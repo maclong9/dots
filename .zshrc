@@ -12,7 +12,6 @@ alias ytad="yt-dlp -x --audio-format alac"
 source ~/.zplug/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-completions"
-zplug "ajeetdsouza/zoxide"
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
