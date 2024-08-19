@@ -33,7 +33,6 @@ for option in [
 endfor
 
 for [key, cmd] in items({
-        '<C-a>': '<plug>(lsp-action)',
         '<C-h>': '<C-w>h',
         '<C-j>': '<C-w>j',
         '<C-k>': '<C-w>k',
@@ -49,7 +48,8 @@ for [key, cmd] in items({
         'gi': '<plug>(lsp-implementation)',
         'gn': '<cmd>LspNextDiagnostic<cr>',
         'gp': '<cmd>LspPreviousDiagnostic<cr>',
-        'gr': '<plug>(lsp-rename)',
+        'gr': '<plug>(lsp-references)',
+        'gR': '<plug>(lsp-rename)',
         'gs': '<plug>(lsp-document-symbol-search)',
         'gt': '<plug>(lsp-type-definition)'
 })
