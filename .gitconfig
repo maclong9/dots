@@ -1,0 +1,18 @@
+[user]
+  email = maclong9@icloud.com
+  name = Mac
+
+[alias]
+  a = add
+  aa = add .
+  ac = "!f() { git add . && git commit -sm \"$1\"; }; f"
+  b = branch
+  bd = branch -d
+  c = commit -sm
+  cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
+  co = checkout
+  d = diff
+  p = push
+  pl = pull
+  pln = pull --no-rebase
+  s = status

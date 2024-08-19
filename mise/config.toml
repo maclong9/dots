@@ -1,0 +1,4 @@
+[tools]
+github-cli = "latest"
+deno = "latest"
+node = "lts"
