@@ -41,6 +41,7 @@ for [key, cmd] in items({
         '<Esc>': '<cmd>nohlsearch<cr>',
         '<leader>e': '<cmd>Explore<cr>',
         '<leader>f': '<cmd>Files<cr>',
+        '<leader>b': '<cmd>Buffers<cr>',
         '<leader>g': '<cmd>Rg<cr>',
         'ga': '<plug>(lsp-code-action)',
         'gd': '<plug>(lsp-definition)',
