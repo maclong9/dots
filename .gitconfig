@@ -16,3 +16,6 @@
   pl = pull
   pln = pull --no-rebase
   s = status
+
+[push]
+  autoSetupRemote = true

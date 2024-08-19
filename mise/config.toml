@@ -2,3 +2,8 @@
 github-cli = "latest"
 deno = "latest"
 node = "lts"
+yt-dlp = "latest"
+ffmpeg = "latest"
+ripgrep = "latest"
+zoxide = "latest"
+bat = "latest"

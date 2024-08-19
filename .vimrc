@@ -1,7 +1,6 @@
 vim9script
 syntax enable
 colorscheme habamax
-command! -nargs=1 G execute ':!git <args>'
 
 for [var, val] in items({
         is_posix: 1,
@@ -70,5 +69,7 @@ call plug#begin()
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-fugitive'
     Plug 'yggdroot/indentline'
+    Plug 'github/copilot.vim'
 call plug#end()

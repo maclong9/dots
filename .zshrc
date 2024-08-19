@@ -1,5 +1,4 @@
-eval "$(~/.local/bin/mise activate zsh)"
-
+export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
 
@@ -20,3 +19,6 @@ if ! zplug check --verbose; then
     fi
 fi
 zplug load
+
+eval "$(~/.local/bin/mise activate zsh)"
+eval "$(zoxide init zsh)"
