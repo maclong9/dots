@@ -18,14 +18,9 @@ mise install
 # Source .zshrc and wait for zplug to complete
 source $HOME/.zshrc
 
-# Function to check if zplug is still running
-zplug_running() {
-  jobs | grep -q 'zplug'
-}
-
 # Wait for zplug to complete
 echo "Waiting for zplug to complete..."
-while zplug_running; do
+while jobs | grep -q 'zplug'; do
   sleep 1
 done
 echo "zplug completed."
