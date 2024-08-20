@@ -13,12 +13,12 @@ else
     source ~/.zplug/init.zsh
 fi
 
-zplug "zsh-users/zsh-syntax-highlighting"
-zplug "zsh-users/zsh-completions"
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-syntax-highlighting"
 zplug check || zplug install
 zplug clean --force
 zplug load
 
-eval "$(~/.local/bin/mise activate zsh)"
 eval "$(zoxide init zsh)"
+eval "$(~/.local/bin/mise activate zsh)"

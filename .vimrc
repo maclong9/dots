@@ -17,7 +17,6 @@ for option in [
         'cursorline',
         'hlsearch',
         'incsearch',
-        'mouse=a',
         'noshowmode',
         'noswapfile',
         'number',
@@ -25,6 +24,7 @@ for option in [
         'relativenumber',
         'scrolloff=999',
         'shiftwidth=2',
+        'signcolumn=no',
         'signcolumn=no',
         'smartindent',
         'tabstop=2',
@@ -79,3 +79,5 @@ call plug#begin()
     Plug 'yggdroot/indentline'
     Plug 'github/copilot.vim'
 call plug#end()
+
+autocmd BufWritePre *.* :LspDocumentFormat
