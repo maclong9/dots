@@ -15,12 +15,5 @@ curl https://mise.run | sh
 eval "$(~/.local/bin/mise activate zsh)"
 mise install
 
-# Source .zshrc and wait for zplug to complete
+# Source .zshrc
 source $HOME/.zshrc
-
-# Wait for zplug to complete
-echo "Waiting for zplug to complete..."
-while jobs | grep -q 'zplug'; do
-  sleep 1
-done
-echo "zplug completed."
