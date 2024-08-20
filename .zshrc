@@ -1,10 +1,13 @@
 export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
+export EDITOR="vim"
+
+setopt correct
 
 alias g="git"
 alias hg="history | grep"
-alias ytad="yt-dlp -x --audio-format alac"
+alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
 if [[ ! -d ~/.zplug ]]; then
     git clone https://github.com/zplug/zplug ~/.zplug
@@ -14,10 +17,16 @@ else
 fi
 
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
-zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-syntax-highlighting"
+zplug "djui/alias-tips"
+zplug "modules/archive", from:prezto
+zplug "modules/completion", from:prezto
+zplug "modules/directory", from:prezto
+zplug "modules/history", from:prezto
+zplug "modules/node", from:prezto
+zplug "modules/syntax-highlighting", from:prezto
+zplug "modules/utility", from:prezto
+
 zplug check || zplug install
-zplug clean --force
 zplug load
 
 eval "$(zoxide init zsh)"

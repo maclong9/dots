@@ -25,7 +25,7 @@ for option in [
         'scrolloff=999',
         'shiftwidth=2',
         'signcolumn=no',
-        'signcolumn=no',
+        'smartcase',
         'smartindent',
         'tabstop=2',
 ]
@@ -38,7 +38,6 @@ for [key, cmd] in items({
         '<C-k>': '<C-w>k',
         '<C-l>': '<C-w>l',
         '<Esc>': '<cmd>nohlsearch<cr>',
-        '<leader>e': '<cmd>Explore<cr>',
         '<leader>f': '<cmd>Files<cr>',
         '<leader>b': '<cmd>Buffers<cr>',
         '<leader>g': '<cmd>Rg<cr>',
@@ -76,6 +75,7 @@ call plug#begin()
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-vinegar'
     Plug 'yggdroot/indentline'
     Plug 'github/copilot.vim'
 call plug#end()
