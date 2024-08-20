@@ -13,10 +13,7 @@ zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-completions"
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
 if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+    zplug install
 fi
 zplug load
 
