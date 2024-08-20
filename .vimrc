@@ -79,3 +79,5 @@ call plug#begin()
     Plug 'yggdroot/indentline'
     Plug 'github/copilot.vim'
 call plug#end()
+
+autocmd BufWritePre *.* :LspDocumentFormat
