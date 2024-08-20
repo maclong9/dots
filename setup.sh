@@ -10,4 +10,5 @@ curl https://mise.run | sh
 eval "$(~/.local/bin/mise activate zsh)"
 mise install
 source $HOME/.zshrc
+sleep 50
 npm i -g pnpm vercel
