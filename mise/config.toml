@@ -1,5 +1,6 @@
 [tools]
 bat = "latest"
+delta = "latest"
 deno = "latest"
 ffmpeg = "latest"
 github-cli = "latest"
