@@ -3,11 +3,11 @@ syntax enable
 colorscheme habamax
 
 for [var, val] in items({
+        indentLine_char: '│',
         is_posix: 1,
         mapleader: ';',
         netrw_banner: 0,
         netrw_liststyle: 3,
-        indentLine_char: '│',
 })
     execute 'g:' .. var .. ' = ' .. string(val)
 endfor
@@ -22,10 +22,10 @@ for option in [
         'noswapfile',
         'number',
         'regexpengine=0',
-        'signcolumn=no',
         'relativenumber',
         'scrolloff=999',
         'shiftwidth=2',
+        'signcolumn=no',
         'smartindent',
         'tabstop=2',
 ]
