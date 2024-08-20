@@ -20,13 +20,13 @@ for option in [
         'noswapfile',
         'number',
         'relativenumber',
-        'regexpengine=0',
         'signcolumn=no',
         'scrolloff=999',
         'tabstop=2',
         'shiftwidth=2',
         'smartindent',
         'breakindent',
+        'regexpengine=0',
 ]
     execute 'set ' .. option
 endfor
