@@ -1,4 +1,4 @@
-git clone https://github.com/maclong9/dotfiles .config
+git clone https://github.com/maclong9/dots .config
 
 for file in .config/*(D); do
   if [[ $file:t != ".git*" ]]; then
