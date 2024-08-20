@@ -2,6 +2,7 @@ export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
 export EDITOR="vim"
+export ASDF_FFMPEG_ENABLE="libaom fontconfig freetype frei0r lame libass libvorbis libvpx opus rtmpdump sdl2 snappy theora x264 x265 xz"
 
 setopt correct
 
