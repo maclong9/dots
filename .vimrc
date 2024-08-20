@@ -13,7 +13,6 @@ for [var, val] in items({
 endfor
 
 for option in [
-        'breakindent',
         'cursorline',
         'hlsearch',
         'incsearch',
@@ -24,9 +23,10 @@ for option in [
         'regexpengine=0',
         'signcolumn=no',
         'scrolloff=999',
+        'tabstop=2',
         'shiftwidth=2',
         'smartindent',
-        'tabstop=2',
+        'breakindent',
 ]
     execute 'set ' .. option
 endfor
