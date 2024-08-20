@@ -9,10 +9,9 @@ done
 curl https://mise.run | sh
 eval "$(~/.local/bin/mise activate zsh)"
 mise install
+npm i -g pnpm vercel
 
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-npm i -g pnpm vercel
 
 source $HOME/.zshrc
