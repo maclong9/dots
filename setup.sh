@@ -4,8 +4,8 @@
 git clone https://github.com/maclong9/dots .config
 
 # Create symlinks for dotfiles
-for file in .config/*(D); do
-  if [[ $file:t =~ ^\..* && $file:t != ".git" && $file:t != ".gitignore" ]]; then
+for file in .config/.*(.); do
+  if [[ $file:t != ".git" && $file:t != ".gitignore" && $file:t != "." && $file:t != ".." ]]; then
     ln -s "$file" "$HOME/${file:t}"
   fi
 done
