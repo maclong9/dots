@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Clone the dotfiles repository
 git clone https://github.com/maclong9/dots .config
