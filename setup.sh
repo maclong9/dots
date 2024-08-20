@@ -24,6 +24,3 @@ while jobs | grep -q 'zplug'; do
   sleep 1
 done
 echo "zplug completed."
-
-# Now run npm commands
-npm i -g pnpm vercel
