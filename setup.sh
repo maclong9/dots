@@ -1,7 +1,7 @@
 git clone https://github.com/maclong9/dots .config
 
 for file in .config/*(D); do
-  if [[ $file:t != ".git*" ]]; then
+  if [[ $file:t != ".git" && $file:t != ".gitignore" ]]; then
     ln -s "$file" "$HOME/.${file:t}"
   fi
 done
