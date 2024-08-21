@@ -4,6 +4,8 @@ export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~
 export EDITOR="vim"
 export ASDF_FFMPEG_ENABLE="libaom fontconfig freetype frei0r lame libass libvorbis libvpx opus rtmpdump sdl2 snappy theora x264 x265 xz"
 
+# TODO: Convert export and alias to loops
+
 setopt correct
 
 alias g="git"
