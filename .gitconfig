@@ -5,7 +5,8 @@
 [alias]
   a = add
   aa = add .
-  ac = "!f() { git add . && git commit -sm \"$1\"; }; f"
+  ac = "!f() { git add $1 && git commit -m \"$2\"; }; f"
+  aac = "!f() { git add . && git commit -m \"$1\"; }; f"
   b = branch
   bd = branch -d
   c = commit -m
