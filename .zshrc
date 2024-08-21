@@ -7,6 +7,7 @@ export ASDF_FFMPEG_ENABLE="libaom fontconfig freetype frei0r lame libass libvorb
 setopt correct
 
 alias g="git"
+alias lg="lazygit"
 alias hg="history | grep"
 alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
