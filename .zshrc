@@ -4,14 +4,18 @@ export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~
 export EDITOR="vim"
 export ASDF_FFMPEG_ENABLE="libaom fontconfig freetype frei0r lame libass libvorbis libvpx opus rtmpdump sdl2 snappy theora x264 x265 xz"
 
-# TODO: Convert export and alias to loops
-
-setopt correct
-
+alias _="sudo"
+alias e="${(z)VISUAL:-${(z)EDITOR}}"
 alias g="git"
 alias lg="lazygit"
 alias hg="history | grep"
+alias http-serve="python3 -m http.server"
+alias mkdir="mkdir -p"
+alias o="open"
+alias sa="alias | rg -i"
 alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
+
+setopt correct
 
 if [[ ! -d ~/.zplug ]]; then
     git clone https://github.com/zplug/zplug ~/.zplug
@@ -22,10 +26,8 @@ fi
 
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
 zplug "djui/alias-tips"
+zplug "zsh-users/zsh-syntax-highlighting"
 zplug "modules/completion", from:prezto
-zplug "modules/history", from:prezto
-zplug "modules/syntax-highlighting", from:prezto
-zplug "modules/utility", from:prezto
 
 zplug check || zplug install
 zplug load
