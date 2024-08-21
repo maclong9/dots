@@ -23,7 +23,6 @@ for option in [
         'regexpengine=0',
         'relativenumber',
         'scrolloff=999',
-        'shellcmdflag=-i',
         'shiftwidth=2',
         'signcolumn=no',
         'smartcase',
@@ -44,6 +43,7 @@ for [key, cmd] in items({
         '<leader>g': '<cmd>Rg<cr>',
         'ga': '<plug>(lsp-code-action)',
         'gd': '<plug>(lsp-definition)',
+        'gf': '<cmd>LspDocumentFormat<cr>',
         'gh': '<plug>(lsp-hover)',
         'gi': '<plug>(lsp-implementation)',
         'gn': '<cmd>LspNextDiagnostic<cr>',
@@ -80,5 +80,3 @@ call plug#begin()
     Plug 'yggdroot/indentline'
     Plug 'github/copilot.vim'
 call plug#end()
-
-autocmd BufWritePre *.* :LspDocumentFormat
