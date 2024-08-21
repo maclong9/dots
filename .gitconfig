@@ -11,6 +11,7 @@
   bd = branch -d
   br = "!f() { git branch -m $1; }; f"
   c = commit -m
+  ca = "!f() { git commit -am \"$1\"; }; f"
   cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
   co = checkout
   col = checkout -
