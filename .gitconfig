@@ -11,12 +11,13 @@
   bd = branch -d
   br = "!f() { git branch -m $1; }; f"
   c = commit -m
-  ca = "!f() { git commit -am \"$1\"; }; f"
+  ca = "!f() { git commit --amend -m \"$1\"; }; f"
   cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
   co = checkout
   col = checkout -
   d = diff
   ds = diff --stat HEAD~
+  f = fetch
   l = log --oneline --decorate --all
   lg = log --graph --oneline --decorate --all
   p = push
