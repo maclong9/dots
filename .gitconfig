@@ -9,6 +9,7 @@
   aac = "!f() { git add . && git commit -m \"$1\"; }; f"
   b = branch
   bd = branch -d
+  br = "!f() { git branch -m $1; }; f"
   c = commit -m
   cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
   co = checkout
