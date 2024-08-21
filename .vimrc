@@ -79,4 +79,5 @@ call plug#begin()
     Plug 'tpope/vim-vinegar'
     Plug 'yggdroot/indentline'
     Plug 'github/copilot.vim'
+    Plug 'pasky/claude.vim'
 call plug#end()
