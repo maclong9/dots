@@ -23,11 +23,8 @@ fi
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
 zplug "djui/alias-tips"
 zplug "zsh-users/zsh-syntax-highlighting"
-zplug "modules/archive", from:prezto
 zplug "modules/completion", from:prezto
-zplug "modules/directory", from:prezto
 zplug "modules/history", from:prezto
-zplug "modules/node", from:prezto
 zplug "modules/utility", from:prezto
 
 zplug check || zplug install
