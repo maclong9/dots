@@ -7,11 +7,11 @@
   aa = add .
   ac = "!f() { git add . && git commit -sm \"$1\"; }; f"
   b = branch
-  bb = checkout -
   bd = branch -d
   c = commit -m
   cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
   co = checkout
+  col = checkout -
   d = diff
   ds = diff --stat HEAD~
   l = log --oneline --decorate --all
