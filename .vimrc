@@ -23,6 +23,7 @@ for option in [
         'regexpengine=0',
         'relativenumber',
         'scrolloff=999',
+        'shellcmdflag=-ic',
         'shiftwidth=2',
         'signcolumn=no',
         'smartcase',
