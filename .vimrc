@@ -6,8 +6,6 @@ for [var, val] in items({
         indentLine_char: '│',
         is_posix: 1,
         mapleader: ';',
-        netrw_banner: 0,
-        netrw_liststyle: 3,
 })
     execute 'g:' .. var .. ' = ' .. string(val)
 endfor
@@ -41,17 +39,17 @@ for [key, cmd] in items({
         '<leader>f': '<cmd>Files<cr>',
         '<leader>b': '<cmd>Buffers<cr>',
         '<leader>g': '<cmd>Rg<cr>',
-        'ga': '<plug>(lsp-code-action)',
-        'gd': '<plug>(lsp-definition)',
-        'gf': '<cmd>LspDocumentFormat<cr>',
-        'gh': '<plug>(lsp-hover)',
-        'gi': '<plug>(lsp-implementation)',
-        'gn': '<cmd>LspNextDiagnostic<cr>',
-        'gp': '<cmd>LspPreviousDiagnostic<cr>',
-        'gr': '<plug>(lsp-references)',
-        'gR': '<plug>(lsp-rename)',
-        'gs': '<plug>(lsp-document-symbol-search)',
-        'gt': '<plug>(lsp-type-definition)'
+        '<leader>a': '<plug>(lsp-code-action)',
+        '<leader>d': '<plug>(lsp-definition)',
+        '<leader>F': '<cmd>LspDocumentFormat<cr>',
+        '<leader>h': '<plug>(lsp-hover)',
+        '<leader>i': '<plug>(lsp-implementation)',
+        '<leader>n': '<cmd>LspNextDiagnostic<cr>',
+        '<leader>p': '<cmd>LspPreviousDiagnostic<cr>',
+        '<leader>r': '<plug>(lsp-references)',
+        '<leader>R': '<plug>(lsp-rename)',
+        '<leader>s': '<plug>(lsp-document-symbol-search)',
+        '<leader>t': '<plug>(lsp-type-definition)'
 })
     execute 'nnoremap ' .. key .. ' ' .. cmd
 endfor
