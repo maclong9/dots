@@ -36,6 +36,7 @@ for [key, cmd] in items({
     '<C-k>': '<C-w>k',
     '<C-l>': '<C-w>l',
     '<Esc>': '<cmd>nohlsearch<cr>',
+    '<leader>e': '<cmd>Explore<cr>',
     '<leader>F': '<cmd>LspDocumentFormat<cr>',
     '<leader>R': '<plug>(lsp-rename)',
     '<leader>a': '<plug>(lsp-code-action)',
@@ -76,7 +77,6 @@ call plug#begin()
     Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rsi'
     Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-vinegar'
     Plug 'yggdroot/indentline'
     Plug 'airblade/vim-gitgutter'
     Plug 'andymass/vim-matchup'
