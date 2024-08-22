@@ -1,13 +1,11 @@
 vim9script
 syntax enable
 colorscheme habamax
-&t_SI = "\e[6 q"
-&t_EI = "\e[2 q"
 
 for [var, val] in items({
     indentLine_char: '│',
-    is_posix: 1,
     mapleader: ';',
+    is_posix: 1,
 })
     execute 'g:' .. var .. ' = ' .. string(val)
 endfor
@@ -15,7 +13,7 @@ endfor
 for option in [
   'breakindent',
   'cursorline',
-  'hlsearch',
+  'hlsearch'
   'incsearch',
   'noshowmode',
   'noswapfile',
