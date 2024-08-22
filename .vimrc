@@ -22,7 +22,7 @@ for option in [
     'relativenumber',
     'scrolloff=999',
     'shiftwidth=2',
-    'signcolumn=no',
+    'signcolumn=yes',
     'smartcase',
     'smartindent',
     'tabstop=2',
@@ -78,4 +78,7 @@ call plug#begin()
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-vinegar'
     Plug 'yggdroot/indentline'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'andymass/vim-matchup'
+    Plug 'wellle/targets.vim'
 call plug#end()
