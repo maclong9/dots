@@ -5,11 +5,11 @@ colorscheme habamax
 &t_EI = "\e[2 q"
 
 for [var, val] in items({
-    indentLine_char: '│',
-    is_posix: 1,
-    mapleader: ';',
+  indentLine_char: '│',
+  is_posix: 1,
+  mapleader: ';',
 })
-    execute 'g:' .. var .. ' = ' .. string(val)
+  execute 'g:' .. var .. ' = ' .. string(val)
 endfor
 
 for option in [
