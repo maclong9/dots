@@ -1,6 +1,8 @@
 vim9script
 syntax enable
 colorscheme habamax
+&t_SI = "\e[6 q"
+&t_EI = "\e[2 q"
 
 for [var, val] in items({
     indentLine_char: '│',
