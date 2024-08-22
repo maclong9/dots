@@ -8,7 +8,6 @@ alias e="${(z)VISUAL:-${(z)EDITOR}}"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
-alias sa="alias | rg -i"
 alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
 setopt correct
