@@ -12,7 +12,6 @@ for [var, val] in items({
     execute 'g:' .. var .. ' = ' .. string(val)
 endfor
 
-
 for option in [
   'breakindent',
   'cursorline',
@@ -82,6 +81,5 @@ call plug#begin()
   Plug 'tpope/vim-surround'
   Plug 'yggdroot/indentline'
   Plug 'airblade/vim-gitgutter'
-  Plug 'andymass/vim-matchup'
   Plug 'wellle/targets.vim'
 call plug#end()
