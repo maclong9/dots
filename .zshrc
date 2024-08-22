@@ -21,8 +21,8 @@ fi
 
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
 zplug "djui/alias-tips"
+zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-syntax-highlighting"
-zplug "modules/completion", from:prezto
 
 zplug check || zplug install
 zplug load
