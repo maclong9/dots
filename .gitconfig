@@ -37,6 +37,9 @@
   line-numbers = true
   side-by-side = true
 
+[init]
+  defaultBranch = main
+
 [merge]
   tool = vimdiff
 
