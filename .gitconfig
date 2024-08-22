@@ -40,5 +40,11 @@
 [merge]
   tool = vimdiff
 
+[pager]
+  blame  = delta
+  diff   = delta
+  reflog = delta
+  show   = delta
+
 [push]
   autoSetupRemote = true
