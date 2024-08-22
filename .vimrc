@@ -53,12 +53,12 @@ for [key, cmd] in items({
   '<leader>s': '<plug>(lsp-document-symbol-search)',
   '<leader>t': '<plug>(lsp-type-definition)'
 })
-    execute 'nnoremap ' .. key .. ' ' .. cmd
+  execute 'nnoremap ' .. key .. ' ' .. cmd
 endfor
 
 if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin()
