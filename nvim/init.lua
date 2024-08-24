@@ -312,7 +312,7 @@ do
 		}
 	end
 
-	vim.api.nvim_create_autocmd({ "ModeChanged" }, {
+	vim.api.nvim_create_autocmd({ "ModeChanged", "VimEnter" }, {
 		callback = function()
 			local mode = vim.api.nvim_get_mode().mode
 			local color = colors[mode] or colors.normal
