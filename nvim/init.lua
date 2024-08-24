@@ -170,7 +170,6 @@ require('mason-lspconfig').setup({
 		'cssls',
 		'denols',
 		'eslint',
-		'html',
 		'lua_ls',
 		'marksman',
 		'tailwindcss',
