@@ -2,18 +2,15 @@
 vim.cmd('syntax enable')
 
 -- Set global variables
-local globals = {
+for k, v in pairs({
 	is_posix = 1,    -- Use POSIX-compatible behavior
 	mapleader = ';', -- Set the leader key to semicolon
-}
-
--- Apply global variables
-for k, v in pairs(globals) do
+}) do
 	vim.g[k] = v
 end
 
--- Set Neovim options
-local options = {
+-- Apply Neovim options
+for k, v in pairs({
 	breakindent = true,    -- Preserve indentation on wrapped lines
 	cursorline = true,     -- Highlight the current line
 	hlsearch = true,       -- Highlight search results
@@ -29,18 +26,12 @@ local options = {
 	smartcase = true,      -- Case-sensitive search if query has uppercase
 	smartindent = true,    -- Smart autoindenting on new lines
 	tabstop = 2,           -- Number of spaces a tab counts for
-}
-
--- Apply Neovim options
-for k, v in pairs(options) do
+}) do
 	vim.opt[k] = v
 end
 
--- Set up key mappings
-local keymap = vim.keymap.set
-local opts = { noremap = true, silent = true }
-
-local mappings = {
+-- Set key mappings
+for _, mapping in ipairs({
 	-- General
 	{ 'n', '<C-h>',             '<C-w>h' },                                  -- Move to left window
 	{ 'n', '<C-j>',             '<C-w>j' },                                  -- Move to bottom window
@@ -61,15 +52,12 @@ local mappings = {
 	{ 'n', '<leader>li',        '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
 	{ 'n', '<leader>lt',        '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
 	{ 'n', '<leader>lr',        '<cmd>lua vim.lsp.buf.references()<CR>' },   -- Find references
-}
-
--- Apply key mappings
-for _, mapping in ipairs(mappings) do
-	keymap(mapping[1], mapping[2], mapping[3], opts)
+}) do
+	keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
 -- Setup LSP Signs with Nerd Fonts
-local signs = { Error = "", Warn = "", Hint = "", Info = " " }
+local signs = { Error = "", Warn = "", Hint = "", Info = " " }
 
 -- Apply signs
 for type, icon in pairs(signs) do
@@ -94,47 +82,47 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugin specification
 require("lazy").setup({
 	{ "windwp/nvim-autopairs" }, -- Autoclose brackets
-	{ "williamboman/mason.nvim" },          -- LSP package manager
+	{ "williamboman/mason.nvim" }, -- LSP package manager
 	{ "williamboman/mason-lspconfig.nvim" }, -- mason.nvim bridge
-	{ "neovim/nvim-lspconfig" },            -- LSP configuration
-	{ "hrsh7th/nvim-cmp" },                 -- Autocompletion plugin
-	{ "hrsh7th/cmp-nvim-lsp" },             -- LSP source for cmp
-	{ "hrsh7th/cmp-buffer" },               -- Buffer source for cmp
-	{ "hrsh7th/cmp-path" },                 -- Path source for cmp
-	{ "L3MON4D3/LuaSnip" },                 -- Snippet engine
-	{ "saadparwaiz1/cmp_luasnip" },         -- Luasnip source for cmp
-	{ "tpope/vim-commentary" },    -- Commenting support
-	{ "tpope/vim-fugitive" },      -- Git integration
-	{ "tpope/vim-rsi" },           -- Readline-style keys
+	{ "neovim/nvim-lspconfig" }, -- LSP configuration
+	{ "hrsh7th/nvim-cmp" }, -- Autocompletion plugin
+	{ "hrsh7th/cmp-nvim-lsp" }, -- LSP source for cmp
+	{ "hrsh7th/cmp-buffer" }, -- Buffer source for cmp
+	{ "hrsh7th/cmp-path" }, -- Path source for cmp
+	{ "L3MON4D3/LuaSnip" }, -- Snippet engine
+	{ "saadparwaiz1/cmp_luasnip" }, -- Luasnip source for cmp
+	{ "tpope/vim-commentary" }, -- Commenting support
+	{ "tpope/vim-fugitive" }, -- Git integration
+	{ "tpope/vim-rsi" }, -- Readline-style keys
 	{ "kylechui/nvim-surround", opts = {} }, -- Edit surrounding pairs
 	{ "chrisgrieser/nvim-spider" }, -- Move through camelCase
-	{ "wellle/targets.vim" },     -- Additional text objects
+	{ "wellle/targets.vim" }, -- Additional text objects
 	{ "folke/neodev.nvim", opts = {} }, -- Neovim Lua development
 	{ "github/copilot.vim" }, -- Code completion
 	{ -- AI Pair Programmer
-	  "yetone/avante.nvim",
-	  event = "VeryLazy",
-	  build = "make",
-	  opts = {},
-	  dependencies = {
-	    "nvim-tree/nvim-web-devicons",
-	    "stevearc/dressing.nvim",
-	    "nvim-lua/plenary.nvim",
-	    "MunifTanjim/nui.nvim",
-	    {
-	      'MeanderingProgrammer/render-markdown.nvim',
-	      opts = {
-	        file_types = { "markdown", "Avante" },
-	      },
-	      ft = { "markdown", "Avante" },
-	    },
-	  },
+		"yetone/avante.nvim",
+		event = "VeryLazy",
+		build = "make",
+		opts = {},
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			{
+				'MeanderingProgrammer/render-markdown.nvim',
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
+			},
+		},
 	},
-  { -- Git signs
-    "lewis6991/gitsigns.nvim", 
-    opts = {} 
-  }, 
-	{                           -- Fuzzy finder
+	{ -- Git signs
+		"lewis6991/gitsigns.nvim", 
+		opts = {} 
+	}, 
+	{ -- Fuzzy finder
 		"nvim-telescope/telescope.nvim",
 		tag = '0.1.5',
 		dependencies = { 'nvim-lua/plenary.nvim' },
@@ -142,23 +130,23 @@ require("lazy").setup({
 	{ -- Treesitter integration
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
-    opts = {
-      ensure_installed = "all", -- or a list of languages
-    	highlight = {
-    		enable = true,         -- false will disable the whole extension
-    		additional_vim_regex_highlighting = false,
-    	},
-    	indent = {
-    		enable = true
-    	},
-    },
+		opts = {
+			ensure_installed = "all", -- or a list of languages
+			highlight = {
+				enable = true,         -- false will disable the whole extension
+				additional_vim_regex_highlighting = false,
+			},
+			indent = {
+				enable = true
+			},
+		},
 	},
 	{ -- Indentation guides
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
-    opts = {
-      indent = { char = "│" },
-    }, 
+		opts = {
+			indent = { char = "│" },
+		}, 
 	},
 	{ -- File explorer
 		'stevearc/oil.nvim',
@@ -170,7 +158,6 @@ require("lazy").setup({
 		opts = {
 			formatters_by_ft = {
 				markdown = { "deno" },
-				html = { "deno" },
 				typescript = { "deno" },
 				yaml = { "deno" },
 				lua = { "stylua" },
@@ -193,7 +180,6 @@ require('mason-lspconfig').setup({
 		'lua_ls',
 		'marksman',
 		'tailwindcss',
-		'tsserver'
 	},
 	automatic_installation = true,
 })
@@ -206,16 +192,11 @@ for _, lsp in ipairs({
 	'cssls',
 	'denols',
 	'eslint',
-	'html',
 	'lua_ls',
 	'marksman',
 	'tailwindcss',
-	'tsserver'
 }) do
 	lspconfig[lsp].setup {
-		on_attach = function(client, bufnr)
-			-- Key mappings for LSP-related commands can be added here
-		end,
 		capabilities = capabilities,
 	}
 end
@@ -267,67 +248,67 @@ cmp.setup {
 
 -- Statusline
 do
-  local colors = {
-    normal = "#61afef",
-    insert = "#98c379",
-    visual = "#c678dd",
-    replace = "#e5c07b",
-    command = "#56b6c2",
-    inactive = "#4b5263",
-    bg = "#282c34",
-    fg = "#abb2bf",
-  }
+	local colors = {
+		normal = "#61afef",
+		insert = "#98c379",
+		visual = "#c678dd",
+		replace = "#e5c07b",
+		command = "#56b6c2",
+		inactive = "#4b5263",
+		bg = "#282c34",
+		fg = "#abb2bf",
+	}
 
-  local mode_names = {
-    n = "NORMAL",
-    i = "INSERT",
-    v = "VISUAL",
-    V = "V-LINE",
-    [""] = "V-BLOCK",
-    c = "COMMAND",
-    R = "REPLACE",
-    t = "TERMINAL",
-  }
+	local mode_names = {
+		n = "NORMAL",
+		i = "INSERT",
+		v = "VISUAL",
+		V = "V-LINE",
+		[""] = "V-BLOCK",
+		c = "COMMAND",
+		R = "REPLACE",
+		t = "TERMINAL",
+	}
 
-  local function get_mode()
-    local mode = vim.api.nvim_get_mode().mode
-    return string.format(" %s ", mode_names[mode] or mode:upper())
-  end
+	local function get_mode()
+		local mode = vim.api.nvim_get_mode().mode
+		return string.format(" %s ", mode_names[mode] or mode:upper())
+	end
 
-  local function get_filename()
-    local filename = vim.fn.expand("%:t")
-    return filename == "" and "[No Name]" or filename
-  end
+	local function get_filename()
+		local filename = vim.fn.expand("%:t")
+		return filename == "" and "[No Name]" or filename
+	end
 
-  local function get_filetype()
-    return vim.bo.filetype
-  end
+	local function get_filetype()
+		return vim.bo.filetype
+	end
 
-  _G.statusline = function()
-    local mode = get_mode()
-    local filename = get_filename()
-    local filetype = get_filetype()
-    
-    return table.concat {
-      "%#StatusLine#",
-      mode,
-      "%#StatusLineNC#",
-      " %f", -- Full path
-      "%m", -- Modified flag
-      "%=", -- Right align
-      filetype,
-      " %l:%c ", -- Line and column
-      "%p%%", -- Percentage through file
-    }
-  end
+	_G.statusline = function()
+		local mode = get_mode()
+		local filename = get_filename()
+		local filetype = get_filetype()
+		
+		return table.concat {
+			"%#StatusLine#",
+			mode,
+			"%#StatusLineNC#",
+			" %f", -- Full path
+			"%m", -- Modified flag
+			"%=", -- Right align
+			filetype,
+			" %l:%c ", -- Line and column
+			"%p%%", -- Percentage through file
+		}
+	end
 
-  vim.api.nvim_create_autocmd({"ModeChanged"}, {
-    callback = function()
-      local mode = vim.api.nvim_get_mode().mode
-      local color = colors[mode] or colors.normal
-      vim.api.nvim_command("hi StatusLine guifg=" .. color .. " guibg=" .. colors.bg)
-    end
-  })
+	vim.api.nvim_create_autocmd({"ModeChanged"}, {
+		callback = function()
+			local mode = vim.api.nvim_get_mode().mode
+			local color = colors[mode] or colors.normal
+			vim.api.nvim_command("hi StatusLine guifg=" .. color .. " guibg=" .. colors.bg)
+		end
+	})
 
-  vim.o.statusline = "%!v:lua.statusline()"
+	vim.o.statusline = "%!v:lua.statusline()"
 end
