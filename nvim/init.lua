@@ -3,7 +3,7 @@ vim.cmd('syntax enable')
 
 -- Set global variables
 for k, v in pairs({
-	is_posix = 1,    -- Use POSIX-compatible behavior
+	is_posix = 1,   -- Use POSIX-compatible behavior
 	mapleader = ';', -- Set the leader key to semicolon
 }) do
 	vim.g[k] = v
@@ -11,20 +11,20 @@ end
 
 -- Set Neovim options
 for k, v in pairs({
-	breakindent = true,    -- Preserve indentation on wrapped lines
-	cursorline = true,     -- Highlight the current line
-	hlsearch = true,       -- Highlight search results
-	incsearch = true,      -- Show search matches as you type
-	swapfile = false,      -- Disable swap file creation
-	number = true,         -- Show line numbers
+	breakindent = true,   -- Preserve indentation on wrapped lines
+	cursorline = true,    -- Highlight the current line
+	hlsearch = true,      -- Highlight search results
+	incsearch = true,     -- Show search matches as you type
+	swapfile = false,     -- Disable swap file creation
+	number = true,        -- Show line numbers
 	relativenumber = true, -- Show relative line numbers
-	regexpengine = 0,      -- Use automatic regexp engine selection
-	scrolloff = 999,       -- Keep cursor centered vertically
-	shiftwidth = 2,        -- Number of spaces for each indent level
-	signcolumn = 'yes',    -- Always show the sign column
-	smartcase = true,      -- Case-sensitive search if query has uppercase
-	smartindent = true,    -- Smart autoindenting on new lines
-	tabstop = 2,           -- Number of spaces a tab counts for
+	regexpengine = 0,     -- Use automatic regexp engine selection
+	scrolloff = 999,      -- Keep cursor centered vertically
+	shiftwidth = 2,       -- Number of spaces for each indent level
+	signcolumn = 'yes',   -- Always show the sign column
+	smartcase = true,     -- Case-sensitive search if query has uppercase
+	smartindent = true,   -- Smart autoindenting on new lines
+	tabstop = 2,          -- Number of spaces a tab counts for
 }) do
 	vim.opt[k] = v
 end
@@ -32,35 +32,35 @@ end
 -- Set key mappings
 for _, mapping in ipairs({
 	-- General
-	{ 'n', '<C-h>',             '<C-w>h' },                                  -- Move to left window
-	{ 'n', '<C-j>',             '<C-w>j' },                                  -- Move to bottom window
-	{ 'n', '<C-k>',             '<C-w>k' },                                  -- Move to top window
-	{ 'n', '<C-l>',             '<C-w>l' },                                  -- Move to right window
-	{ 'n', '<Esc>',             '<cmd>nohlsearch<CR>' },                     -- Clear search highlight
+	{ 'n', '<C-h>',      '<C-w>h' },             -- Move to left window
+	{ 'n', '<C-j>',      '<C-w>j' },             -- Move to bottom window
+	{ 'n', '<C-k>',      '<C-w>k' },             -- Move to top window
+	{ 'n', '<C-l>',      '<C-w>l' },             -- Move to right window
+	{ 'n', '<Esc>',      '<cmd>nohlsearch<CR>' }, -- Clear search highlight
 
 	-- Telescope
-	{ 'n', '<leader>b',         '<cmd>Telescope buffers<CR>' },              -- Find Buffers
-	{ 'n', '<leader>f',         '<cmd>Telescope find_files<CR>' },           -- Find Files
-	{ 'n', '<leader>g',         '<cmd>Telescope live_grep<CR>' },            -- Find Text
-	{ 'n', '<leader>s',         '<cmd>Telescope lsp_document_symbols<CR>' }, -- Find Symbols
+	{ 'n', '<leader>b',  '<cmd>Telescope buffers<CR>' },             -- Find Buffers
+	{ 'n', '<leader>f',  '<cmd>Telescope find_files<CR>' },          -- Find Files
+	{ 'n', '<leader>g',  '<cmd>Telescope live_grep<CR>' },           -- Find Text
+	{ 'n', '<leader>s',  '<cmd>Telescope lsp_document_symbols<CR>' }, -- Find Symbols
 
 	-- LSP Mappings
-	{ 'n', '<leader>lh',        '<cmd>lua vim.lsp.buf.hover()<CR>' },        -- Show hover information
-	{ 'n', '<leader>la',        '<cmd>lua vim.lsp.buf.code_action()<CR>' },  -- Show code actions
-	{ 'n', '<leader>ld',        '<cmd>lua vim.lsp.buf.definition()<CR>' },   -- Go to definition
-	{ 'n', '<leader>li',        '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
-	{ 'n', '<leader>lt',        '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
-	{ 'n', '<leader>lr',        '<cmd>lua vim.lsp.buf.references()<CR>' },   -- Find references
+	{ 'n', '<leader>lh', '<cmd>lua vim.lsp.buf.hover()<CR>' },          -- Show hover information
+	{ 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>' },    -- Show code actions
+	{ 'n', '<leader>ld', '<cmd>lua vim.lsp.buf.definition()<CR>' },     -- Go to definition
+	{ 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
+	{ 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
+	{ 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>' },     -- Find references
 }) do
-	keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
+	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
 -- Set LSP signs
-for type, icon in pairs({ 
-		Error = "", 
-		Warn = "", 
-		Hint = "", 
-		Info = " " 
+for type, icon in pairs({
+	Error = "",
+	Warn = "",
+	Hint = "",
+	Info = " "
 }) do
 	local hl = "DiagnosticSign" .. type
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
@@ -82,25 +82,25 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugin specification
 require("lazy").setup({
-	{ "windwp/nvim-autopairs" }, -- Autoclose brackets
-	{ "williamboman/mason.nvim" }, -- LSP package manager
-	{ "williamboman/mason-lspconfig.nvim" }, -- mason.nvim bridge
-	{ "neovim/nvim-lspconfig" }, -- LSP configuration
-	{ "hrsh7th/nvim-cmp" }, -- Autocompletion plugin
-	{ "hrsh7th/cmp-nvim-lsp" }, -- LSP source for cmp
-	{ "hrsh7th/cmp-buffer" }, -- Buffer source for cmp
-	{ "hrsh7th/cmp-path" }, -- Path source for cmp
-	{ "L3MON4D3/LuaSnip" }, -- Snippet engine
-	{ "saadparwaiz1/cmp_luasnip" }, -- Luasnip source for cmp
-	{ "tpope/vim-commentary" }, -- Commenting support
-	{ "tpope/vim-fugitive" }, -- Git integration
-	{ "tpope/vim-rsi" }, -- Readline-style keys
-	{ "kylechui/nvim-surround", opts = {} }, -- Edit surrounding pairs
-	{ "chrisgrieser/nvim-spider" }, -- Move through camelCase
-	{ "wellle/targets.vim" }, -- Additional text objects
-	{ "folke/neodev.nvim", opts = {} }, -- Neovim Lua development
-	{ "github/copilot.vim" }, -- Code completion
-	{ -- AI Pair Programmer
+	{ "windwp/nvim-autopairs" },                      -- Autoclose brackets
+	{ "williamboman/mason.nvim" },                    -- LSP package manager
+	{ "williamboman/mason-lspconfig.nvim" },          -- mason.nvim bridge
+	{ "neovim/nvim-lspconfig" },                      -- LSP configuration
+	{ "hrsh7th/nvim-cmp" },                           -- Autocompletion plugin
+	{ "hrsh7th/cmp-nvim-lsp" },                       -- LSP source for cmp
+	{ "hrsh7th/cmp-buffer" },                         -- Buffer source for cmp
+	{ "hrsh7th/cmp-path" },                           -- Path source for cmp
+	{ "L3MON4D3/LuaSnip" },                           -- Snippet engine
+	{ "saadparwaiz1/cmp_luasnip" },                   -- Luasnip source for cmp
+	{ "tpope/vim-commentary" },                       -- Commenting support
+	{ "tpope/vim-fugitive" },                         -- Git integration
+	{ "tpope/vim-rsi" },                              -- Readline-style keys
+	{ "kylechui/nvim-surround",           opts = {} }, -- Edit surrounding pairs
+	{ "chrisgrieser/nvim-spider" },                   -- Move through camelCase
+	{ "wellle/targets.vim" },                         -- Additional text objects
+	{ "folke/neodev.nvim",                opts = {} }, -- Neovim Lua development
+	{ "github/copilot.vim" },                         -- Code completion
+	{                                                 -- AI Pair Programmer
 		"yetone/avante.nvim",
 		event = "VeryLazy",
 		build = "make",
@@ -120,9 +120,9 @@ require("lazy").setup({
 		},
 	},
 	{ -- Git signs
-		"lewis6991/gitsigns.nvim", 
-		opts = {} 
-	}, 
+		"lewis6991/gitsigns.nvim",
+		opts = {}
+	},
 	{ -- Fuzzy finder
 		"nvim-telescope/telescope.nvim",
 		tag = '0.1.5',
@@ -134,7 +134,7 @@ require("lazy").setup({
 		opts = {
 			ensure_installed = "all", -- or a list of languages
 			highlight = {
-				enable = true,         -- false will disable the whole extension
+				enable = true,       -- false will disable the whole extension
 				additional_vim_regex_highlighting = false,
 			},
 			indent = {
@@ -147,7 +147,7 @@ require("lazy").setup({
 		main = "ibl",
 		opts = {
 			indent = { char = "│" },
-		}, 
+		},
 	},
 	{ -- File explorer
 		'stevearc/oil.nvim',
@@ -292,21 +292,21 @@ do
 		local mode = get_mode()
 		local filename = get_filename()
 		local filetype = get_filetype()
-		
+
 		return table.concat {
 			"%#StatusLine#",
 			mode,
 			"%#StatusLineNC#",
-			" %f", -- Full path
-			"%m", -- Modified flag
-			"%=", -- Right align
+			" %f",  -- Full path
+			"%m",   -- Modified flag
+			"%=",   -- Right align
 			filetype,
 			" %l:%c ", -- Line and column
 			"%p%%", -- Percentage through file
 		}
 	end
 
-	vim.api.nvim_create_autocmd({"ModeChanged"}, {
+	vim.api.nvim_create_autocmd({ "ModeChanged" }, {
 		callback = function()
 			local mode = vim.api.nvim_get_mode().mode
 			local color = colors[mode] or colors.normal
