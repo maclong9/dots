@@ -41,11 +41,14 @@ local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
 local mappings = {
+	-- General
 	{ 'n', '<C-h>',             '<C-w>h' },                                  -- Move to left window
 	{ 'n', '<C-j>',             '<C-w>j' },                                  -- Move to bottom window
 	{ 'n', '<C-k>',             '<C-w>k' },                                  -- Move to top window
 	{ 'n', '<C-l>',             '<C-w>l' },                                  -- Move to right window
 	{ 'n', '<Esc>',             '<cmd>nohlsearch<CR>' },                     -- Clear search highlight
+
+	-- Telescope
 	{ 'n', '<leader>b',         '<cmd>Telescope buffers<CR>' },              -- Find Buffers
 	{ 'n', '<leader>f',         '<cmd>Telescope find_files<CR>' },           -- Find Files
 	{ 'n', '<leader>g',         '<cmd>Telescope live_grep<CR>' },            -- Find Text
