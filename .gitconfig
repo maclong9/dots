@@ -32,6 +32,7 @@
 
 [core]
   pager = delta
+  excludeFile = $HOME/.gitignore
 
 [delta]
   line-numbers = true
