@@ -161,6 +161,9 @@ require("lazy").setup({
 				markdown = { "deno" },
 				typescript = { "deno" },
 				yaml = { "deno" },
+				css = { "deno" },
+				html = { "deno" },
+				json = { "deno" },
 				lua = { "stylua" },
 			},
 			format_on_save = {
