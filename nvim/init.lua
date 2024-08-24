@@ -106,10 +106,30 @@ require("lazy").setup({
 	{ "tpope/vim-commentary" },    -- Commenting support
 	{ "tpope/vim-fugitive" },      -- Git integration
 	{ "tpope/vim-rsi" },           -- Readline-style keys
-	{ "kylechui/nvim-surround", opts ={} } -- Edit surrounding pairs
+	{ "kylechui/nvim-surround", opts = {} }, -- Edit surrounding pairs
 	{ "chrisgrieser/nvim-spider" }, -- Move through camelCase
 	{ "wellle/targets.vim" },     -- Additional text objects
 	{ "folke/neodev.nvim", opts = {} }, -- Neovim Lua development
+	{ "github/copilot.vim" }, -- Code completion
+	{ -- AI Pair Programmer
+	  "yetone/avante.nvim",
+	  event = "VeryLazy",
+	  build = "make",
+	  opts = {},
+	  dependencies = {
+	    "nvim-tree/nvim-web-devicons",
+	    "stevearc/dressing.nvim",
+	    "nvim-lua/plenary.nvim",
+	    "MunifTanjim/nui.nvim",
+	    {
+	      'MeanderingProgrammer/render-markdown.nvim',
+	      opts = {
+	        file_types = { "markdown", "Avante" },
+	      },
+	      ft = { "markdown", "Avante" },
+	    },
+	  },
+	},
   { -- Git signs
     "lewis6991/gitsigns.nvim", 
     opts = {} 
@@ -119,7 +139,7 @@ require("lazy").setup({
 		tag = '0.1.5',
 		dependencies = { 'nvim-lua/plenary.nvim' },
 	},
-	{                                       -- Treesitter integration
+	{ -- Treesitter integration
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
     opts = {
@@ -133,14 +153,14 @@ require("lazy").setup({
     	},
     },
 	},
-	{                              -- Indentation guides
+	{ -- Indentation guides
 		"lukas-reineke/indent-blankline.nvim",
 		main = "ibl",
     opts = {
       indent = { char = "│" },
     }, 
 	},
-	{                             -- File explorer
+	{ -- File explorer
 		'stevearc/oil.nvim',
 		opts = {},
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -244,3 +264,70 @@ cmp.setup {
 		{ name = 'path' },
 	},
 }
+
+-- Statusline
+do
+  local colors = {
+    normal = "#61afef",
+    insert = "#98c379",
+    visual = "#c678dd",
+    replace = "#e5c07b",
+    command = "#56b6c2",
+    inactive = "#4b5263",
+    bg = "#282c34",
+    fg = "#abb2bf",
+  }
+
+  local mode_names = {
+    n = "NORMAL",
+    i = "INSERT",
+    v = "VISUAL",
+    V = "V-LINE",
+    [""] = "V-BLOCK",
+    c = "COMMAND",
+    R = "REPLACE",
+    t = "TERMINAL",
+  }
+
+  local function get_mode()
+    local mode = vim.api.nvim_get_mode().mode
+    return string.format(" %s ", mode_names[mode] or mode:upper())
+  end
+
+  local function get_filename()
+    local filename = vim.fn.expand("%:t")
+    return filename == "" and "[No Name]" or filename
+  end
+
+  local function get_filetype()
+    return vim.bo.filetype
+  end
+
+  _G.statusline = function()
+    local mode = get_mode()
+    local filename = get_filename()
+    local filetype = get_filetype()
+    
+    return table.concat {
+      "%#StatusLine#",
+      mode,
+      "%#StatusLineNC#",
+      " %f", -- Full path
+      "%m", -- Modified flag
+      "%=", -- Right align
+      filetype,
+      " %l:%c ", -- Line and column
+      "%p%%", -- Percentage through file
+    }
+  end
+
+  vim.api.nvim_create_autocmd({"ModeChanged"}, {
+    callback = function()
+      local mode = vim.api.nvim_get_mode().mode
+      local color = colors[mode] or colors.normal
+      vim.api.nvim_command("hi StatusLine guifg=" .. color .. " guibg=" .. colors.bg)
+    end
+  })
+
+  vim.o.statusline = "%!v:lua.statusline()"
+end
