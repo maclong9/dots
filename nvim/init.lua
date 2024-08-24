@@ -201,17 +201,7 @@ require('gitsigns').setup()
 require('ibl').setup()
 
 -- Setup Telescope
-require('telescope').setup{
-  defaults = {
-    -- Configuration here
-  },
-  pickers = {
-    -- Picker-specific configuration here
-  },
-  extensions = {
-    -- Extension-specific configuration here
-  }
-}
+require('telescope').setup{}
 
 -- Setup Treesitter
 require'nvim-treesitter.configs'.setup {
