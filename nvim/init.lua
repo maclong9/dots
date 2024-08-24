@@ -55,11 +55,13 @@ for _, mapping in ipairs({
 	keymap(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
 
--- Setup LSP Signs with Nerd Fonts
-local signs = { Error = "", Warn = "", Hint = "", Info = " " }
-
--- Apply signs
-for type, icon in pairs(signs) do
+-- Set LSP signs
+for type, icon in pairs({ 
+		Error = "", 
+		Warn = "", 
+		Hint = "", 
+		Info = " " 
+}) do
 	local hl = "DiagnosticSign" .. type
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
