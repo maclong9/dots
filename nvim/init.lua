@@ -9,7 +9,7 @@ for k, v in pairs({
 	vim.g[k] = v
 end
 
--- Apply Neovim options
+-- Set Neovim options
 for k, v in pairs({
 	breakindent = true,    -- Preserve indentation on wrapped lines
 	cursorline = true,     -- Highlight the current line
