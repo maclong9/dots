@@ -37,6 +37,7 @@ for _, mapping in ipairs({
 	{ 'n', '<C-k>',      '<C-w>k' },             -- Move to top window
 	{ 'n', '<C-l>',      '<C-w>l' },             -- Move to right window
 	{ 'n', '<Esc>',      '<cmd>nohlsearch<CR>' }, -- Clear search highlight
+	{ 'n', '<leader>e',  '<cmd>Oil<CR>' },       -- Open file explorer
 
 	-- Telescope
 	{ 'n', '<leader>b',  '<cmd>Telescope buffers<CR>' },             -- Find Buffers
@@ -82,25 +83,25 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugin specification
 require("lazy").setup({
-	{ "windwp/nvim-autopairs" },                      -- Autoclose brackets
-	{ "williamboman/mason.nvim" },                    -- LSP package manager
-	{ "williamboman/mason-lspconfig.nvim" },          -- mason.nvim bridge
-	{ "neovim/nvim-lspconfig" },                      -- LSP configuration
-	{ "hrsh7th/nvim-cmp" },                           -- Autocompletion plugin
-	{ "hrsh7th/cmp-nvim-lsp" },                       -- LSP source for cmp
-	{ "hrsh7th/cmp-buffer" },                         -- Buffer source for cmp
-	{ "hrsh7th/cmp-path" },                           -- Path source for cmp
-	{ "L3MON4D3/LuaSnip" },                           -- Snippet engine
-	{ "saadparwaiz1/cmp_luasnip" },                   -- Luasnip source for cmp
-	{ "tpope/vim-commentary" },                       -- Commenting support
-	{ "tpope/vim-fugitive" },                         -- Git integration
-	{ "tpope/vim-rsi" },                              -- Readline-style keys
-	{ "kylechui/nvim-surround",           opts = {} }, -- Edit surrounding pairs
-	{ "chrisgrieser/nvim-spider" },                   -- Move through camelCase
-	{ "wellle/targets.vim" },                         -- Additional text objects
-	{ "folke/neodev.nvim",                opts = {} }, -- Neovim Lua development
-	{ "github/copilot.vim" },                         -- Code completion
-	{                                                 -- AI Pair Programmer
+	{ "windwp/nvim-autopairs",            event = "InsertEnter" }, -- Autoclose brackets
+	{ "williamboman/mason.nvim" },                                -- LSP package manager
+	{ "williamboman/mason-lspconfig.nvim" },                      -- mason.nvim bridge
+	{ "neovim/nvim-lspconfig" },                                  -- LSP configuration
+	{ "hrsh7th/nvim-cmp",                 event = "InsertEnter" }, -- Autocompletion plugin
+	{ "hrsh7th/cmp-nvim-lsp",             event = "InsertEnter" }, -- LSP source for cmp
+	{ "hrsh7th/cmp-buffer",               event = "InsertEnter" }, -- Buffer source for cmp
+	{ "hrsh7th/cmp-path",                 event = "InsertEnter" }, -- Path source for cmp
+	{ "L3MON4D3/LuaSnip",                 event = "InsertEnter" }, -- Snippet engine
+	{ "saadparwaiz1/cmp_luasnip",         event = "InsertEnter" }, -- Luasnip source for cmp
+	{ "tpope/vim-commentary",             event = "VeryLazy" },   -- Commenting support
+	{ "tpope/vim-fugitive",               event = "VeryLazy" },   -- Git integration
+	{ "tpope/vim-rsi",                    event = "VeryLazy" },   -- Readline-style keys
+	{ "kylechui/nvim-surround",           opts = {} },            -- Edit surrounding pairs
+	{ "chrisgrieser/nvim-spider",         event = "VeryLazy" },   -- Move through camelCase
+	{ "wellle/targets.vim",               event = "VeryLazy" },   -- Additional text objects
+	{ "folke/neodev.nvim",                opts = {} },            -- Neovim Lua development
+	{ "github/copilot.vim",               event = "VeryLazy" },   -- Code completion
+	{                                                             -- AI Pair Programmer
 		"yetone/avante.nvim",
 		event = "VeryLazy",
 		build = "make",
@@ -121,16 +122,19 @@ require("lazy").setup({
 	},
 	{ -- Git signs
 		"lewis6991/gitsigns.nvim",
-		opts = {}
+		opts = {},
+		event = "VeryLazy"
 	},
 	{ -- Fuzzy finder
 		"nvim-telescope/telescope.nvim",
 		tag = '0.1.5',
 		dependencies = { 'nvim-lua/plenary.nvim' },
+		event = "VeryLazy"
 	},
 	{ -- Treesitter integration
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
+		event = "VeryLazy",
 		opts = {
 			ensure_installed = "all", -- or a list of languages
 			highlight = {
@@ -144,6 +148,7 @@ require("lazy").setup({
 	},
 	{ -- Indentation guides
 		"lukas-reineke/indent-blankline.nvim",
+		event = "VeryLazy",
 		main = "ibl",
 		opts = {
 			indent = { char = "│" },
@@ -156,6 +161,7 @@ require("lazy").setup({
 	},
 	{ -- Formatting
 		'stevearc/conform.nvim',
+		event = "BufWritePre",
 		opts = {
 			formatters_by_ft = {
 				markdown = { "deno" },
