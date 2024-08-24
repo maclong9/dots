@@ -15,7 +15,6 @@ for k, v in pairs({
 	cursorline = true,     -- Highlight the current line
 	hlsearch = true,       -- Highlight search results
 	incsearch = true,      -- Show search matches as you type
-	showmode = false,      -- Don't show the mode in the last line
 	swapfile = false,      -- Disable swap file creation
 	number = true,         -- Show line numbers
 	relativenumber = true, -- Show relative line numbers
