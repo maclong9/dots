@@ -106,7 +106,7 @@ require("lazy").setup({
 	{ "tpope/vim-commentary" },    -- Commenting support
 	{ "tpope/vim-fugitive" },      -- Git integration
 	{ "tpope/vim-rsi" },           -- Readline-style keys
-	{ "tpope/vim-surround" },      -- Surround text objects
+	{ "kylechui/nvim-surround", opts ={} } -- Edit surrounding pairs
 	{ "chrisgrieser/nvim-spider" }, -- Move through camelCase
 	{ "wellle/targets.vim" },     -- Additional text objects
 	{ "folke/neodev.nvim", opts = {} }, -- Neovim Lua development
