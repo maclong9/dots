@@ -12,9 +12,15 @@ vim.opt.guicursor = {
 }
 
 -- Set global variables
-vim.g.indentLine_char = '│'
-vim.g.is_posix = 1
-vim.g.mapleader = ';'
+local globals = {
+  indentLine_char = '│',
+  is_posix = 1,
+  mapleader = ';',
+}
+
+for k, v in pairs(globals) do
+  vim.g[k] = v
+end
 
 -- Set various options
 local options = {
@@ -26,6 +32,7 @@ local options = {
   swapfile = false,
   number = true,
   relativenumber = true,
+  regexpengine = 0,
   scrolloff = 999,
   shiftwidth = 2,
   signcolumn = 'yes',
@@ -38,8 +45,6 @@ for k, v in pairs(options) do
   vim.opt[k] = v
 end
 
-vim.opt.regexpengine = 0
-
 -- Key mappings
 local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
@@ -50,7 +55,7 @@ local mappings = {
   {'n', '<C-k>', '<C-w>k'},
   {'n', '<C-l>', '<C-w>l'},
   {'n', '<Esc>', '<cmd>nohlsearch<CR>'},
-  {'n', '<leader>e', '<cmd>Explore<CR>'},
+  {'n', '<leader>e', '<cmd>Oil<CR>'},
   {'n', '<leader>b', '<cmd>Telescope buffers<CR>'},
   {'n', '<leader>f', '<cmd>Telescope find_files<CR>'},
   {'n', '<leader>g', '<cmd>Telescope live_grep<CR>'},
@@ -101,6 +106,11 @@ require("lazy").setup({
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
   { "lewis6991/gitsigns.nvim" },
   { "wellle/targets.vim" },
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
+  }
 })
 
 -- LSP setup
