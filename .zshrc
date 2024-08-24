@@ -1,13 +1,14 @@
 export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
-export EDITOR="vim"
+
 
 alias _="sudo"
-alias e="${(z)VISUAL:-${(z)EDITOR}}"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
+alias nv="nvim"
+alias v="vim"
 alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
 setopt correct
