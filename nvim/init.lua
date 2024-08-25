@@ -111,7 +111,7 @@ require("lazy").setup({
 	{ "tpope/vim-fugitive",               event = "VeryLazy" },   -- Git integration
 	{ "tpope/vim-rsi",                    event = "VeryLazy" },   -- Readline-style keys
 	{ "wellle/targets.vim",               event = "VeryLazy" },   -- Additional text objects
-	{                                                             -- AI Pair Programmer
+	{                                                             -- AI Pair Programmer 
 		"yetone/avante.nvim",
 		event = "VeryLazy",
 		build = "make",
@@ -130,10 +130,35 @@ require("lazy").setup({
 			},
 		},
 	},
-	{ -- Git signs
-		"lewis6991/gitsigns.nvim",
+	{ -- Breadcrumbs
+		'Bekaboo/dropbar.nvim',
+		dependencies = {
+			'nvim-telescope/telescope-fzf-native.nvim'
+		}
+	},
+	{ -- File explorer
+		'stevearc/oil.nvim',
 		opts = {},
-		event = "VeryLazy"
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
+	{ -- Formatting
+		'stevearc/conform.nvim',
+		event = "BufWritePre",
+		opts = {
+			formatters_by_ft = {
+				markdown = { "deno" },
+				typescript = { "deno" },
+				yaml = { "deno" },
+				css = { "deno" },
+				html = { "deno" },
+				json = { "deno" },
+				lua = { "stylua" },
+			},
+			format_on_save = {
+				timeout_ms = 500,
+				lsp_format = "fallback",
+			},
+		},
 	},
 	{ -- Fuzzy finder
 		"nvim-telescope/telescope.nvim",
@@ -152,6 +177,55 @@ require("lazy").setup({
 			-- optional: vim.keymap.set(
 		end,
 		event = "VeryLazy"
+	},
+	{ -- Git signs
+		"lewis6991/gitsigns.nvim",
+		opts = {},
+		event = "VeryLazy"
+	},
+	{ -- Hardtime instills good vim habits
+		"m4xshen/hardtime.nvim",
+		dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+		opts = {}
+	},
+	{ -- Highlight undo changes
+		'tzachar/highlight-undo.nvim',
+		opts = {},
+	},
+	{ -- Indentation guides
+		"lukas-reineke/indent-blankline.nvim",
+		event = "VeryLazy",
+		main = "ibl",
+		opts = {
+			indent = { char = "│" },
+		},
+	},
+	{ -- LSP Garbage Collection
+		"zeioth/garbage-day.nvim",
+		dependencies = "neovim/nvim-lspconfig",
+		event = "VeryLazy",
+		opts = {}
+	},
+	{ -- Session management
+		'rmagatti/auto-session',
+		lazy = false,
+		dependencies = {
+			'nvim-telescope/telescope.nvim',
+		},
+		opts = {
+			auto_session_suppress_dirs = { '~/', '~/Downloads', '/' },
+		}
+	},
+	{ -- Tailwind CSS support
+		"luckasRanarison/tailwind-tools.nvim",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		opts = {}
 	},
 	{ -- Treesitter integration
 		"nvim-treesitter/nvim-treesitter",
@@ -179,83 +253,9 @@ require("lazy").setup({
 			},
 		},
 	},
-	{ -- Indentation guides
-		"lukas-reineke/indent-blankline.nvim",
-		event = "VeryLazy",
-		main = "ibl",
-		opts = {
-			indent = { char = "│" },
-		},
-	},
-	{ -- File explorer
-		'stevearc/oil.nvim',
-		opts = {},
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-	},
-	{ -- Formatting
-		'stevearc/conform.nvim',
-		event = "BufWritePre",
-		opts = {
-			formatters_by_ft = {
-				markdown = { "deno" },
-				typescript = { "deno" },
-				yaml = { "deno" },
-				css = { "deno" },
-				html = { "deno" },
-				json = { "deno" },
-				lua = { "stylua" },
-			},
-			format_on_save = {
-				timeout_ms = 500,
-				lsp_format = "fallback",
-			},
-		},
-	},
-	{ -- Tailwind CSS support
-		"luckasRanarison/tailwind-tools.nvim",
-		name = "tailwind-tools",
-		build = ":UpdateRemotePlugins",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-telescope/telescope.nvim",
-			"neovim/nvim-lspconfig",
-		},
-		opts = {}
-	},
-	{ -- LSP Garbage Collection
-		"zeioth/garbage-day.nvim",
-		dependencies = "neovim/nvim-lspconfig",
-		event = "VeryLazy",
-		opts = {}
-	},
-	{ -- Highlight undo changes
-		'tzachar/highlight-undo.nvim',
-		opts = {},
-	},
-	{ -- Breadcrumbs
-		'Bekaboo/dropbar.nvim',
-		dependencies = {
-			'nvim-telescope/telescope-fzf-native.nvim'
-		}
-	},
 	{ -- Yank history
 		"gbprod/yanky.nvim",
 		opts = {},
-	},
-	{ -- Automatic session management
-		'rmagatti/auto-session',
-		lazy = false,
-		dependencies = {
-			'nvim-telescope/telescope.nvim',
-		},
-		opts = {
-			auto_session_suppress_dirs = { '~/', '~/Downloads', '/' },
-		}
-	},
-	{ -- Instills good vim habits
-		"m4xshen/hardtime.nvim",
-		dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
-		opts = {}
 	},
 })
 
