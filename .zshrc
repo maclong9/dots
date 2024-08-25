@@ -2,7 +2,6 @@ export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
 
-
 alias _="sudo"
 alias g="git"
 alias hg="history | grep"
