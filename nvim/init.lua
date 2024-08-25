@@ -4,7 +4,7 @@ vim.cmd('syntax enable')
 -- Set global variables
 for k, v in pairs({
 	is_posix = 1,   -- Use POSIX-compatible behavior
-	mapleader = ';', -- Set the leader key to semicolon
+	mapleader = ' ', -- Set the leader key
 }) do
 	vim.g[k] = v
 end
@@ -44,14 +44,23 @@ for _, mapping in ipairs({
 	{ 'n', '<leader>f',  '<cmd>Telescope find_files<CR>' },          -- Find Files
 	{ 'n', '<leader>g',  '<cmd>Telescope live_grep<CR>' },           -- Find Text
 	{ 'n', '<leader>s',  '<cmd>Telescope lsp_document_symbols<CR>' }, -- Find Symbols
+	{ "n", "<leader>u",  "<cmd>Telescope undo<cr>" },                -- Undo history
 
-	-- LSP Mappings
+	-- LSP
 	{ 'n', '<leader>lh', '<cmd>lua vim.lsp.buf.hover()<CR>' },          -- Show hover information
 	{ 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>' },    -- Show code actions
 	{ 'n', '<leader>ld', '<cmd>lua vim.lsp.buf.definition()<CR>' },     -- Go to definition
 	{ 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
 	{ 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
 	{ 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>' },     -- Find references
+
+	-- Yanky
+	{ 'n', 'p',          '<Plug>(YankyPutAfter)' },     -- Paste after
+	{ 'n', 'P',          '<Plug>(YankyPutBefore)' },    -- Paste before
+	{ 'n', 'gp',         '<Plug>(YankyGPutAfter)' },    -- Paste after and move cursor
+	{ 'n', 'gP',         '<Plug>(YankyGPutBefore)' },   -- Paste before and move cursor
+	{ 'n', '<c-p>',      '<Plug>(YankyPreviousEntry)' }, -- Previous yank
+	{ 'n', '<c-n>',      '<Plug>(YankyNextEntry)' },    -- Next yank
 }) do
 	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -83,10 +92,12 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugin specification
 require("lazy").setup({
-	{ "windwp/nvim-autopairs",            event = "InsertEnter" }, -- Autoclose brackets
 	{ "williamboman/mason.nvim" },                                -- LSP package manager
 	{ "williamboman/mason-lspconfig.nvim" },                      -- mason.nvim bridge
 	{ "neovim/nvim-lspconfig" },                                  -- LSP configuration
+	{ "kylechui/nvim-surround",           opts = {} },            -- Edit surrounding pairs
+	{ "folke/neodev.nvim",                opts = {} },            -- Neovim Lua development
+	{ "windwp/nvim-autopairs",            event = "InsertEnter" }, -- Autoclose brackets
 	{ "hrsh7th/nvim-cmp",                 event = "InsertEnter" }, -- Autocompletion plugin
 	{ "hrsh7th/cmp-nvim-lsp",             event = "InsertEnter" }, -- LSP source for cmp
 	{ "hrsh7th/cmp-buffer",               event = "InsertEnter" }, -- Buffer source for cmp
@@ -96,11 +107,10 @@ require("lazy").setup({
 	{ "tpope/vim-commentary",             event = "VeryLazy" },   -- Commenting support
 	{ "tpope/vim-fugitive",               event = "VeryLazy" },   -- Git integration
 	{ "tpope/vim-rsi",                    event = "VeryLazy" },   -- Readline-style keys
-	{ "kylechui/nvim-surround",           opts = {} },            -- Edit surrounding pairs
 	{ "chrisgrieser/nvim-spider",         event = "VeryLazy" },   -- Move through camelCase
 	{ "wellle/targets.vim",               event = "VeryLazy" },   -- Additional text objects
-	{ "folke/neodev.nvim",                opts = {} },            -- Neovim Lua development
 	{ "github/copilot.vim",               event = "VeryLazy" },   -- Code completion
+	{ "sindrets/diffview.nvim",           event = "VeryLazy" },   -- Git Diff Viewer
 	{                                                             -- AI Pair Programmer
 		"yetone/avante.nvim",
 		event = "VeryLazy",
@@ -128,7 +138,19 @@ require("lazy").setup({
 	{ -- Fuzzy finder
 		"nvim-telescope/telescope.nvim",
 		tag = '0.1.5',
-		dependencies = { 'nvim-lua/plenary.nvim' },
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			"debugloop/telescope-undo.nvim",
+		},
+		config = function()
+			require("telescope").setup({
+				extensions = {
+					undo = {},
+				},
+			})
+			require("telescope").load_extension("undo")
+			-- optional: vim.keymap.set(
+		end,
 		event = "VeryLazy"
 	},
 	{ -- Treesitter integration
@@ -177,19 +199,63 @@ require("lazy").setup({
 				lsp_format = "fallback",
 			},
 		},
-	}
+	},
+	{ -- Tailwind CSS support
+		"luckasRanarison/tailwind-tools.nvim",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		opts = {}
+	},
+	{ -- LSP Garbage Collection
+		"zeioth/garbage-day.nvim",
+		dependencies = "neovim/nvim-lspconfig",
+		event = "VeryLazy",
+		opts = {}
+	},
+	{ -- Highlight undo changes
+		'tzachar/highlight-undo.nvim',
+		opts = {},
+	},
+	{ -- Breadcrumbs
+		'Bekaboo/dropbar.nvim',
+		dependencies = {
+			'nvim-telescope/telescope-fzf-native.nvim'
+		}
+	},
+	{ -- Yank history
+		"gbprod/yanky.nvim",
+		opts = {},
+	},
+	{ -- Automatic session management
+		'rmagatti/auto-session',
+		lazy = false,
+		dependencies = {
+			'nvim-telescope/telescope.nvim',
+		},
+		opts = {
+			auto_session_suppress_dirs = { '~/', '~/Downloads', '/' },
+		}
+	},
+	{ -- Instills good vim habits
+		"m4xshen/hardtime.nvim",
+		dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+		opts = {}
+	},
 })
 
 -- LSP setup
 require('mason').setup()
 require('mason-lspconfig').setup({
 	ensure_installed = {
-		'cssls',
 		'denols',
 		'eslint',
 		'lua_ls',
 		'marksman',
-		'tailwindcss',
 	},
 	automatic_installation = true,
 })
@@ -199,12 +265,10 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- Set up each LSP server
 for _, lsp in ipairs({
-	'cssls',
 	'denols',
 	'eslint',
 	'lua_ls',
 	'marksman',
-	'tailwindcss',
 }) do
 	lspconfig[lsp].setup {
 		capabilities = capabilities,
@@ -322,3 +386,11 @@ do
 
 	vim.o.statusline = "%!v:lua.statusline()"
 end
+
+-- Add autocommand to run TailwindSort on save for .tsx files
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*.tsx",
+	callback = function()
+		vim.cmd("TailwindSort")
+	end,
+})
