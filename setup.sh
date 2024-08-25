@@ -5,7 +5,7 @@
 git clone https://github.com/maclong9/dots .config
 
 for file in .config/.*(.); do
-  if [[ $file:t != ".git" ]]; then
+  if [[ $file:t != ".git" && $file:t != "." && $file:t != ".." ]]; then
     ln -s "$file" "$HOME/${file:t}"
   fi
 done
