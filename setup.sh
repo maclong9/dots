@@ -17,3 +17,7 @@ read api_key
 echo "export ANTHROPIC_API_KEY=$api_key" >> ~/.zshenv
 
 source $HOME/.zshrc
+
+gh auth login
+gh extension install github/gh-copilot
+
