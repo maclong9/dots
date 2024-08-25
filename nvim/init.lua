@@ -158,9 +158,20 @@ require("lazy").setup({
 		build = ":TSUpdate",
 		event = "VeryLazy",
 		opts = {
-			ensure_installed = "all", -- or a list of languages
+			ensure_installed = {
+				"css",
+				"html",
+				"javascript",
+				"json",
+				"jsx",
+				"lua",
+				"rust",
+				"tsx",
+				"typescript",
+				"yaml",
+			},
 			highlight = {
-				enable = true,       -- false will disable the whole extension
+				enable = true, -- false will disable the whole extension
 				additional_vim_regex_highlighting = false,
 			},
 			indent = {
