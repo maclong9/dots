@@ -5,7 +5,7 @@ colorscheme habamax
 for [var, val] in items({
   indentLine_char: '│',
   is_posix: 1,
-  mapleader: ';',
+  mapleader: ' ',
 })
   execute 'g:' .. var .. ' = ' .. string(val)
 endfor
