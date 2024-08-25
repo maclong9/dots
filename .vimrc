@@ -12,6 +12,7 @@ endfor
 
 for option in [
   'breakindent',
+	'conceallevel=0',
   'cursorline',
   'hlsearch',
   'incsearch',
@@ -61,4 +62,8 @@ call plug#begin()
   Plug 'yggdroot/indentline'
   Plug 'airblade/vim-gitgutter'
   Plug 'wellle/targets.vim'
+	Plug 'junegunn/goyo.vim'
+	Plug 'junegunn/limelight.vim'
 call plug#end()
+
+autocmd VimEnter * Goyo | Limelight

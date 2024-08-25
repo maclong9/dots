@@ -18,7 +18,6 @@ for k, v in pairs({
 	swapfile = false,     -- Disable swap file creation
 	number = true,        -- Show line numbers
 	relativenumber = true, -- Show relative line numbers
-	regexpengine = 0,     -- Use automatic regexp engine selection
 	scrolloff = 999,      -- Keep cursor centered vertically
 	shiftwidth = 2,       -- Number of spaces for each indent level
 	signcolumn = 'yes',   -- Always show the sign column
@@ -248,15 +247,17 @@ require("lazy").setup({
 	},
 })
 
+local servers = {
+	'denols',
+	'lua_ls',
+	'marksman',
+	'tailwindcss',
+}
+
 -- LSP setup
 require('mason').setup()
 require('mason-lspconfig').setup({
-	ensure_installed = {
-		'denols',
-		'eslint',
-		'lua_ls',
-		'marksman',
-	},
+	ensure_installed = servers,
 	automatic_installation = true,
 })
 
@@ -264,12 +265,7 @@ local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- Set up each LSP server
-for _, lsp in ipairs({
-	'denols',
-	'eslint',
-	'lua_ls',
-	'marksman',
-}) do
+for _, lsp in ipairs(servers) do
 	lspconfig[lsp].setup {
 		capabilities = capabilities,
 	}
