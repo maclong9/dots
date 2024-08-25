@@ -15,7 +15,7 @@ for k, v in pairs({
 	cursorline = true,    -- Highlight the current line
 	hlsearch = true,      -- Highlight search results
 	incsearch = true,     -- Show search matches as you type
-	swapfile = false,     -- Disable swap file creation
+	laststatus = 3,       -- Always show only one status line
 	number = true,        -- Show line numbers
 	relativenumber = true, -- Show relative line numbers
 	scrolloff = 999,      -- Keep cursor centered vertically
@@ -23,6 +23,7 @@ for k, v in pairs({
 	signcolumn = 'yes',   -- Always show the sign column
 	smartcase = true,     -- Case-sensitive search if query has uppercase
 	smartindent = true,   -- Smart autoindenting on new lines
+	swapfile = false,     -- Disable swap file creation
 	tabstop = 2,          -- Number of spaces a tab counts for
 }) do
 	vim.opt[k] = v
@@ -38,28 +39,28 @@ for _, mapping in ipairs({
 	{ 'n', '<Esc>',      '<cmd>nohlsearch<CR>' }, -- Clear search highlight
 	{ 'n', '<leader>e',  '<cmd>Oil<CR>' },       -- Open file explorer
 
+	-- LSP
+	{ 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>' },    -- Show code actions
+	{ 'n', '<leader>ld', '<cmd>lua vim.lsp.buf.definition()<CR>' },     -- Go to definition
+	{ 'n', '<leader>lh', '<cmd>lua vim.lsp.buf.hover()<CR>' },          -- Show hover information
+	{ 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
+	{ 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>' },     -- Find references
+	{ 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
+
 	-- Telescope
+	{ "n", "<leader>u",  "<cmd>Telescope undo<cr>" },                -- Undo history
 	{ 'n', '<leader>b',  '<cmd>Telescope buffers<CR>' },             -- Find Buffers
 	{ 'n', '<leader>f',  '<cmd>Telescope find_files<CR>' },          -- Find Files
 	{ 'n', '<leader>g',  '<cmd>Telescope live_grep<CR>' },           -- Find Text
 	{ 'n', '<leader>s',  '<cmd>Telescope lsp_document_symbols<CR>' }, -- Find Symbols
-	{ "n", "<leader>u",  "<cmd>Telescope undo<cr>" },                -- Undo history
-
-	-- LSP
-	{ 'n', '<leader>lh', '<cmd>lua vim.lsp.buf.hover()<CR>' },          -- Show hover information
-	{ 'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>' },    -- Show code actions
-	{ 'n', '<leader>ld', '<cmd>lua vim.lsp.buf.definition()<CR>' },     -- Go to definition
-	{ 'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>' }, -- Go to implementation
-	{ 'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>' }, -- Go to type definition
-	{ 'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>' },     -- Find references
 
 	-- Yanky
-	{ 'n', 'p',          '<Plug>(YankyPutAfter)' },     -- Paste after
-	{ 'n', 'P',          '<Plug>(YankyPutBefore)' },    -- Paste before
-	{ 'n', 'gp',         '<Plug>(YankyGPutAfter)' },    -- Paste after and move cursor
-	{ 'n', 'gP',         '<Plug>(YankyGPutBefore)' },   -- Paste before and move cursor
-	{ 'n', '<c-p>',      '<Plug>(YankyPreviousEntry)' }, -- Previous yank
 	{ 'n', '<c-n>',      '<Plug>(YankyNextEntry)' },    -- Next yank
+	{ 'n', '<c-p>',      '<Plug>(YankyPreviousEntry)' }, -- Previous yank
+	{ 'n', 'P',          '<Plug>(YankyPutBefore)' },    -- Paste before
+	{ 'n', 'gP',         '<Plug>(YankyGPutBefore)' },   -- Paste before and move cursor
+	{ 'n', 'gp',         '<Plug>(YankyGPutAfter)' },    -- Paste after and move cursor
+	{ 'n', 'p',          '<Plug>(YankyPutAfter)' },     -- Paste after
 }) do
 	vim.keymap.set(mapping[1], mapping[2], mapping[3], { noremap = true, silent = true })
 end
@@ -67,9 +68,9 @@ end
 -- Set LSP signs
 for type, icon in pairs({
 	Error = "",
-	Warn = "",
 	Hint = "",
-	Info = " "
+	Info = " ",
+	Warn = "",
 }) do
 	local hl = "DiagnosticSign" .. type
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
@@ -91,25 +92,25 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugin specification
 require("lazy").setup({
-	{ "williamboman/mason.nvim" },                                -- LSP package manager
-	{ "williamboman/mason-lspconfig.nvim" },                      -- mason.nvim bridge
 	{ "neovim/nvim-lspconfig" },                                  -- LSP configuration
-	{ "kylechui/nvim-surround",           opts = {} },            -- Edit surrounding pairs
+	{ "williamboman/mason-lspconfig.nvim" },                      -- mason.nvim bridge
+	{ "williamboman/mason.nvim" },                                -- LSP package manager
 	{ "folke/neodev.nvim",                opts = {} },            -- Neovim Lua development
-	{ "windwp/nvim-autopairs",            event = "InsertEnter" }, -- Autoclose brackets
-	{ "hrsh7th/nvim-cmp",                 event = "InsertEnter" }, -- Autocompletion plugin
-	{ "hrsh7th/cmp-nvim-lsp",             event = "InsertEnter" }, -- LSP source for cmp
-	{ "hrsh7th/cmp-buffer",               event = "InsertEnter" }, -- Buffer source for cmp
-	{ "hrsh7th/cmp-path",                 event = "InsertEnter" }, -- Path source for cmp
+	{ "kylechui/nvim-surround",           opts = {} },            -- Edit surrounding pairs
 	{ "L3MON4D3/LuaSnip",                 event = "InsertEnter" }, -- Snippet engine
+	{ "hrsh7th/cmp-buffer",               event = "InsertEnter" }, -- Buffer source for cmp
+	{ "hrsh7th/cmp-nvim-lsp",             event = "InsertEnter" }, -- LSP source for cmp
+	{ "hrsh7th/cmp-path",                 event = "InsertEnter" }, -- Path source for cmp
+	{ "hrsh7th/nvim-cmp",                 event = "InsertEnter" }, -- Autocompletion plugin
 	{ "saadparwaiz1/cmp_luasnip",         event = "InsertEnter" }, -- Luasnip source for cmp
+	{ "windwp/nvim-autopairs",            event = "InsertEnter" }, -- Autoclose brackets
+	{ "chrisgrieser/nvim-spider",         event = "VeryLazy" },   -- Move through camelCase
+	{ "github/copilot.vim",               event = "VeryLazy" },   -- Code completion
+	{ "sindrets/diffview.nvim",           event = "VeryLazy" },   -- Git Diff Viewer
 	{ "tpope/vim-commentary",             event = "VeryLazy" },   -- Commenting support
 	{ "tpope/vim-fugitive",               event = "VeryLazy" },   -- Git integration
 	{ "tpope/vim-rsi",                    event = "VeryLazy" },   -- Readline-style keys
-	{ "chrisgrieser/nvim-spider",         event = "VeryLazy" },   -- Move through camelCase
 	{ "wellle/targets.vim",               event = "VeryLazy" },   -- Additional text objects
-	{ "github/copilot.vim",               event = "VeryLazy" },   -- Code completion
-	{ "sindrets/diffview.nvim",           event = "VeryLazy" },   -- Git Diff Viewer
 	{                                                             -- AI Pair Programmer
 		"yetone/avante.nvim",
 		event = "VeryLazy",
