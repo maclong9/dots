@@ -121,14 +121,7 @@ require("lazy").setup({
 			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
-			{
-				'MeanderingProgrammer/render-markdown.nvim',
-				opts = {
-					file_types = { "markdown", "Avante" },
-				},
-				ft = { "markdown", "Avante" },
-			},
-		},
+		}
 	},
 	{ -- Breadcrumbs
 		'Bekaboo/dropbar.nvim',
@@ -219,6 +212,12 @@ require("lazy").setup({
 		event = "VeryLazy",
 		opts = {}
 	},
+	{ -- Markdown Rendering
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown", "Avante" },
+    build = function() vim.fn["mkdp#util#install"]() end,
+  },
 	{ -- Session management
 		'rmagatti/auto-session',
 		lazy = false,
@@ -266,6 +265,20 @@ require("lazy").setup({
 			},
 		},
 	},
+	{ -- Which Key
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {},  
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
+  },
 	{ -- Yank history
 		"gbprod/yanky.nvim",
 		opts = {},
