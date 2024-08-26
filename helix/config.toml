@@ -2,8 +2,6 @@ theme = "fleet_dark"
 
 [editor]
 line-number = "relative"
-scrolloff = 999
-shell = ["zsh"]
 
 [editor.auto-save]
 after-delay.enable = true
