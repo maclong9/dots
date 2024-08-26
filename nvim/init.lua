@@ -136,6 +136,19 @@ require("lazy").setup({
 			'nvim-telescope/telescope-fzf-native.nvim'
 		}
 	},
+	{
+ 	 'jinh0/eyeliner.nvim',
+	  config = function()
+	    require'eyeliner'.setup {
+	      highlight_on_key = true,
+	      dim = false,             
+	      max_length = 9999,
+	      disabled_filetypes = {},
+	      disabled_buftypes = {},
+	      default_keymaps = true,
+	    }
+	  end
+	},
 	{ -- File explorer
 		'stevearc/oil.nvim',
 		opts = {},
