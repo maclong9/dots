@@ -11,7 +11,8 @@ end
 
 -- Set Neovim options
 for k, v in pairs({
-	breakindent = true,   -- Preserve indentation on wrapped lines
+	breakindent = true,   -- Preserve indentation on wrapped lines 
+	colorcolumn = '80',   -- Highlight column 80
 	cursorline = true,    -- Highlight the current line
 	hlsearch = true,      -- Highlight search results
 	incsearch = true,     -- Show search matches as you type
@@ -92,6 +93,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugin specification
 require("lazy").setup({
+	{ 'Bekaboo/deadcolumn.nvim' }, 																-- Dynamic Color Column
 	{ "neovim/nvim-lspconfig" },                                  -- LSP configuration
 	{ "williamboman/mason-lspconfig.nvim" },                      -- mason.nvim bridge
 	{ "williamboman/mason.nvim" },                                -- LSP package manager
@@ -129,23 +131,22 @@ require("lazy").setup({
 			'nvim-telescope/telescope-fzf-native.nvim'
 		}
 	},
-	{
- 	 'jinh0/eyeliner.nvim',
-	  config = function()
-	    require'eyeliner'.setup {
-	      highlight_on_key = true,
-	      dim = false,             
-	      max_length = 9999,
-	      disabled_filetypes = {},
-	      disabled_buftypes = {},
-	      default_keymaps = true,
-	    }
-	  end
-	},
 	{ -- File explorer
 		'stevearc/oil.nvim',
 		opts = {},
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
+	{
+	  "folke/flash.nvim",
+	  event = "VeryLazy",
+	  opts = {},
+	  keys = {
+	    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+	    { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+	    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+	    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+	    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+	  },
 	},
 	{ -- Formatting
 		'stevearc/conform.nvim',
@@ -212,12 +213,11 @@ require("lazy").setup({
 		event = "VeryLazy",
 		opts = {}
 	},
-	{ -- Markdown Rendering
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    ft = { "markdown", "Avante" },
-    build = function() vim.fn["mkdp#util#install"]() end,
-  },
+	{
+    'MeanderingProgrammer/render-markdown.nvim',
+    opts = {},
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, 
+	},
 	{ -- Session management
 		'rmagatti/auto-session',
 		lazy = false,
@@ -266,19 +266,39 @@ require("lazy").setup({
 		},
 	},
 	{ -- Which Key
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {},  
-    keys = {
-      {
-        "<leader>?",
-        function()
-          require("which-key").show({ global = false })
-        end,
-        desc = "Buffer Local Keymaps (which-key)",
-      },
-    },
-  },
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		opts = {
+			plugins = {
+				marks = true,
+				registers = true,
+				spelling = {
+					enabled = true,
+					suggestions = 20,
+				},
+			},
+		},
+		config = function()
+			local wk = require("which-key")
+			wk.register({
+				l = {
+					name = "LSP",
+				},
+				a = {
+					name = "Avante",
+				},
+			}, { prefix = "<leader>" })
+		end,
+		keys = {
+			{
+				"<leader>?",
+				function()
+					require("which-key").show({ global = false })
+				end,
+				desc = "Buffer Local Keymaps (which-key)",
+			},
+		},
+	},
 	{ -- Yank history
 		"gbprod/yanky.nvim",
 		opts = {},
