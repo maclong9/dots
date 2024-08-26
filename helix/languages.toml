@@ -34,18 +34,24 @@ environment = { NO_COLOR = "1" }
 
 [language-server.deno-lsp.config.deno]
 enable = true
-# Uncomment to enable completion of unstable features of Deno
-# unstable = true
-# Uncomment to cache dependencies on save
-# cacheOnSave = true
-# Enable completion of importing from registries
-# Enable completion of function calls
-suggest = { completeFunctionCalls = false, imports = { hosts = { "https://deno.land" = true } } }
-# suggest = { imports = { hosts = { "https://deno.land" = true, "https://crux.land" = true, "https://x.nest.land" = true } } }
-# Uncomment to enable inlay hints
-# inlayHints.parameterNames.enabled = "all"
-# inlayHints.parameterTypes.enabled = true
-# inlayHints.variableTypes.enabled = true
-# inlayHints.propertyDeclarationTypes.enabled  = true
-# inlayHints.functionLikeReturnTypes.enabled = true
-# inlayHints.enumMemberValues.enabled = true
+unstable = true
+
+[[language]]
+name = "html"
+language-servers = [ "vscode-html-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "jsx"
+language-servers = [ "typescript-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "tsx"
+language-servers = [ "typescript-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "svelte"
+language-servers = [ "svelteserver", "tailwindcss-ls" ]
