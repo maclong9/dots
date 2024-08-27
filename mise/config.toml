@@ -1,13 +1,9 @@
 [tools]
-bat = "latest"
 delta = "latest"
 deno = "latest"
 ffmpeg = "latest"
 github-cli = "latest"
-neovim = "latest"
 node = "lts"
-ripgrep = "latest"
 rust = "latest"
 yt-dlp = "latest"
 zoxide = "latest"
-tmux = "latest"
