@@ -1,8 +1,8 @@
 [tools]
-delta = "latest"
 deno = "latest"
 ffmpeg = "latest"
 github-cli = "latest"
+gitui = "latest"
 node = "lts"
 yt-dlp = "latest"
 zoxide = "latest"
