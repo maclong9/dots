@@ -6,9 +6,7 @@ alias _="sudo"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
-alias nv="nvim"
-alias v="vim"
-alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
+lias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
 setopt correct
 
