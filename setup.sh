@@ -12,10 +12,6 @@ curl https://mise.run | sh
 eval "$(~/.local/bin/mise activate zsh)"
 mise install
 
-echo "Please enter your ANTHROPIC_API_KEY:"
-read api_key
-echo "export ANTHROPIC_API_KEY=$api_key" >> ~/.zshenv
-
 source $HOME/.zshrc
 
 gh auth login
