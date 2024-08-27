@@ -6,5 +6,8 @@ line-number = "relative"
 [editor.auto-save]
 after-delay.enable = true
 
+[editor.file-picker]
+hidden = false
+
 [editor.indent-guides]
 render = true

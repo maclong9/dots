@@ -27,8 +27,6 @@ file-types = ["tsx"]
 language-servers = ["deno-lsp"]
 auto-format = true
 
-
-
 [language-server.deno-lsp]
 command = "deno"
 args = ["lsp"]
@@ -39,3 +37,19 @@ enable = true
 unstable = true
 cacheOnSave = true
 suggest = { completeFunctionCalls = false, imports = { hosts = { "https://deno.land" = true } } }
+
+[[language]]
+name = "html"
+language-servers = [ "vscode-html-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "jsx"
+language-servers = [ "typescript-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "tsx"
+language-servers = [ "typescript-language-server", "tailwindcss-ls" ]
