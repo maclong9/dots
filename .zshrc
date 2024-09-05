@@ -9,16 +9,6 @@ alias hg="history | grep"
 alias mkdir="mkdir -p"
 alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
-yy() {
-    local tmp="${$(mktemp -t "yazi-cwd.XXXXXX"):A}"
-    yazi "$@" --cwd-file="$tmp"
-    if [[ -s "$tmp" ]]; then
-        local cwd="$(<$tmp)"
-        [[ -n "$cwd" && "$cwd" != "$PWD" ]] && builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
-}
-
 setopt correct
 
 if [[ ! -d ~/.zplug ]]; then

@@ -1,8 +1,8 @@
 vim9script
 syntax enable
 colorscheme habamax
-&t_SI = "\e[6 q"
 &t_EI = "\e[2 q"
+&t_SI = "\e[6 q"
 
 for [var, val] in items({
   indentLine_char: '│',
@@ -37,12 +37,12 @@ for [key, cmd] in items({
   '<C-k>': '<C-w>k',
   '<C-l>': '<C-w>l',
   '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>e': '<cmd>Explore<cr>',
   '<leader>F': '<cmd>LspFormat<cr>',
   '<leader>R': '<cmd>LspRename<cr>',
   '<leader>a': '<cmd>LspCodeAction<cr>',
   '<leader>b': '<cmd>Buffers<cr>',
   '<leader>d': '<cmd>LspGotoDefinition<cr>',
+  '<leader>e': '<cmd>Explore<cr>',
   '<leader>f': '<cmd>Files<cr>',
   '<leader>g': '<cmd>Rg<cr>',
   '<leader>h': '<cmd>LspHover<cr>',
@@ -63,6 +63,7 @@ endif
 
 call plug#begin()
   Plug 'Eliot00/auto-pairs'
+  Plug 'airblade/vim-gitgutter'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
@@ -72,10 +73,9 @@ call plug#begin()
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
-  Plug 'yggdroot/indentline'
-  Plug 'airblade/vim-gitgutter'
   Plug 'wellle/targets.vim'
   Plug 'yegappan/lsp'
+  Plug 'yggdroot/indentline'
 call plug#end()
 
 autocmd User LspSetup call LspOptionsSet({autoHighlightDiags: v:true, outlineOnRight: v:true, usePopupInCodeAction: v:true, ignoreMissingServer: v:true})
@@ -88,24 +88,25 @@ var lspServers = [
         
     },
     {
-        name: 'typescript',
-        filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
-        path: 'deno',
-        args: ['lsp'],
-        features: {
-          unstable: true,
-          cacheOnSave: true,
-        }
+      name: 'rustlang',
+      filetype: ['rust'],
+      path: 'rust-analyzer',
     },
     {
-      name: 'rustlang',
-      filetype: ['rs', 'rust'],
-      path: '$HOME/.local/share/mise/installs/rust/latest/bin/rust-analyzer',
+      name: 'swift',
+      filetype: ['swift'],
+      path: 'sourcekit-lsp',
+    },
+    {
+        name: 'typescript',
+        filetype: ['typescript', 'typescriptreact'],
+        path: 'deno',
+        args: ['lsp'],
     },
     {
       name: 'ziglang',
       filetype: ['zig'],
       path: '/usr/local/bin/zls'
-    }
+    },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
