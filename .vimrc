@@ -38,20 +38,20 @@ for [key, cmd] in items({
   '<C-l>': '<C-w>l',
   '<Esc>': '<cmd>nohlsearch<cr>',
   '<leader>e': '<cmd>Explore<cr>',
-  '<leader>F': '<cmd>LspDocumentFormat<cr>',
-  '<leader>R': '<plug>(lsp-rename)',
-  '<leader>a': '<plug>(lsp-code-action)',
+  '<leader>F': '<cmd>LspFormat<cr>',
+  '<leader>R': '<cmd>LspRename<cr>',
+  '<leader>a': '<cmd>LspCodeAction<cr>',
   '<leader>b': '<cmd>Buffers<cr>',
-  '<leader>d': '<plug>(lsp-definition)',
+  '<leader>d': '<cmd>LspGotoDefinition<cr>',
   '<leader>f': '<cmd>Files<cr>',
   '<leader>g': '<cmd>Rg<cr>',
-  '<leader>h': '<plug>(lsp-hover)',
-  '<leader>i': '<plug>(lsp-implementation)',
-  '<leader>n': '<cmd>LspNextDiagnostic<cr>',
-  '<leader>p': '<cmd>LspPreviousDiagnostic<cr>',
-  '<leader>r': '<plug>(lsp-references)',
-  '<leader>s': '<plug>(lsp-document-symbol-search)',
-  '<leader>t': '<plug>(lsp-type-definition)'
+  '<leader>h': '<cmd>LspHover<cr>',
+  '<leader>i': '<cmd>LspGotoImpl<cr>',
+  '<leader>n': '<cmd>LspDiag nextWrap<cr>',
+  '<leader>p': '<cmd>LspDiag prevWrap<cr>',
+  '<leader>r': '<cmd>LspPeekReferences<cr>',
+  '<leader>s': '<cmd>LspSymbolSearch<cr>',
+  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
 })
   execute 'nnoremap ' .. key .. ' ' .. cmd
 endfor
@@ -66,11 +66,7 @@ call plug#begin()
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
-  Plug 'mattn/vim-lsp-settings'
   Plug 'mityu/vim-wispath'
-  Plug 'prabirshrestha/asyncomplete-lsp.vim'
-  Plug 'prabirshrestha/asyncomplete.vim'
-  Plug 'prabirshrestha/vim-lsp'
   Plug 'sheerun/vim-polyglot'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
@@ -79,4 +75,37 @@ call plug#begin()
   Plug 'yggdroot/indentline'
   Plug 'airblade/vim-gitgutter'
   Plug 'wellle/targets.vim'
+  Plug 'yegappan/lsp'
 call plug#end()
+
+autocmd User LspSetup call LspOptionsSet({autoHighlightDiags: v:true, outlineOnRight: v:true, usePopupInCodeAction: v:true, ignoreMissingServer: v:true})
+var lspServers = [
+    {
+        name: 'clang',
+        filetype: ['c', 'cpp'],
+        path: '/usr/bin/clangd',
+        args: ['--background-index'],
+        
+    },
+    {
+        name: 'typescript',
+        filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
+        path: 'deno',
+        args: ['lsp'],
+        features: {
+          unstable: true,
+          cacheOnSave: true,
+        }
+    },
+    {
+      name: 'rustlang',
+      filetype: ['rs', 'rust'],
+      path: '$HOME/.local/share/mise/installs/rust/latest/bin/rust-analyzer',
+    },
+    {
+      name: 'ziglang',
+      filetype: ['zig'],
+      path: '/usr/local/bin/zls'
+    }
+]
+autocmd User LspSetup call LspAddServer(lspServers)
