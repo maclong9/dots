@@ -15,4 +15,4 @@ mise install
 source $HOME/.zshrc
 
 printf "\033[0;32m✓ Configuration Complete\033[0m\n"
-printf "Make sure to run '\033[0;34mgh auth login"
+printf "Make sure to run '\033[0;34mgh auth login\n"
