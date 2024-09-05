@@ -22,7 +22,6 @@ for option in [
   'number',
   'regexpengine=0',
   'relativenumber',
-  'scrolloff=999',
   'shiftwidth=2',
   'signcolumn=yes',
   'smartcase',
@@ -64,13 +63,11 @@ endif
 
 call plug#begin()
   Plug 'Eliot00/auto-pairs'
-  Plug 'github/copilot.vim'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
   Plug 'mattn/vim-lsp-settings'
   Plug 'mityu/vim-wispath'
-  Plug 'pasky/claude.vim'
   Plug 'prabirshrestha/asyncomplete-lsp.vim'
   Plug 'prabirshrestha/asyncomplete.vim'
   Plug 'prabirshrestha/vim-lsp'
@@ -82,8 +79,4 @@ call plug#begin()
   Plug 'yggdroot/indentline'
   Plug 'airblade/vim-gitgutter'
   Plug 'wellle/targets.vim'
-  Plug 'junegunn/goyo.vim'
-  Plug 'junegunn/limelight.vim'
 call plug#end()
-
-autocmd VimEnter * Goyo | Limelight
