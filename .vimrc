@@ -88,11 +88,6 @@ var lspServers = [
         
     },
     {
-      name: 'rustlang',
-      filetype: ['rust'],
-      path: 'rust-analyzer',
-    },
-    {
       name: 'swift',
       filetype: ['swift'],
       path: 'sourcekit-lsp',
