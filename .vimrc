@@ -93,6 +93,12 @@ var lspServers = [
       path: 'sourcekit-lsp',
     },
     {
+      name: 'typescript',
+      filetype: ['typescript', 'typescriptreact'],
+      path: 'deno',
+      args: ['lsp'],
+    },
+    {
       name: 'ziglang',
       filetype: ['zig'],
       path: '/usr/local/bin/zls'
