@@ -8,8 +8,20 @@ for [var, val] in items({
   indentLine_char: '│',
   is_posix: 1,
   mapleader: ';',
+  gitgutter_sign_added: '│',
+  gitgutter_sign_modified: '│',
+  gitgutter_sign_removed: '│',
+
 })
   execute 'g:' .. var .. ' = ' .. string(val)
+endfor
+
+for [group, colors] in items({
+  'GitGutterAdd':    ['#00ff00', 2],
+  'GitGutterChange': ['#ffff00', 3],
+  'GitGutterDelete': ['#d75f5f', 1],
+})
+  execute 'highlight ' .. group .. ' guifg=' .. colors[0] .. ' ctermfg=' .. colors[1]
 endfor
 
 for option in [
@@ -105,3 +117,4 @@ var lspServers = [
     },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
+
