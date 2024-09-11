@@ -13,6 +13,7 @@ alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . --exec 'mv
 
 if [[ ! -d ~/.zplug ]]; then
     git clone https://github.com/zplug/zplug ~/.zplug
+    source ~/.zplug/init.zsh && zplug install
 fi
 
 source ~/.zplug/init.zsh
