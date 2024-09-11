@@ -5,13 +5,12 @@ colorscheme habamax
 &t_SI = "\e[6 q"
 
 for [var, val] in items({
-  indentLine_char: '│',
-  is_posix: 1,
-  mapleader: ';',
   gitgutter_sign_added: '│',
   gitgutter_sign_modified: '│',
   gitgutter_sign_removed: '│',
-
+  indentLine_char: '│',
+  is_posix: 1,
+  mapleader: ';',
 })
   execute 'g:' .. var .. ' = ' .. string(val)
 endfor
@@ -44,10 +43,10 @@ for option in [
 endfor
 
 for [key, cmd] in items({
-  '<C-h>': '<C-w>h',
-  '<C-j>': '<C-w>j',
-  '<C-k>': '<C-w>k',
-  '<C-l>': '<C-w>l',
+  '<C-h>': '<cmd>wincmd h<cr>',
+  '<C-j>': '<cmd>wincmd j<cr>',
+  '<C-k>': '<cmd>wincmd k<cr>',
+  '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>',
   '<leader>F': '<cmd>LspFormat<cr>',
   '<leader>R': '<cmd>LspRename<cr>',
@@ -100,11 +99,6 @@ var lspServers = [
         
     },
     {
-      name: 'swift',
-      filetype: ['swift'],
-      path: 'sourcekit-lsp',
-    },
-    {
       name: 'typescript',
       filetype: ['typescript', 'typescriptreact'],
       path: 'deno',
@@ -117,4 +111,3 @@ var lspServers = [
     },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
-
