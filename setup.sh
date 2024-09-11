@@ -12,7 +12,7 @@ for file in .config/.*; do
 done
 
 curl https://mise.run | sh
-eval "$("$HOME"/.local/bin/mise activate sh)"
+eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install
 
 (crontab -l 2>/dev/null; \
