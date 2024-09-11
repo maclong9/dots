@@ -10,7 +10,7 @@ for [var, val] in items({
   gitgutter_sign_removed: '│',
   indentLine_char: '│',
   is_posix: 1,
-  mapleader: ';',
+  mapleader: ' ',
 })
   execute 'g:' .. var .. ' = ' .. string(val)
 endfor
