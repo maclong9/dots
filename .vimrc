@@ -16,9 +16,9 @@ for [var, val] in items({
 endfor
 
 for [group, colors] in items({
-  'GitGutterAdd':    ['#00ff00', 2],
-  'GitGutterChange': ['#ffff00', 3],
-  'GitGutterDelete': ['#d75f5f', 1],
+  'GitGutterAdd':    ['#5faf5f', 71], 
+  'GitGutterChange': ['#d7af5f', 179],
+  'GitGutterDelete': ['#af5f5f', 131],
 })
   execute 'highlight ' .. group .. ' guifg=' .. colors[0] .. ' ctermfg=' .. colors[1]
 endfor
@@ -40,7 +40,7 @@ for option in [
   'smartindent',
   'tabstop=2',
 ]
-    execute 'set ' .. option
+  execute 'set ' .. option
 endfor
 
 for [key, cmd] in items({
@@ -92,23 +92,22 @@ call plug#end()
 
 autocmd User LspSetup call LspOptionsSet({autoHighlightDiags: v:true, outlineOnRight: v:true, usePopupInCodeAction: v:true, ignoreMissingServer: v:true})
 var lspServers = [
-    {
-        name: 'clang',
-        filetype: ['c', 'cpp'],
-        path: '/usr/bin/clangd',
-        args: ['--background-index'],
-        
-    },
-    {
-      name: 'typescript',
-      filetype: ['typescript', 'typescriptreact'],
-      path: 'deno',
-      args: ['lsp'],
-    },
-    {
-      name: 'ziglang',
-      filetype: ['zig'],
-      path: '/usr/local/bin/zls'
-    },
+  {
+    name: 'clang',
+    filetype: ['c', 'cpp'],
+    path: '/usr/bin/clangd',
+    args: ['--background-index'],
+  },
+  {
+    name: 'typescript',
+    filetype: ['typescript', 'typescriptreact'],
+    path: 'deno',
+    args: ['lsp'],
+  },
+  {
+    name: 'ziglang',
+    filetype: ['zig'],
+    path: '/usr/local/bin/zls'
+  },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
