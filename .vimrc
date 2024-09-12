@@ -33,6 +33,7 @@ for option in [
   'number',
   'regexpengine=0',
   'relativenumber',
+  'scrolloff=999',
   'shiftwidth=2',
   'signcolumn=yes',
   'smartcase',
