@@ -1,6 +1,6 @@
 vim9script
 syntax enable
-colorscheme sorbet # Good Default Options: habamax | slate | sorbet
+colorscheme sorbet # Good Default Options: habamax | sorbet
 &t_EI = "\e[2 q"
 &t_SI = "\e[6 q"
 

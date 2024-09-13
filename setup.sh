@@ -6,8 +6,7 @@ for file in .config/.*; do
   case "$(basename "$file")" in
     "." | ".." | ".git") continue ;;
     *)
-      ln -s "$file" "$HOME/$(basename "$file")"
-      ;;
+      ln -s "$file" "$HOME/$(basename "$file")" ;;
   esac
 done
 
