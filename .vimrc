@@ -1,6 +1,6 @@
 vim9script
 syntax enable
-colorscheme habamax
+colorscheme habamax # Good Default Options: habamax | lunaperche | slate | sorbet | zaibatsu
 &t_EI = "\e[2 q"
 &t_SI = "\e[6 q"
 
