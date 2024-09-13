@@ -1,6 +1,6 @@
 vim9script
 syntax enable
-colorscheme habamax # Good Default Options: habamax | lunaperche | slate | sorbet | zaibatsu
+colorscheme sorbet # Good Default Options: habamax | slate | sorbet
 &t_EI = "\e[2 q"
 &t_SI = "\e[6 q"
 
@@ -21,6 +21,14 @@ for [group, colors] in items({
   'GitGutterDelete': ['#af5f5f', 131],
 })
   execute 'highlight ' .. group .. ' guifg=' .. colors[0] .. ' ctermfg=' .. colors[1]
+endfor
+
+for area in [
+  'Normal',
+  'LineNr',
+  'SignColumn',
+]
+  execute 'highlight ' .. area .. ' guibg=NONE ctermbg=NONE'
 endfor
 
 for option in [
