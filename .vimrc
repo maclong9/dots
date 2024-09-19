@@ -108,7 +108,7 @@ var lspServers = [
   {
     name: 'swift',
     filetype: ['swift'],
-    path: 'sourcekit-lsp',
+    path: '/usr/bin/sourcekit-lsp',
   },
   {
     name: 'typescript',
