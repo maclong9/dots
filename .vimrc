@@ -87,7 +87,6 @@ call plug#begin()
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
-  Plug 'mityu/vim-wispath'
   Plug 'sheerun/vim-polyglot'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
@@ -105,6 +104,11 @@ var lspServers = [
     filetype: ['c', 'cpp'],
     path: '/usr/bin/clangd',
     args: ['--background-index'],
+  },
+  {
+    name: 'swift',
+    filetype: ['swift'],
+    path: 'sourcekit-lsp',
   },
   {
     name: 'typescript',
