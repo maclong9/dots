@@ -10,7 +10,6 @@
   b = branch
   bd = branch -d
   br = "!f() { git branch -m $1; }; f"
-  bs = "!f() { git checkout -b development && git push -u origin development && git checkout -b staging && git push -u origin staging && git checkout main && echo 'Development and staging branches created and pushed to origin.'; }; f"
   c = commit -m
   ca = "!f() { git commit --amend -m \"$1\"; }; f"
   cl = "!f() { base_url=\"https://github.com/\"; if [[ \"$1\" == *\"/\"* ]]; then git clone \"$base_url/$1.git\"; else git clone \"$base_url/maclong9/$1.git\"; fi; }; f"
