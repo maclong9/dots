@@ -1,9 +1,7 @@
 [tools]
-delta = "latest"
 deno = "latest"
 ffmpeg = "latest"
 github-cli = "latest"
 ripgrep = "latest"
 yt-dlp = "latest"
-zig = "latest"
 zoxide = "latest"

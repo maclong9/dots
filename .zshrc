@@ -2,10 +2,8 @@ export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
 
-autoload -U compinit; compinit
-setopt correct
-
 alias _="sudo"
+alias ls="sls -cli"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
@@ -19,8 +17,6 @@ fi
 source ~/.zplug/init.zsh
 
 zplug "zplug/zplug", hook-build:"zplug --self-manage"
-zplug "djui/alias-tips"
-zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-syntax-highlighting"
 
 zplug check || zplug install

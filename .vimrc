@@ -1,26 +1,12 @@
 vim9script
 syntax enable
 colorscheme habamax
-&t_EI = "\e[2 q"
-&t_SI = "\e[6 q"
 
 for [var, val] in items({
-  gitgutter_sign_added: '│',
-  gitgutter_sign_modified: '│',
-  gitgutter_sign_removed: '│',
-  indentLine_char: '│',
   is_posix: 1,
   mapleader: ' ',
 })
   execute 'g:' .. var .. ' = ' .. string(val)
-endfor
-
-for [group, colors] in items({
-  'GitGutterAdd':    ['#5faf5f', 71], 
-  'GitGutterChange': ['#d7af5f', 179],
-  'GitGutterDelete': ['#af5f5f', 131],
-})
-  execute 'highlight ' .. group .. ' guifg=' .. colors[0] .. ' ctermfg=' .. colors[1]
 endfor
 
 for area in [
@@ -83,7 +69,6 @@ endif
 
 call plug#begin()
   Plug 'Eliot00/auto-pairs'
-  Plug 'airblade/vim-gitgutter'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
@@ -92,19 +77,11 @@ call plug#begin()
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
-  Plug 'wellle/targets.vim'
   Plug 'yegappan/lsp'
-  Plug 'yggdroot/indentline'
 call plug#end()
 
 autocmd User LspSetup call LspOptionsSet({autoHighlightDiags: v:true, outlineOnRight: v:true, usePopupInCodeAction: v:true, ignoreMissingServer: v:true})
 var lspServers = [
-  {
-    name: 'clang',
-    filetype: ['c', 'cpp'],
-    path: '/usr/bin/clangd',
-    args: ['--background-index'],
-  },
   {
     name: 'swift',
     filetype: ['swift'],
@@ -115,11 +92,6 @@ var lspServers = [
     filetype: ['typescript', 'typescriptreact', 'javascript'],
     path: 'deno',
     args: ['lsp'],
-  },
-  {
-    name: 'ziglang',
-    filetype: ['zig'],
-    path: '/usr/local/bin/zls'
   },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)

@@ -15,8 +15,8 @@ eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install
 
 (crontab -l 2>/dev/null; \
-  echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade && /Users/maclong/.zplug/bin/zplug update") | \
-  crontab -
+  echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade && /Users/maclong/.zplug/bin/zplug update" \
+) | crontab -
 
 . "$HOME/.zshrc"
 
