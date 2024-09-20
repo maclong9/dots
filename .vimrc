@@ -1,20 +1,13 @@
 vim9script
 syntax enable
 colorscheme habamax
+highlight Normal guibg=NONE ctermbg=NONE
 
 for [var, val] in items({
   is_posix: 1,
   mapleader: ' ',
 })
   execute 'g:' .. var .. ' = ' .. string(val)
-endfor
-
-for area in [
-  'Normal',
-  'LineNr',
-  'SignColumn',
-]
-  execute 'highlight ' .. area .. ' guibg=NONE ctermbg=NONE'
 endfor
 
 for option in [
@@ -28,11 +21,9 @@ for option in [
   'regexpengine=0',
   'relativenumber',
   'scrolloff=999',
-  'shiftwidth=2',
   'signcolumn=yes',
   'smartcase',
   'smartindent',
-  'tabstop=2',
 ]
   execute 'set ' .. option
 endfor
