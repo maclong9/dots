@@ -1,4 +1,4 @@
-export PATH="$PATH:/Users/maclong/.local/share/mise/installs/zoxide/latest/bin"
+export PATH="$PATH:$(find $HOME/.local/share/mise/installs -type d -name bin | tr '\n' ':' | sed 's/:$//')"
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
 
