@@ -8,27 +8,7 @@ for [k, v] in items({
   mapleader: ' ',
   netrw_banner: 0,
 })
-  execute 'g:' .. k .. ' = ' .. string(v)
-endfor
-
-for o in [
-  'breakindent',
-  'cursorline',
-  'hlsearch',
-  'incsearch',
-  'noshowmode',
-  'noswapfile',
-  'number',
-  'regexpengine=0',
-  'relativenumber',
-  'scrolloff=999',
-  'shiftwidth=2',
-  'signcolumn=no',
-  'smartcase',
-  'smartindent',
-  'tabstop=2',
-]
-  execute 'set ' .. o
+  execute $'g:{k} = {string(v)}'
 endfor
 
 for [k, v] in items({
@@ -55,11 +35,40 @@ for [k, v] in items({
   '<leader>s': '<cmd>LspSymbolSearch<cr>',
   '<leader>t': '<cmd>LspGotoTypeDef<cr>'
 })
-  execute 'nnoremap ' .. k .. ' ' .. v
+  execute $'nnoremap {k} {v}'
+endfor
+
+for o in [
+  'breakindent',
+  'cursorline',
+  'hlsearch',
+  'incsearch',
+  'noshowmode',
+  'noswapfile',
+  'number',
+  'regexpengine=0',
+  'relativenumber',
+  'scrolloff=999',
+  'shiftwidth=2',
+  'signcolumn=no',
+  'smartcase',
+  'smartindent',
+  'tabstop=2',
+]
+  execute $'set {o}'
+endfor
+
+for o in [
+  'EndOfBuffer',
+  'Normal',
+  'NonText',
+]
+  execute $'autocmd ColorScheme * hi {o} guibg=NONE ctermbg=NONE'
 endfor
 
 if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
@@ -78,8 +87,6 @@ call plug#begin()
 call plug#end()
 
 colorscheme xcode
-autocmd ColorScheme * hi EndOfBuffer guibg=NONE ctermbg=NONE
-autocmd ColorScheme * hi Normal guibg=NONE ctermbg=NONE
 
 var lspOptions = { 
   autoHighlightDiags: true,
