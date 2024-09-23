@@ -22,9 +22,11 @@ for o in [
   'regexpengine=0',
   'relativenumber',
   'scrolloff=999',
+  'shiftwidth=2',
   'signcolumn=yes',
   'smartcase',
   'smartindent',
+  'tabstop=2',
 ]
   execute 'set ' .. o
 endfor
