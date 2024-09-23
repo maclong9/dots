@@ -1,9 +1,7 @@
 export PATH="$PATH:$(find $HOME/.local/share/mise/installs -type d -name bin | \
   tr '\n' ':' | sed 's/:$//')"
-
 export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~ 
 %F{%(?.blue.red)}%Bλ%b%f "
-
 export EDITOR="vim"
 
 alias _="sudo"
