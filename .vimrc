@@ -2,8 +2,6 @@ vim9script
 syntax enable
 &t_EI = "\e[2 q"
 &t_SI = "\e[6 q"
-colorscheme habamax
-highlight Normal guibg=NONE ctermbg=NONE
 
 for [var, val] in items({
   is_posix: 1,
@@ -73,8 +71,11 @@ call plug#begin()
   Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
   Plug 'yegappan/lsp'
+  Plug 'arzg/vim-colors-xcode'
 call plug#end()
 
+colorscheme xcode
+hi Normal guibg=NONE ctermbg=NONE
 
 var lspOptions = { 
   autoHighlightDiags: v:true,
