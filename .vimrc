@@ -75,7 +75,7 @@ call plug#begin()
 call plug#end()
 
 colorscheme xcode
-hi Normal guibg=NONE ctermbg=NONE
+autocmd ColorScheme * hi Normal guibg=NONE ctermbg=NONE
 
 var lspOptions = { 
   autoHighlightDiags: v:true,
@@ -83,6 +83,7 @@ var lspOptions = {
   usePopupInCodeAction: v:true,
   ignoreMissingServer: v:true
 }
+autocmd User LspSetup call LspOptionsSet(lspOptions)
 
 var lspServers = [
   {
@@ -97,6 +98,4 @@ var lspServers = [
     args: ['lsp'],
   },
 ]
-
-autocmd User LspSetup call LspOptionsSet(lspOptions)
 autocmd User LspSetup call LspAddServer(lspServers)
