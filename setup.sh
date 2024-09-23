@@ -14,9 +14,7 @@ curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
 
-(crontab -l 2>/dev/null; \
-  echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade" \
-) | crontab -
+(crontab -l 2>/dev/null; echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
 
 . "$HOME/.zshrc"
 
