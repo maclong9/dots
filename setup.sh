@@ -19,4 +19,5 @@ mise install -y
 . "$HOME/.zshrc"
 
 printf "\033[0;32m✓ Configuration Complete\033[0m\n"
+printf "You may need to restart your terminal for all changes to take effect.\n"
 printf "Make sure to run '\033[0;34mgh auth login\033[0m'\n"
