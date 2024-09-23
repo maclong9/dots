@@ -71,7 +71,14 @@ call plug#begin()
   Plug 'yegappan/lsp'
 call plug#end()
 
-autocmd User LspSetup call LspOptionsSet({autoHighlightDiags: v:true, outlineOnRight: v:true, usePopupInCodeAction: v:true, ignoreMissingServer: v:true})
+
+var lspOptions = { 
+  autoHighlightDiags: v:true,
+  outlineOnRight: v:true,
+  usePopupInCodeAction: v:true,
+  ignoreMissingServer: v:true
+}
+
 var lspServers = [
   {
     name: 'swift',
@@ -85,4 +92,6 @@ var lspServers = [
     args: ['lsp'],
   },
 ]
+
+autocmd User LspSetup call LspOptionsSet(lspOptions)
 autocmd User LspSetup call LspAddServer(lspServers)
