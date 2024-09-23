@@ -81,9 +81,10 @@ require("lazy").setup({
   { 'mattn/emmet-vim' },
   { 'sheerun/vim-polyglot' },
   { 'numToStr/Comment.nvim', opts = {} },
-  { 'tpope/vim-fugitive' },
   { 'tpope/vim-rsi' },
-  { 'tpope/vim-surround' },
+  { 'echasnovski/mini.surround', version = false, opts = {} },
+  { 'echasnovski/mini-git', version = false, main = 'mini.git', opts = {} },
+  { 'echasnovski/mini.statusline', opts = {} },
   {
     'stevearc/oil.nvim',
     opts = {
@@ -97,7 +98,10 @@ require("lazy").setup({
     'arzg/vim-colors-xcode',
     config = function()
   	  vim.cmd('colorscheme xcode')
-  	  vim.cmd('highlight Normal guibg=NONE ctermbg=NONE')
+
+	    for _, v in ipairs({ 'Normal', 'NonText' }) do
+        vim.cmd('highlight ' .. v .. ' guibg=NONE ctermbg=NONE')
+	    end
   	  vim.cmd('highlight StatusLine guibg=NONE ctermbg=NONE guifg=#fefefe ctermfg=white')
     end,
   },
