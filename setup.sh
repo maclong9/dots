@@ -11,7 +11,7 @@ done
 
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
-mise install
+mise install -y
 
 . "$HOME/.zshrc"
 
