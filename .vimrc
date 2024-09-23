@@ -23,7 +23,7 @@ for o in [
   'relativenumber',
   'scrolloff=999',
   'shiftwidth=2',
-  'signcolumn=yes',
+  'signcolumn=no',
   'smartcase',
   'smartindent',
   'tabstop=2',
@@ -82,10 +82,13 @@ autocmd ColorScheme * hi EndOfBuffer guibg=NONE ctermbg=NONE
 autocmd ColorScheme * hi Normal guibg=NONE ctermbg=NONE
 
 var lspOptions = { 
-  autoHighlightDiags: v:true,
-  outlineOnRight: v:true,
-  usePopupInCodeAction: v:true,
-  ignoreMissingServer: v:true
+  autoHighlightDiags: true,
+  diagVirtualTextAlign: 'after',
+  highlightDiagInline: true,
+  ignoreMissingServer: true,
+  outlineOnRight: true,
+  showDiagWithVirtualText: true,
+  usePopupInCodeAction: true,
 }
 autocmd User LspSetup call LspOptionsSet(lspOptions)
 
