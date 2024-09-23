@@ -32,24 +32,13 @@
   u = reset HEAD~1 --soft
 
 [core]
-  pager = delta
   excludeFile = $HOME/.gitignore
-
-[delta]
-  line-numbers = true
-  side-by-side = true
 
 [init]
   defaultBranch = main
 
 [merge]
   tool = vimdiff
-
-[pager]
-  blame  = delta
-  diff   = delta
-  reflog = delta
-  show   = delta
 
 [push]
   autoSetupRemote = true
