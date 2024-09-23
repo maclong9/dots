@@ -88,7 +88,7 @@ call plug#end()
 
 colorscheme xcode
 
-var lspOptions = { 
+var lspOptions = {
   autoHighlightDiags: true,
   diagVirtualTextAlign: 'after',
   highlightDiagInline: true,
