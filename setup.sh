@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
+
 git clone https://github.com/maclong9/dots .config
 
 for file in .config/.*; do
