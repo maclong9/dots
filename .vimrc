@@ -1,5 +1,7 @@
 vim9script
 syntax enable
+&t_EI = "\e[2 q"
+&t_SI = "\e[6 q"
 colorscheme habamax
 highlight Normal guibg=NONE ctermbg=NONE
 
@@ -34,6 +36,8 @@ for [key, cmd] in items({
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>',
+  '<leader>C': '<cmd>Commits<cr>',
+  '<leader>D': '<cmd>GF?<cr>',
   '<leader>F': '<cmd>LspFormat<cr>',
   '<leader>R': '<cmd>LspRename<cr>',
   '<leader>a': '<cmd>LspCodeAction<cr>',

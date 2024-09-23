@@ -3,6 +3,7 @@ export PROMPT="%F{white}%n@%m %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
 alias _="sudo"
+alias cat="bat"
 alias ls="sls -cli"
 alias g="git"
 alias hg="history | grep"
