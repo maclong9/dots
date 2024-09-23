@@ -3,14 +3,14 @@ syntax enable
 &t_EI = "\e[2 q"
 &t_SI = "\e[6 q"
 
-for [var, val] in items({
+for [k, v] in items({
   is_posix: 1,
   mapleader: ' ',
 })
-  execute 'g:' .. var .. ' = ' .. string(val)
+  execute 'g:' .. k .. ' = ' .. string(v)
 endfor
 
-for option in [
+for o in [
   'breakindent',
   'cursorline',
   'hlsearch',
@@ -25,10 +25,10 @@ for option in [
   'smartcase',
   'smartindent',
 ]
-  execute 'set ' .. option
+  execute 'set ' .. o
 endfor
 
-for [key, cmd] in items({
+for [k, v] in items({
   '<C-h>': '<cmd>wincmd h<cr>',
   '<C-j>': '<cmd>wincmd j<cr>',
   '<C-k>': '<cmd>wincmd k<cr>',
@@ -52,7 +52,7 @@ for [key, cmd] in items({
   '<leader>s': '<cmd>LspSymbolSearch<cr>',
   '<leader>t': '<cmd>LspGotoTypeDef<cr>'
 })
-  execute 'nnoremap ' .. key .. ' ' .. cmd
+  execute 'nnoremap ' .. k .. ' ' .. v
 endfor
 
 if empty(glob('~/.vim/autoload/plug.vim'))
