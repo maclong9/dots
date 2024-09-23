@@ -2,8 +2,12 @@
 vim.cmd('syntax enable')
 
 -- Global variables
-vim.g.is_posix = 1
-vim.g.mapleader = ' '
+for k, v in pairs({
+  is_posix = 1,
+  mapleader = ' ',
+}) do
+  vim.g[k] = v
+end
 
 -- Options
 for k, v in pairs({
@@ -40,7 +44,6 @@ map('n', '<C-k>', '<cmd>wincmd k<cr>')
 map('n', '<C-l>', '<cmd>wincmd l<cr>')
 map('n', '<Esc>', '<cmd>nohlsearch<cr>')
 map('n', '<leader>C', '<cmd>Telescope git_commits<cr>')
-map('n', '<leader>D', '<cmd>DiffviewFileHistory<cr>')
 map('n', '<leader>F', '<cmd>lua vim.lsp.buf.formatting()<cr>')
 map('n', '<leader>R', '<cmd>lua vim.lsp.buf.rename()<cr>')
 map('n', '<leader>a', '<cmd>lua vim.lsp.buf.code_action()<cr>')
@@ -65,7 +68,7 @@ if not vim.loop.fs_stat(lazypath) then
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
+    "--branch=stable",
     lazypath,
   })
 end
@@ -83,7 +86,11 @@ require("lazy").setup({
   { 'tpope/vim-surround' },
   {
     'stevearc/oil.nvim',
-    opts = {},
+    opts = {
+      view_options = {
+        show_hidden = true,
+      }
+    },
     dependencies = { { "echasnovski/mini.icons", opts = {} } },
   },
   { 
@@ -105,7 +112,6 @@ require("lazy").setup({
       local nvim_lsp = require('lspconfig')
       
       local on_attach = function(client, bufnr)
-        -- Enable completion triggered by <c-x><c-o>
         vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
       end
       
@@ -124,7 +130,6 @@ require("lazy").setup({
           root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc"),
       }
       
-      -- Diagnostic settings
       vim.diagnostic.config({
         virtual_text = true,
         signs = true,
