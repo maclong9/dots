@@ -6,6 +6,7 @@ syntax enable
 for [k, v] in items({
   is_posix: 1,
   mapleader: ' ',
+  netrw_banner: 0,
 })
   execute 'g:' .. k .. ' = ' .. string(v)
 endfor
@@ -75,6 +76,7 @@ call plug#begin()
 call plug#end()
 
 colorscheme xcode
+autocmd ColorScheme * hi EndOfBuffer guibg=NONE ctermbg=NONE
 autocmd ColorScheme * hi Normal guibg=NONE ctermbg=NONE
 
 var lspOptions = { 
