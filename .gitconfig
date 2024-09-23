@@ -32,6 +32,7 @@
   u = reset HEAD~1 --soft
 
 [core]
+  editor = vim
   excludeFile = $HOME/.gitignore
 
 [init]
