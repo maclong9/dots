@@ -10,8 +10,6 @@ alias ls="sls -cli"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
-alias ytad="yt-dlp -x --audio-format alac -o '%(title)s.%(ext)s' -P . \
-  --exec 'mv {} /Users/maclong/Music/Music/Media.localized/Automatically\ Add\ to\ Music.localized/'"
 
 kp() { kill -9 $(lsof -ti tcp:$1); }
 
