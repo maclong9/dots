@@ -42,9 +42,6 @@
   editor = vim
   excludeFile = $HOME/.gitignore
 
-[init]
-  defaultBranch = main
-
 [merge]
   tool = vimdiff
 
