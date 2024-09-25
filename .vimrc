@@ -11,33 +11,6 @@ for [k, v] in items({
   execute $'g:{k} = {string(v)}'
 endfor
 
-for [k, v] in items({
-  '<C-h>': '<cmd>wincmd h<cr>',
-  '<C-j>': '<cmd>wincmd j<cr>',
-  '<C-k>': '<cmd>wincmd k<cr>',
-  '<C-l>': '<cmd>wincmd l<cr>',
-  '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>C': '<cmd>Commits<cr>',
-  '<leader>D': '<cmd>GF?<cr>',
-  '<leader>F': '<cmd>LspFormat<cr>',
-  '<leader>R': '<cmd>LspRename<cr>',
-  '<leader>a': '<cmd>LspCodeAction<cr>',
-  '<leader>b': '<cmd>Buffers<cr>',
-  '<leader>d': '<cmd>LspGotoDefinition<cr>',
-  '<leader>e': '<cmd>Explore<cr>',
-  '<leader>f': '<cmd>Files<cr>',
-  '<leader>g': '<cmd>Rg<cr>',
-  '<leader>h': '<cmd>LspHover<cr>',
-  '<leader>i': '<cmd>LspGotoImpl<cr>',
-  '<leader>n': '<cmd>LspDiag nextWrap<cr>',
-  '<leader>p': '<cmd>LspDiag prevWrap<cr>',
-  '<leader>r': '<cmd>LspPeekReferences<cr>',
-  '<leader>s': '<cmd>LspSymbolSearch<cr>',
-  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
-})
-  execute $'nnoremap {k} {v}'
-endfor
-
 for o in [
   'breakindent',
   'cursorline',
@@ -66,6 +39,33 @@ for o in [
   execute $'autocmd ColorScheme * hi {o} guibg=NONE ctermbg=NONE'
 endfor
 
+for [k, v] in items({
+  '<C-h>': '<cmd>wincmd h<cr>',
+  '<C-j>': '<cmd>wincmd j<cr>',
+  '<C-k>': '<cmd>wincmd k<cr>',
+  '<C-l>': '<cmd>wincmd l<cr>',
+  '<Esc>': '<cmd>nohlsearch<cr>',
+  '<leader>C': '<cmd>Commits<cr>',
+  '<leader>D': '<cmd>GF?<cr>',
+  '<leader>F': '<cmd>LspFormat<cr>',
+  '<leader>R': '<cmd>LspRename<cr>',
+  '<leader>a': '<cmd>LspCodeAction<cr>',
+  '<leader>b': '<cmd>Buffers<cr>',
+  '<leader>d': '<cmd>LspGotoDefinition<cr>',
+  '<leader>e': '<cmd>Explore<cr>',
+  '<leader>f': '<cmd>Files<cr>',
+  '<leader>g': '<cmd>Rg<cr>',
+  '<leader>h': '<cmd>LspHover<cr>',
+  '<leader>i': '<cmd>LspGotoImpl<cr>',
+  '<leader>n': '<cmd>LspDiag nextWrap<cr>',
+  '<leader>p': '<cmd>LspDiag prevWrap<cr>',
+  '<leader>r': '<cmd>LspPeekReferences<cr>',
+  '<leader>s': '<cmd>LspSymbolSearch<cr>',
+  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
+})
+  execute $'nnoremap {k} {v}'
+endfor
+
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -83,6 +83,7 @@ call plug#begin()
   Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
   Plug 'yegappan/lsp'
+  Plug 'wellle/targets.vim'
   Plug 'arzg/vim-colors-xcode'
 call plug#end()
 
