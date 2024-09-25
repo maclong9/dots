@@ -7,7 +7,7 @@
   aa = add .
   ac = "!f() { git add $1 && git commit -m \"$2\"; }; f"
   aac = "!f() { git add . && git commit -m \"$1\"; }; f"
-  alias = config --get-regexp ^alias
+  als = config --get-regexp ^alias
   b = branch
   bd = branch -d
   br = "!f() { git branch -m $1; }; f"

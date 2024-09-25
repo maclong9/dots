@@ -74,6 +74,7 @@ endif
 
 call plug#begin()
   Plug 'Eliot00/auto-pairs'
+  Plug 'arzg/vim-colors-xcode'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
@@ -82,9 +83,8 @@ call plug#begin()
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
-  Plug 'yegappan/lsp'
   Plug 'wellle/targets.vim'
-  Plug 'arzg/vim-colors-xcode'
+  Plug 'yegappan/lsp'
 call plug#end()
 
 colorscheme xcode
