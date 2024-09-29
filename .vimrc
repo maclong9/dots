@@ -73,8 +73,8 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin()
-  Plug 'Eliot00/auto-pairs'
   Plug 'arzg/vim-colors-xcode'
+  Plug 'Eliot00/auto-pairs'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
