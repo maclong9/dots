@@ -16,8 +16,6 @@ mise install -y
 
 (crontab -l 2>/dev/null; echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
 
-. "$HOME/.zshrc"
-
 printf "\033[0;32m✓ Configuration Complete\033[0m\n\
 You may need to restart your terminal for all changes to take effect.\n\
 Make sure to run '\033[0;34mgh auth login\033[0m'\n"
