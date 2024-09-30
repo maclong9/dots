@@ -2,8 +2,10 @@
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
 restore() {
-  sudo rm -rf "$HOME/.*" "$HOME/.local/share/mise/" "$CLT_PLACEHOLDER"
-  (crontab -l 2>/dev/null | sed '1d') | crontab -
+  if [ $? -ne 0 ]; then
+    sudo rm -rf "$HOME/.*" "$HOME/.local/share/mise/" "$CLT_PLACEHOLDER"
+    (crontab -l 2>/dev/null | sed '1d') | crontab -
+  fi
 }
 
 trap "restore" EXIT
