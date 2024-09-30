@@ -30,7 +30,7 @@ CLT_PACKAGE=$(softwareupdate -l |
 sudo softwareupdate -i "$CLT_PACKAGE"
 sudo rm -rf "$CLT_PLACEHOLDER"
 
-if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
+if ! [ -f "/usr/bin/git" ]; then
   xcode-select --install
 fi
 
