@@ -1,14 +1,12 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
-restore() {
-  if [ $? -ne 0 ]; then
-    sudo rm -rf "$HOME/.*"
-    (crontab -l 2>/dev/null | sed '1d') | crontab -
-  fi
-}
-
-trap "restore" EXIT
+trap '
+if [ $? -ne 0 ]; then
+  sudo rm -rf "$HOME/.*"
+  (crontab -l 2>/dev/null | sed "1d") | crontab -
+fi
+' EXIT
 
 caffeinate -s -w $$ &
 
