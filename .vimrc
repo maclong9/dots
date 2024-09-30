@@ -75,8 +75,6 @@ endif
 call plug#begin()
   Plug 'arzg/vim-colors-xcode'
   Plug 'Eliot00/auto-pairs'
-  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'junegunn/fzf.vim'
   Plug 'mattn/emmet-vim'
   Plug 'sheerun/vim-polyglot'
   Plug 'tpope/vim-commentary'
