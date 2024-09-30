@@ -112,7 +112,7 @@ var lspConfiguration = {
   ]
 }
 
-for [event, cmds] in items({
+for [k, v] in items({
   'ColorScheme': [
     'hi EndOfBuffer guibg=NONE ctermbg=NONE',
     'hi Normal guibg=NONE ctermbg=NONE',
@@ -129,11 +129,11 @@ for [event, cmds] in items({
     'LspFormat',
   ],
 })
-  for cmd in cmds
-    if event != 'BufWritePre'
-      execute $'autocmd {event} {cmd}'
+  for w in v
+    if k != 'BufWritePre'
+      execute $'autocmd {k} {w}'
     else
-      execute $'autocmd {event} * {cmd}'
+      execute $'autocmd {k} * {w}'
     endif
   endfor
 endfor
