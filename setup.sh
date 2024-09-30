@@ -19,12 +19,16 @@ sudo launchctl load /System/Library/LaunchDaemons/com.apple.alf.agent.plist 2>/d
 sudo fdesetup enable -user "$USER" | tee ~/Desktop/"FileVault Recovery Key.txt"
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local > /dev/null
 
-if ! xcode-select -p &>/dev/null; then
+if ! xcode-select -p 2>&1; then
   xcode-select --install
 fi
 
-if ! /usr/bin/xcrun clang &>/dev/null; then
+if ! /usr/bin/xcrun clang 2>&1; then
   sudo xcodebuild -license accept
+fi
+
+if ! softwareupdate -l 2>&1 | grep -q "No new software available."; then
+  sudo softwareupdate --install --all
 fi
 
 git clone https://github.com/maclong9/dots .config
