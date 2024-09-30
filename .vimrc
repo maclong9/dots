@@ -46,7 +46,6 @@ for [k, v] in items({
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>F': '<cmd>LspFormat<cr>',
   '<leader>R': '<cmd>LspRename<cr>',
   '<leader>a': '<cmd>LspCodeAction<cr>',
   '<leader>d': '<cmd>LspGotoDefinition<cr>',
@@ -108,3 +107,5 @@ var lspServers = [
   },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
+
+autocmd BufWritePre * LspFormat
