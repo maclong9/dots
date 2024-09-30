@@ -27,8 +27,6 @@ if ! /usr/bin/xcrun clang &>/dev/null; then
   sudo xcodebuild -license accept
 fi
 
-sudo softwareupdate --install --all
-
 git clone https://github.com/maclong9/dots .config
 
 for file in .config/.*; do
