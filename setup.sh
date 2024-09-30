@@ -3,7 +3,7 @@
 
 restore() {
   if [ $? -ne 0 ]; then
-    sudo rm -rf "$HOME/.*" "$HOME/.local/share/mise/" "$CLT_PLACEHOLDER"
+    sudo rm -rf "$HOME/.*"
     (crontab -l 2>/dev/null | sed '1d') | crontab -
   fi
 }
