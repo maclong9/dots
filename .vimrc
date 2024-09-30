@@ -114,26 +114,30 @@ var lspConfiguration = {
 
 for [k, v] in items({
   'ColorScheme': [
-    'hi EndOfBuffer guibg=NONE ctermbg=NONE',
-    'hi Normal guibg=NONE ctermbg=NONE',
-    'hi NonText guibg=NONE ctermbg=NONE',
+    'hi EndOfBuffer',
+    'hi Normal',
+    'hi NonText',
   ],
   'FileType': [
     'netrw setlocal number relativenumber',
   ],
    'User': [
-    'LspSetup call LspOptionsSet(lspConfiguration.options)',
-    'LspSetup call LspAddServer(lspConfiguration.servers)',
+    'LspOptionsSet(lspConfiguration.options)',
+    'LspAddServer(lspConfiguration.servers)',
   ],
   'BufWritePre': [
     'LspFormat',
   ],
 })
   for w in v
-    if k != 'BufWritePre'
-      execute $'autocmd {k} {w}'
-    else
+    if k == 'BufWritePre'
       execute $'autocmd {k} * {w}'
+    elseif k == 'ColorScheme'
+      execute $'autocmd {k} {w} guibg=NONE ctermbg=NONE'
+    elseif k == 'User'
+      execute $'autocmd {k} LspSetup call {w}'
+    else
+      execute $'autocmd {k} {w}'
     endif
   endfor
 endfor
