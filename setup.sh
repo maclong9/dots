@@ -20,9 +20,7 @@ if ! /usr/bin/xcrun clang 2>&1; then
   sudo xcodebuild -license accept
 fi
 
-if ! softwareupdate -l 2>&1 | grep -q "No new software available."; then
-  sudo softwareupdate --install --all
-fi
+sudo softwareupdate --install --all
 
 git clone https://github.com/maclong9/dots .config
 
