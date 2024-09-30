@@ -10,7 +10,8 @@ fi
 
 caffeinate -s -w $$ &
 
-sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local > /dev/null
+sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
+  sudo tee /etc/pam.d/sudo_local > /dev/null
 
 if ! xcode-select -p 2>&1; then
   xcode-select --install
