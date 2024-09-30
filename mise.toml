@@ -1,7 +1,4 @@
 [tools]
-bat = "latest"
 deno = "latest"
 github-cli = "latest"
-ripgrep = "latest"
-xh = "latest"
 zoxide = "latest"
