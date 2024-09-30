@@ -113,21 +113,10 @@ var lspConfiguration = {
 }
 
 for [k, v] in items({
-  'ColorScheme': [
-    'hi EndOfBuffer',
-    'hi Normal',
-    'hi NonText',
-  ],
-  'FileType': [
-    'netrw setlocal number relativenumber',
-  ],
-   'User': [
-    'LspOptionsSet(lspConfiguration.options)',
-    'LspAddServer(lspConfiguration.servers)',
-  ],
-  'BufWritePre': [
-    'LspFormat',
-  ],
+  'ColorScheme': ['hi EndOfBuffer', 'hi Normal', 'hi NonText'],
+  'FileType': ['netrw setlocal number relativenumber'],
+   'User': [ 'LspOptionsSet(lspConfiguration.options)' 'LspAddServer(lspConfiguration.servers)'],
+  'BufWritePre': ['LspFormat'],
 })
   for w in v
     if k == 'BufWritePre'
