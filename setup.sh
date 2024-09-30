@@ -3,7 +3,7 @@
 
 trap '
 if [ $? -ne 0 ]; then
-  sudo rm -rf "$HOME/.*"
+  sudo rm -rf "$HOME/.*" "/etc/pam.d/sudo_local"
   (crontab -l 2>/dev/null | sed "1d") | crontab -
 fi
 ' EXIT
