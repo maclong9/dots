@@ -16,6 +16,7 @@ for o in [
   'cursorline',
   'hlsearch',
   'incsearch',
+  'nocompatible',
   'noshowmode',
   'noswapfile',
   'number',
