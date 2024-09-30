@@ -24,7 +24,6 @@ fi
 sudo softwareupdate --install --all
 
 git clone https://github.com/maclong9/dots .config
-
 for file in .config/.*; do
   case "$(basename "$file")" in
     "." | ".." | ".git") continue ;;
