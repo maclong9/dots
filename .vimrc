@@ -82,36 +82,58 @@ call plug#end()
 
 colorscheme xcode
 
-var lspOptions = {
-  autoHighlightDiags: true,
-  diagVirtualTextAlign: 'after',
-  highlightDiagInline: true,
-  ignoreMissingServer: true,
-  outlineOnRight: true,
-  showDiagWithVirtualText: true,
-  usePopupInCodeAction: true,
+var lspConfiguration = {
+  options: {
+    autoHighlightDiags: true,
+    diagVirtualTextAlign: 'after',
+    highlightDiagInline: true,
+    ignoreMissingServer: true,
+    outlineOnRight: true,
+    showDiagWithVirtualText: true,
+    usePopupInCodeAction: true,
+  },
+  servers: [
+    {
+      name: 'clang',
+      filetype: ['c'],
+      path: '/usr/bin/clangd',
+    },
+    {
+      name: 'swift',
+      filetype: ['swift'],
+      path: '/usr/bin/sourcekit-lsp',
+    },
+    {
+      name: 'typescript',
+      filetype: ['typescript', 'typescriptreact', 'javascript'],
+      path: 'deno',
+      args: ['lsp'],
+    },
+  ]
 }
-autocmd User LspSetup call LspOptionsSet(lspOptions)
 
-var lspServers = [
-  {
-    name: 'clang',
-    filetype: ['c'],
-    path: '/usr/bin/clangd',
-
-  },
-  {
-    name: 'swift',
-    filetype: ['swift'],
-    path: '/usr/bin/sourcekit-lsp',
-  },
-  {
-    name: 'typescript',
-    filetype: ['typescript', 'typescriptreact', 'javascript'],
-    path: 'deno',
-    args: ['lsp'],
-  },
-]
-autocmd User LspSetup call LspAddServer(lspServers)
-
-autocmd BufWritePre * LspFormat
+for [event, cmds] in items({
+  'ColorScheme': [
+    'hi EndOfBuffer guibg=NONE ctermbg=NONE',
+    'hi Normal guibg=NONE ctermbg=NONE',
+    'hi NonText guibg=NONE ctermbg=NONE',
+  ],
+  'FileType': [
+    'netrw setlocal number relativenumber',
+  ],
+   'User': [
+    'LspSetup call LspOptionsSet(lspConfiguration.options)',
+    'LspSetup call LspAddServer(lspConfiguration.servers)',
+  ],
+  'BufWritePre': [
+    'LspFormat',
+  ],
+})
+  for cmd in cmds
+    if event != 'BufWritePre'
+      execute $'autocmd {event} {cmd}'
+    else
+      execute $'autocmd {event} * {cmd}'
+    endif
+  endfor
+endfor
