@@ -19,23 +19,12 @@ sudo launchctl load /System/Library/LaunchDaemons/com.apple.alf.agent.plist 2>/d
 sudo fdesetup enable -user "$USER" | tee ~/Desktop/"FileVault Recovery Key.txt"
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local > /dev/null
 
-CLT_PLACEHOLDER="/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
-sudo touch "$CLT_PLACEHOLDER"
-CLT_PACKAGE=$(softwareupdate -l |
-  grep -B 1 "Command Line Tools" |
-  awk -F"*" '/^ *\*/ {print $2}' |
-  sed -e 's/^ *Label: //' -e 's/^ *//' |
-  sort -V |
-  tail -n1)
-sudo softwareupdate -i "$CLT_PACKAGE"
-sudo rm -rf "$CLT_PLACEHOLDER"
-
-if ! [ -f "/usr/bin/git" ]; then
+if ! xcode-select -p &>/dev/null; then
   xcode-select --install
 fi
 
-if /usr/bin/xcrun clang 2>&1 | grep $Q license; then
-  sudo xcodebuild -license
+if ! /usr/bin/xcrun clang &>/dev/null; then
+  sudo xcodebuild -license accept
 fi
 
 sudo softwareupdate --install --all
