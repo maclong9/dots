@@ -1,6 +1,42 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
+restore() {
+  sudo rm -rf "$HOME/.*" "$HOME/.local/share/mise/" "$CLT_PLACEHOLDER"
+  (crontab -l 2>/dev/null | sed '1d') | crontab -
+}
+
+trap "restore" EXIT
+
+caffeinate -s -w $$ &
+
+sudo defaults write com.apple.screensaver askForPassword -int 1
+sudo defaults write com.apple.screensaver askForPasswordDelay -int 0
+sudo defaults write /Library/Preferences/com.apple.alf globalstate -int 1
+sudo launchctl load /System/Library/LaunchDaemons/com.apple.alf.agent.plist 2>/dev/null
+sudo fdesetup enable -user "$USER" | tee ~/Desktop/"FileVault Recovery Key.txt"
+
+CLT_PLACEHOLDER="/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress"
+sudo touch "$CLT_PLACEHOLDER"
+CLT_PACKAGE=$(softwareupdate -l |
+  grep -B 1 "Command Line Tools" |
+  awk -F"*" '/^ *\*/ {print $2}' |
+  sed -e 's/^ *Label: //' -e 's/^ *//' |
+  sort -V |
+  tail -n1)
+sudo softwareupdate -i "$CLT_PACKAGE"
+sudo rm -rf "$CLT_PLACEHOLDER"
+
+if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
+  xcode-select --install
+fi
+
+if /usr/bin/xcrun clang 2>&1 | grep $Q license; then
+  sudo xcodebuild -license
+fi
+
+sudo softwareupdate --install --all
+
 git clone https://github.com/maclong9/dots .config
 
 for file in .config/.*; do
@@ -15,6 +51,7 @@ eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
 
 (crontab -l 2>/dev/null; echo "0 12 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
+sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local > /dev/null
 
 printf "\033[0;32m✓ Configuration Complete\033[0m\n\
 You may need to restart your terminal for all changes to take effect.\n\
