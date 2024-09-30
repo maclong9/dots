@@ -56,7 +56,7 @@ for [k, v] in items({
   '<leader>p': '<cmd>LspDiag prevWrap<cr>',
   '<leader>r': '<cmd>LspPeekReferences<cr>',
   '<leader>s': '<cmd>LspSymbolSearch<cr>',
-  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
+  '<leader>t': '<cmd>LspGotoTypeDef<cr>',
 })
   execute $'nnoremap {k} {v}'
 endfor
@@ -94,6 +94,12 @@ var lspOptions = {
 autocmd User LspSetup call LspOptionsSet(lspOptions)
 
 var lspServers = [
+  {
+    name: 'clang',
+    filetype: ['c'],
+    path: '/usr/bin/clangd',
+
+  },
   {
     name: 'swift',
     filetype: ['swift'],
