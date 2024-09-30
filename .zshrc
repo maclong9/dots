@@ -3,7 +3,6 @@ export PATH="$PATH:$(find $HOME/.local/share/mise/installs -type d -name bin \
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
-alias _="sudo"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
