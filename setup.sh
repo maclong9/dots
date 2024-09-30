@@ -4,7 +4,7 @@
 trap '
 if [ $? -ne 0 ]; then
   sudo rm -rf "$HOME/.*" "/etc/pam.d/sudo_local"
-  (crontab -l 2>/dev/null | sed "1d") | crontab -
+  (crontab -l 2>/dev/null | sed "2d") | crontab -
 fi
 ' EXIT
 
