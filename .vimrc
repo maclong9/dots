@@ -32,11 +32,7 @@ for o in [
   execute $'set {o}'
 endfor
 
-for o in [
-  'EndOfBuffer',
-  'Normal',
-  'NonText',
-]
+for o in ['EndOfBuffer', 'Normal', 'NonText']
   execute $'autocmd ColorScheme * hi {o} guibg=NONE ctermbg=NONE'
 endfor
 
