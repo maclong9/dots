@@ -42,14 +42,15 @@ for [k, v] in items({
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>R': '<cmd>LspRename<cr>',
   '<leader>a': '<cmd>LspCodeAction<cr>',
   '<leader>d': '<cmd>LspGotoDefinition<cr>',
+  '<leader>e': '<cmd>Explore<cr>',
   '<leader>h': '<cmd>LspHover<cr>',
   '<leader>i': '<cmd>LspGotoImpl<cr>',
   '<leader>n': '<cmd>LspDiag nextWrap<cr>',
   '<leader>p': '<cmd>LspDiag prevWrap<cr>',
   '<leader>r': '<cmd>LspPeekReferences<cr>',
+  '<leader>R': '<cmd>LspRename<cr>',
   '<leader>s': '<cmd>LspSymbolSearch<cr>',
   '<leader>t': '<cmd>LspGotoTypeDef<cr>'
 })
