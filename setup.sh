@@ -1,23 +1,25 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
-trap '
-if [ $? -ne 0 ]; then
-  sudo rm -rf "$HOME"/.{config, gitconfig, gitignore vim, vimrc, zshrc}
-  (crontab -l 2>/dev/null | sed "$d;$d") | crontab -
-fi
-' EXIT
+trap 'cleanup' EXIT
+
+cleanup() {
+  if [ $? -ne 0 ]; then
+    sudo rm -rf "$HOME"/.config "$HOME"/.gitconfig "$HOME"/.gitignore "$HOME"/.vim "$HOME"/.vimrc "$HOME"/.zshrc
+    (crontab -l 2>/dev/null | sed '$d;$d') | crontab -
+  fi
+}
 
 caffeinate -s -w $$ &
 
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
   sudo tee /etc/pam.d/sudo_local > /dev/null
 
-if ! xcode-select -p 2>&1; then
+if ! xcode-select -p >/dev/null 2>&1; then
   xcode-select --install
 fi
 
-if ! /usr/bin/xcrun clang 2>&1; then
+if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
   sudo xcodebuild -license accept
 fi
 
