@@ -3,7 +3,7 @@
 
 trap '
 if [ $? -ne 0 ]; then
-  sudo rm -rf "$HOME/.*" "/etc/pam.d/sudo_local"
+  sudo rm -rf "$HOME"/.{config, gitconfig, gitignore vim, vimrc, zshrc}
   (crontab -l 2>/dev/null | sed "$d;$d") | crontab -
 fi
 ' EXIT
