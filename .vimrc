@@ -27,6 +27,7 @@ for o in [
   'smartcase',
   'smartindent',
   'tabstop=2',
+  'wildmenu'
 ]
   execute $'set {o}'
 endfor
