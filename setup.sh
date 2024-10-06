@@ -5,7 +5,8 @@ trap 'cleanup' EXIT
 
 cleanup() {
   if [ $? -ne 0 ]; then
-    sudo rm -rf "$HOME"/.config "$HOME"/.gitconfig "$HOME"/.gitignore "$HOME"/.vim "$HOME"/.vimrc "$HOME"/.zshrc
+    sudo rm -rf "$HOME"/.config "$HOME"/.gitconfig "$HOME"/.gitignore \
+      "$HOME"/.vim "$HOME"/.vimrc "$HOME"/.zshrc
     (crontab -l 2>/dev/null | sed '$d;$d') | crontab -
   fi
 }
