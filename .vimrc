@@ -31,10 +31,6 @@ for o in [
   execute $'set {o}'
 endfor
 
-for o in ['EndOfBuffer', 'Normal', 'NonText']
-  execute $'autocmd ColorScheme * hi {o} guibg=NONE ctermbg=NONE'
-endfor
-
 for [k, v] in items({
   '<C-h>': '<cmd>wincmd h<cr>',
   '<C-j>': '<cmd>wincmd j<cr>',
@@ -117,7 +113,7 @@ for [k, v] in items({
     if k == 'BufWritePre'
       execute $'autocmd {k} * {w}'
     elseif k == 'ColorScheme'
-      execute $'autocmd {k} hi {w} guibg=NONE ctermbg=NONE'
+      execute $'autocmd {k} * hi {w} guibg=NONE ctermbg=NONE'
     elseif k == 'User'
       execute $'autocmd {k} LspSetup call {w}'
     else
