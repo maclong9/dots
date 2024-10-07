@@ -16,15 +16,17 @@ caffeinate -s -w $$ &
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
   sudo tee /etc/pam.d/sudo_local > /dev/null
 
-if ! xcode-select -p >/dev/null 2>&1; then
-  xcode-select --install
+if  [ "$(uname -s)" = "Darwin" ]; then
+  if ! xcode-select -p >/dev/null 2>&1; then
+    xcode-select --install
+  fi
+  
+  if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
+    sudo xcodebuild -license accept
+  fi
+  
+  sudo softwareupdate --install --all
 fi
-
-if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
-  sudo xcodebuild -license accept
-fi
-
-sudo softwareupdate --install --all
 
 git clone https://github.com/maclong9/dots .config
 for file in .config/.*; do
