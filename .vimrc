@@ -104,21 +104,21 @@ var lspConfiguration = {
   ]
 }
 
-for [k, v] in items({
+for [k, c] in items({
   'ColorScheme': ['EndOfBuffer', 'Normal', 'NonText'],
   'FileType': ['netrw setlocal number relativenumber'],
   'User': [ 'LspOptionsSet(lspConfiguration.options)', 'LspAddServer(lspConfiguration.servers)'],
   'BufWritePre': ['LspFormat'],
 })
-  for w in v
+  for v in c
     if k == 'BufWritePre'
-      execute $'autocmd {k} * {w}'
+      execute $'autocmd {k} * {v}'
     elseif k == 'ColorScheme'
-      execute $'autocmd {k} * hi {w} guibg=NONE ctermbg=NONE'
+      execute $'autocmd {k} * hi {v} guibg=NONE ctermbg=NONE'
     elseif k == 'User'
-      execute $'autocmd {k} LspSetup call {w}'
+      execute $'autocmd {k} LspSetup call {v}'
     else
-      execute $'autocmd {k} {w}'
+      execute $'autocmd {k} {v}'
     endif
   endfor
 endfor
