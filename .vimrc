@@ -22,7 +22,7 @@ for o in [
   'regexpengine=0',
   'relativenumber',
   'scrolloff=999',
-  'shiftwidth=2',
+  'shiftwidth=3',
   'signcolumn=no',
   'smartcase',
   'smartindent',

@@ -41,7 +41,6 @@ eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
 
 (crontab -l 2>/dev/null; echo "0 10 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
-(crontab -l 2>/dev/null; echo "0 10 * * 1 /usr/sbin/softwareupdate --install --all") | crontab -
 
 printf "\033[0;32m✓ Configuration Complete\033[0m\n\
 You may need to restart your terminal for all changes to take effect.\n\
