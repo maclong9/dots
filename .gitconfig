@@ -13,6 +13,7 @@
   br = "!f() { git branch -m $1; }; f"
   c = "commit -m"
   ca = "!f() { git commit --amend -m \"$1\"; }; f"
+	cl = "clone"
   co = "checkout"
   col = "checkout -"
   d = "diff"
@@ -34,8 +35,8 @@
   editor = "vim"
   excludeFile = "$HOME/.gitignore"
 
-[merge]
-  tool = "vimdiff"
+[init]
+	defaultBranch = main
 
 [push]
   autoSetupRemote = true
