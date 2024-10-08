@@ -25,7 +25,8 @@ for [k, v] in items({
   '<C-j>': '<cmd>wincmd j<cr>',
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
-  '<Esc>': '<cmd>nohlsearch<cr>'
+  '<Esc>': '<cmd>nohlsearch<cr>',
+  '<leader>e': '<cmd>Explore<cr>'
 })
   execute $'nnoremap {k} {v}'
 endfor
