@@ -1,8 +1,8 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
+# removes configuration files if script fails
 trap 'cleanup' EXIT
-
 cleanup() {
   if [ $? -ne 0 ]; then
     sudo rm -rf "$HOME"/.config "$HOME"/.gitconfig "$HOME"/.gitignore \
@@ -42,7 +42,7 @@ done
 
 # setup vim Xcode colorscheme
 git clone https://github.com/arzg/vim-colors-xcode.git
-cp -r vim-colors-xcode/{autoload,colors,doc} ~/.vim
+cp -r vim-colors-xcode/autoload vim-colors-xcode/colors vim-colors-xcode/doc ~/.vim
 rm -rf vim-colors-xcode
 
 # install mise and runtimes
