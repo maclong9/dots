@@ -8,9 +8,8 @@ for [k, v] in items({ is_posix: 1, mapleader: ' ', netrw_banner: 0 })
 endfor
 
 for o in [
-  'breakindent', 'cursorline', 'hlsearch', 'incsearch', 'noswapfile',
-  'number', 'relativenumber', 'scrolloff=999', 'shiftwidth=2',
-  'smartcase', 'smartindent', 'tabstop=2', 'wildmenu'
+  'breakindent', 'cursorline', 'hlsearch', 'incsearch', 'noswapfile', 'number', 'relativenumber', 
+	'scrolloff=999', 'shiftwidth=2', 'smartcase', 'smartindent', 'tabstop=2', 'wildmenu'
 ]
   execute $'set {o}'
 endfor
