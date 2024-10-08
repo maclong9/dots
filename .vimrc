@@ -37,20 +37,25 @@ for [k, v] in items({
   '<C-j>': '<cmd>wincmd j<cr>',
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
-  '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>a': '<cmd>LspCodeAction<cr>',
-  '<leader>d': '<cmd>LspGotoDefinition<cr>',
-  '<leader>e': '<cmd>Explore<cr>',
-  '<leader>h': '<cmd>LspHover<cr>',
-  '<leader>i': '<cmd>LspGotoImpl<cr>',
-  '<leader>n': '<cmd>LspDiag nextWrap<cr>',
-  '<leader>p': '<cmd>LspDiag prevWrap<cr>',
-  '<leader>r': '<cmd>LspPeekReferences<cr>',
-  '<leader>R': '<cmd>LspRename<cr>',
-  '<leader>s': '<cmd>LspSymbolSearch<cr>',
-  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
+  '<Esc>': '<cmd>nohlsearch<cr>'
 })
   execute $'nnoremap {k} {v}'
+endfor
+
+for [k, v] in items({
+	'(': '()<Left>',
+	'{': '{}<Left>',
+	'[': '[]<Left>',
+	'"': '""<Left>',
+	"'": "''<Left>",
+  '<C-a>': '<Home>',
+	'<C-e>': '<End>',
+	'<C-b>': '<Left>',
+	'<C-f>': '<Right>',
+	'<C-d>': '<Del>',
+	'<C-h>': '<BS>'
+})
+	execute $'inoremap {k} {v}'
 endfor
 
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -61,53 +66,18 @@ endif
 
 call plug#begin()
   Plug 'arzg/vim-colors-xcode'
-  Plug 'Eliot00/auto-pairs'
   Plug 'mattn/emmet-vim'
-  Plug 'sheerun/vim-polyglot'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-rsi'
   Plug 'tpope/vim-surround'
   Plug 'wellle/targets.vim'
-  Plug 'yegappan/lsp'
 call plug#end()
 
 colorscheme xcode
 
-var lspConfiguration = {
-  options: {
-    autoHighlightDiags: true,
-    diagVirtualTextAlign: 'after',
-    highlightDiagInline: true,
-    ignoreMissingServer: true,
-    outlineOnRight: true,
-    showDiagWithVirtualText: true,
-    usePopupInCodeAction: true,
-  },
-  servers: [
-    {
-      name: 'clang',
-      filetype: ['c'],
-      path: '/usr/bin/clangd',
-    },
-    {
-      name: 'swift',
-      filetype: ['swift'],
-      path: '/usr/bin/sourcekit-lsp',
-    },
-    {
-      name: 'typescript',
-      filetype: ['typescript', 'typescriptreact', 'javascript'],
-      path: 'deno',
-      args: ['lsp'],
-    },
-  ]
-}
-
 for [k, c] in items({
   'ColorScheme': ['EndOfBuffer', 'Normal', 'NonText'],
   'FileType': ['netrw setlocal number relativenumber'],
-  'User': [ 'LspOptionsSet(lspConfiguration.options)', 'LspAddServer(lspConfiguration.servers)'],
   'BufWritePre': ['LspFormat'],
 })
   for v in c
@@ -115,9 +85,6 @@ for [k, c] in items({
       execute $'autocmd {k} * {v}'
     elseif k == 'ColorScheme'
       execute $'autocmd {k} * hi {v} guibg=NONE ctermbg=NONE'
-    elseif k == 'User'
-      execute $'autocmd {k} LspSetup call {v}'
-    else
       execute $'autocmd {k} {v}'
     endif
   endfor
