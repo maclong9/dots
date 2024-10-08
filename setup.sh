@@ -14,7 +14,7 @@ cleanup() {
 # stop machine from sleeping while script runs
 if [ "$(uname -s)" = "Darwin" ]; then caffeinate -s -w $$ & fi
 
-# enable TouchID for `sudo`
+# enable Touch ID for `sudo`
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
   sudo tee /etc/pam.d/sudo_local > /dev/null
 
