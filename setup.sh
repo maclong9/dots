@@ -13,9 +13,11 @@ cleanup() {
 
 caffeinate -s -w $$ &
 
+# enable TouchID for `sudo`
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
   sudo tee /etc/pam.d/sudo_local > /dev/null
 
+# install Xcode & cli tools, accept license and update
 if  [ "$(uname -s)" = "Darwin" ]; then
   if ! xcode-select -p >/dev/null 2>&1; then
     xcode-select --install
@@ -28,6 +30,7 @@ if  [ "$(uname -s)" = "Darwin" ]; then
   sudo softwareupdate --install --all
 fi
 
+# clone configuration files and symlink to home directory
 git clone https://github.com/maclong9/dots .config
 for file in .config/.*; do
   case "$(basename "$file")" in
@@ -36,14 +39,17 @@ for file in .config/.*; do
   esac
 done
 
+# setup vim Xcode colorscheme
 git clone https://github.com/arzg/vim-colors-xcode.git
 cp -r vim-colors-xcode/{autoload,colors,doc} ~/.vim
 rm -rf vim-colors-xcode
 
+# install mise and runtimes
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
 
+# cron for updating runtimes
 (crontab -l 2>/dev/null; echo "0 10 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
 
 printf "\033[0;32m✓ Configuration Complete\033[0m\n\
