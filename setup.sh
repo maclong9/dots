@@ -36,6 +36,10 @@ for file in .config/.*; do
   esac
 done
 
+git clone https://github.com/arzg/vim-colors-xcode.git
+cp -r vim-colors-xcode/{autoload,colors,doc} ~/.vim
+rm -rf vim-colors-xcode
+
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
