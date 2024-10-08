@@ -11,7 +11,8 @@ cleanup() {
   fi
 }
 
-caffeinate -s -w $$ &
+# stop machine from sleeping while script runs
+if [ "$(uname -s)" = "Darwin" ]; then caffeinate -s -w $$ & fi
 
 # enable TouchID for `sudo`
 sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
@@ -52,6 +53,4 @@ mise install -y
 # cron for updating runtimes
 (crontab -l 2>/dev/null; echo "0 10 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
 
-printf "\033[0;32m✓ Configuration Complete\033[0m\n\
-You may need to restart your terminal for all changes to take effect.\n\
-Make sure to run '\033[0;34mgh auth login\033[0m'\n"
+printf "Configuration complete\nMake sure to authenticate the GitHub cli\n"
