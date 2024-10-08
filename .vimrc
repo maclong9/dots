@@ -1,91 +1,76 @@
 vim9script
-syntax enable
-&t_EI = "\e[2 q"
-&t_SI = "\e[6 q"
 
-for [k, v] in items({
+syntax enable
+colorscheme xcode
+
+var globals = {
   is_posix: 1,
   mapleader: ' ',
   netrw_banner: 0,
-})
-  execute $'g:{k} = {string(v)}'
-endfor
+}
 
-for o in [
-  'breakindent',
-  'cursorline',
-  'hlsearch',
-  'incsearch',
-  'noshowmode',
-  'noswapfile',
-  'number',
-  'regexpengine=0',
-  'relativenumber',
-  'scrolloff=999',
-  'shiftwidth=3',
-  'signcolumn=no',
-  'smartcase',
-  'smartindent',
-  'tabstop=2',
-  'wildmenu'
+var options = [
+  'breakindent', 'cursorline', 'hlsearch', 'incsearch', 'noswapfile',
+	'number', 'relativenumber', 'scrolloff=999', 'shiftwidth=2',
+  'smartcase', 'smartindent', 'tabstop=2', 'wildmenu'
 ]
-  execute $'set {o}'
-endfor
 
-for [k, v] in items({
+var normal_mappings = {
   '<C-h>': '<cmd>wincmd h<cr>',
   '<C-j>': '<cmd>wincmd j<cr>',
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>'
-})
+}
+
+var insert_mappings = {
+  '<C-a>': '<Home>',
+  '<C-e>': '<End>',
+  '<C-b>': '<Left>',
+  '<C-f>': '<Right>',
+  '<C-d>': '<Del>',
+  '<C-h>': '<BS>'
+}
+
+var auto_commands = {
+  'ColorScheme': ['EndOfBuffer', 'Normal', 'NonText'],
+  'FileType': ['netrw setlocal number relativenumber'],
+}
+
+var text_objects = ['()', '{}', '[]', '<>', "''", '""', '``']
+
+command -nargs=* G echo system('git ' .. <q-args>)
+
+for [k, v] in items(globals)
+  execute $'g:{k} = {string(v)}'
+endfor
+
+for o in options
+  execute $'set {o}'
+endfor
+
+for [k, v] in items(normal_mappings)
   execute $'nnoremap {k} {v}'
 endfor
 
-for [k, v] in items({
-	'(': '()<Left>',
-	'{': '{}<Left>',
-	'[': '[]<Left>',
-	'"': '""<Left>',
-	"'": "''<Left>",
-  '<C-a>': '<Home>',
-	'<C-e>': '<End>',
-	'<C-b>': '<Left>',
-	'<C-f>': '<Right>',
-	'<C-d>': '<Del>',
-	'<C-h>': '<BS>'
-})
-	execute $'inoremap {k} {v}'
+for obj in text_objects
+  execute $'onoremap in{obj[0]} :<c-u>normal! f{obj[0]}vi{obj[0]}<cr>'
+  execute $'onoremap an{obj[0]} :<c-u>normal! f{obj[0]}va{obj[0]}<cr>'
+  execute $'onoremap il{obj[0]} :<c-u>normal! F{obj[1]}vi{obj[0]}<cr>'
+  execute $'onoremap al{obj[0]} :<c-u>normal! F{obj[1]}va{obj[0]}<cr>'
+  execute $'inoremap {obj[0]} {obj}<Left>'
 endfor
 
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
+for [k, v] in items(insert_mappings)
+  execute $'inoremap {k} {v}'
+endfor
 
-call plug#begin()
-  Plug 'arzg/vim-colors-xcode'
-  Plug 'mattn/emmet-vim'
-  Plug 'tpope/vim-commentary'
-  Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-surround'
-  Plug 'wellle/targets.vim'
-call plug#end()
-
-colorscheme xcode
-
-for [k, c] in items({
-  'ColorScheme': ['EndOfBuffer', 'Normal', 'NonText'],
-  'FileType': ['netrw setlocal number relativenumber'],
-  'BufWritePre': ['LspFormat'],
-})
-  for v in c
-    if k == 'BufWritePre'
-      execute $'autocmd {k} * {v}'
-    elseif k == 'ColorScheme'
-      execute $'autocmd {k} * hi {v} guibg=NONE ctermbg=NONE'
-      execute $'autocmd {k} {v}'
+for [k, v] in items(auto_commands)
+  for w in v
+    if k == 'ColorScheme'
+      execute $'autocmd {k} * hi {w} guibg=NONE ctermbg=NONE'
+    else
+      execute $'autocmd {k} {w}'
     endif
   endfor
 endfor
