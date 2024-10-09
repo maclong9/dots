@@ -56,4 +56,3 @@ for [k, v] in items({
 })
   execute $'inoremap {k} {v}'
 endfor
-
