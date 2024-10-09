@@ -1,5 +1,13 @@
 vim9script
 syntax enable
+
+# clone `xcode` colorscheme if missing then set
+if !filereadable(expand('~/.vim/colors/xcode.vim'))
+  silent !mkdir -p ~/.vim/autoload ~/.vim/colors ~/.vim/doc
+  silent !git clone https://github.com/arzg/vim-colors-xcode.git /tmp/vim-colors-xcode
+  silent !cp -r /tmp/vim-colors-xcode/{autoload,colors,doc} ~/.vim
+  silent !rm -rf /tmp/vim-colors-xcode
+endif
 colorscheme xcode
 
 # use `:G` to invoke `git` commands
@@ -19,7 +27,7 @@ for o in [
   execute $'set {o}'
 endfor
 
-# autocommand for transparent background and line numbers in file explorer
+# transparent background and line numbers in file explorer
 for g in ['EndOfBuffer', 'Normal', 'NonText']
   execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
 endfor
@@ -48,3 +56,4 @@ for [k, v] in items({
 })
   execute $'inoremap {k} {v}'
 endfor
+

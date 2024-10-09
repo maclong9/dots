@@ -40,11 +40,6 @@ for file in .config/.*; do
   esac
 done
 
-# setup vim Xcode colorscheme
-git clone https://github.com/arzg/vim-colors-xcode.git
-cp -r vim-colors-xcode/autoload vim-colors-xcode/colors vim-colors-xcode/doc ~/.vim
-rm -rf vim-colors-xcode
-
 # install mise & runtimes then create cron for updating runtimes
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
