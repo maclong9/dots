@@ -1,7 +1,7 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
-# restores system to previous state if script fails
+# restore system to previous state if non-zero exit code
 trap 'cleanup' EXIT
 cleanup() {
   if [ $? -ne 0 ]; then
@@ -11,9 +11,9 @@ cleanup() {
   fi
 }
 
-# checks if running on macOS
+# check if running on macOS
 if  [ "$(uname -s)" = "Darwin" ]; then
-  # keeps machine awake while script is running
+  # keep machine awake while script is running
 	caffeinate -s -w $$
 
 	# enable Touch ID for `sudo`
@@ -45,7 +45,7 @@ git clone https://github.com/arzg/vim-colors-xcode.git
 cp -r vim-colors-xcode/autoload vim-colors-xcode/colors vim-colors-xcode/doc ~/.vim
 rm -rf vim-colors-xcode
 
-# install mise and runtimes and creates cron for updating runtimes
+# install mise & runtimes then create cron for updating runtimes
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
