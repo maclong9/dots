@@ -36,7 +36,7 @@
   excludeFile = "$HOME/.gitignore"
 
 [init]
-	defaultBranch = main
+	defaultBranch = "main"
 
 [push]
   autoSetupRemote = true
