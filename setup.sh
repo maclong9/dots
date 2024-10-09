@@ -20,12 +20,12 @@ if  [ "$(uname -s)" = "Darwin" ]; then
 	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
 	  sudo tee /etc/pam.d/sudo_local > /dev/null
 
-	# install Xcode and cli tools
+	# install developer tools
   if ! xcode-select -p >/dev/null 2>&1; then
     xcode-select --install
   fi
   
-  # accept Apple developer tools license
+  # accept developer tools license
   if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
     sudo xcodebuild -license accept
   fi
