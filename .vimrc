@@ -12,8 +12,9 @@ endfor
 
 # set options
 for o in [
-  'breakindent', 'cursorline', 'hlsearch', 'incsearch', 'noswapfile', 'number', 'relativenumber', 
-	'scrolloff=999', 'shiftwidth=2', 'smartcase', 'smartindent', 'tabstop=2', 'wildmenu'
+  'breakindent', 'cursorline', 'hlsearch', 'incsearch', 'noswapfile', 
+	'number', 'relativenumber', 'regexpengine=0', 'scrolloff=999',
+	'shiftwidth=2', 'smartcase', 'smartindent', 'tabstop=2', 'wildmenu'
 ]
   execute $'set {o}'
 endfor

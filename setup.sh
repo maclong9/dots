@@ -1,34 +1,34 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
-# removes configuration files if script fails
+# restores system to previous state if script fails
 trap 'cleanup' EXIT
 cleanup() {
   if [ $? -ne 0 ]; then
     sudo rm -rf "$HOME"/.config "$HOME"/.gitconfig "$HOME"/.gitignore \
-      "$HOME"/.vim "$HOME"/.vimrc "$HOME"/.zshrc
+      "$HOME"/.vim "$HOME"/.vimrc "$HOME"/.zshrc /etc/pam.d/sudo_local
     (crontab -l 2>/dev/null | sed '$d;$d') | crontab -
   fi
 }
 
-# stop machine from sleeping while script runs
-if [ "$(uname -s)" = "Darwin" ]; then caffeinate -s -w $$ & fi
-
-# enable Touch ID for `sudo`
-sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
-  sudo tee /etc/pam.d/sudo_local > /dev/null
-
-# install Xcode & cli tools, accept license and update
+# checks if running on macOS
 if  [ "$(uname -s)" = "Darwin" ]; then
+  # keeps machine awake while script is running
+	caffeinate -s -w $$
+
+	# enable Touch ID for `sudo`
+	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
+	  sudo tee /etc/pam.d/sudo_local > /dev/null
+
+	# install Xcode and cli tools
   if ! xcode-select -p >/dev/null 2>&1; then
     xcode-select --install
   fi
   
+  # accept Apple developer tools license
   if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
     sudo xcodebuild -license accept
   fi
-  
-  sudo softwareupdate --install --all
 fi
 
 # clone configuration files and symlink to home directory
@@ -45,12 +45,10 @@ git clone https://github.com/arzg/vim-colors-xcode.git
 cp -r vim-colors-xcode/autoload vim-colors-xcode/colors vim-colors-xcode/doc ~/.vim
 rm -rf vim-colors-xcode
 
-# install mise and runtimes
+# install mise and runtimes and creates cron for updating runtimes
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
-
-# cron for updating runtimes
 (crontab -l 2>/dev/null; echo "0 10 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
 
 printf "Configuration complete\nMake sure to authenticate the GitHub cli\n"
