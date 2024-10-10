@@ -40,7 +40,7 @@ for file in .config/.*; do
   esac
 done
 
-# install mise & runtimes then create cron for updating runtimes
+# install mise & runtimes then create cron for updating runtimes every Monday at 10
 curl https://mise.run | sh
 eval "$("$HOME"/.local/bin/mise activate zsh)"
 mise install -y
