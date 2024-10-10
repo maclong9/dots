@@ -14,7 +14,7 @@ colorscheme xcode
 command -nargs=* G echo system('git ' .. <q-args>)
 
 # global variables
-for [k, v] in items({ is_posix: 1, mapleader: ' ', netrw_banner: 0 })
+for [k, v] in items({ is_posix: 1, netrw_banner: 0 })
   execute $'g:{k} = {string(v)}'
 endfor
 
