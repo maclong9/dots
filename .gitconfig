@@ -29,6 +29,7 @@
   sh = "show"
   st = "stash push -u"
   sr = "stash pop"
+  rs = "restore"
   u = "reset --soft HEAD~1"
 
 [core]
