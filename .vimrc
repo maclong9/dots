@@ -3,7 +3,7 @@ syntax enable
 
 # clone `xcode` colorscheme if missing then set
 if !filereadable(expand('~/.vim/colors/xcode.vim'))
-  silent !mkdir -p ~/.vim/autoload ~/.vim/colors ~/.vim/doc
+  silent !mkdir -p ~/.vim
   silent !git clone https://github.com/arzg/vim-colors-xcode.git /tmp/vim-colors-xcode
   silent !cp -r /tmp/vim-colors-xcode/{autoload,colors,doc} ~/.vim
   silent !rm -rf /tmp/vim-colors-xcode
@@ -55,4 +55,17 @@ for [k, v] in items({
   '<C-h>': '<BS>'
 })
   execute $'inoremap {k} {v}'
+endfor
+
+# command mode mappings
+for [k, v] in items({
+	'<C-a>': '<Home>',
+	'<C-e>': '<End>',
+	'<C-b>': '<Left>',
+	'<C-f>': '<Right>',
+	'<C-d>': '<Del>',
+	'<M-b>': '<S-Left>',
+  '<M-f>': '<S-Right>'
+})
+	execute $'cnoremap {k} {v}'
 endfor
