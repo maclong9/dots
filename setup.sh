@@ -13,9 +13,9 @@ cleanup() {
 
 # check if running on macOS
 if  [ "$(uname -s)" = "Darwin" ]; then
-# enable Touch ID for `sudo`
-sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
-  sudo tee /etc/pam.d/sudo_local > /dev/null
+	# enable Touch ID for `sudo`
+	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template |
+ 		sudo tee /etc/pam.d/sudo_local > /dev/null
 
 	# install developer tools
 	if ! xcode-select -p >/dev/null 2>&1; then
