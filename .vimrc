@@ -3,10 +3,8 @@ syntax enable
 
 # clone `xcode` colorscheme if missing then set
 if !filereadable(expand('~/.vim/colors/xcode.vim'))
-  silent !mkdir -p ~/.vim
-  silent !git clone https://github.com/arzg/vim-colors-xcode.git /tmp/vim-colors-xcode
-  silent !cp -r /tmp/vim-colors-xcode/{autoload,colors,doc} ~/.vim
-  silent !rm -rf /tmp/vim-colors-xcode
+  silent !mkdir -p ~/.vim/colors
+  silent !cp ~/.config/xcode.vim ~/.vim/colors
 endif
 colorscheme xcode
 
@@ -40,21 +38,8 @@ for [k, v] in items({
   '<C-k>': '<cmd>wincmd k<cr>',
   '<C-l>': '<cmd>wincmd l<cr>',
   '<Esc>': '<cmd>nohlsearch<cr>',
-  '<leader>e': '<cmd>Explore<cr>'
 })
   execute $'nnoremap {k} {v}'
-endfor
-
-# insert mode mappings
-for [k, v] in items({
-  '<C-a>': '<Home>',
-  '<C-e>': '<End>',
-  '<C-b>': '<Left>',
-  '<C-f>': '<Right>',
-  '<C-d>': '<Del>',
-  '<C-h>': '<BS>'
-})
-  execute $'inoremap {k} {v}'
 endfor
 
 # command mode mappings
@@ -64,8 +49,8 @@ for [k, v] in items({
 	'<C-b>': '<Left>',
 	'<C-f>': '<Right>',
 	'<C-d>': '<Del>',
-	'<M-b>': '<S-Left>',
-  '<M-f>': '<S-Right>'
+	'<M-b>': '<Shift-Left>', # TODO: Figure out why the Meta based keys just cancel command mode
+  '<M-f>': '<Shift-Right>'
 })
 	execute $'cnoremap {k} {v}'
 endfor
