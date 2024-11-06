@@ -1,13 +1,5 @@
 vim9script
 syntax enable
-
-# clone `xcode` colorscheme if missing then set
-if !filereadable(expand('~/.vim/colors/xcode.vim'))
-	silent !mkdir -p ~/.vim
-	silent !git clone https://github.com/arzg/vim-colors-xcode.git /tmp/vim-colors-xcode
-	silent !cp -r /tmp/vim-colors-xcode/{autoload,colors,doc} ~/.vim
-	silent !rm -rf /tmp/vim-colors-xcode
-endif
 colorscheme xcode
 
 # use `:G` to invoke `git` commands
@@ -33,26 +25,64 @@ for g in ['EndOfBuffer', 'Normal', 'NonText']
 endfor
 autocmd FileType netrw setlocal number relativenumber
 
-# normal mode mappings
+# keymaps
 for [k, v] in items({
-	'<C-h>': '<cmd>wincmd h<cr>',
-	'<C-j>': '<cmd>wincmd j<cr>',
-	'<C-k>': '<cmd>wincmd k<cr>',
-	'<C-l>': '<cmd>wincmd l<cr>',
-	'<Esc>': '<cmd>nohlsearch<cr>'
+  '<C-h>': '<cmd>wincmd h<cr>',
+  '<C-j>': '<cmd>wincmd j<cr>',
+  '<C-k>': '<cmd>wincmd k<cr>',
+  '<C-l>': '<cmd>wincmd l<cr>',
+  '<Esc>': '<cmd>nohlsearch<cr>',
+  '<leader>a': '<cmd>LspCodeAction<cr>',
+  '<leader>d': '<cmd>LspGotoDefinition<cr>',
+  '<leader>e': '<cmd>Explore<cr>',
+  '<leader>h': '<cmd>LspHover<cr>',
+  '<leader>i': '<cmd>LspGotoImpl<cr>',
+  '<leader>n': '<cmd>LspDiag nextWrap<cr>',
+  '<leader>p': '<cmd>LspDiag prevWrap<cr>',
+  '<leader>r': '<cmd>LspPeekReferences<cr>',
+  '<leader>R': '<cmd>LspRename<cr>',
+  '<leader>s': '<cmd>LspSymbolSearch<cr>',
+  '<leader>t': '<cmd>LspGotoTypeDef<cr>'
 })
   execute $'nnoremap {k} {v}'
 endfor
 
-# command mode mappings
-for [k, v] in items({
-	'<C-a>': '<Home>',
-	'<C-e>': '<End>',
-	'<C-b>': '<Left>',
-	'<C-f>': '<Right>',
-	'<C-d>': '<Del>',
-	'<M-b>': '<S-Left>',
-  	'<M-f>': '<S-Right>'
-})
-	execute $'cnoremap {k} {v}'
-endfor
+# a few simple plugins
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+  Plug 'arzg/vim-colors-xcode'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-surround'
+	Plug 'tpope/vim-rsi'
+  Plug 'wellle/targets.vim'
+	Plug 'yegappan/lsp'
+call plug#end()
+
+var lspConfiguration = {
+  options: {
+    autoHighlightDiags: true,
+    diagVirtualTextAlign: 'after',
+    highlightDiagInline: true,
+    ignoreMissingServer: true,
+    outlineOnRight: true,
+    showDiagWithVirtualText: true,
+    usePopupInCodeAction: true,
+  },
+  servers: [
+    { name: 'clang', filetype: ['c'], path: '/usr/bin/clangd' },
+    { 
+			name: 'typescript',
+			filetype: ['typescript', 'typescriptreact', 'javascript'], 
+			path: 'typescript-language-server', 
+			args: ['--stdio'] 
+		},
+  ]
+}
+
+autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
+autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
