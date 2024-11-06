@@ -65,12 +65,6 @@ call plug#end()
 
 var lspConfiguration = {
   options: {
-    autoHighlightDiags: true,
-    diagVirtualTextAlign: 'after',
-    highlightDiagInline: true,
-    ignoreMissingServer: true,
-    outlineOnRight: true,
-    showDiagWithVirtualText: true,
     usePopupInCodeAction: true,
   },
   servers: [
