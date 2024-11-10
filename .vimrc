@@ -54,7 +54,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-# a few simple qol plugins
+# plugin list
 call plug#begin()
 	Plug 'arzg/vim-colors-xcode'
 	Plug 'tpope/vim-commentary'
@@ -64,6 +64,7 @@ call plug#begin()
 	Plug 'yegappan/lsp'
 call plug#end()
 
+# lsp configuration
 var lspConfiguration = {
 	options: {
 		usePopupInCodeAction: true,
@@ -82,6 +83,5 @@ var lspConfiguration = {
 		},
 	]
 }
-
 autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
 autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
