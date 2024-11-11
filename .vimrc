@@ -75,6 +75,22 @@ var lspConfiguration = {
 			filetype: ['c'], 
 			path: '/usr/bin/clangd' 
 		},
+		{
+			name: 'css',
+			filetype: ['css', 'scss', 'less'],
+			path: 'vscode-css-language-server',
+			args: ['--stdio'],
+			initializationOptions: {
+				provideFormatter: true,
+				css: { validate: true },
+			},
+		},
+		{
+			name: 'tailwind',
+			filetype: ['typescriptreact'],
+			path: 'tailwindcss-language-server',
+			args: ['--stdio'],
+		},
 		{ 
 			name: 'typescript',
 			filetype: ['typescript', 'typescriptreact', 'javascript'], 
