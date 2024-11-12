@@ -58,8 +58,10 @@ endif
 call plug#begin()
 	Plug 'arzg/vim-colors-xcode'
 	Plug 'tpope/vim-commentary'
-	Plug 'tpope/vim-surround'
+	Plug 'tpope/vim-obsession'
 	Plug 'tpope/vim-rsi'
+	Plug 'tpope/vim-sleuth'
+	Plug 'tpope/vim-surround'
 	Plug 'wellle/targets.vim'
 	Plug 'yegappan/lsp'
 call plug#end()
