@@ -6,6 +6,7 @@ export PROMPT="%F{white}%n %B%F{brightwhite}%~
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
+alias c="clear"
 
 kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2};  }
