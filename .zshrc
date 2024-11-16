@@ -13,5 +13,4 @@ alias vs="vim -S Session.vim"
 kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2};  }
 
-eval "$(zoxide init zsh)"
-eval "$(~/.local/bin/mise activate zsh)"
+source "$HOME/.asdf/asdf.sh"

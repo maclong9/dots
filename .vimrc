@@ -31,28 +31,34 @@ autocmd FileType netrw setlocal number relativenumber
 
 # keymaps
 for [k, v] in items({
-    '<C-h>': '<cmd>wincmd h<cr>',
-    '<C-j>': '<cmd>wincmd j<cr>',
-    '<C-k>': '<cmd>wincmd k<cr>',
-    '<C-l>': '<cmd>wincmd l<cr>',
-    '<Esc>': '<cmd>nohlsearch<cr>',
-    '<leader>a': '<cmd>LspCodeAction<cr>',
-    '<leader>d': '<cmd>LspGotoDefinition<cr>',
-    '<leader>e': '<cmd>Explore<cr>',
-    '<leader>h': '<cmd>LspHover<cr>',
-    '<leader>i': '<cmd>LspGotoImpl<cr>',
-    '<leader>n': '<cmd>LspDiag nextWrap<cr>',
-    '<leader>p': '<cmd>LspDiag prevWrap<cr>',
-    '<leader>r': '<cmd>LspPeekReferences<cr>',
-    '<leader>R': '<cmd>LspRename<cr>',
-    '<leader>s': '<cmd>LspSymbolSearch<cr>',
-    '<leader>t': '<cmd>LspGotoTypeDef<cr>',
-    '<leader>f': '<cmd>Files<cr>',
-    '<leader>b': '<cmd>Buffers<cr>',
-    '<leader>g': '<cmd>Rg<cr>',
-    '<leader>c': '<cmd>Commits<cr>',
-    '<leader>m': '<cmd>Maps<cr>',
-    '<leader>/': '<cmd>Commands<cr>'
+	'<Esc>': '<cmd>nohlsearch<cr>',
+	'<C-h>': '<cmd>wincmd h<cr>',
+	'<C-j>': '<cmd>wincmd j<cr>',
+	'<C-k>': '<cmd>wincmd k<cr>',
+	'<C-l>': '<cmd>wincmd l<cr>',
+	'<S-h>': '<cmd>tabp<cr>',
+	'<S-l>': '<cmd>tabn<cr>',
+	'<leader>1': '1gt',
+	'<leader>2': '2gt',
+	'<leader>3': '3gt',
+	'<leader>4': '4gt',
+	'<leader>5': '5gt',
+	'<leader>a': '<cmd>LspCodeAction<cr>',
+	'<leader>d': '<cmd>LspGotoDefinition<cr>',
+	'<leader>e': '<cmd>Explore<cr>',
+	'<leader>h': '<cmd>LspHover<cr>',
+	'<leader>i': '<cmd>LspGotoImpl<cr>',
+	'<leader>n': '<cmd>LspDiag nextWrap<cr>',
+	'<leader>p': '<cmd>LspDiag prevWrap<cr>',
+	'<leader>r': '<cmd>LspPeekReferences<cr>',
+	'<leader>R': '<cmd>LspRename<cr>',
+	'<leader>s': '<cmd>LspSymbolSearch<cr>',
+	'<leader>t': '<cmd>LspGotoTypeDef<cr>',
+	'<leader>f': '<cmd>Files<cr>',
+	'<leader>b': '<cmd>Buffers<cr>',
+	'<leader>c': '<cmd>Commits<cr>',
+	'<leader>m': '<cmd>Maps<cr>',
+	'<leader>/': '<cmd>Commands<cr>',
 })
   execute $'nnoremap {k} {v}'
 endfor
@@ -66,13 +72,14 @@ endif
 
 # plugin list
 call plug#begin()
-	Plug 'arzg/vim-colors-xcode'
+	Plug 'lunacookies/vim-colors-xcode'
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
+	Plug 'junegunn/fzf.vim'
 	Plug 'mattn/emmet-vim'
 	Plug 'tpope/vim-commentary'
 	Plug 'tpope/vim-obsession'
 	Plug 'tpope/vim-rsi'
+	Plug 'tpope/vim-sleuth'
 	Plug 'tpope/vim-surround'
 	Plug 'wellle/targets.vim'
 	Plug 'yegappan/lsp'
@@ -116,3 +123,4 @@ var lspConfiguration = {
 }
 autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
 autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
+autocmd BufWritePost *.c,*.ts,*.tsx :LspFormat

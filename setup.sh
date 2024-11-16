@@ -37,10 +37,12 @@ for file in .config/.*; do
 	esac
 done
 
-# install mise & runtimes then create cron for updating runtimes every Monday at 10
-curl https://mise.run | sh
-eval "$("$HOME"/.local/bin/mise activate zsh)"
-mise install -y
-(crontab -l 2>/dev/null; echo "0 10 * * 1 /Users/maclong/.local/bin/mise upgrade") | crontab -
+# install asdf & runtimes then create cron for updating runtimes every Monday at 10
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
+source "$HOME/.asdf/asdf.sh"
+asdf plugin add github-cli; asdf plugin add nodejs
+asdf install github-cli latest; asdf global nodejs lts
+asdf install
+(crontab -l 2>/dev/null; echo "0 10 * * 1 asdf update && asdf plugin update --all") | crontab -
 
 printf "Configuration complete\nMake sure to authenticate the GitHub cli\n"
