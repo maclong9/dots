@@ -12,5 +12,3 @@ alias vs="vim -S Session.vim"
 
 kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2};  }
-
-source "$HOME/.asdf/asdf.sh"
