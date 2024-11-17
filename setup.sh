@@ -37,12 +37,12 @@ for file in .config/.*; do
 	esac
 done
 
-# install asdf & runtimes then create cron for updating runtimes every Monday at 10
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
-source "$HOME/.asdf/asdf.sh"
-asdf plugin add github-cli; asdf plugin add nodejs
-asdf install github-cli latest; asdf global nodejs lts
-asdf install
-(crontab -l 2>/dev/null; echo "0 10 * * 1 asdf update && asdf plugin update --all") | crontab -
+# install tooling
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+nvm install 22
+npm i -g tailwindcss-language-server typescript-language-server vscode-langservers-extracted
+
+# setup cron tasks
+0 10 * * * /Users/maclong/.save-the-world.sh
 
 printf "Configuration complete\nMake sure to authenticate the GitHub cli\n"
