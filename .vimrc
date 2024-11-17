@@ -1,33 +1,39 @@
 vim9script
 syntax enable
 
-# use `:G` to invoke `git` commands
-command -nargs=* G echo system('git ' .. <q-args>)
-
 # global variables
-for [k, v] in items({ 
-	is_posix: 1, 
-	netrw_banner: 0 
-})
+for [k, v] in items({ is_posix: 1, netrw_banner: 0 })
 	execute $'g:{k} = {string(v)}'
 endfor
 
 # set options
 for o in [
-	'breakindent', 'cursorline', 'hlsearch', 'incsearch', 
-	'noswapfile', 'number', 'relativenumber', 'regexpengine=0', 
-	'shiftwidth=4', 'smartcase', 'smartindent', 'splitbelow', 
-	'splitright', 'tabstop=4', 'wildmenu'
+	'breakindent',
+	'cursorline',
+	'hlsearch',
+	'incsearch',
+	'noswapfile',
+	'number',
+	'regexpengine=0',
+	'relativenumber',
+	'shiftwidth=4',
+	'smartcase',
+	'smartindent',
+	'splitbelow',
+	'splitright',
+	'tabstop=4',
+	'wildmenu',
 ]
 	execute $'set {o}'
 endfor
 
-# transparent background and line numbers in file explorer
+# transparent background
 for g in ['EndOfBuffer', 'Normal', 'NonText']
 	execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
 endfor
-autocmd FileType netrw setlocal number relativenumber
 
+# add line numbers to explorer
+autocmd FileType netrw setlocal number relativenumber
 
 # keymaps
 for [k, v] in items({
@@ -72,17 +78,19 @@ endif
 
 # plugin list
 call plug#begin()
-	Plug 'lunacookies/vim-colors-xcode'
-	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-	Plug 'junegunn/fzf.vim'
-	Plug 'mattn/emmet-vim'
-	Plug 'tpope/vim-commentary'
-	Plug 'tpope/vim-obsession'
-	Plug 'tpope/vim-rsi'
-	Plug 'tpope/vim-sleuth'
-	Plug 'tpope/vim-surround'
-	Plug 'wellle/targets.vim'
-	Plug 'yegappan/lsp'
+	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } # Fuzzy Finder CLI
+	Plug 'junegunn/fzf.vim' # In Editor Fuzzy Finder
+	Plug 'junegunn/gv.vim' # Git Commit Viewer
+	Plug 'lunacookies/vim-colors-xcode' # Colorscheme
+	Plug 'mattn/emmet-vim' # HTML Shorthand Syntax 
+	Plug 'tpope/vim-commentary' # Quickly Toggle Comments
+	Plug 'tpope/vim-fugitive' # Perform Git Commands in Editor
+	Plug 'tpope/vim-obsession' # Automatically Track Vim Session
+	Plug 'tpope/vim-rsi' # Readline Commands in Command Mode
+	Plug 'tpope/vim-sleuth' # Automatic Indentation Detection
+	Plug 'tpope/vim-surround' # Quick Edit Surrounding Pairs
+	Plug 'wellle/targets.vim' # Additional Text Objects
+	Plug 'yegappan/lsp' # Language Server Implementation
 call plug#end()
 colorscheme xcode
 
