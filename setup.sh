@@ -41,7 +41,7 @@ done
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 source "$HOME/.nvm/nvm.sh"
 nvm install 22
-npm i -g tailwindcss-language-server typescript-language-server vscode-langservers-extracted
+"$HOME/.nvm/versions/node/v22.11.0/bin/npm" i -g tailwindcss-language-server typescript-language-server vscode-langservers-extracted
 
 # setup cron tasks
 0 10 * * * /Users/maclong/.save-the-world.sh
