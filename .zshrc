@@ -1,5 +1,3 @@
-export PATH="$PATH:$(find $HOME/.local/share/mise/installs -type d -name bin \
-	| tr '\n' ':' | sed 's/:$//')"
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
@@ -12,3 +10,7 @@ alias vs="vim -S Session.vim"
 
 kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2};  }
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
