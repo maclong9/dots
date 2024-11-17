@@ -37,11 +37,14 @@ autocmd FileType netrw setlocal number relativenumber
 
 # keymaps
 for [k, v] in items({
-	'<Esc>': '<cmd>nohlsearch<cr>',
+	# Clear highlights from search
+	'<Esc>': '<cmd>nohlsearch<cr>', 
+	# Quicker Pane Switching
 	'<C-h>': '<cmd>wincmd h<cr>',
 	'<C-j>': '<cmd>wincmd j<cr>',
 	'<C-k>': '<cmd>wincmd k<cr>',
 	'<C-l>': '<cmd>wincmd l<cr>',
+	# Tab Switching
 	'<S-h>': '<cmd>tabp<cr>',
 	'<S-l>': '<cmd>tabn<cr>',
 	'<leader>1': '1gt',
@@ -49,6 +52,7 @@ for [k, v] in items({
 	'<leader>3': '3gt',
 	'<leader>4': '4gt',
 	'<leader>5': '5gt',
+	# LSP Mappings
 	'<leader>a': '<cmd>LspCodeAction<cr>',
 	'<leader>d': '<cmd>LspGotoDefinition<cr>',
 	'<leader>e': '<cmd>Explore<cr>',
@@ -60,6 +64,7 @@ for [k, v] in items({
 	'<leader>R': '<cmd>LspRename<cr>',
 	'<leader>s': '<cmd>LspSymbolSearch<cr>',
 	'<leader>t': '<cmd>LspGotoTypeDef<cr>',
+	# Fuzzy Finder
 	'<leader>f': '<cmd>Files<cr>',
 	'<leader>b': '<cmd>Buffers<cr>',
 	'<leader>c': '<cmd>Commits<cr>',
