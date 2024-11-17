@@ -46,4 +46,4 @@ npm i -g tailwindcss-language-server typescript-language-server vscode-langserve
 # setup cron tasks
 0 10 * * * /Users/maclong/.save-the-world.sh
 
-printf "Configuration complete\nMake sure to authenticate the GitHub cli\n"
+printf "Configuration complete\n"
