@@ -39,6 +39,7 @@ done
 
 # install tooling
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+source "$HOME/.nvim/nvm.sh"
 nvm install 22
 npm i -g tailwindcss-language-server typescript-language-server vscode-langservers-extracted
 
