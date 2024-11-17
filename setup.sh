@@ -44,6 +44,6 @@ nvm install 22
 "$HOME/.nvm/versions/node/v22.11.0/bin/npm" i -g tailwindcss-language-server typescript-language-server vscode-langservers-extracted
 
 # setup cron tasks
-0 10 * * * /Users/maclong/.save-the-world.sh
+(crontab -l 2>/dev/null; echo "0 10 * * 1 $HOME/.save-the-world.sh") | crontab -
 
 printf "Configuration complete\n"
