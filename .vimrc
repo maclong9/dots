@@ -91,6 +91,7 @@ call plug#begin()
 	Plug 'tpope/vim-commentary' # Quickly Toggle Comments
 	Plug 'tpope/vim-fugitive' # Perform Git Commands in Editor
 	Plug 'tpope/vim-obsession' # Automatically Track Vim Session
+	Plug 'tpope/vim-rhubarb' # Open Files and Lines on GitHub
 	Plug 'tpope/vim-rsi' # Readline Commands in Command Mode
 	Plug 'tpope/vim-sleuth' # Automatic Indentation Detection
 	Plug 'tpope/vim-surround' # Quick Edit Surrounding Pairs
@@ -105,12 +106,12 @@ var lspConfiguration = {
 		usePopupInCodeAction: true,
 	},
 	servers: [
-		{ 
+		{ # C
 			name: 'clang', 
 			filetype: ['c'], 
 			path: '/usr/bin/clangd' 
 		},
-		{
+		{ # CSS
 			name: 'css',
 			filetype: ['css', 'scss', 'less'],
 			path: 'vscode-css-language-server',
@@ -120,13 +121,13 @@ var lspConfiguration = {
 				css: { validate: true },
 			},
 		},
-		{
+		{ # TailwindCSS
 			name: 'tailwind',
 			filetype: ['typescriptreact'],
 			path: 'tailwindcss-language-server',
 			args: ['--stdio'],
 		},
-		{ 
+		{  # TypeScript
 			name: 'typescript',
 			filetype: ['typescript', 'typescriptreact', 'javascript'], 
 			path: 'typescript-language-server', 
