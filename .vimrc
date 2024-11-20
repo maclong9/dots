@@ -133,8 +133,28 @@ var lspConfiguration = {
 			path: 'typescript-language-server', 
 			args: ['--stdio'] 
 		},
+		{ # Deno TypeScript
+			name: 'deno',
+			filetype: ['typescript', 'typescriptreact'],
+			path: 'deno',
+			args: ['lsp'],
+			root: 'deno.json'
+		},
+		{ # ESLint
+			name: 'eslint',
+			filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+			path: 'vscode-eslint-language-server',
+			args: ['--stdio'],
+			initializationOptions: {
+				validate: 'on',
+				packageManager: 'yarn',
+				codeActionOnSave: true,
+				format: true,
+				autoFixOnSave: true,
+			},
+		},
 	]
 }
 autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
 autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
-autocmd BufWritePost *.c,*.ts,*.tsx :LspFormat
+autocmd CursorHold * silent! write
