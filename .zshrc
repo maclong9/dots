@@ -1,4 +1,4 @@
-export PATH="$HOME/.deno/bin"
+export PATH="$HOME/.deno/bin:$PATH"
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
