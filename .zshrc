@@ -1,12 +1,15 @@
+export PATH="$HOME/.deno/bin"
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
+# Aliases
 alias c="clear"
 alias g="git"
 alias hg="history | grep"
 alias mkdir="mkdir -p"
 alias v="vim"
 
+# Functions
 kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2}; }
 mkcd() { mkdir $1 && cd $1; }
@@ -17,13 +20,8 @@ vs() {
         vim +Obsession 
 }
 
-# deno completions
+# Deno Setup
 if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then
     export FPATH="/Users/maclong/.zsh/completions:$FPATH"
 fi
-
-# nvm source and completions
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-. "/Users/maclong/.deno/env"
+source "$HOME/.deno/env"

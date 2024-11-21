@@ -47,6 +47,6 @@ nvm install 22
 	vscode-langservers-extracted
 
 # setup cron tasks
-(crontab -l 2>/dev/null; echo "0 10 * * 1 $HOME/.save-the-world.sh") | crontab -
+(crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
 
 printf "Configuration complete\n"
