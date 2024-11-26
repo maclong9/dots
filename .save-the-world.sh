@@ -12,7 +12,7 @@ curl_task_1() {
 # Function to run the curl command for the second URL
 curl_task_2() {
   for i in $(seq 1 100); do
-    curl -s "https://www.example.com/?q=someone" > /dev/null
+    curl -s "https://oceanhero.today/web?q=someone" > /dev/null
     echo "Task 2 - Count: $i"
     sleep 5
   done

@@ -19,9 +19,5 @@ vs() {
         vim -S Session.vim || 
         vim +Obsession 
 }
-
-# Deno Setup
-if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then
-    export FPATH="/Users/maclong/.zsh/completions:$FPATH"
-fi
-source "$HOME/.deno/env"
+export NVM_DIR=~/.nvm
+ [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
