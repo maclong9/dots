@@ -1,7 +1,7 @@
 #!/bin/sh
 # `curl -sSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh`
 
-# restore system to previous state if non-zero exit code
+# Restore System to Previous State If Non-Zero Exit Code
 trap 'cleanup' EXIT
 cleanup() {
 	if [ $? -ne 0 ]; then
@@ -11,24 +11,24 @@ cleanup() {
 	fi
 }
 
-# check if running on macOS
+# Check If Running on macOS
 if [ "$(uname -s)" = "Darwin" ]; then
-	# enable Touch ID for `sudo`
+	# Enable Touch ID for `sudo`
 	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | \
 		sudo tee /etc/pam.d/sudo_local > /dev/null
 
-	# install developer tools
+	# Install Developer Tools
 	if ! xcode-select -p >/dev/null 2>&1; then
 		xcode-select --install
 	fi
 
-	# accept developer tools license
+	# Accept Developer Tools License
 	if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
 		sudo xcodebuild -license accept
 	fi
 fi
 
-# clone configuration files and symlink to home directory
+# Clone Configuration Files and Symlink to Home Directory
 git clone https://github.com/maclong9/dots .config
 for file in .config/.*; do
 	case "$(basename "$file")" in
@@ -37,16 +37,16 @@ for file in .config/.*; do
 	esac
 done
 
-# install deno
+# Install Deno
 curl -fsSL https://deno.land/install.sh | sh -s -- --no-modify-path
 
-# install node
+# Install Node
 export NVM_DIR="$HOME/.nvm"
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | NVM_DIR="$NVM_DIR" bash
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 nvm install 22
 
-# setup cron tasks
+# Setup Cron Tasks
 (crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
 
 printf "\033[1;32m✔\033[0m \033[1;37mConfiguration complete\033[0m\n"
