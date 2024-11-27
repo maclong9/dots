@@ -10,11 +10,21 @@ alias mkdir="mkdir -p"
 alias v="vim"
 
 # Functions
-kp() { kill -9 $(lsof -ti tcp:$1); }
-nx() { deno run -A npm:$1 ${@:2}; }
+
+## Kill Port
+kp() { 
+    kill -9 $(lsof -ti tcp:$1); 
+}
+
+# Run NPM/NPX with Deno
+nx() { 
+    deno run -A npm:$1 ${@:2}; 
+}
+
+# Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
 
-## initialise new swift executable and open in Xcode
+## Start New Swift Executable Project
 swcli() {
     mkdir $1
     cd $1
@@ -22,7 +32,7 @@ swcli() {
     open Package.swift
 }
 
-## open previous session or start a new one
+## Open or Create Vim Session
 vs() {
     [[ -f ./Session.vim ]] &&
         vim -S Session.vim ||
@@ -35,5 +45,6 @@ if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH=
 autoload -Uz compinit
 compinit [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
+# Configure nvm
 export NVM_DIR=~/.nvm
  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
