@@ -6,6 +6,7 @@ export PROMPT="%F{white}%n %B%F{brightwhite}%~
 alias c="clear"
 alias g="git"
 alias hg="history | grep"
+alias sf="swift format --recursive --in-place"
 alias mkdir="mkdir -p"
 alias v="vim"
 

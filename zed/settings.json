@@ -1,0 +1,34 @@
+{
+  "outline_panel": {
+    "dock": "right"
+  },
+  "assistant": {
+    "default_model": {
+      "model": "claude-3-5-sonnet-latest",
+      "provider": "zed.dev"
+    },
+    "version": "2"
+  },
+  "buffer_font_family": "Liga SFMono Nerd Font",
+  "buffer_font_size": 12,
+  "features": {
+    "inline_completion_provider": "supermaven"
+  },
+  "formatter": {
+    "code_actions": {
+      "source.fixAll.eslint": true,
+      "source.organizeImports": true
+    }
+  },
+  "terminal": {
+    "option_as_meta": true
+  },
+  "theme": {
+    "mode": "system",
+    "dark": "Xcode Default Dark",
+    "light": "Xcode Default Light"
+  },
+  "ui_font_family": "Liga SFMono Nerd Font",
+  "ui_font_size": 12,
+  "use_autoclose": true
+}
