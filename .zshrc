@@ -43,7 +43,6 @@ vs() {
 if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH="/Users/maclong/.zsh/completions:$FPATH"; fi
 . "/Users/maclong/.deno/env"
 autoload -Uz compinit
-compinit [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Configure nvm
 export NVM_DIR=~/.nvm
