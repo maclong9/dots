@@ -1,3 +1,5 @@
 .DS_Store
 gh/
 Session.vim
+zed/*
+!zed/settings.json
