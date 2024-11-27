@@ -1,7 +1,4 @@
 {
-  "outline_panel": {
-    "dock": "right"
-  },
   "assistant": {
     "default_model": {
       "model": "claude-3-5-sonnet-latest",
@@ -20,6 +17,12 @@
       "source.organizeImports": true
     }
   },
+  "inlay_hints": {
+    "enabled": true
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
   "terminal": {
     "option_as_meta": true
   },
@@ -28,7 +31,8 @@
     "dark": "Xcode Default Dark",
     "light": "Xcode Default Light"
   },
+  "unstable.ui_density": "comfortable",
   "ui_font_family": "Liga SFMono Nerd Font",
-  "ui_font_size": 12,
-  "use_autoclose": true
+  "ui_font_size": 13.5,
+  "use_autoclose": true,
 }

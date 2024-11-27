@@ -27,6 +27,11 @@ for o in [
 	execute $'set {o}'
 endfor
 
+# transparent background
+for g in ['EndOfBuffer', 'Normal', 'NonText']
+	execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
+endfor
+
 # add line numbers to explorer
 autocmd FileType netrw setlocal number relativenumber
 
@@ -70,6 +75,7 @@ call plug#begin()
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } # Fuzzy Finder CLI
 	Plug 'junegunn/fzf.vim' # In Editor Fuzzy Finder
 	Plug 'junegunn/gv.vim' # Git Commit Viewer
+	Plug 'lunacookies/vim-colors-xcode' # Colorscheme
 	Plug 'mattn/emmet-vim' # HTML Shorthand Syntax 
 	Plug 'tpope/vim-commentary' # Quickly Toggle Comments
 	Plug 'tpope/vim-fugitive' # Perform Git Commands in Editor
@@ -80,3 +86,4 @@ call plug#begin()
 	Plug 'tpope/vim-surround' # Quick Edit Surrounding Pairs
 	Plug 'wellle/targets.vim' # Additional Text Objects
 call plug#end()
+colorscheme xcode
