@@ -52,13 +52,24 @@ for [k, v] in items({
 	'<leader>3': '3gt',
 	'<leader>4': '4gt',
 	'<leader>5': '5gt',
-	'<leader>t': '<cmd>LspGotoTypeDef<cr>',
 	# Fuzzy Finder
 	'<leader>f': '<cmd>Files<cr>',
 	'<leader>b': '<cmd>Buffers<cr>',
 	'<leader>c': '<cmd>Commits<cr>',
 	'<leader>m': '<cmd>Maps<cr>',
 	'<leader>/': '<cmd>Commands<cr>',
+	# LSP Mappings
+	'<leader>a': '<cmd>LspCodeAction<cr>',
+	'<leader>d': '<cmd>LspGotoDefinition<cr>',
+	'<leader>e': '<cmd>Explore<cr>',
+	'<leader>h': '<cmd>LspHover<cr>',
+	'<leader>i': '<cmd>LspGotoImpl<cr>',
+	'<leader>n': '<cmd>LspDiag nextWrap<cr>',
+	'<leader>p': '<cmd>LspDiag prevWrap<cr>',
+	'<leader>r': '<cmd>LspPeekReferences<cr>',
+	'<leader>R': '<cmd>LspRename<cr>',
+	'<leader>s': '<cmd>LspSymbolSearch<cr>',
+	'<leader>t': '<cmd>LspGotoTypeDef<cr>',
 })
   execute $'nnoremap {k} {v}'
 endfor
@@ -122,17 +133,10 @@ var lspConfiguration = {
 			path: 'typescript-language-server', 
 			args: ['--stdio'] 
 		},
-		{ # Deno TypeScript
-			name: 'deno',
-			filetype: ['typescript', 'typescriptreact'],
-			path: 'deno',
-			args: ['lsp'],
-			root: 'deno.json'
-		},
                 { # Vue
                 	name: 'vue',
                 	filetype: ['vue'],
-                	path: 'vue-language-server',
+                	path: 'vls',
 			args: ['--stdio'],
                  	initializationOptions: {
                  		typescript: {
@@ -153,3 +157,4 @@ var lspConfiguration = {
 }
 autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
 autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
+autocmd BufWritePre * LspFormat
