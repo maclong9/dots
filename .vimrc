@@ -1,12 +1,12 @@
 vim9script
 syntax enable
 
-# global variables
+# Global Variables
 for [k, v] in items({ is_posix: 1, netrw_banner: 0 })
 	execute $'g:{k} = {string(v)}'
 endfor
 
-# set options
+# Set Options
 for o in [
 	'breakindent',
 	'cursorline',
@@ -27,17 +27,17 @@ for o in [
 	execute $'set {o}'
 endfor
 
-# transparent background
+# Transparent Background
 for g in ['EndOfBuffer', 'Normal', 'NonText']
 	execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
 endfor
 
-# add line numbers to explorer
+# Add Line Numbers To Explorer
 autocmd FileType netrw setlocal number relativenumber
 
-# keymaps
+# Keymaps
 for [k, v] in items({
-	# Clear highlights from search
+	# Clear Highlights From Search
 	'<Esc>': '<cmd>nohlsearch<cr>', 
 	# Quicker Pane Switching
 	'<C-h>': '<cmd>wincmd h<cr>',
@@ -62,14 +62,14 @@ for [k, v] in items({
   execute $'nnoremap {k} {v}'
 endfor
 
-# install vim-plug if missing
+# Install Vim-plug If Missing
 if empty(glob('~/.vim/autoload/plug.vim'))
 	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
   		\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-# plugin list
+# Plugin List
 call plug#begin()
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } # Fuzzy Finder CLI
 	Plug 'junegunn/fzf.vim' # In Editor Fuzzy Finder
