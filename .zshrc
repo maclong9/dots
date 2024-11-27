@@ -14,11 +14,12 @@ kp() { kill -9 $(lsof -ti tcp:$1); }
 nx() { deno run -A npm:$1 ${@:2}; }
 mkcd() { mkdir $1 && cd $1; }
 
-## initialise new swift executable
+## initialise new swift executable and open in Xcode
 swcli() {
     mkdir $1
     cd $1
     swift package init --name $1 --type executable
+    open Package.swift
 }
 
 ## open previous session or start a new one
