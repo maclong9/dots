@@ -50,7 +50,7 @@ set -- tailwindcss-language-server \
 	vscode-langservers-extracted@4.10.0/vscode-markdown-language-server 
 
 for server in "$@" do
-	deno install -g "npm:$server"
+	"$HOME/.deno/bin/deno" install -g "npm:$server"
 done
 
 # setup cron tasks
