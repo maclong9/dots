@@ -40,6 +40,7 @@ done
 # install tooling
 curl -fsSL https://deno.land/install.sh | sh
 source "$HOME/.deno/env"
+source "$HOME/.deno/bin"
 
 set -- tailwindcss-language-server \
 	typescript-language-server \
@@ -50,7 +51,7 @@ set -- tailwindcss-language-server \
 	vscode-langservers-extracted@4.10.0/vscode-markdown-language-server 
 
 for server in "$@"; do
-	"$HOME/.deno/bin/deno" install -g "npm:$server"
+	deno install -g "npm:$server"
 done
 
 # setup cron tasks
