@@ -137,7 +137,7 @@ var lspConfiguration = {
                  	initializationOptions: {
                  		typescript: {
 					tsdk: '/usr/local/node_modules/typescript/lib'
-                        	}
+                        	},
                         	vue: {
                             		hybridMode: v:false
                         	}
