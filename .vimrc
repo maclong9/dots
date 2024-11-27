@@ -58,18 +58,6 @@ for [k, v] in items({
 	'<leader>c': '<cmd>Commits<cr>',
 	'<leader>m': '<cmd>Maps<cr>',
 	'<leader>/': '<cmd>Commands<cr>',
-	# LSP Mappings
-	'<leader>a': '<cmd>LspCodeAction<cr>',
-	'<leader>d': '<cmd>LspGotoDefinition<cr>',
-	'<leader>e': '<cmd>Explore<cr>',
-	'<leader>h': '<cmd>LspHover<cr>',
-	'<leader>i': '<cmd>LspGotoImpl<cr>',
-	'<leader>n': '<cmd>LspDiag nextWrap<cr>',
-	'<leader>p': '<cmd>LspDiag prevWrap<cr>',
-	'<leader>r': '<cmd>LspPeekReferences<cr>',
-	'<leader>R': '<cmd>LspRename<cr>',
-	'<leader>s': '<cmd>LspSymbolSearch<cr>',
-	'<leader>t': '<cmd>LspGotoTypeDef<cr>',
 })
   execute $'nnoremap {k} {v}'
 endfor
@@ -96,65 +84,5 @@ call plug#begin()
 	Plug 'tpope/vim-sleuth' # Automatic Indentation Detection
 	Plug 'tpope/vim-surround' # Quick Edit Surrounding Pairs
 	Plug 'wellle/targets.vim' # Additional Text Objects
-	Plug 'yegappan/lsp' # Language Server Implementation
 call plug#end()
 colorscheme xcode
-
-# lsp configuration
-var lspConfiguration = {
-	options: {
-		usePopupInCodeAction: true,
-	},
-	servers: [
-		{ # C
-			name: 'clang', 
-			filetype: ['c'], 
-			path: '/usr/bin/clangd' 
-		},
-		{ # CSS
-			name: 'css',
-			filetype: ['css', 'scss', 'less'],
-			path: 'vscode-css-language-server',
-			args: ['--stdio'],
-			initializationOptions: {
-				provideFormatter: true,
-				css: { validate: true },
-			},
-		},
-		{ # TailwindCSS
-			name: 'tailwind',
-			filetype: ['typescriptreact'],
-			path: 'tailwindcss-language-server',
-			args: ['--stdio'],
-		},
-		{ # TypeScript
-			name: 'typescript',
-			filetype: ['typescript', 'typescriptreact', 'javascript'], 
-			path: 'typescript-language-server', 
-			args: ['--stdio'] 
-		},
-                { # Vue
-                	name: 'vue',
-                	filetype: ['vue'],
-                	path: 'vls',
-			args: ['--stdio'],
-                 	initializationOptions: {
-                 		typescript: {
-					tsdk: '/usr/local/node_modules/typescript/lib'
-                        	},
-                        	vue: {
-                            		hybridMode: v:false
-                        	}
-                	}
-                },
-		{ # ESLint
-			name: 'vscode-eslint-server',
-			filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact', 'vue'],
-			path: 'vscode-eslint-language-server',
-			args: ['--stdio'],
-		},
-	]
-}
-autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
-autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
-autocmd BufWritePre * LspFormat
