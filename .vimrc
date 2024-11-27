@@ -85,5 +85,63 @@ call plug#begin()
 	Plug 'tpope/vim-sleuth' # Automatic Indentation Detection
 	Plug 'tpope/vim-surround' # Quick Edit Surrounding Pairs
 	Plug 'wellle/targets.vim' # Additional Text Objects
+	Plug 'yegappan/lsp' # Language Server Implementation
 call plug#end()
 colorscheme xcode
+
+# lsp configuration
+var lspConfiguration = {
+	options: {
+		usePopupInCodeAction: true,
+	},
+	servers: [
+		{ # C
+			name: 'clang', 
+			filetype: ['c'], 
+			path: '/usr/bin/clangd' 
+		},
+		{ # CSS
+			name: 'css',
+			filetype: ['css', 'scss', 'less'],
+			path: 'vscode-css-language-server',
+			args: ['--stdio'],
+			initializationOptions: {
+				provideFormatter: true,
+				css: { validate: true },
+			},
+		},
+		{ # TailwindCSS
+			name: 'tailwind',
+			filetype: ['typescriptreact'],
+			path: 'tailwindcss-language-server',
+			args: ['--stdio'],
+		},
+		{ # TypeScript
+			name: 'typescript',
+			filetype: ['typescript', 'typescriptreact', 'javascript'], 
+			path: 'typescript-language-server', 
+			args: ['--stdio'] 
+		},
+		{ # Deno TypeScript
+			name: 'deno',
+			filetype: ['typescript', 'typescriptreact'],
+			path: 'deno',
+			args: ['lsp'],
+			root: 'deno.json'
+		},
+		{ # ESLint
+			name: 'eslint',
+			filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+			path: 'vscode-eslint-language-server',
+			args: ['--stdio'],
+			initializationOptions: {
+				validate: 'on',
+				codeActionOnSave: true,
+				format: true,
+				autoFixOnSave: true,
+			},
+		},
+	]
+}
+autocmd User LspSetup call LspOptionsSet(lspConfiguration.options)
+autocmd User LspSetup call LspAddServer(lspConfiguration.servers)
