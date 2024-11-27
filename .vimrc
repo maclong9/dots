@@ -129,17 +129,25 @@ var lspConfiguration = {
 			args: ['lsp'],
 			root: 'deno.json'
 		},
+                { # Vue
+                	name: 'vue',
+                	filetype: ['vue'],
+                	path: 'vue-language-server',
+			args: ['--stdio'],
+                 	initializationOptions: {
+                 		typescript: {
+					tsdk: '/usr/local/node_modules/typescript/lib'
+                        	}
+                        	vue: {
+                            		hybridMode: v:false
+                        	}
+                	}
+                },
 		{ # ESLint
-			name: 'eslint',
-			filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+			name: 'vscode-eslint-server',
+			filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact', 'vue'],
 			path: 'vscode-eslint-language-server',
 			args: ['--stdio'],
-			initializationOptions: {
-				validate: 'on',
-				codeActionOnSave: true,
-				format: true,
-				autoFixOnSave: true,
-			},
 		},
 	]
 }
