@@ -1,5 +1,3 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH="/Users/maclong/.zsh/completions:$FPATH"; fi
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
@@ -18,21 +16,23 @@ mkcd() { mkdir $1 && cd $1; }
 
 ## initialise new swift executable
 swcli() {
-    mkdir $1 
+    mkdir $1
     cd $1
-    swift package init --name $1 --type executable 
+    swift package init --name $1 --type executable
 }
 
 ## open previous session or start a new one
-vs() { 
-    [[ -f ./Session.vim ]] && 
-        vim -S Session.vim || 
-        vim +Obsession 
+vs() {
+    [[ -f ./Session.vim ]] &&
+        vim -S Session.vim ||
+        vim +Obsession
 }
+
+# Setup Deno and Completions
+if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH="/Users/maclong/.zsh/completions:$FPATH"; fi
+. "/Users/maclong/.deno/env"
+autoload -Uz compinit
+compinit [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 export NVM_DIR=~/.nvm
  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-. "/Users/maclong/.deno/env"
-# Initialize zsh completions (added by deno install script)
-autoload -Uz compinit
-compinit [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

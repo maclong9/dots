@@ -16,12 +16,12 @@ if [ "$(uname -s)" = "Darwin" ]; then
 	# enable Touch ID for `sudo`
 	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | \
 		sudo tee /etc/pam.d/sudo_local > /dev/null
-	
+
 	# install developer tools
 	if ! xcode-select -p >/dev/null 2>&1; then
 		xcode-select --install
 	fi
-	
+
 	# accept developer tools license
 	if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
 		sudo xcodebuild -license accept
@@ -37,20 +37,16 @@ for file in .config/.*; do
 	esac
 done
 
-# install runtimes
-curl -fsSL https://deno.land/install.sh | sh
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-source "$HOME/.nvm/nvm.sh"
-nvm install 22
+# install deno
+curl -fsSL https://deno.land/install.sh | sh -s -- --no-modify-path
 
-# install language servers
-"$HOME/.nvm/versions/node/v22.11.0/bin/npm" i -g \
-	tailwindcss-language-server \
-	typescript-language-server \
-	vscode-langservers-extracted \
- 	vue-language-server
+# install node
+export NVM_DIR="$HOME/.nvm"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | NVM_DIR="$NVM_DIR" bash
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 22
 
 # setup cron tasks
 (crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
 
-printf "Configuration complete\n"
+printf "\033[1;32m✔\033[0m \033[1;37mConfiguration complete\033[0m\n"
