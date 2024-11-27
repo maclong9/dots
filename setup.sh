@@ -37,22 +37,18 @@ for file in .config/.*; do
 	esac
 done
 
-# install tooling
+# install runtimes
 curl -fsSL https://deno.land/install.sh | sh
-source "$HOME/.deno/env"
-source "$HOME/.deno/bin"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+source "$HOME/.nvm/nvm.sh"
+nvm install 22
 
-set -- tailwindcss-language-server \
+# install language servers
+"$HOME/.nvm/versions/node/v22.11.0/bin/npm" i -g \
+	tailwindcss-language-server \
 	typescript-language-server \
-	vscode-langservers-extracted@4.10.0/vscode-css-language-server \
-	vscode-langservers-extracted@4.10.0/vscode-eslint-language-server \
-	vscode-langservers-extracted@4.10.0/vscode-html-language-server \
-	vscode-langservers-extracted@4.10.0/vscode-json-language-server \
-	vscode-langservers-extracted@4.10.0/vscode-markdown-language-server 
-
-for server in "$@"; do
-	deno install -g "npm:$server"
-done
+	vscode-langservers-extracted \
+ 	vue-language-server
 
 # setup cron tasks
 (crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
