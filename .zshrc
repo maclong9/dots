@@ -9,8 +9,6 @@ alias sf="swift format --recursive --in-place"
 alias mkdir="mkdir -p"
 alias v="vim"
 
-# Functions
-
 ## Kill Port
 kp() { 
     kill -9 $(lsof -ti tcp:$1); 
