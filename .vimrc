@@ -45,7 +45,7 @@ autocmd FileType netrw setlocal number relativenumber
 for [k, v] in items({
 	# Clear Highlights From Search
 	'<Esc>': '<cmd>nohlsearch<cr>', 
-	# Open Explore
+	# Open File Explorer
 	'<leader>e': '<cmd>Explore<cr>',
 	# Quicker Pane Switching
 	'<C-h>': '<cmd>wincmd h<cr>',
