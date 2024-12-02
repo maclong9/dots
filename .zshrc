@@ -14,21 +14,13 @@ kp() {
     kill -9 $(lsof -ti tcp:$1); 
 }
 
-# Run NPM/NPX with Deno
+# Run `npx` with Deno
 nx() { 
     deno run -A npm:$1 ${@:2}; 
 }
 
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
-
-## Start New Swift Executable Project
-swcli() {
-    mkdir $1
-    cd $1
-    swift package init --name $1 --type executable
-    open Package.swift
-}
 
 ## Open or Create Vim Session
 vs() {
