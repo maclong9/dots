@@ -110,4 +110,4 @@ call plug#begin()
 call plug#end()
 colorscheme xcode
 
-autocmd  BufWrite * LspDocumentFormat
+autocmd  BufWrite * LspDocumentFormat # Auto Format on Save

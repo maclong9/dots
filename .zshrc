@@ -9,7 +9,7 @@ alias sf="swift format --recursive --in-place"
 alias mkdir="mkdir -p"
 alias v="vim"
 
-## Kill Port
+# Kill Port
 kp() { 
     kill -9 $(lsof -ti tcp:$1); 
 }
@@ -22,7 +22,7 @@ nx() {
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
 
-## Open or Create Vim Session
+# Open or Create Vim Session
 vs() {
     [[ -f ./Session.vim ]] &&
         vim -S Session.vim ||
