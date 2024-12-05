@@ -14,18 +14,13 @@ cleanup() {
 # Check If Running on macOS
 if [ "$(uname -s)" = "Darwin" ]; then
 	# Enable Touch ID for `sudo`
-	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | \
-		sudo tee /etc/pam.d/sudo_local > /dev/null
-
+	sudo sed 's/^#auth/auth/' /etc/pam.d/sudo_local.template | sudo tee /etc/pam.d/sudo_local > /dev/null
+	
 	# Install Developer Tools
-	if ! xcode-select -p >/dev/null 2>&1; then
-		xcode-select --install
-	fi
-
+	! xcode-select -p >/dev/null 2>&1 && xcode-select --install
+	
 	# Accept Developer Tools License
-	if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
-		sudo xcodebuild -license accept
-	fi
+	! /usr/bin/xcrun clang >/dev/null 2>&1 && sudo xcodebuild -license accept
 fi
 
 # Clone Configuration Files and Symlink to Home Directory

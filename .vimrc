@@ -81,7 +81,7 @@ for [k, v] in items({
   execute $'nnoremap {k} {v}'
 endfor
 
-# Install Vim-plug If Missing
+# Install vim-plug If Missing
 if empty(glob('~/.vim/autoload/plug.vim'))
 	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
   		\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -110,4 +110,5 @@ call plug#begin()
 call plug#end()
 colorscheme xcode
 
-autocmd  BufWrite * LspDocumentFormat # Auto Format on Save
+# Auto Format on Save
+autocmd  BufWritePre * LspDocumentFormat 
