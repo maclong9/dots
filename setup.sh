@@ -32,15 +32,6 @@ for file in .config/.*; do
 	esac
 done
 
-# Install Deno
-curl -fsSL https://deno.land/install.sh | sh -s -- --no-modify-path
-
-# Install Node
-export NVM_DIR="$HOME/.nvm"
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | NVM_DIR="$NVM_DIR" bash
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install 22
-
 # Setup Cron Tasks
 (crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
 
