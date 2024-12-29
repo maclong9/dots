@@ -32,6 +32,11 @@ for file in .config/.*; do
 	esac
 done
 
+# Setup Developer Tooling
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+/usr/local/bin/nvm install 22
+curl -fsSL https://deno.land/install.sh | sh
+
 # Setup Cron Tasks
 (crontab -l 2>/dev/null; echo "0 10 * * * $HOME/.save-the-world.sh") | crontab -
 
