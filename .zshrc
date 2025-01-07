@@ -1,6 +1,9 @@
 export PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 
+autoload -Uz compinit
+compinit
+
 # Aliases
 alias c="clear"
 alias g="git"
