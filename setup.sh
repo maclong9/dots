@@ -34,8 +34,9 @@ done
 
 # Setup Developer Tooling
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-. ~/.zshrc
 nvim install 22
+. ~/.zshrc
+npm i -g pnpm vercel
 curl -fsSL https://deno.land/install.sh | sh -- -y
 
 # Setup Cron Tasks
