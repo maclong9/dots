@@ -10,7 +10,6 @@ alias g="git"
 alias hg="history | grep"
 alias sf="swift format --recursive --in-place"
 alias mkdir="mkdir -p"
-alias v="vim"
 
 # Kill Port
 kp() { 

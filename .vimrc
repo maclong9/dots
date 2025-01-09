@@ -5,8 +5,6 @@ syntax enable
 for [k, v] in items({ 
 	is_posix: 1,
 	netrw_banner: 0,
-	lsp_settings_filetype_vue: ['typescript-language-server', 'volar-server']
-
 })
 	execute $'g:{k} = {string(v)}'
 endfor
@@ -31,11 +29,6 @@ for o in [
 	'wildmenu',
 ]
 	execute $'set {o}'
-endfor
-
-# Transparent Background
-for g in ['EndOfBuffer', 'Normal', 'NonText']
-	execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
 endfor
 
 # Add Line Numbers To Explorer
@@ -93,7 +86,7 @@ call plug#begin()
 	Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } # Fuzzy Finder CLI
 	Plug 'junegunn/fzf.vim' # In Editor Fuzzy Finder
 	Plug 'junegunn/gv.vim' # Git Commit Viewer
-	Plug 'lunacookies/vim-colors-xcode' # Colorscheme
+	Plug 'lunacookies/vim-colors-xcode' # Xcode Style Colorscheme
 	Plug 'mattn/emmet-vim' # HTML Shorthand Syntax 
 	Plug 'tpope/vim-commentary' # Quickly Toggle Comments
 	Plug 'tpope/vim-fugitive' # Perform Git Commands in Editor
@@ -108,7 +101,14 @@ call plug#begin()
 	Plug 'prabirshrestha/asyncomplete.vim' # Autocompletion
 	Plug 'prabirshrestha/asyncomplete-lsp.vim' # LSP Autocomplete
 call plug#end()
+
+# Apply Colorscheme
 colorscheme xcode
+
+# Enforce Transparent Background
+for g in ['EndOfBuffer', 'Normal', 'NonText']
+	execute $'autocmd ColorScheme * hi {g} guibg=NONE ctermbg=NONE'
+endfor
 
 # Auto Format on Save
 autocmd  BufWritePre * LspDocumentFormat 
