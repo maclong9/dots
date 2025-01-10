@@ -31,6 +31,58 @@ vs() {
         vim +Obsession
 }
 
+# Create New SvelteKit Project
+cs() {
+  # Create new SvelteKit project
+  pnpx sv create $1
+
+  # Navigate to project directory
+  cd $1
+
+  # Initialize Git repository
+  git init
+
+  # Setup commitlint
+  pnpm add --save-dev @commitlint/{cli,config-conventional}
+  echo "export default { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
+
+  # Setup Husky
+  pnpm add --save-dev husky
+  pnpm husky init
+
+  # Configure Git hooks
+  echo "pnpm dlx commitlint --edit \$1" > .husky/commit-msg
+  echo "pnpm test && pnpm lint && pnpm check" > .husky/pre-commit
+  
+  # Generate VSCode extension recommendations
+  curl https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/083b363fc6196b072a9e59fbe7a45ef6ff6ca3ba/extensions.json > .vscode/extensions.json
+
+  # Remove broken Storybook file
+  rm -rf ./src/stories/Page.svelte ./src/stories/Page.stories.svelte
+
+  # Initial build and format
+  pnpm build && pnpm format
+
+  # Create repository
+  gh repo create
+
+  # Create initial commit and push
+  git add .
+  git commit -m "chore: 🎉 initialize project
+
+  Setup complete development environment with:
+  - Configure SvelteKit as frontend framework
+  - Integrate ESLint and Prettier for code quality
+  - Configure Vitest for unit testing infrastructure
+  - Add Playwright for end-to-end testing automation
+  - Install and configure TailwindCSS for styling
+  - Setup commitlint to enforce conventional commit messages
+  - Implement husky pre-commit hooks for automated checks
+  - Setup Storybook for developing component in isolation
+  - Generate VSCode `extensions.json` recommendations"
+  git push
+}
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
