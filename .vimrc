@@ -101,6 +101,7 @@ call plug#begin()
 	Plug 'prabirshrestha/asyncomplete.vim' # Autocompletion
 	Plug 'prabirshrestha/asyncomplete-lsp.vim' # LSP Autocomplete
 	Plug 'github/copilot.vim' # AI Copilot 
+	Plug 'sheerun/vim-polyglot' # Syntax Highlighting
 call plug#end()
 
 # Apply Colorscheme
