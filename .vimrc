@@ -100,6 +100,7 @@ call plug#begin()
 	Plug 'mattn/vim-lsp-settings' # LSP Setup
 	Plug 'prabirshrestha/asyncomplete.vim' # Autocompletion
 	Plug 'prabirshrestha/asyncomplete-lsp.vim' # LSP Autocomplete
+	Plug 'github/copilot.vim' # AI Copilot 
 call plug#end()
 
 # Apply Colorscheme

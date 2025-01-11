@@ -33,49 +33,11 @@ vs() {
 
 # Create New SvelteKit Project
 cs() {
-  # Create new project and initialise
-  pnpx sv create $1
-  cd $1
-  git init
-
-  # Setup commitlint and move tw plugins to devDeps
-  pnpm add --save-dev @commitlint/{cli,config-conventional} @tailwindcss/forms @tailwindcss/container-queries @tailwindcss/typography
-  echo "export default { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
-
-  # Setup Husky
-  pnpm add --save-dev husky
-  pnpm husky init
-  echo "pnpm dlx commitlint --edit \$1" > .husky/commit-msg
-  echo "pnpm test && pnpm lint && pnpm check" > .husky/pre-commit
-  
-  # Generate VSCode extension recommendations
-  mkdir .vscode
-  curl https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/2bdc2738c56bfe436be2326d03469988fcc6795f/extensions.json > .vscode/extensions.json
-
-  # Remove default Storybook files
-  rm -rf ./src/stories/**/*
-
-  # Initial build and format
-  pnpm build && pnpm format
-
-  # Create repository
-  gh repo create
-
-  # Create initial commit and push
-  git add .
-  git commit -m "chore: 🎉 initialize project
-
-  Setup development environment:
-  - Configure SvelteKit as frontend framework
-  - Integrate ESLint and Prettier for code quality
-  - Configure Vitest for unit testing infrastructure
-  - Add Playwright for end-to-end testing automation
-  - Install and configure TailwindCSS for styling
-  - Setup commitlint to enforce conventional commit messages
-  - Implement husky pre-commit hooks for automated checks
-  - Setup Storybook for developing component in isolation
-  - Generate VSCode `extensions.json` recommendations"
-  git push
+    local tmp_file=$(mktemp)
+    curl -Ss https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/24a48033d90ba95b8fc6595a8da0051750e6f6fc/create-sveltekit.sh > "$tmp_file"
+    chmod +x "$tmp_file"
+    "$tmp_file" "$1"
+    rm "$tmp_file"
 }
 
 export NVM_DIR="$HOME/.nvm"
