@@ -33,32 +33,27 @@ vs() {
 
 # Create New SvelteKit Project
 cs() {
-  # Create new SvelteKit project
+  # Create new project and initialise
   pnpx sv create $1
-
-  # Navigate to project directory
   cd $1
-
-  # Initialize Git repository
   git init
 
-  # Setup commitlint
-  pnpm add --save-dev @commitlint/{cli,config-conventional}
+  # Setup commitlint and move tw plugins to devDeps
+  pnpm add --save-dev @commitlint/{cli,config-conventional} @tailwindcss/forms @tailwindcss/container-queries @tailwindcss/typography
   echo "export default { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
 
   # Setup Husky
   pnpm add --save-dev husky
   pnpm husky init
-
-  # Configure Git hooks
   echo "pnpm dlx commitlint --edit \$1" > .husky/commit-msg
   echo "pnpm test && pnpm lint && pnpm check" > .husky/pre-commit
   
   # Generate VSCode extension recommendations
-  curl https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/083b363fc6196b072a9e59fbe7a45ef6ff6ca3ba/extensions.json > .vscode/extensions.json
+  mkdir .vscode
+  curl https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/2bdc2738c56bfe436be2326d03469988fcc6795f/extensions.json > .vscode/extensions.json
 
-  # Remove broken Storybook file
-  rm -rf ./src/stories/Page.svelte ./src/stories/Page.stories.svelte
+  # Remove default Storybook files
+  rm -rf ./src/stories/**/*
 
   # Initial build and format
   pnpm build && pnpm format
@@ -70,7 +65,7 @@ cs() {
   git add .
   git commit -m "chore: 🎉 initialize project
 
-  Setup complete development environment with:
+  Setup development environment:
   - Configure SvelteKit as frontend framework
   - Integrate ESLint and Prettier for code quality
   - Configure Vitest for unit testing infrastructure
