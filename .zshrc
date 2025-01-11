@@ -34,7 +34,7 @@ vs() {
 # Create New SvelteKit Project
 cs() {
     local tmp_file=$(mktemp)
-    curl -Ss https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/918c1484db3cffceef76284e34e927383d6e94c1/create-sveltekit.sh > "$tmp_file"
+    curl -Ss https://gist.githubusercontent.com/maclong9/de559a23c06949a8c95e548112a6567f/raw/238d766296131982609e5ce822061b6075db31e6/create-sveltekit.sh > "$tmp_file"
     chmod +x "$tmp_file"
     "$tmp_file" "$1"
     rm "$tmp_file"
