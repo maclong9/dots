@@ -1,0 +1,54 @@
+[user]
+  email = "maclong9@icloud.com"
+  name = "Mac"
+
+[alias]
+  a = "add"
+  aa = "add ."
+  ac = "!f() { git add $1 && git commit -m \"$2\"; }; f"
+  aac = "!f() { git add . && git commit -m \"$1\"; }; f"
+  alias = "config --get-regexp ^alias"
+  b = "branch"
+  bd = "branch -d"
+  br = "!f() { git branch -m $1; }; f"
+  c = "commit -m"
+  ca = "!f() { git commit --amend -m \"$1\"; }; f"
+  co = "checkout"
+  col = "checkout -"
+  d = "diff"
+  ds = "diff --stat HEAD~"
+  f = "fetch"
+  l = "log --oneline --decorate --all"
+  lg = "log --graph --oneline --decorate --all"
+  p = "push"
+  pl = "pull"
+  plr = "pull --rebase"
+  pln = "pull --no-rebase"
+  s = "status"
+  sh = "show"
+  st = "stash push -u"
+  sr = "stash pop"
+  rs = "restore"
+  u = "reset --soft HEAD~1"
+  cl = "!f() { \
+    if [[ \"$1\" =~ ^https ]]; then \
+      git clone \"$1\"; \
+    elif [[ \"$1\" =~ ^[^/]+/[^/]+$ ]]; then \
+      git clone \"https://github.com/$1\"; \
+    elif [[ \"$1\" =~ ^[^/]+$ ]]; then \
+      git clone \"https://github.com/maclong9/$1\"; \
+    else \
+      echo \"Invalid repository specification\"; \
+      return 1; \
+    fi \
+  }; f"
+
+[core]
+  editor = "vim"
+  excludeFile = "$HOME/.gitignore"
+
+[init]
+	defaultBranch = "main"
+
+[push]
+  autoSetupRemote = true

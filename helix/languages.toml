@@ -1,0 +1,65 @@
+[[language]]
+name = "css"
+file-types = ["css"]
+language-servers = ["tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "css"] }
+auto-format = true
+
+[[language]]
+name = "html"
+file-types = ["html"]
+formatter = { command = "prettier", args = ["--parser", "html"] }
+auto-format = true
+
+[[language]]
+name = "markdown"
+file-types = ["md"]
+formatter = { command = "prettier", args = ["--parser", "markdown"] }
+soft-wrap.enable = true
+
+[[language]]
+name = "svelte"
+language-servers = [
+  "svelteserver",
+  "tailwindcss-language-server",
+  "emmet-ls",
+  "vscode-eslint-language-server",
+  "typescript-language-server"]
+file-types = ["svelte"]
+formatter = { command = "prettier", args = ["--parser", "svelte"] }
+auto-format = true
+
+[[language]]
+name = "swift"
+file-types = ["swift"]
+formatter = { command = "swift format", args = ["--in-place"] }
+auto-format = true
+
+[[language]]
+name = "typescript"
+file-types = ["js", "ts", "mjs", "mts", "cjs"]
+language-servers = [
+  "eslint-language-server",
+  "typescript-language-server",
+]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+auto-format = true
+
+[[language]]
+name = "tsx"
+file-types = ["jsx", "tsx"]
+language-servers = [
+  "emmet-ls",
+  "typescript-language-server",
+  "tailwindcss-lannguage-server",
+  "vscode-eslint-language-server",
+]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+auto-format = true
+soft-wrap.enable = true
+
+[[language]]
+name = "yaml"
+file-types = ["yml", "yaml"]
+formatter = { command = "prettier", args = ["--parser", "yaml"] }
+soft-wrap.enable = true

@@ -1,0 +1,10 @@
+theme = "transparent"
+[editor]
+line-number = "relative"
+file-picker.hidden = false
+indent-guides.render = true
+inline-diagnostics.cursor-line = "hint"
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
