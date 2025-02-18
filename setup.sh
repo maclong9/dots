@@ -10,12 +10,12 @@ get_sudo_password() {
 	echo
 }
 
-# Function to run sudo commands with the stored password
+# Run sudo commands with the stored password
 run_sudo() {
 	echo "$SUDO_PASSWORD" | sudo -S sh -c "$1"
 }
 
-# Spinner function with new frames
+# Display spinner with message
 spinner() {
 	pid="$1"
 	delay=0.1
@@ -48,19 +48,6 @@ run_with_spinner() {
 	fi
 }
 
-# Cleanup function
-cleanup() {
-	if [ $? -ne 0 ]; then
-		printf "\033[1;31m✗\033[0m \033[1;37mSetup failed, restoring system state\033[0m\n"
-		cd "$HOME" || exit
-		run_sudo "rm -rf .config .gitconfig .gitignore .zshrc /etc/pam.d/sudo_local"
-		(crontab -l 2>/dev/null | grep -v "backup\|update") | crontab -
-		exit 1
-	fi
-}
-
-trap cleanup EXIT
-
 # Main setup
 get_sudo_password
 
@@ -68,8 +55,8 @@ get_sudo_password
 run_with_spinner "git clone https://github.com/maclong9/dots .config" "Cloning configuration files"
 for file in .config/.*; do
 	case "$(basename "$file")" in
-	"." | ".." | ".git") continue ;;
-	*) ln -sf "$file" "${HOME}/$(basename "$file")" ;;
+		"." | ".." | ".git") continue ;;
+		*) ln -sf "$file" "${HOME}/$(basename "$file")" ;;
 	esac
 done
 
@@ -79,10 +66,12 @@ if [ "$(uname -s)" = "Darwin" ]; then
 
 	# Enable Touch ID for sudo
 	if [ ! -f "/etc/pam.d/sudo_local" ]; then
-		run_with_spinner 'run_sudo "sed '\''s/^#auth/auth/'\'' /etc/pam.d/sudo_local.template > /etc/pam.d/sudo_local"' "Enabling Touch ID for sudo"
+		run_with_spinner \
+		'run_sudo "sed '\''s/^#auth/auth/'\'' /etc/pam.d/sudo_local.template > /etc/pam.d/sudo_local"' \
+		"Enabling Touch ID for sudo"
 	fi
 
-	# Install Xcode command line tools if needed
+	# Install Xcode command line tools
 	if ! xcode-select -p >/dev/null 2>&1; then
 		run_with_spinner "xcode-select --install" "Installing Xcode command line tools"
 		until xcode-select -p >/dev/null 2>&1; do
@@ -90,29 +79,37 @@ if [ "$(uname -s)" = "Darwin" ]; then
 		done
 	fi
 
-	# Accept Xcode license if needed
+	# Accept Xcode license
 	if ! /usr/bin/xcrun clang >/dev/null 2>&1; then
 		run_with_spinner 'run_sudo "xcodebuild -license accept"' "Accepting Xcode license"
 	fi
 fi
 
-# Install development tools
-run_with_spinner "true" "Installing development tools"
-
-# Install Homebrew if needed
+# Install Homebrew
 if ! command -v /opt/homebrew/bin/brew >/dev/null 2>&1; then
-	run_with_spinner "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\" && eval \"$(/opt/homebrew/bin/brew shellenv)\"" "Installing Homebrew"
+	run_with_spinner "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\" &&\
+		eval \"$(/opt/homebrew/bin/brew shellenv)\"" \
+		"Installing Homebrew"
 fi
 
 # Install commandline tools
-run_with_spinner "/opt/homebrew/bin/brew install gh helix node orbstack starship zoxide" "Installing applications and tools"
+run_with_spinner "/opt/homebrew/bin/brew install \
+	gh harper helix marksman node orbstack starship zoxide" \
+	"Installing applications and tools"
 
 # Install language servers
-run_with_spinner "/opt/homebrew/bin/npm install -g @tailwindcss/language-server emmet-ls svelte-language-server typescript-language-server vercel vscode-langservers-extracted" "Installing web tooling"
+run_with_spinner \
+	"/opt/homebrew/bin/npm install -g \
+	@tailwindcss/language-server emmet-ls svelte-language-server typescript-language-server \
+	vercel vscode-langservers-extracted" \
+	"Installing web tooling"
 
 # Install macOS Applications
 if [ "$(uname -s)" = "Darwin" ]; then
-	run_with_spinner "/opt/homebrew/bin/brew install mas && /opt/homebrew/bin/brew install --cask ghostty homerow hyperkey onyx && /opt/homebrew/bin/mas install 1527619437 1662217862 1596283165 634148309 424389933 634159523 497799835 434290957 424390742 1289583905" "Installing macOS applications"
+	run_with_spinner \
+		"/opt/homebrew/bin/brew install mas && /opt/homebrew/bin/brew install --cask ghostty homerow hyperkey onyx &&\
+		/opt/homebrew/bin/mas install 1527619437 1662217862 1596283165 634148309 424389933 634159523 497799835 434290957 424390742 1289583905" \
+		"Installing macOS applications"
 fi
 
 # GitHub CLI authentication
