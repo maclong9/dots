@@ -1,3 +1,7 @@
+[language-server.harper-ls]
+command = "harper-ls"
+args = ["--stdio"]
+
 [[language]]
 name = "css"
 file-types = ["css"]
@@ -43,7 +47,7 @@ name = "typescript"
 file-types = ["js", "ts", "mjs", "mts", "cjs"]
 language-servers = [
   "eslint-language-server",
-  "harper-ls"
+  "harper-ls",
   "typescript-language-server",
 ]
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
@@ -54,7 +58,7 @@ name = "tsx"
 file-types = ["jsx", "tsx"]
 language-servers = [
   "emmet-ls",
-  "harper-ls"
+  "harper-ls",
   "tailwindcss-lannguage-server",
   "typescript-language-server",
   "vscode-eslint-language-server",
