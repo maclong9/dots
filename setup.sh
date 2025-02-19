@@ -108,7 +108,7 @@ run_with_spinner \
 if [ "$(uname -s)" = "Darwin" ]; then
 	run_with_spinner \
 		"/opt/homebrew/bin/brew install mas && /opt/homebrew/bin/brew install --cask ghostty homerow hyperkey onyx &&\
-		/opt/homebrew/bin/mas install 1527619437 1662217862 1596283165 634148309 424389933 634159523 497799835 434290957 424390742 1289583905" \
+		/opt/homebrew/bin/mas install 1527619437 1662217862 634148309 424389933 634159523 497799835 434290957 424390742 1289583905" \
 		"Installing macOS applications"
 fi
 
