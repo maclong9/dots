@@ -24,6 +24,15 @@ if [ "$(uname -s)" = "Darwin" ]; then
 	! /usr/bin/xcrun clang >/dev/null 2>&1 && sudo xcodebuild -license accept
 fi
 
+# Clone Configuration Files and Symlink to Home Directory
+git clone https://github.com/maclong9/dots .config
+for file in .config/.*; do
+	case "$(basename "$file")" in
+		"." | ".." | ".git") continue ;;
+		*) ln -s "$file" "$HOME/$(basename "$file")" ;;
+	esac
+done
+
 # SSH Setup
 ssh-keygen -t ed25519 -C "maclong9@icloud.com" -f "$HOME/.ssh/id_ed25519" -N ""
 eval "$(ssh-agent -s)"
@@ -39,14 +48,5 @@ sudo chmod +x /usr/local/bin/sls
 
 # Deno
 curl -fsSL https://deno.land/install.sh | sh;
-
-# Clone Configuration Files and Symlink to Home Directory
-git clone https://github.com/maclong9/dots .config
-for file in .config/.*; do
-	case "$(basename "$file")" in
-		"." | ".." | ".git") continue ;;
-		*) ln -s "$file" "$HOME/$(basename "$file")" ;;
-	esac
-done
 
 printf "Run 'source ~/.zshrc' to and add your SSH key where needed"
