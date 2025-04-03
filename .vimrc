@@ -1,11 +1,10 @@
 vim9script 
 
-# TODO: Look into: matchit, comment, hlyank & netrw packadd's
-
 # Basic configuration
 autocmd FileType netrw setlocal number relativenumber
 colorscheme habamax 
 g:netrw_banner = 0 
+g:netrw_liststyle = 3
 set ai noswf nu re=0 rnu sw=2 scl=yes ts=2 
 syntax enable
 
@@ -150,3 +149,54 @@ for c in chars
     execute "nnoremap <silent> cs" .. m .. nm .. " :call g:ChangeSurround('" .. a .. "', '" .. new_open .. "', '" .. new_close .. "')<CR>"
   endfor
 endfor
+
+# Comment markers by filetype
+g:comment_markers = {
+	'vim': '"',
+	'vim9': '#',
+	'c': '//',
+	'javascript': '//',
+	'typescript': '//',
+	'swift': '//',
+	'default': '#'
+}
+
+# Determine appropriate comment style based on filetype and vim9script detection
+def g:GetCommentMarker(): string
+  var ft = &filetype
+  var marker = g:comment_markers->get(ft, g:comment_markers['default'])
+
+  # Special case for detecting vim9script in vim files
+  if ft == 'vim' && getline(1) =~ 'vim9script'
+    marker = g:comment_markers['vim9']
+  endif
+
+  return marker
+enddef
+
+# Toggle comments on current line or selection
+def g:ToggleComment()
+  var firstline = line(".")
+  var lastline = line(".")
+  var marker = g:GetCommentMarker()
+  var start_pattern = '^[ \t]*' .. escape(marker, '*/[]^$.')
+
+  # Process each line in the range
+  for lnum in range(firstline, lastline)
+    var line = getline(lnum)
+    if line =~ '^\s*$'
+      continue # Skip empty lines
+    endif
+
+    if line =~ start_pattern
+      setline(lnum, substitute(line, start_pattern .. '\s\?', '', '')) # Remove comment
+    else
+      var indent = matchstr(line, '^\s*')
+      setline(lnum, indent .. marker .. ' ' .. substitute(line, '^\s*', '', '')) # Add comment
+    endif
+  endfor
+enddef
+
+# Comment toggling mappings
+nnoremap <silent> <leader>c :call g:ToggleComment()<CR> 
+xnoremap <silent> <leader>c :call g:ToggleComment()<CR>
