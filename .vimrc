@@ -154,11 +154,7 @@ endfor
 g:comment_markers = {
 	'vim': '"',
 	'vim9': '#',
-	'c': '//',
-	'javascript': '//',
-	'typescript': '//',
-	'swift': '//',
-	'default': '#'
+	'default': '//'
 }
 
 # Determine appropriate comment style based on filetype and vim9script detection
