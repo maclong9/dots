@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH="/Users/maclong/.zsh/completions:$FPATH"; fi
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 # General Settings
@@ -25,3 +27,7 @@ nx() { deno run -A npm:$1 ${@:2} }
 
 # Safely move to trash
 rm() { mv $1 ~/.Trash }
+. "/Users/maclong/.deno/env"
+# Initialize zsh completions (added by deno install script)
+autoload -Uz compinit
+compinit
