@@ -1,7 +1,7 @@
 vim9script 
 
 # Basic configuration
-autocmd FileType netrw setlocal number relativenumber
+autocmd FileType netrw setlocal nu rnu
 colorscheme habamax 
 g:netrw_banner = 0 
 g:netrw_liststyle = 3
@@ -118,7 +118,7 @@ var readline_mappings = {
   '<C-F>': '<Right>',     # Forward one character
   '<C-H>': '<BS>',        # Backspace
   '<C-K>': '<C-\>e getcmdpos() == 1 ? "" : getcmdline()[:getcmdpos()-2]<CR>', # Kill to end
-  '<C-U>': '<C-U>',       # Delete to beginning of line
+  '<C-U>': '<C-U>',       # Delete to beginning
   '<Esc>b': '<C-Left>',   # Back one word
   '<Esc>f': '<C-Right>'   # Forward one word
 }

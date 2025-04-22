@@ -13,9 +13,10 @@ alias g="git"
 alias hg="history 1 | grep"
 alias ls="sls -cli"
 alias mkdir="mkdir -p"
+alias dig="deno install -gArf"
+alias remove="/bin/rm"
 alias sf="swift format --recursive --in-place"
 alias v="vim"
-alias remove="/bin/rm"
 
 # Kill Port
 kp() { kill -9 $(lsof -ti tcp:$1) }
@@ -30,3 +31,7 @@ nx() { deno run -A npm:$1 ${@:2} }
 rm() { mv $1 ~/.Trash }
 
 . "/Users/maclong/.deno/env"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

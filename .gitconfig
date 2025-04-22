@@ -16,6 +16,7 @@
 	lg = "log --graph --oneline --decorate --all"
 	p = "push"
 	pl = "pull"
+	pf = "push --force"
 	r = "restore"
 	s = "status"
 	sh = "show"
