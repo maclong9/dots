@@ -13,9 +13,6 @@ cleanup() {
 	fi
 }
 
-# Prepare Binary Directory
-sudo mkdir /usr/local/bin 
-
 # Check If Running on macOS
 if [ "$(uname -s)" = "Darwin" ]; then
 	# Enable Touch ID for `sudo`
@@ -25,15 +22,7 @@ if [ "$(uname -s)" = "Darwin" ]; then
 	# Install Developer Tools
 	! xcode-select -p >/dev/null 2>&1 && xcode-select --install
 	! /usr/bin/xcrun clang >/dev/null 2>&1 && sudo xcodebuild -license accept
-
-	# Install Swift List
-	sudo curl -L https://github.com/maclong9/list/releases/download/v1.1.3/sls-arm64 -o /usr/local/bin/sls
-else
-	sudo curl -L https://github.com/maclong9/list/releases/download/v1.1.3/sls-x86_64 -o /usr/local/bin/sls
 fi
-
-# Make Swift List Executable
-sudo chmod +x /usr/local/bin/sls
 
 # Clone Configuration Files and Symlink to Home Directory
 git clone https://github.com/maclong9/dots .config
@@ -51,6 +40,11 @@ mkdir ~/.ssh
 printf 'Host github.com\n\tAddKeysToAgent yes\n\tIdentityFile ~/.ssh/id_ed25519' > ~/.ssh/config
 ssh-add ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Install Swift List
+sudo mkdir -p /usr/local/bin
+sudo curl -L $(curl -s https://api.github.com/repos/maclong9/list/releases/latest | grep "browser_download_url.*sls-arm64" | cut -d\" -f4) -o /usr/local/bin/sls
+sudo chmod +x /usr/local/bin/sls
 
 # Deno
 curl -fsSL https://deno.land/install.sh | sh;
