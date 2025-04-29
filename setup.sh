@@ -36,7 +36,6 @@ done
 # SSH Setup
 ssh-keygen -t ed25519 -C "maclong9@icloud.com" -f "$HOME/.ssh/id_ed25519" -N ""
 eval "$(ssh-agent -s)"
-mkdir ~/.ssh
 printf 'Host github.com\n\tAddKeysToAgent yes\n\tIdentityFile ~/.ssh/id_ed25519' > ~/.ssh/config
 ssh-add ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub | pbcopy
