@@ -1,7 +1,4 @@
 #!/bin/sh
-# System Configuration
-# usage: 
-#   source <(curl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh)
 
 # Restore System to Previous State If Non-Zero Exit Code
 trap 'cleanup' EXIT
