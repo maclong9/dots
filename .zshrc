@@ -4,8 +4,7 @@ if [[ ":$FPATH:" != *":/Users/maclong/.zsh/completions:"* ]]; then export FPATH=
 # General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
-autoload -Uz compinit
-compinit
+autoload -Uz compinit && compinit
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 
 # Aliases
