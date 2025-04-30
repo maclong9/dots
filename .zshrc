@@ -15,6 +15,7 @@ alias mkdir="mkdir -p"
 alias dig="deno install -gArf"
 alias remove="/bin/rm"
 alias sf="swift format --recursive --in-place"
+alias sl="swift format lint --recursive"
 alias v="vim"
 
 # Kill Port
@@ -31,3 +32,7 @@ rm() { mv $1 ~/.Trash }
 
 # Source Deno
 . "/Users/maclong/.deno/env"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
