@@ -1,6 +1,3 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/maclong/completions:"* ]]; then export FPATH="/Users/maclong/completions:$FPATH"; fi
-
 # General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
@@ -24,10 +21,5 @@ kp() { kill -9 $(lsof -ti tcp:$1) }
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
 
-# Run `npx` with Deno
-nx() { deno run -A npm:$1 ${@:2} }
-
 # Safely move to trash
 rm() { mv $1 ~/.Trash }
-
-. "/Users/maclong/.deno/env"
