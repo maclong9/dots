@@ -13,6 +13,7 @@ alias dig="deno install -gArf"
 alias remove="/bin/rm"
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
+alias src="/bin/rm -rf ~/Library/Caches/org.swift.swiftpm; /bin/rm -rf ~/Library/org.swift.swiftpm; swift package resolve;"
 alias v="vim"
 
 # Kill Port
@@ -23,3 +24,4 @@ mkcd() { mkdir $1 && cd $1; }
 
 # Safely move to trash
 rm() { mv $1 ~/.Trash }
+. "/Users/maclong/.deno/env"
