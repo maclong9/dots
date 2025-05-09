@@ -24,4 +24,5 @@ mkcd() { mkdir $1 && cd $1; }
 
 # Safely move to trash
 rm() { mv $1 ~/.Trash }
+
 . "/Users/maclong/.deno/env"
