@@ -22,6 +22,9 @@ kp() { kill -9 $(lsof -ti tcp:$1) }
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
 
+# Run `npx` with Deno
+nx() { deno run -A npm:$1 ${@:2} }
+
 # Safely move to trash
 rm() { mv $1 ~/.Trash }
 
