@@ -1,4 +1,4 @@
-vim9script 
+vim9script
 
 # Basic configuration
 autocmd FileType netrw setlocal nu rnu
@@ -196,3 +196,43 @@ enddef
 # Comment toggling mappings
 nnoremap <silent> <leader>c :call g:ToggleComment()<CR> 
 xnoremap <silent> <leader>c :call g:ToggleComment()<CR>
+
+# LSP Setup
+plug#begin()
+  Plug 'yegappan/lsp'
+plug#end()
+
+# LSP Options
+var lspOpts = {
+	autoHighlight: v:true,
+	showDiagWithVirtualText: v:true,
+	usePopupInCodeAction: v:true,
+}
+autocmd User LspSetup call LspOptionsSet(lspOpts)
+
+# LSP Servers
+var lspServers = [{
+  name: 'swift',
+  filetype: ['swift'],
+  path: '/usr/bin/xcrun',
+  args: ['sourcekit-lsp']
+}, {
+  name: 'deno',
+  filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+  path: 'deno',
+  args: ['lsp']
+}]
+autocmd User LspSetup call LspAddServer(lspServers)
+
+# LSP Keymaps
+vnoremap <leader>ca :LspCodeAction<CR>
+cnoremap <leader>ca :LspCodeAction<CR>
+nnoremap <leader>f :Files<CR>
+nnoremap <leader>l :LspCodeLens<CR>
+nnoremap <leader>h :LspHover<CR>
+nnoremap <leader>r :LspRename<CR>
+nnoremap <leader>o :LspOutline<CR>
+nnoremap [d :LspDiagPrevWrap<CR>
+nnoremap ]d :LspDiagNextWrap<CR>
+nnoremap gd :LspGotoDefinition<CR>
+nnoremap gi :LspGotoImpl<CR>
