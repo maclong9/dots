@@ -1,2 +1,3 @@
-zed/
-!zed/settings.json
+zed/conversations/
+zed/prompts/
+zed/themes/
