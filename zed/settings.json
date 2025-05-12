@@ -35,13 +35,6 @@
   },
   "buffer_font_family": "SF Mono",
   "buffer_font_size": 12,
-  "context_servers": {
-    "mcp-server-github": {
-      "settings": {
-        "github_personal_access_token": "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"
-      }
-    }
-  },
   "icon_theme": "Colored Zed Icons Theme Dark",
   "languages": {
     "TypeScript": {
