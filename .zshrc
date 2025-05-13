@@ -63,6 +63,11 @@ add_vhost() {
         Options Indexes FollowSymLinks
         AllowOverride All
         Require all granted
+				RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME}.html -f
+        RewriteRule ^(.*)$ $1.html [L]
     </Directory>
 
     ErrorLog "${LOG_PREFIX}-error_log"
