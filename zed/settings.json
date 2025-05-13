@@ -51,6 +51,10 @@
     }
   },
   "relative_line_numbers": true,
+  "tabs": {
+    "file_icons": true,
+    "git_status": true
+  },
   "theme": {
     "dark": "Anysphere Theme",
     "light": "One Light",
