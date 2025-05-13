@@ -6,7 +6,13 @@
   "auto_install_extensions": {
     "anysphere-theme": true,
     "colored-zed-icons-theme": true,
+    "csv": true,
+    "deno": true,
+    "docker-compose": true,
+    "emmet": true,
+    "graphql": true,
     "html": true,
+    "proto": true,
     "react-typescript-snippets": true,
     "swift": true
   },
