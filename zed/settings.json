@@ -10,6 +10,7 @@
     "deno": true,
     "docker-compose": true,
     "emmet": true,
+    "git-firefly": true,
     "graphql": true,
     "html": true,
     "proto": true,
@@ -31,19 +32,9 @@
     "default_width": 300
   },
   "icon_theme": "Colored Zed Icons Theme Dark",
-  "languages": {
-    "TSX": {
-      "code_actions_on_format": {
-        "source.fixAll": true,
-        "source.organizeImports": true
-      }
-    },
-    "TypeScript": {
-      "code_actions_on_format": {
-        "source.fixAll": true,
-        "source.organizeImports": true
-      }
-    }
+  "code_actions_on_format": {
+    "source.fixall": true,
+    "source.organizeImports": true
   },
   "notification_panel": {
     "button": false
