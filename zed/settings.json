@@ -52,7 +52,8 @@
   },
   "relative_line_numbers": true,
   "terminal": {
-    "button": false
+    "button": false,
+    "default_height": 360
   },
   "theme": {
     "dark": "Anysphere Theme",
