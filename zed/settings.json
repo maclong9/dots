@@ -24,6 +24,9 @@
   },
   "buffer_font_family": "SF Mono",
   "buffer_font_size": 12,
+  "buffer_font_features": {
+    "calt": true
+  },
   "collaboration_panel": {
     "button": false
   },
