@@ -79,5 +79,4 @@ EOF
   sudo apachectl restart
 }
 
-
 . "/Users/maclong/.deno/env"
