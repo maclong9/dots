@@ -15,7 +15,8 @@
     "html": true,
     "proto": true,
     "react-typescript-snippets": true,
-    "swift": true
+    "swift": true,
+    "package-swift-lsp": true
   },
   "autosave": {
     "after_delay": {
