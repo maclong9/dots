@@ -1,4 +1,10 @@
 {
+  "agent": {
+    "always_allow_tool_actions": true,
+    "model_parameters": [],
+    "default_profile": "write",
+    "version": "2"
+  },
   "assistant_panel": {
     "dock": "right",
     "default_width": 300
@@ -63,5 +69,9 @@
   },
   "ui_font_family": "SF Pro",
   "ui_font_size": 12,
-  "vim_mode": true
+  "vim_mode": true,
+  "title_bar": {
+    "show_user_picture": false,
+    "show_branch_icon": true
+  }
 }
