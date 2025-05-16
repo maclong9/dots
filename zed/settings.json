@@ -1,13 +1,13 @@
 {
   "agent": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
+    },
     "always_allow_tool_actions": true,
-    "model_parameters": [],
     "default_profile": "write",
+    "model_parameters": [],
     "version": "2"
-  },
-  "assistant_panel": {
-    "dock": "right",
-    "default_width": 300
   },
   "auto_install_extensions": {
     "anysphere-theme": true,
@@ -19,10 +19,10 @@
     "git-firefly": true,
     "graphql": true,
     "html": true,
+    "package-swift-lsp": true,
     "proto": true,
     "react-typescript-snippets": true,
-    "swift": true,
-    "package-swift-lsp": true
+    "swift": true
   },
   "autosave": {
     "after_delay": {
@@ -30,32 +30,34 @@
     }
   },
   "buffer_font_family": "SF Mono",
-  "buffer_font_size": 12,
   "buffer_font_features": {
     "calt": true
   },
-  "collaboration_panel": {
-    "button": false
-  },
-  "git_panel": {
-    "dock": "left",
-    "default_width": 300
-  },
-  "icon_theme": "Colored Zed Icons Theme Dark",
+  "buffer_font_size": 11,
   "code_actions_on_format": {
     "source.fixall": true,
     "source.organizeImports": true
   },
-  "notification_panel": {
-    "button": false
+  "collaboration_panel": {
+    "default_width": 300
   },
+  "chat_panel": {
+    "default_width": 300,
+    "dock": "left"
+  },
+  "git_panel": {
+    "default_width": 300,
+    "dock": "left"
+  },
+  "icon_theme": "Colored Zed Icons Theme Dark",
   "outline_panel": {
     "default_width": 300,
     "dock": "right"
   },
   "project_panel": {
     "default_width": 300,
-    "dock": "left"
+    "dock": "left",
+    "hide_gitignore": true
   },
   "relative_line_numbers": true,
   "terminal": {
@@ -67,11 +69,11 @@
     "light": "One Light",
     "mode": "system"
   },
-  "ui_font_family": "SF Pro",
-  "ui_font_size": 12,
-  "vim_mode": true,
   "title_bar": {
-    "show_user_picture": false,
-    "show_branch_icon": true
-  }
+    "show_branch_icon": true,
+    "show_user_picture": false
+  },
+  "ui_font_family": "SF Pro",
+  "ui_font_size": 11,
+  "vim_mode": true
 }
