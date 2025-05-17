@@ -15,7 +15,7 @@ fi
 git clone https://github.com/maclong9/dots .config
 for file in .config/.*; do
 	case "$(basename "$file")" in
-		"." | ".." | ".git") continue ;;
+		"." | ".." | ".git" | ".gitignore") continue ;;
 		*) ln -s "$file" "$HOME/$(basename "$file")" ;;
 	esac
 done
