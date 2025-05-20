@@ -1,14 +1,4 @@
 {
-  "agent": {
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-latest"
-    },
-    "always_allow_tool_actions": true,
-    "default_profile": "write",
-    "model_parameters": [],
-    "version": "2"
-  },
   "auto_install_extensions": {
     "anysphere-theme": true,
     "colored-zed-icons-theme": true,
@@ -17,7 +7,6 @@
     "docker-compose": true,
     "emmet": true,
     "git-firefly": true,
-    "graphql": true,
     "html": true,
     "package-swift-lsp": true,
     "proto": true,

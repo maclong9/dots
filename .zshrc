@@ -81,6 +81,3 @@ EOF
   sudo apachectl restart
 }
 . "/Users/maclong/.deno/env"
-# Initialize zsh completions (added by deno install script)
-autoload -Uz compinit
-compinit
