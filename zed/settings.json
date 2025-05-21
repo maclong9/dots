@@ -1,4 +1,9 @@
 {
+  "agent": {
+    "model_parameters": [],
+    "always_allow_tool_actions": true,
+    "version": "2"
+  },
   "auto_install_extensions": {
     "anysphere-theme": true,
     "colored-zed-icons-theme": true,

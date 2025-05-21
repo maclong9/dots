@@ -13,6 +13,10 @@ alias dig="deno install -gArf"
 alias remove="/bin/rm"
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
+alias sr="swift run"
+alias st="swift test"
+alias sb="swift build"
+alias sbr="swift build -c release"
 alias src="/bin/rm -rf ~/Library/Caches/org.swift.swiftpm; /bin/rm -rf ~/Library/org.swift.swiftpm; swift package resolve;"
 alias v="vim"
 
@@ -78,3 +82,10 @@ EOF
   echo "🔄 Restarting Apache..."
   sudo apachectl restart
 }
+
+# bun completions
+[ -s "/Users/maclong/.bun/_bun" ] && source "/Users/maclong/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
