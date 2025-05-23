@@ -1,5 +1,16 @@
 {
+  "context_servers": {
+    "mcp-server-github": {
+      "settings": {
+      }
+    }
+  },
   "agent": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
+    },
+    "default_profile": "write",
     "model_parameters": [],
     "always_allow_tool_actions": true,
     "version": "2"
@@ -50,8 +61,7 @@
   },
   "project_panel": {
     "default_width": 300,
-    "dock": "left",
-    "hide_gitignore": true
+    "dock": "left"
   },
   "relative_line_numbers": true,
   "terminal": {

@@ -20,13 +20,6 @@ for file in .config/.*; do
 	esac
 done
 
-# SSH Setup
-ssh-keygen -t ed25519 -C "maclong9@icloud.com" -f "$HOME/.ssh/id_ed25519" -N ""
-eval "$(ssh-agent -s)"
-printf 'Host github.com\n\tAddKeysToAgent yes\n\tIdentityFile ~/.ssh/id_ed25519' > ~/.ssh/config
-ssh-add ~/.ssh/id_ed25519
-cat ~/.ssh/id_ed25519.pub | pbcopy
-
 # Install Swift List
 sudo mkdir -p /usr/local/bin
 download_url=$(curl -s https://api.github.com/repos/maclong9/list/releases/latest | grep "browser_download_url.*sls" | cut -d\" -f4)
