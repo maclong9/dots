@@ -30,6 +30,6 @@ fi
 sudo curl -L "$download_url" -o /usr/local/bin/sls
 sudo chmod +x /usr/local/bin/sls
 
-curl -fsSL https://bun.sh/install | bash
+curl -fsSL https://deno.land/install.sh | sh
 
 printf "Run 'source ~/.zshrc' to and add your SSH key where needed"
