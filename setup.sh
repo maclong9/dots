@@ -30,6 +30,11 @@ fi
 sudo curl -L "$download_url" -o /usr/local/bin/sls
 sudo chmod +x /usr/local/bin/sls
 
+# Install Deno
 curl -fsSL https://deno.land/install.sh | sh
+
+# Setup SSH Key
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+cat ~/.ssh/id_rsa | pbcopy
 
 printf "Run 'source ~/.zshrc' to and add your SSH key where needed"

@@ -1,7 +1,7 @@
 [user]
 	email = "maclong9@icloud.com"
 	name = "Mac"
-	signingkey = /Users/maclong/.ssh/id_ed25519.pub
+	signingKey = "~/.ssh/id_ed25519" 
 [alias]
 	aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
 	ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
@@ -32,3 +32,11 @@
 	rebase = false
 [gpg]
 	format = ssh
+[includeIf "gitdir:~/Developer/work/"]
+    path = ~/.gitconfig-work
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/local/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/local/bin/gh auth git-credential
