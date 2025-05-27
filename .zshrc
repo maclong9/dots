@@ -19,6 +19,7 @@ alias sr="swift run"
 alias st="swift test"
 alias sb="swift build"
 alias sbr="swift build -c release"
+alias spu="swift package update"
 alias src="/bin/rm -rf ~/Library/Caches/org.swift.swiftpm; /bin/rm -rf ~/Library/org.swift.swiftpm; swift package resolve;"
 alias v="vim"
 
@@ -85,12 +86,6 @@ EOF
   sudo apachectl restart
 }
 
-# bun completions
-[ -s "/Users/maclong/.bun/_bun" ] && source "/Users/maclong/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 . "/Users/mac/.deno/env"
 # Initialize zsh completions (added by deno install script)
 autoload -Uz compinit
