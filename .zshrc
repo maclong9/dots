@@ -8,11 +8,10 @@ setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 
 # Aliases
 alias g="git"
-alias hg="history 1 | grep"
 alias ls="sls -cli"
+alias la="sls -clia"
 alias mkdir="mkdir -p"
 alias dig="deno install -gArf"
-alias remove="/bin/rm"
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
 alias sr="swift run"
