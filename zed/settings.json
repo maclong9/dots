@@ -7,8 +7,8 @@
   },
   "agent": {
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-4.1"
+      "provider": "google",
+      "model": "gemini-2.5-flash-preview-04-17"
     },
     "default_profile": "write",
     "model_parameters": [],
