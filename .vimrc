@@ -90,12 +90,12 @@ enddef
 var lspServers = [{
   name: 'deno',
   filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
-  path: 'deno',
+  path: '/home/mac/.deno/bin/deno',
   args: ['lsp']
 }, {
   name: 'rust-analyzer',
   filetype: ['rust'],
-  path: 'rust-analyzer',
+  path: '/home/mac/.cargo/bin/rust-analyzer',
   args: []
 }, {
   name: 'pylsp',

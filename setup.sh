@@ -8,7 +8,7 @@ printf "Updating XBPS..."
 sudo xbps-install -Suy xbps
 
 printf "Installing core development tools..."
-sudo xbps-install -y base-devel curl gcc git github-cli nodejs python3 python3-pip rustup unzip vim zsh
+sudo xbps-install -y base-devel curl git github-cli nodejs python3 python3-pip rustup unzip vim zsh
 
 printf "Installing common linters and formatters..."
 
