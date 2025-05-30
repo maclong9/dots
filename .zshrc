@@ -1,5 +1,3 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/mac/.zsh/completions:"* ]]; then export FPATH="/Users/mac/.zsh/completions:$FPATH"; fi
 # General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
@@ -27,12 +25,6 @@ kp() { kill -9 $(lsof -ti tcp:$1) }
 
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
-
-# Run `npx` with Deno
-nx() { deno run -A npm:$1 ${@:2} }
-
-# Safely move to trash
-rm() { mv $1 ~/.Trash }
 
 # Add Localhost Domain
 add_vhost() {
@@ -84,8 +76,3 @@ EOF
   echo "🔄 Restarting Apache..."
   sudo apachectl restart
 }
-
-. "/Users/mac/.deno/env"
-# Initialize zsh completions (added by deno install script)
-autoload -Uz compinit
-compinit

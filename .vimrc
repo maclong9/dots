@@ -222,11 +222,6 @@ var lspServers = [{
   filetype: ['swift'],
   path: '/usr/bin/xcrun',
   args: ['sourcekit-lsp']
-}, {
-  name: 'deno',
-  filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
-  path: 'deno',
-  args: ['lsp']
 }]
 autocmd User LspSetup call LspAddServer(lspServers)
 
