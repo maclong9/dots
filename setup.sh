@@ -8,7 +8,7 @@ printf "Updating XBPS...\n"
 sudo xbps-install -Suy xbps
 
 printf "Installing core tools...\n"
-sudo xbps-install -y base-devel curl git github-cli jq unzip vim zsh
+sudo xbps-install -y base-devel curl git github-cli jq unzip vim wget zsh
 
 # Shell tooling
 printf "Installing shell tools...\n"
