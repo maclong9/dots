@@ -61,7 +61,6 @@ go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 # Additional language servers and tools
 printf "Installing additional language servers...\n"
 sudo npm install -g yaml-language-server dockerfile-language-server-nodejs bash-language-server
-sudo xbps-install -y lua-language-server
 
 # Database tools
 printf "Installing database tools...\n"
