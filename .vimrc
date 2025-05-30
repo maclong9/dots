@@ -4,7 +4,6 @@ vim9script
 # BASIC CONFIGURATION
 # ==============================================================================
 
-# Core settings
 set autoindent            # Automatically indent new lines to match the previous line
 set expandtab             # Convert tabs to spaces when inserting
 set hlsearch              # Highlight all matches when searching
@@ -16,15 +15,13 @@ set number                # Display line numbers on the left side
 set relativenumber        # Show relative line numbers (distance from current line)
 set scrolloff=999         # Keep cursor away from top/bottom edges
 set shiftwidth=4          # Number of spaces used for each step of autoindent
-set showbreak             # String to display at the beginning of wrapped lines
 set smartcase             # Override ignorecase if search contains uppercase letters
 set splitright            # Open new vertical splits to the right
 set tabstop=4             # Number of spaces that a tab character represents
 set timeoutlen=500        # Time in milliseconds to wait for mapped sequence to complete
 set updatetime=250        # Time in milliseconds before swap file is written and CursorHold fires
 
-# Colorscheme and transparency
-colorscheme habamax
+colorscheme habamax       # Set colorscheme
 
 # ==============================================================================
 # NETRW CONFIGURATION
@@ -38,7 +35,6 @@ g:netrw_liststyle = 3
 # PLUGIN SETUP
 # ==============================================================================
 
-# Auto-install vim-plug
 var data_dir = has('nvim') ? stdpath('data') .. '/site' : expand('~/.vim')
 if empty(glob(data_dir .. '/autoload/plug.vim'))
   silent! execute '!curl -fLo ' .. data_dir .. '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -54,24 +50,17 @@ plug#begin()
   Plug 'tpope/vim-unimpaired'          # Paired mappings for navigation
   Plug 'tpope/vim-fugitive'            # Simple git commands with :G
 
-  # LSP and completion
-  Plug 'yegappan/lsp'                  # LSP support
-
   # Fuzzy finding
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  # Fuzzy finder
   Plug 'junegunn/fzf.vim'              # Fzf Vim integration
 
   # Development tools
-  Plug 'dense-analysis/ale'            # Async linting engine
+  Plug 'yegappan/lsp'                  # Built-in LSP client
   Plug 'airblade/vim-gitgutter'        # Git diff in gutter
 
   # Language-specific plugins
-  Plug 'pangloss/vim-javascript'       # Better JavaScript syntax
-  Plug 'leafgarland/typescript-vim'    # TypeScript syntax
-  Plug 'rust-lang/rust.vim'            # Rust support
-  Plug 'vim-python/python-syntax'      # Enhanced Python syntax
-  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }  # Go support
-  Plug 'vim-php/vim-php'               # PHP syntax and support
+  Plug 'rhysd/vim-clang-format'        # C formatting
+  Plug 'keith/swift.vim'               # Swift syntax and support
 
   # UI improvements
   Plug 'itchyny/lightline.vim'         # Lightweight status line
@@ -85,93 +74,24 @@ plug#end()
 # LSP Options
 var lspOpts = {
   autoHighlight: v:true,
-  ignoreMissingServer: v:true,
   showDiagWithVirtualText: v:true,
   usePopupInCodeAction: v:true,
-  completionMatcher: 'fuzzy',
-  vsnipSupport: v:true,
 }
-autocmd User LspSetup call LspOptionsSet(lspOpts)
+autocmd User LspSetup silent! call LspOptionsSet(lspOpts)
 
 # LSP Servers
-var lspServers = [
-  {
-    name: 'swift',
-    filetype: ['swift'],
-    path: '/usr/bin/xcrun',
-    args: ['sourcekit-lsp']
-  },
-  {
-    name: 'clangd',
-    filetype: ['c', 'cpp', 'objc', 'objcpp'],
-    path: '/usr/bin/clangd',
-    args: ['--background-index', '--clang-tidy']
-  },
-  {
-    name: 'typescript-language-server',
-    filetype: ['javascript', 'typescript', 'typescriptreact', 'javascriptreact'],
-    path: 'typescript-language-server',
-    args: ['--stdio']
-  },
-  {
-    name: 'pylsp',
-    filetype: ['python'],
-    path: 'pylsp',
-    args: []
-  },
-  {
-    name: 'rust-analyzer',
-    filetype: ['rust'],
-    path: 'rust-analyzer',
-    args: []
-  },
-  {
-    name: 'gopls',
-    filetype: ['go'],
-    path: 'gopls',
-    args: ['--stdio']
-  },
-  {
-    name: 'intelephense',
-    filetype: ['php'],
-    path: 'intelephense',
-    args: ['--stdio']
-  }
-]
+var lspServers = [{
+  name: 'clangd',
+  filetype: ['c'],
+  path: 'clangd',
+  args: ['--background-index']
+}, {
+  name: 'sourcekit',
+  filetype: ['swift'],
+  path: 'sourcekit-lsp',
+  args: []
+}]
 autocmd User LspSetup call LspAddServer(lspServers)
-
-# ==============================================================================
-# ALE CONFIGURATION
-# ==============================================================================
-
-# Deno detection helper
-def IsDeno(): bool
-  return filereadable('deno.json') || filereadable('deno.jsonc')
-enddef
-
-g:ale_linters_explicit = 1
-g:ale_linters = {
-  'javascript': IsDeno() ? ['deno'] : ['eslint'],
-  'typescript': IsDeno() ? ['deno'] : ['eslint', 'tslint'],
-  'python': ['flake8', 'mypy'],
-  'rust': ['cargo'],
-  'c': ['clang'],
-  'cpp': ['clang++'],
-  'go': ['gopls', 'golangci-lint'],
-  'php': ['phpstan', 'psalm'],
-}
-g:ale_fixers = {
-  '*': ['remove_trailing_lines', 'trim_whitespace'],
-  'javascript': IsDeno() ? ['deno'] : ['prettier', 'eslint'],
-  'typescript': IsDeno() ? ['deno'] : ['prettier', 'eslint'],
-  'python': ['black', 'isort'],
-  'rust': ['rustfmt'],
-  'c': ['clang-format'],
-  'cpp': ['clang-format'],
-  'go': ['gofmt', 'goimports'],
-  'php': ['php-cs-fixer'],
-}
-g:ale_fix_on_save = 1
 
 # ==============================================================================
 # UI PLUGIN CONFIGURATION
@@ -224,6 +144,8 @@ endfor
 # LSP mappings
 nnoremap <leader>ca :LspCodeAction<CR>
 vnoremap <leader>ca :LspCodeAction<CR>
+cnoremap <leader>ca :LspCodeAction<CR>
+nnoremap <leader>f :Files<CR>
 nnoremap <leader>l :LspCodeLens<CR>
 nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>r :LspRename<CR>
@@ -232,16 +154,18 @@ nnoremap [d :LspDiagPrevWrap<CR>
 nnoremap ]d :LspDiagNextWrap<CR>
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap gi :LspGotoImpl<CR>
-nnoremap gr :LspShowReferences<CR>
 
-# FZF commands
-command! F Files
-command! B Buffers
-command! C Commits
+# Clear Highlight Search
+nnoremap <silent> <Esc> <Cmd>nohlsearch<CR>
 
 # Git gutter mappings
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
+
+# FZF Commands
+command! F Files
+command! B Buffers
+command! C Commits
 
 # ==============================================================================
 # AUTO-COMMANDS
@@ -257,12 +181,4 @@ augroup colors
       hi StatusLine guibg=NONE ctermbg=NONE
       hi StatusLineNC guibg=NONE ctermbg=NONE
     }
-augroup END
-
-augroup programming
-  autocmd!
-  # Auto-format on save for specific filetypes
-  autocmd BufWritePre *.py,*.js,*.ts,*.jsx,*.tsx,*.rs,*.c,*.cpp,*.go,*.php,*.kt ALEFix
-  # Enable spell check for documentation
-  autocmd FileType markdown,text,gitcommit setlocal spell
 augroup END
