@@ -22,7 +22,7 @@ sudo xbps-install -y python3 python3-pip python3-lsp-server black python3-isort 
 # JavaScript/TypeScript/Deno
 printf "Installing JS/TS/Deno tools...\n"
 sudo xbps-install -y nodejs
-curl -fsSL https://deno.land/install.sh | sh
+curl -fsSL https://deno.land/install.sh | sh -s -- -y
 sudo npm install -g eslint prettier typescript typescript-language-server vscode-langservers-extracted ktlint
 
 # Rust
