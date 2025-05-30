@@ -14,6 +14,7 @@ set noswapfile            # Disable creation of swap files
 set number                # Display line numbers on the left side
 set relativenumber        # Show relative line numbers (distance from current line)
 set scrolloff=999         # Keep cursor away from top/bottom edges
+set signcolumn=yes        # Ensure signcolumn is always visible
 set shiftwidth=4          # Number of spaces used for each step of autoindent
 set smartcase             # Override ignorecase if search contains uppercase letters
 set splitright            # Open new vertical splits to the right
