@@ -1,7 +1,7 @@
 [user]
 	email = "maclong9@icloud.com"
 	name = "Mac"
-	signingKey = "~/.ssh/id_ed25519"
+	signingKey = "~/.ssh/id_rsa"
 [alias]
 	aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
 	ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
@@ -33,13 +33,3 @@
 	rebase = false
 [gpg]
 	format = ssh
-[includeIf "gitdir:~/OrbStack/void/home/mac/quantum/damm-fcb"]
-    path = ~/.gitconfig-work
-[credential "https://github.com"]
-	helper =
-	helper = !/usr/local/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper =
-	helper = !/usr/local/bin/gh auth git-credential
-[core]
-	excludesfile = ~/.gitignore_global

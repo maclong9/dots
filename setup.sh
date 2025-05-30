@@ -31,6 +31,6 @@ sudo chmod +x /usr/local/bin/sls
 
 # Setup SSH Key
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
-cat ~/.ssh/id_rsa | pbcopy
+cat ~/.ssh/id_rsa.pub | pbcopy
 
 printf "Run 'source ~/.zshrc' to and add your SSH key where needed"
