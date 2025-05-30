@@ -159,7 +159,7 @@ augroup END
 augroup programming
   autocmd!
   # Auto-format on save for specific filetypes
-  autocmd BufWritePre *.py,*.js,*.ts,*.jsx,*.tsx,*.rs,*.c,*.cpp,*.go,*.php,*.kt,*.swift ALEFix
+  autocmd BufWritePre *.c,*.swift ALEFix
   # Enable spell check for documentation
   autocmd FileType markdown,text,gitcommit setlocal spell
 augroup END
