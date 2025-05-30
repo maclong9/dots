@@ -70,6 +70,8 @@ plug#begin()
   Plug 'leafgarland/typescript-vim'    # TypeScript syntax
   Plug 'rust-lang/rust.vim'            # Rust support
   Plug 'vim-python/python-syntax'      # Enhanced Python syntax
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }  # Go support
+  Plug 'vim-php/vim-php'               # PHP syntax and support
 
   # UI improvements
   Plug 'itchyny/lightline.vim'         # Lightweight status line
@@ -122,6 +124,18 @@ var lspServers = [
     filetype: ['rust'],
     path: 'rust-analyzer',
     args: []
+  },
+  {
+    name: 'gopls',
+    filetype: ['go'],
+    path: 'gopls',
+    args: ['--stdio']
+  },
+  {
+    name: 'intelephense',
+    filetype: ['php'],
+    path: 'intelephense',
+    args: ['--stdio']
   }
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
@@ -142,7 +156,9 @@ g:ale_linters = {
   'python': ['flake8', 'mypy'],
   'rust': ['cargo'],
   'c': ['clang'],
-  'cpp': ['clang++']
+  'cpp': ['clang++'],
+  'go': ['gopls', 'golangci-lint'],
+  'php': ['phpstan', 'psalm'],
 }
 g:ale_fixers = {
   '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -151,7 +167,9 @@ g:ale_fixers = {
   'python': ['black', 'isort'],
   'rust': ['rustfmt'],
   'c': ['clang-format'],
-  'cpp': ['clang-format']
+  'cpp': ['clang-format'],
+  'go': ['gofmt', 'goimports'],
+  'php': ['php-cs-fixer'],
 }
 g:ale_fix_on_save = 1
 
@@ -225,7 +243,6 @@ command! C Commits
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
-
 # ==============================================================================
 # AUTO-COMMANDS
 # ==============================================================================
@@ -245,7 +262,7 @@ augroup END
 augroup programming
   autocmd!
   # Auto-format on save for specific filetypes
-  autocmd BufWritePre *.py,*.js,*.ts,*.jsx,*.tsx,*.rs,*.c,*.cpp ALEFix
+  autocmd BufWritePre *.py,*.js,*.ts,*.jsx,*.tsx,*.rs,*.c,*.cpp,*.go,*.php,*.kt ALEFix
   # Enable spell check for documentation
   autocmd FileType markdown,text,gitcommit setlocal spell
 augroup END
