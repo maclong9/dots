@@ -48,7 +48,6 @@ gem install solargraph
 printf "Installing Go tools...\n"
 go install golang.org/x/tools/gopls@latest
 go install golang.org/x/tools/cmd/goimports@latest
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 # Additional language servers and tools
 printf "Installing additional language servers...\n"
