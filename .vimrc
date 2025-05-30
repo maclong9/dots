@@ -175,6 +175,11 @@ nnoremap <silent> <Esc> <Cmd>nohlsearch<CR>
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
+# Copy to macOS clipboard
+vnoremap <leader>y :silent w !mac pbcopy<CR><CR>
+nnoremap <leader>yy :silent .w !mac pbcopy<CR><CR>
+nnoremap <leader>ya :silent %w !mac pbcopy<CR><CR>
+
 # FZF Commands
 command! F Files
 command! B Buffers
