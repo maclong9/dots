@@ -22,7 +22,6 @@ download_url=$(curl -s \
 	https://api.github.com/repos/maclong9/list/releases/latest | 
 	grep "browser_download_url.*sls" |
 	cut -d\" -f4)
-
 if [ -z "$download_url" ]; then
     echo "Error: Could not find download URL for 'sls' in the latest release."
     exit 1
