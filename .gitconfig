@@ -19,7 +19,6 @@
 	plo = "pull origin"
 	pf = "push --force"
 	r = "restore"
-	s = "!f() { gh auth switch; }; f"
 	st = "status"
 	sh = "show"
 	spo = "stash pop"
