@@ -36,7 +36,7 @@ sudo xbps-install -y clang-tools-extra cmake make ccls
 
 # Java
 printf "Installing Java tools...\n"
-sudo xbps-install -y openjdk17 maven gradle
+sudo xbps-install -y openjdk17 apache-maven gradle
 mkdir -p "$HOME"/.local/share/eclipse.jdt.ls
 wget -q https://download.eclipse.org/jdtls/milestones/1.28.0/jdt-language-server-1.28.0-202310261436.tar.gz
 tar -xzf jdt-language-server-1.28.0-202310261436.tar.gz -C "$HOME"/.local/share/eclipse.jdt.ls
