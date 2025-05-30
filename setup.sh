@@ -17,13 +17,13 @@ go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
 # Python
 printf "Installing Python tools...\n"
-sudo xbps-install -y python3 python3-pip python3-lsp-server black python3-isort ruff
+sudo xbps-install -y python3 python3-pip python3-lsp-server black python3-isort
 
 # JavaScript/TypeScript/Deno
 printf "Installing JS/TS/Deno tools...\n"
 sudo xbps-install -y nodejs
 curl -fsSL https://deno.land/install.sh | sh -s -- -y
-sudo npm install -g eslint prettier typescript typescript-language-server vscode-langservers-extracted ktlint
+sudo npm install -g eslint prettier typescript typescript-language-server vscode-langservers-extracted
 
 # Rust
 printf "Installing Rust tools...\n"
@@ -33,14 +33,6 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profil
 # C/C++
 printf "Installing C/C++ tools...\n"
 sudo xbps-install -y clang-tools-extra cmake make ccls
-
-# Kotlin
-printf "Installing Kotlin tools...\n"
-sudo xbps-install -y kotlin-bin
-wget -q https://github.com/fwcd/kotlin-language-server/releases/latest/download/server.zip -O /tmp/kotlin-ls.zip
-mkdir -p "$HOME"/.local/share/kotlin-language-server
-unzip -q /tmp/kotlin-ls.zip -d "$HOME"/.local/share/kotlin-language-server
-rm /tmp/kotlin-ls.zip
 
 # PHP
 printf "Installing PHP tools...\n"
