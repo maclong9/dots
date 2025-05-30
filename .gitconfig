@@ -1,7 +1,7 @@
 [user]
 	email = "mac@wearequantum.co.uk"
 	name = "Mac"
-	signingKey = "~/.ssh/id_rsa"
+	signingKey = "~/.ssh/id_rsab"
 [alias]
 	aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
 	ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
