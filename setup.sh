@@ -21,14 +21,13 @@ sudo xbps-install -y python3 python3-pip python3-lsp-server black python3-isort 
 
 # JavaScript/TypeScript/Deno
 printf "Installing JS/TS/Deno tools...\n"
-sudo xbps-install -y nodejs npm
+sudo xbps-install -y nodejs
 curl -fsSL https://deno.land/install.sh | sh
 sudo npm install -g eslint prettier typescript typescript-language-server vscode-langservers-extracted ktlint
 
 # Rust
 printf "Installing Rust tools...\n"
-sudo xbps-install -y rustup
-rustup-init -y --profile default
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 "$HOME"/.cargo/bin/rustup component add rustfmt clippy
 
 # C/C++
