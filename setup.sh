@@ -34,17 +34,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profil
 printf "Installing C/C++ tools...\n"
 sudo xbps-install -y clang-tools-extra cmake make ccls
 
-# Java
-printf "Installing Java tools...\n"
-sudo xbps-install -y openjdk17 apache-maven gradle
-mkdir -p "$HOME"/.local/share/eclipse.jdt.ls
-wget -q https://download.eclipse.org/jdtls/milestones/1.28.0/jdt-language-server-1.28.0-202310261436.tar.gz
-tar -xzf jdt-language-server-1.28.0-202310261436.tar.gz -C "$HOME"/.local/share/eclipse.jdt.ls
-rm jdt-language-server-1.28.0-202310261436.tar.gz
-
 # Kotlin
 printf "Installing Kotlin tools...\n"
-sudo xbps-install -y kotlin
+sudo xbps-install -y kotlin-bin
 wget -q https://github.com/fwcd/kotlin-language-server/releases/latest/download/server.zip -O /tmp/kotlin-ls.zip
 mkdir -p "$HOME"/.local/share/kotlin-language-server
 unzip -q /tmp/kotlin-ls.zip -d "$HOME"/.local/share/kotlin-language-server
