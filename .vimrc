@@ -1,9 +1,6 @@
 vim9script
 
-# ==============================================================================
-# BASIC CONFIGURATION
-# ==============================================================================
-
+# Basic Configuration
 set autoindent            # Automatically indent new lines to match the previous line
 set expandtab             # Convert tabs to spaces when inserting
 set hlsearch              # Highlight all matches when searching
@@ -14,28 +11,21 @@ set noswapfile            # Disable creation of swap files
 set number                # Display line numbers on the left side
 set relativenumber        # Show relative line numbers (distance from current line)
 set scrolloff=999         # Keep cursor away from top/bottom edges
-set signcolumn=yes        # Ensure signcolumn is always visible
 set shiftwidth=4          # Number of spaces used for each step of autoindent
+set signcolumn=yes        # Ensure signcolumn is always visible
 set smartcase             # Override ignorecase if search contains uppercase letters
 set splitright            # Open new vertical splits to the right
 set tabstop=4             # Number of spaces that a tab character represents
-set timeoutlen=500        # Time in milliseconds to wait for mapped sequence to complete
-set updatetime=250        # Time in milliseconds before swap file is written and CursorHold fires
-
+set timeoutlen=500        # Time to wait for mapped sequence to complete
+set updatetime=250        # Time before swap file is written and CursorHold fires
 colorscheme habamax       # Set colorscheme
 
-# ==============================================================================
-# NETRW CONFIGURATION
-# ==============================================================================
-
+# Netrw Configuration
 autocmd FileType netrw setlocal nu rnu
 g:netrw_banner = 0
 g:netrw_liststyle = 3
 
-# ==============================================================================
-# PLUGIN SETUP
-# ==============================================================================
-
+# Plugin Setup
 var data_dir = has('nvim') ? stdpath('data') .. '/site' : expand('~/.vim')
 if empty(glob(data_dir .. '/autoload/plug.vim'))
   silent! execute '!curl -fLo ' .. data_dir .. '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -47,7 +37,6 @@ plug#begin()
   Plug 'tpope/vim-surround'            # For surrounding text with characters
   Plug 'tpope/vim-commentary'          # For commenting/uncommenting lines
   Plug 'tpope/vim-rsi'                 # Readline-style key bindings
-  Plug 'tpope/vim-repeat'              # Make . work with plugin commands
   Plug 'tpope/vim-unimpaired'          # Paired mappings for navigation
   Plug 'tpope/vim-fugitive'            # Simple git commands with :G
 
@@ -64,17 +53,14 @@ plug#begin()
   Plug 'leafgarland/typescript-vim'    # TypeScript syntax
   Plug 'rust-lang/rust.vim'            # Rust support
   Plug 'vim-python/python-syntax'      # Enhanced Python syntax
+  Plug 'udalov/kotlin-vim'             # Kotlin syntax support
 
   # UI improvements
   Plug 'itchyny/lightline.vim'         # Lightweight status line
   Plug 'machakann/vim-highlightedyank' # Highlight yanked text
 plug#end()
 
-# ==============================================================================
-# LSP CONFIGURATION
-# ==============================================================================
-
-# LSP Options
+# LSP Configuration
 var lspOpts = {
   autoHighlight: v:true,
   showDiagWithVirtualText: v:true,
@@ -88,27 +74,204 @@ def IsDeno(): bool
 enddef
 
 # LSP Servers
-var lspServers = [{
-  name: 'deno',
-  filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
-  path: '/home/mac/.deno/bin/deno',
-  args: ['lsp']
-}, {
-  name: 'rust-analyzer',
-  filetype: ['rust'],
-  path: '/home/mac/.cargo/bin/rust-analyzer',
-  args: []
-}, {
-  name: 'pylsp',
-  filetype: ['python'],
-  path: 'pylsp',
-  args: []
-}]
+var lspServers = [
+  # JavaScript/TypeScript - Deno or TypeScript LSP
+  {
+    name: 'deno',
+    filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+    path: '/home/mac/.deno/bin/deno',
+    args: ['lsp'],
+  },
+  {
+    name: 'typescript-language-server',
+    filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+    path: 'typescript-language-server',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  # Rust
+  {
+    name: 'rust-analyzer',
+    filetype: ['rust'],
+    path: '/home/mac/.cargo/bin/rust-analyzer',
+    args: [],
+    syncInit: v:true
+  },
+  # Python
+  {
+    name: 'pylsp',
+    filetype: ['python'],
+    path: 'pylsp',
+    args: [],
+    syncInit: v:true
+  },
+  # Go
+  {
+    name: 'gopls',
+    filetype: ['go', 'gomod'],
+    path: '/home/mac/go/bin/gopls',
+    args: [],
+    syncInit: v:true
+  },
+  # C/C++
+  {
+    name: 'ccls',
+    filetype: ['c', 'cpp'],
+    path: 'ccls',
+    args: [],
+    syncInit: v:true
+  },
+  # Kotlin
+  {
+    name: 'kotlin-language-server',
+    filetype: ['kotlin'],
+    path: '/home/mac/.local/share/kotlin-language-server/server/bin/kotlin-language-server',
+    args: [],
+    syncInit: v:true
+  },
+  # Java
+  {
+    name: 'eclipse.jdt.ls',
+    filetype: ['java'],
+    path: 'java',
+    args: ['-Declipse.application=org.eclipse.jdt.ls.core.id1',
+           '-Dosgi.bundles.defaultStartLevel=4',
+           '-Declipse.product=org.eclipse.jdt.ls.core.product',
+           '-Dlog.protocol=true',
+           '-Dlog.level=ALL',
+           '-Xms1g',
+           '-Xmx2G',
+           '--add-modules=ALL-SYSTEM',
+           '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+           '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+           '-jar', '/home/mac/.local/share/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar',
+           '-configuration', '/home/mac/.local/share/eclipse.jdt.ls/config_linux',
+           '-data', '/tmp/jdtls-workspace'],
+    syncInit: v:true
+  },
+  # PHP
+  {
+    name: 'phpactor',
+    filetype: ['php'],
+    path: '/home/mac/.composer/vendor/bin/phpactor',
+    args: ['language-server'],
+    syncInit: v:true
+  },
+  # Ruby
+  {
+    name: 'solargraph',
+    filetype: ['ruby'],
+    path: 'solargraph',
+    args: ['stdio'],
+    syncInit: v:true
+  },
+  # Shell/Bash
+  {
+    name: 'bash-language-server',
+    filetype: ['sh', 'bash'],
+    path: 'bash-language-server',
+    args: ['start'],
+    syncInit: v:true
+  },
+  # YAML
+  {
+    name: 'yaml-language-server',
+    filetype: ['yaml', 'yml'],
+    path: 'yaml-language-server',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  # JSON
+  {
+    name: 'vscode-json-language-server',
+    filetype: ['json'],
+    path: 'vscode-json-language-server',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  # HTML/CSS
+  {
+    name: 'vscode-html-language-server',
+    filetype: ['html'],
+    path: 'vscode-html-language-server',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  {
+    name: 'vscode-css-language-server',
+    filetype: ['css', 'scss', 'sass'],
+    path: 'vscode-css-language-server',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  # Dockerfile
+  {
+    name: 'docker-langserver',
+    filetype: ['dockerfile'],
+    path: 'docker-langserver',
+    args: ['--stdio'],
+    syncInit: v:true
+  },
+  # Lua
+  {
+    name: 'lua-language-server',
+    filetype: ['lua'],
+    path: 'lua-language-server',
+    args: [],
+    syncInit: v:true
+  }
+]
 autocmd User LspSetup call LspAddServer(lspServers)
 
-# ==============================================================================
-# UI PLUGIN CONFIGURATION
-# ==============================================================================
+# Formatting functions
+def FormatBuffer()
+  var ft = &filetype
+  if ft == 'python'
+    silent! execute '%!black --quiet -'
+  elseif ft == 'rust'
+    silent! execute '%!rustfmt'
+  elseif ft == 'go'
+    silent! execute '%!goimports'
+  elseif ft == 'javascript' || ft == 'typescript' || ft == 'json' || ft == 'css' || ft == 'html'
+    silent! execute '%!prettier --stdin-filepath=' .. expand('%')
+  elseif ft == 'c' || ft == 'cpp'
+    silent! execute '%!clang-format'
+  elseif ft == 'sh' || ft == 'bash'
+    silent! execute '%!shfmt -i 4'
+  elseif ft == 'kotlin'
+    # Note: ktlint doesn't support stdin formatting, so we format the file directly
+    silent! execute '!ktlint -F %'
+    edit!
+  endif
+enddef
+
+# Auto-format on save for supported filetypes
+augroup AutoFormat
+  autocmd!
+  autocmd BufWritePre *.py,*.rs,*.go,*.js,*.ts,*.json,*.css,*.html,*.c,*.cpp,*.sh,*.kt call FormatBuffer()
+augroup END
+
+# Language-specific settings
+augroup LanguageSettings
+  autocmd!
+  # Python: Use ruff for linting
+  autocmd FileType python setlocal makeprg=ruff\ check\ %
+  
+  # Go: Set tab width to match Go conventions
+  autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
+  
+  # YAML: Use 2 spaces
+  autocmd FileType yaml,yml setlocal tabstop=2 shiftwidth=2
+  
+  # JSON: Use 2 spaces
+  autocmd FileType json setlocal tabstop=2 shiftwidth=2
+  
+  # Shell scripts: Use 4 spaces
+  autocmd FileType sh,bash setlocal tabstop=4 shiftwidth=4
+  
+  # Kotlin: Use 4 spaces (standard Kotlin style)
+  autocmd FileType kotlin setlocal tabstop=4 shiftwidth=4
+augroup END
 
 # Lightline configuration
 g:lightline = {
@@ -117,7 +280,8 @@ g:lightline = {
     'left': [['mode', 'paste'],
              ['gitbranch', 'readonly', 'filename', 'modified']],
     'right': [['lineinfo'],
-              ['percent']]
+              ['percent'],
+              ['filetype']]
   },
   'component_function': {
     'gitbranch': 'FugitiveHead'
@@ -137,9 +301,7 @@ g:gitgutter_sign_removed_first_line = '│'
 g:gitgutter_sign_removed_above_and_below = '│'
 g:gitgutter_sign_modified_removed = '│'
 
-# ==============================================================================
-# KEY MAPPINGS
-# ==============================================================================
+# Key Mappings
 
 # Tab navigation
 nnoremap <C-t> :tabnew<CR>
@@ -156,8 +318,8 @@ endfor
 # LSP mappings
 nnoremap <leader>ca :LspCodeAction<CR>
 vnoremap <leader>ca :LspCodeAction<CR>
-cnoremap <leader>ca :LspCodeAction<CR>
 nnoremap <leader>f :Files<CR>
+nnoremap <leader>F :call FormatBuffer()<CR>
 nnoremap <leader>l :LspCodeLens<CR>
 nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>r :LspRename<CR>
@@ -166,6 +328,7 @@ nnoremap [d :LspDiagPrevWrap<CR>
 nnoremap ]d :LspDiagNextWrap<CR>
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap gi :LspGotoImpl<CR>
+nnoremap gr :LspShowReferences<CR>
 
 # Clear Highlight Search
 nnoremap <silent> <Esc> <Cmd>nohlsearch<CR>
@@ -174,20 +337,12 @@ nnoremap <silent> <Esc> <Cmd>nohlsearch<CR>
 nmap ]h <Plug>(GitGutterNextHunk)
 nmap [h <Plug>(GitGutterPrevHunk)
 
-# Copy to macOS clipboard
-vnoremap <leader>y :silent w !mac pbcopy<CR><CR>
-nnoremap <leader>yy :silent .w !mac pbcopy<CR><CR>
-nnoremap <leader>ya :silent %w !mac pbcopy<CR><CR>
-
 # FZF Commands
 command! F Files
 command! B Buffers
 command! C Commits
 
-# ==============================================================================
-# AUTO-COMMANDS
-# ==============================================================================
-
+# Auto-Commands
 augroup colors
     autocmd VimEnter,ColorScheme * {
       hi Normal guibg=NONE ctermbg=NONE

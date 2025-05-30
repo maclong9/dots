@@ -4,46 +4,103 @@ set -eu
 
 cd && sudo passwd mac
 
-printf "Updating XBPS..."
+printf "Updating XBPS...\n"
 sudo xbps-install -Suy xbps
 
-printf "Installing core development tools..."
-sudo xbps-install -y base-devel curl git github-cli nodejs python3 python3-pip rustup unzip vim zsh
+printf "Installing core tools...\n"
+sudo xbps-install -y base-devel curl git github-cli jq unzip vim zsh
 
-printf "Installing common linters and formatters..."
+# Shell tooling
+printf "Installing shell tools...\n"
+sudo xbps-install -y shellcheck go
+go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
 # Python
-sudo xbps-install -y flake8 python3-mypy black python3-isort python3-lsp-server
+printf "Installing Python tools...\n"
+sudo xbps-install -y python3 python3-pip python3-lsp-server black python3-isort ruff
 
-# JavaScript/TypeScript (and Deno optional)
+# JavaScript/TypeScript/Deno
+printf "Installing JS/TS/Deno tools...\n"
+sudo xbps-install -y nodejs npm
 curl -fsSL https://deno.land/install.sh | sh
-sudo npm install -g eslint prettier typescript typescript-language-server
+sudo npm install -g eslint prettier typescript typescript-language-server vscode-langservers-extracted ktlint
 
 # Rust
+printf "Installing Rust tools...\n"
+sudo xbps-install -y rustup
 rustup-init -y --profile default
 "$HOME"/.cargo/bin/rustup component add rustfmt clippy
 
 # C/C++
-sudo xbps-install -y clang-tools-extra
+printf "Installing C/C++ tools...\n"
+sudo xbps-install -y clang-tools-extra cmake make ccls
+
+# Java
+printf "Installing Java tools...\n"
+sudo xbps-install -y openjdk17 maven gradle
+mkdir -p "$HOME"/.local/share/eclipse.jdt.ls
+wget -q https://download.eclipse.org/jdtls/milestones/1.28.0/jdt-language-server-1.28.0-202310261436.tar.gz
+tar -xzf jdt-language-server-1.28.0-202310261436.tar.gz -C "$HOME"/.local/share/eclipse.jdt.ls
+rm jdt-language-server-1.28.0-202310261436.tar.gz
+
+# Kotlin
+printf "Installing Kotlin tools...\n"
+sudo xbps-install -y kotlin
+wget -q https://github.com/fwcd/kotlin-language-server/releases/latest/download/server.zip -O /tmp/kotlin-ls.zip
+mkdir -p "$HOME"/.local/share/kotlin-language-server
+unzip -q /tmp/kotlin-ls.zip -d "$HOME"/.local/share/kotlin-language-server
+rm /tmp/kotlin-ls.zip
+
+# PHP
+printf "Installing PHP tools...\n"
+sudo xbps-install -y php php-composer
+composer global require phpactor/phpactor
+
+# Ruby
+printf "Installing Ruby tools...\n"
+sudo xbps-install -y ruby ruby-devel bundler
+gem install solargraph
+
+# Go
+printf "Installing Go tools...\n"
+go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# Additional language servers and tools
+printf "Installing additional language servers...\n"
+sudo npm install -g yaml-language-server dockerfile-language-server-nodejs bash-language-server
+sudo xbps-install -y lua-language-server
+
+# Database tools
+printf "Installing database tools...\n"
+sudo xbps-install -y postgresql-client sqlite mariadb-client redis
+
+# Docker and container tools
+printf "Installing container tools...\n"
+sudo xbps-install -y docker docker-compose podman
 
 # Setup personal dotfiles
+printf "Setting up dotfiles...\n"
 rm -rf "$HOME"/.config
 git clone https://github.com/maclong9/dots "$HOME"/.config
 cd "$HOME"/.config && git switch container
 for file in "$HOME"/.config/.*; do
-	case "$(basename "$file")" in
-		"." | ".." | ".git" | ".gitignore") continue ;;
-		*) rm -rf "$HOME/$(basename "$file")" &&
-  		     ln -s "$file" "$HOME/$(basename "$file")" ;;
-	esac
+    case "$(basename "$file")" in
+        "." | ".." | ".git" | ".gitignore") continue ;;
+        *) rm -rf "$HOME/$(basename "$file")" &&
+           ln -s "$file" "$HOME/$(basename "$file")" ;;
+    esac
 done
 chsh -s /usr/bin/zsh mac
 
 # Setup SSH Key
-ssh-keygen -t rsa -b 4096 -f "$HOME"/.ssh/id_rsa -N ""
-cat "$HOME"/.ssh/id_rsa.pub
+printf "Setting up SSH key...\n"
+ssh-keygen -t ed25519 -f "$HOME"/.ssh/id_ed25519 -N ""
+printf "\nYour SSH public key:\n"
+cat "$HOME"/.ssh/id_ed25519.pub
 
-mkdir "$HOME"/work
+mkdir -p "$HOME"/work
 
-printf "Development container setup completed.\n"
-printf "Run 'source "$HOME"/.zshrc' to and add your SSH key where needed\n"
+printf "\nDevelopment container setup completed.\n"
+printf "Run 'source ~/.zshrc' and add your SSH key where needed\n"
