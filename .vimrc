@@ -1,9 +1,6 @@
 vim9script
 
-# ==============================================================================
-# BASIC CONFIGURATION
-# ==============================================================================
-
+# Basic Configuration
 set autoindent            # Automatically indent new lines to match the previous line
 set expandtab             # Convert tabs to spaces when inserting
 set hlsearch              # Highlight all matches when searching
@@ -19,23 +16,16 @@ set signcolumn=yes        # Ensure signcolumn is always visible
 set smartcase             # Override ignorecase if search contains uppercase letters
 set splitright            # Open new vertical splits to the right
 set tabstop=4             # Number of spaces that a tab character represents
-set timeoutlen=500        # Time in milliseconds to wait for mapped sequence to complete
-set updatetime=250        # Time in milliseconds before swap file is written and CursorHold fires
-
+set timeoutlen=500        # Time to wait for mapped sequence to complete
+set updatetime=250        # Time before swap file is written and CursorHold fires
 colorscheme habamax       # Set colorscheme
 
-# ==============================================================================
-# NETRW CONFIGURATION
-# ==============================================================================
-
+# Netrw Configuration
 autocmd FileType netrw setlocal nu rnu
 g:netrw_banner = 0
 g:netrw_liststyle = 3
 
-# ==============================================================================
-# PLUGIN SETUP
-# ==============================================================================
-
+# Plugin Setup
 var data_dir = has('nvim') ? stdpath('data') .. '/site' : expand('~/.vim')
 if empty(glob(data_dir .. '/autoload/plug.vim'))
   silent! execute '!curl -fLo ' .. data_dir .. '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -47,7 +37,6 @@ plug#begin()
   Plug 'tpope/vim-surround'            # For surrounding text with characters
   Plug 'tpope/vim-commentary'          # For commenting/uncommenting lines
   Plug 'tpope/vim-rsi'                 # Readline-style key bindings
-  Plug 'tpope/vim-repeat'              # Make . work with plugin commands
   Plug 'tpope/vim-unimpaired'          # Paired mappings for navigation
   Plug 'tpope/vim-fugitive'            # Simple git commands with :G
 
@@ -68,11 +57,7 @@ plug#begin()
   Plug 'machakann/vim-highlightedyank' # Highlight yanked text
 plug#end()
 
-# ==============================================================================
-# LSP CONFIGURATION
-# ==============================================================================
-
-# LSP Options
+# LSP Configuration
 var lspOpts = {
   autoHighlight: v:true,
   showDiagWithVirtualText: v:true,
@@ -93,10 +78,6 @@ var lspServers = [{
   args: []
 }]
 autocmd User LspSetup call LspAddServer(lspServers)
-
-# ==============================================================================
-# UI PLUGIN CONFIGURATION
-# ==============================================================================
 
 # Lightline configuration
 g:lightline = {
@@ -125,9 +106,7 @@ g:gitgutter_sign_removed_first_line = '│'
 g:gitgutter_sign_removed_above_and_below = '│'
 g:gitgutter_sign_modified_removed = '│'
 
-# ==============================================================================
-# KEY MAPPINGS
-# ==============================================================================
+# Key Mappings
 
 # Tab navigation
 nnoremap <C-t> :tabnew<CR>
@@ -167,10 +146,7 @@ command! F Files
 command! B Buffers
 command! C Commits
 
-# ==============================================================================
-# AUTO-COMMANDS
-# ==============================================================================
-
+# Auto-Commands
 augroup colors
     autocmd VimEnter,ColorScheme * {
       hi Normal guibg=NONE ctermbg=NONE

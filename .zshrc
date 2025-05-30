@@ -17,7 +17,6 @@ alias st="swift test"
 alias sb="swift build"
 alias sbr="swift build -c release"
 alias spu="swift package update"
-alias src="/bin/rm -rf ~/Library/Caches/org.swift.swiftpm; /bin/rm -rf ~/Library/org.swift.swiftpm; swift package resolve;"
 alias v="vim"
 
 # Kill Port
