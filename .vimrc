@@ -59,8 +59,10 @@ plug#begin()
   Plug 'airblade/vim-gitgutter'        # Git diff in gutter
 
   # Language-specific plugins
-  Plug 'rhysd/vim-clang-format'        # C formatting
-  Plug 'keith/swift.vim'               # Swift syntax and support
+  Plug 'pangloss/vim-javascript'       # Better JavaScript syntax
+  Plug 'leafgarland/typescript-vim'    # TypeScript syntax
+  Plug 'rust-lang/rust.vim'            # Rust support
+  Plug 'vim-python/python-syntax'      # Enhanced Python syntax
 
   # UI improvements
   Plug 'itchyny/lightline.vim'         # Lightweight status line
@@ -79,16 +81,26 @@ var lspOpts = {
 }
 autocmd User LspSetup silent! call LspOptionsSet(lspOpts)
 
+# Deno detection helper
+def IsDeno(): bool
+  return filereadable('deno.json') || filereadable('deno.jsonc')
+enddef
+
 # LSP Servers
 var lspServers = [{
-  name: 'clangd',
-  filetype: ['c'],
-  path: 'clangd',
-  args: ['--background-index']
+  name: 'deno',
+  filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+  path: 'deno',
+  args: ['lsp']
 }, {
-  name: 'sourcekit',
-  filetype: ['swift'],
-  path: 'sourcekit-lsp',
+  name: 'rust-analyzer',
+  filetype: ['rust'],
+  path: 'rust-analyzer',
+  args: []
+}, {
+  name: 'pylsp',
+  filetype: ['python'],
+  path: 'pylsp',
   args: []
 }]
 autocmd User LspSetup call LspAddServer(lspServers)

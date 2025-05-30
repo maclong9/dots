@@ -1,36 +1,49 @@
 #!/bin/sh
 
-# Check If Running on macOS
-if [ "$(uname -s)" = "Darwin" ]; then
-	# Enable Touch ID for `sudo`
-	sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
-	sudo sed -i '' '3s/^#//' /etc/pam.d/sudo_local
-fi
+set -eu
 
-# Clone Configuration Files and Symlink to Home Directory
-git clone https://github.com/maclong9/dots .config
-for file in .config/.*; do
+cd && sudo passwd mac
+
+printf "Updating XBPS..."
+sudo xbps-install -Suy xbps
+
+printf "Installing core development tools..."
+sudo xbps-install -y base-devel curl gcc git github-cli nodejs python3 python3-pip rustup unzip vim zsh
+
+printf "Installing common linters and formatters..."
+
+# Python
+sudo xbps-install -y flake8 python3-mypy black python3-isort python3-lsp-server
+
+# JavaScript/TypeScript (and Deno optional)
+curl -fsSL https://deno.land/install.sh | sh
+sudo npm install -g eslint prettier typescript typescript-language-server
+
+# Rust
+rustup-init -y --profile default
+"$HOME"/.cargo/bin/rustup component add rustfmt clippy
+
+# C/C++
+sudo xbps-install -y clang-tools-extra
+
+# Setup personal dotfiles
+rm -rf "$HOME"/.config
+git clone https://github.com/maclong9/dots "$HOME"/.config
+cd "$HOME"/.config && git switch container
+for file in "$HOME"/.config/.*; do
 	case "$(basename "$file")" in
 		"." | ".." | ".git" | ".gitignore") continue ;;
-		*) ln -s "$file" "$HOME/$(basename "$file")" ;;
+		*) rm -rf "$HOME/$(basename "$file")" &&
+  		     ln -s "$file" "$HOME/$(basename "$file")" ;;
 	esac
 done
-
-# Install Swift List
-sudo mkdir -p /usr/local/bin
-download_url=$(curl -s \
-	https://api.github.com/repos/maclong9/list/releases/latest | 
-	grep "browser_download_url.*sls" |
-	cut -d\" -f4)
-if [ -z "$download_url" ]; then
-    echo "Error: Could not find download URL for 'sls' in the latest release."
-    exit 1
-fi
-sudo curl -L "$download_url" -o /usr/local/bin/sls
-sudo chmod +x /usr/local/bin/sls
+chsh -s /usr/bin/zsh mac
 
 # Setup SSH Key
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
-cat ~/.ssh/id_rsa.pub | pbcopy
+ssh-keygen -t rsa -b 4096 -f "$HOME"/.ssh/id_rsa -N ""
+cat "$HOME"/.ssh/id_rsa.pub
 
-printf "Run 'source ~/.zshrc' to and add your SSH key where needed"
+mkdir "$HOME"/work
+
+printf "Development container setup completed.\n"
+printf "Run 'source "$HOME"/.zshrc' to and add your SSH key where needed\n"
