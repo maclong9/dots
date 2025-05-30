@@ -1,203 +1,44 @@
 vim9script
 
-# Basic configuration
+# ==============================================================================
+# BASIC CONFIGURATION
+# ==============================================================================
+
+# Core settings
+set autoindent            # Automatically indent new lines to match the previous line
+set expandtab             # Convert tabs to spaces when inserting
+set hlsearch              # Highlight all matches when searching
+set ignorecase            # Ignore case when searching
+set incsearch             # Show search matches as you type
+set laststatus=2          # Always show the status line
+set noswapfile            # Disable creation of swap files
+set number                # Display line numbers on the left side
+set relativenumber        # Show relative line numbers (distance from current line)
+set scrolloff=999         # Keep cursor away from top/bottom edges
+set shiftwidth=4          # Number of spaces used for each step of autoindent
+set showbreak             # String to display at the beginning of wrapped lines
+set smartcase             # Override ignorecase if search contains uppercase letters
+set splitright            # Open new vertical splits to the right
+set tabstop=4             # Number of spaces that a tab character represents
+set timeoutlen=500        # Time in milliseconds to wait for mapped sequence to complete
+set updatetime=250        # Time in milliseconds before swap file is written and CursorHold fires
+
+# Colorscheme and transparency
+colorscheme habamax
+
+# ==============================================================================
+# NETRW CONFIGURATION
+# ==============================================================================
+
 autocmd FileType netrw setlocal nu rnu
-colorscheme habamax 
-g:netrw_banner = 0 
+g:netrw_banner = 0
 g:netrw_liststyle = 3
-set ai noswf nu re=0 rnu sw=2 scl=yes ts=2 
-syntax enable
 
-# Set transparent background
-autocmd VimEnter,ColorScheme * {
-  hi Normal guibg=NONE ctermbg=NONE
-  hi NonText guibg=NONE ctermbg=NONE
-  hi LineNr guibg=NONE ctermbg=NONE
-  hi SignColumn guibg=NONE ctermbg=NONE
-  hi VertSplit guibg=NONE ctermbg=NONE
-}
+# ==============================================================================
+# PLUGIN SETUP
+# ==============================================================================
 
-# :G for git
-command! -nargs=+ G execute "!git" <q-args> 
-
-# Character pairs for surround functionality
-var pairs = { 
-	'<': '>',
-	'"': '"',
-	'{': '}',
-	'[': ']',
-	'(': ')',
-	"'": "'",
-	'`': '`'
-}
-
-# Locate opening and closing pair characters around cursor position
-def g:FindPair(open: string, close: string): list<any>
-  var cursorPos = getpos('.')
-  var searchPattern = escape(open, '[]^$.*')
-  if search(searchPattern, 'bW') == 0
-    echo "No '" .. open .. "' found before cursor!"
-    return [[-1, -1, -1, -1], [-1, -1, -1, -1]]
-  endif
-  var startPos = getpos('.')
-  if open == '"' || open == "'"
-    if search(escape(open, '"'), 'W') == 0
-      echo "No closing '" .. open .. "' found after cursor!"
-      setpos('.', cursorPos)
-      return [[-1, -1, -1, -1], [-1, -1, -1, -1]]
-    endif
-  elseif open == '<'
-    if search('>', 'W') == 0
-      echo "No closing '>' found after cursor!"
-      setpos('.', cursorPos)
-      return [[-1, -1, -1, -1], [-1, -1, -1, -1]]
-    endif
-  else
-    normal %
-  endif
-  var endPos = getpos('.')
-  setpos('.', cursorPos)
-  return [startPos, endPos]
-enddef
-
-# Add surrounding characters to visual selection with optional spacing
-def g:AddSurround(char: string, add_spaces: bool = v:true)
-  var pair = pairs[char]
-  var cursorPos = getpos('.')
-  var startPos = getpos("'<")
-  var endPos = getpos("'>")
-  if startPos[1] == 0 || endPos[1] == 0
-    echo "No visual selection found!"
-    return
-  endif
-  var space = add_spaces ? " " : ""
-  setpos('.', endPos)
-  execute "normal! a" .. space .. pair .. "\<Esc>"
-  setpos('.', startPos)
-  execute "normal! i" .. char .. space .. "\<Esc>"
-  setpos('.', cursorPos)
-enddef
-command! -nargs=1 AddSurround call g:AddSurround(<f-args>)
-
-# Replace existing surrounding characters with new ones
-def g:ChangeSurround(old_open: string, new_open: string, new_close: string)
-  var cursorPos = getpos('.')
-  var [startPos, endPos] = g:FindPair(old_open, pairs[old_open])
-  if startPos[1] == -1
-    return
-  endif
-  setpos('.', endPos)
-  execute "normal! r" .. new_close
-  setpos('.', startPos)
-  execute "normal! r" .. new_open
-  setpos('.', cursorPos)
-enddef
-command! -nargs=+ ChangeSurround call g:ChangeSurround(<f-args>)
-
-# Remove surrounding character pairs
-def g:DeleteSurround(open: string)
-  var cursorPos = getpos('.')
-  var [startPos, endPos] = g:FindPair(open, pairs[open])
-  if startPos[1] == -1
-    return
-  endif
-  setpos('.', endPos)
-  normal x
-  setpos('.', startPos)
-  normal x
-  setpos('.', cursorPos)
-enddef
-command! -nargs=1 DeleteSurround call g:DeleteSurround(<f-args>)
-
-# Readline-style keyboard shortcuts for command mode
-var readline_mappings = {
-  '<C-A>': '<Home>',      # Beginning of line
-  '<C-B>': '<Left>',      # Back one character
-  '<C-D>': '<Del>',       # Delete character under cursor
-  '<C-E>': '<End>',       # End of line
-  '<C-F>': '<Right>',     # Forward one character
-  '<C-H>': '<BS>',        # Backspace
-  '<C-K>': '<C-\>e getcmdpos() == 1 ? "" : getcmdline()[:getcmdpos()-2]<CR>', # Kill to end
-  '<C-U>': '<C-U>',       # Delete to beginning
-  '<Esc>b': '<C-Left>',   # Back one word
-  '<Esc>f': '<C-Right>'   # Forward one word
-}
-for [key, value] in items(readline_mappings)
-  execute "cnoremap " .. key .. " " .. value
-endfor
-
-# Quick pane navigation mappings
-var direction_keys = ['h', 'j', 'k', 'l']
-for key in direction_keys
-  execute "nnoremap <C-" .. key .. "> <C-w>" .. key 
-endfor
-
-# Surround mappings
-var chars = ['<', '"', '{', '[', '(', "'", '`']
-for c in chars
-  var m = c == '<' ? '<lt>' : c
-  var a = c == "'" ? "''" : c
-	# Add surround mappings
-  execute "vnoremap <silent> a" .. m .. " :<C-u>call g:AddSurround('" .. a .. "')<CR>"
-	# Delete surround mappings
-  execute "nnoremap <silent> ds" .. m .. " :call g:DeleteSurround('" .. a .. "')<CR>"
-  # Change surround mappings
-  for n in chars
-    var nm = n == '<' ? '<lt>' : n
-    var new_open = n == "'" ? "''" : n
-    var new_close = pairs[n] == "'" ? "''" : pairs[n]
-    execute "nnoremap <silent> cs" .. m .. nm .. " :call g:ChangeSurround('" .. a .. "', '" .. new_open .. "', '" .. new_close .. "')<CR>"
-  endfor
-endfor
-
-# Comment markers by filetype
-g:comment_markers = {
-	'vim': '"',
-	'vim9': '#',
-	'default': '//'
-}
-
-# Determine appropriate comment style based on filetype and vim9script detection
-def g:GetCommentMarker(): string
-  var ft = &filetype
-  var marker = g:comment_markers->get(ft, g:comment_markers['default'])
-
-  # Special case for detecting vim9script in vim files
-  if ft == 'vim' && getline(1) =~ 'vim9script'
-    marker = g:comment_markers['vim9']
-  endif
-
-  return marker
-enddef
-
-# Toggle comments on current line or selection
-def g:ToggleComment()
-  var firstline = line(".")
-  var lastline = line(".")
-  var marker = g:GetCommentMarker()
-  var start_pattern = '^[ \t]*' .. escape(marker, '*/[]^$.')
-
-  # Process each line in the range
-  for lnum in range(firstline, lastline)
-    var line = getline(lnum)
-    if line =~ '^\s*$'
-      continue # Skip empty lines
-    endif
-
-    if line =~ start_pattern
-      setline(lnum, substitute(line, start_pattern .. '\s\?', '', '')) # Remove comment
-    else
-      var indent = matchstr(line, '^\s*')
-      setline(lnum, indent .. marker .. ' ' .. substitute(line, '^\s*', '', '')) # Add comment
-    endif
-  endfor
-enddef
-
-# Comment toggling mappings
-nnoremap <silent> <leader>c :call g:ToggleComment()<CR> 
-xnoremap <silent> <leader>c :call g:ToggleComment()<CR>
-
-# LSP Setup
+# Auto-install vim-plug
 var data_dir = has('nvim') ? stdpath('data') .. '/site' : expand('~/.vim')
 if empty(glob(data_dir .. '/autoload/plug.vim'))
   silent! execute '!curl -fLo ' .. data_dir .. '/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -205,30 +46,166 @@ if empty(glob(data_dir .. '/autoload/plug.vim'))
 endif
 
 plug#begin()
-  Plug 'yegappan/lsp'
+  # Essential text manipulation
+  Plug 'tpope/vim-surround'            # For surrounding text with characters
+  Plug 'tpope/vim-commentary'          # For commenting/uncommenting lines
+  Plug 'tpope/vim-rsi'                 # Readline-style key bindings
+  Plug 'tpope/vim-repeat'              # Make . work with plugin commands
+  Plug 'tpope/vim-unimpaired'          # Paired mappings for navigation
+  Plug 'tpope/vim-fugitive'            # Simple git commands with :G
+
+  # LSP and completion
+  Plug 'yegappan/lsp'                  # LSP support
+
+  # Fuzzy finding
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }  # Fuzzy finder
+  Plug 'junegunn/fzf.vim'              # Fzf Vim integration
+
+  # Development tools
+  Plug 'dense-analysis/ale'            # Async linting engine
+  Plug 'airblade/vim-gitgutter'        # Git diff in gutter
+
+  # Language-specific plugins
+  Plug 'pangloss/vim-javascript'       # Better JavaScript syntax
+  Plug 'leafgarland/typescript-vim'    # TypeScript syntax
+  Plug 'rust-lang/rust.vim'            # Rust support
+  Plug 'vim-python/python-syntax'      # Enhanced Python syntax
+
+  # UI improvements
+  Plug 'itchyny/lightline.vim'         # Lightweight status line
+  Plug 'machakann/vim-highlightedyank' # Highlight yanked text
 plug#end()
+
+# ==============================================================================
+# LSP CONFIGURATION
+# ==============================================================================
 
 # LSP Options
 var lspOpts = {
-	autoHighlight: v:true,
-	showDiagWithVirtualText: v:true,
-	usePopupInCodeAction: v:true,
+  autoHighlight: v:true,
+  ignoreMissingServer: v:true,
+  showDiagWithVirtualText: v:true,
+  usePopupInCodeAction: v:true,
+  completionMatcher: 'fuzzy',
+  vsnipSupport: v:true,
 }
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
 # LSP Servers
-var lspServers = [{
-  name: 'swift',
-  filetype: ['swift'],
-  path: '/usr/bin/xcrun',
-  args: ['sourcekit-lsp']
-}]
+var lspServers = [
+  {
+    name: 'swift',
+    filetype: ['swift'],
+    path: '/usr/bin/xcrun',
+    args: ['sourcekit-lsp']
+  },
+  {
+    name: 'clangd',
+    filetype: ['c', 'cpp', 'objc', 'objcpp'],
+    path: '/usr/bin/clangd',
+    args: ['--background-index', '--clang-tidy']
+  },
+  {
+    name: 'typescript-language-server',
+    filetype: ['javascript', 'typescript', 'typescriptreact', 'javascriptreact'],
+    path: 'typescript-language-server',
+    args: ['--stdio']
+  },
+  {
+    name: 'pylsp',
+    filetype: ['python'],
+    path: 'pylsp',
+    args: []
+  },
+  {
+    name: 'rust-analyzer',
+    filetype: ['rust'],
+    path: 'rust-analyzer',
+    args: []
+  }
+]
 autocmd User LspSetup call LspAddServer(lspServers)
 
-# LSP Keymaps
+# ==============================================================================
+# ALE CONFIGURATION
+# ==============================================================================
+
+# Deno detection helper
+def IsDeno(): bool
+  return filereadable('deno.json') || filereadable('deno.jsonc')
+enddef
+
+g:ale_linters_explicit = 1
+g:ale_linters = {
+  'javascript': IsDeno() ? ['deno'] : ['eslint'],
+  'typescript': IsDeno() ? ['deno'] : ['eslint', 'tslint'],
+  'python': ['flake8', 'mypy'],
+  'rust': ['cargo'],
+  'c': ['clang'],
+  'cpp': ['clang++']
+}
+g:ale_fixers = {
+  '*': ['remove_trailing_lines', 'trim_whitespace'],
+  'javascript': IsDeno() ? ['deno'] : ['prettier', 'eslint'],
+  'typescript': IsDeno() ? ['deno'] : ['prettier', 'eslint'],
+  'python': ['black', 'isort'],
+  'rust': ['rustfmt'],
+  'c': ['clang-format'],
+  'cpp': ['clang-format']
+}
+g:ale_fix_on_save = 1
+
+# ==============================================================================
+# UI PLUGIN CONFIGURATION
+# ==============================================================================
+
+# Lightline configuration
+g:lightline = {
+  'colorscheme': 'wombat',
+  'active': {
+    'left': [['mode', 'paste'],
+             ['gitbranch', 'readonly', 'filename', 'modified']],
+    'right': [['lineinfo'],
+              ['percent'],
+              ['fileformat', 'fileencoding', 'filetype']]
+  },
+  'component_function': {
+    'gitbranch': 'FugitiveHead'
+  },
+}
+
+# Highlighted yank settings
+g:highlightedyank_highlight_duration = 200
+
+# Git gutter settings
+g:gitgutter_enabled = 1
+g:gitgutter_map_keys = 0
+g:gitgutter_sign_added = '│'
+g:gitgutter_sign_modified = '│'
+g:gitgutter_sign_removed = '│'
+g:gitgutter_sign_removed_first_line = '│'
+g:gitgutter_sign_removed_above_and_below = '│'
+g:gitgutter_sign_modified_removed = '│'
+
+# ==============================================================================
+# KEY MAPPINGS
+# ==============================================================================
+
+# Tab navigation
+nnoremap <C-t> :tabnew<CR>
+nnoremap <C-w> :tabclose<CR>
+nnoremap <C-h> :tabprevious<CR>
+nnoremap <C-l> :tabnext<CR>
+
+# Window navigation
+var direction_keys = ['h', 'j', 'k', 'l']
+for key in direction_keys
+  execute "nnoremap <C-" .. key .. "> <C-w>" .. key
+endfor
+
+# LSP mappings
+nnoremap <leader>ca :LspCodeAction<CR>
 vnoremap <leader>ca :LspCodeAction<CR>
-cnoremap <leader>ca :LspCodeAction<CR>
-nnoremap <leader>f :Files<CR>
 nnoremap <leader>l :LspCodeLens<CR>
 nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>r :LspRename<CR>
@@ -237,3 +214,38 @@ nnoremap [d :LspDiagPrevWrap<CR>
 nnoremap ]d :LspDiagNextWrap<CR>
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap gi :LspGotoImpl<CR>
+nnoremap gr :LspShowReferences<CR>
+
+# FZF commands
+command! F Files
+command! B Buffers
+command! C Commits
+
+# Git gutter mappings
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
+
+
+# ==============================================================================
+# AUTO-COMMANDS
+# ==============================================================================
+
+augroup colors
+    autocmd VimEnter,ColorScheme * {
+      hi Normal guibg=NONE ctermbg=NONE
+      hi NonText guibg=NONE ctermbg=NONE
+      hi LineNr guibg=NONE ctermbg=NONE
+      hi SignColumn guibg=NONE ctermbg=NONE
+      hi VertSplit guibg=NONE ctermbg=NONE
+      hi StatusLine guibg=NONE ctermbg=NONE
+      hi StatusLineNC guibg=NONE ctermbg=NONE
+    }
+augroup END
+
+augroup programming
+  autocmd!
+  # Auto-format on save for specific filetypes
+  autocmd BufWritePre *.py,*.js,*.ts,*.jsx,*.tsx,*.rs,*.c,*.cpp ALEFix
+  # Enable spell check for documentation
+  autocmd FileType markdown,text,gitcommit setlocal spell
+augroup END
