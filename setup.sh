@@ -12,7 +12,7 @@ sudo xbps-install -y base-devel curl git github-cli jq unzip vim zsh
 
 # Shell tooling
 printf "Installing shell tools...\n"
-sudo xbps-install -y shellcheck go
+sudo xbps-install -y go
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
 # Python
