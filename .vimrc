@@ -1,5 +1,8 @@
 vim9script
 
+# OS Detection
+var is_mac = has('mac') || has('macunix') || system('uname') =~? 'darwin'
+
 # Basic Configuration
 set autoindent            # Automatically indent new lines to match the previous line
 set expandtab             # Convert tabs to spaces when inserting
@@ -48,12 +51,19 @@ plug#begin()
   Plug 'yegappan/lsp'                  # Built-in LSP client
   Plug 'airblade/vim-gitgutter'        # Git diff in gutter
 
-  # Language-specific plugins
-  Plug 'pangloss/vim-javascript'       # Better JavaScript syntax
-  Plug 'leafgarland/typescript-vim'    # TypeScript syntax
-  Plug 'rust-lang/rust.vim'            # Rust support
-  Plug 'vim-python/python-syntax'      # Enhanced Python syntax
-  Plug 'udalov/kotlin-vim'             # Kotlin syntax support
+  # Language-specific plugins (conditional based on OS)
+  if is_mac
+    # macOS-specific plugins
+    Plug 'rhysd/vim-clang-format'      # C formatting
+    Plug 'keith/swift.vim'             # Swift syntax and support
+  else
+    # Linux-specific plugins
+    Plug 'pangloss/vim-javascript'     # Better JavaScript syntax
+    Plug 'leafgarland/typescript-vim'  # TypeScript syntax
+    Plug 'rust-lang/rust.vim'          # Rust support
+    Plug 'vim-python/python-syntax'    # Enhanced Python syntax
+    Plug 'udalov/kotlin-vim'           # Kotlin syntax support
+  endif
 
   # UI improvements
   Plug 'itchyny/lightline.vim'         # Lightweight status line
@@ -68,210 +78,233 @@ var lspOpts = {
 }
 autocmd User LspSetup silent! call LspOptionsSet(lspOpts)
 
-# Deno detection helper
+# Deno detection helper (Linux only)
 def IsDeno(): bool
   return filereadable('deno.json') || filereadable('deno.jsonc')
 enddef
 
-# LSP Servers
-var lspServers = [
-  # JavaScript/TypeScript - Deno or TypeScript LSP
-  {
-    name: 'deno',
-    filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
-    path: '/home/mac/.deno/bin/deno',
-    args: ['lsp'],
-  },
-  {
-    name: 'typescript-language-server',
-    filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
-    path: 'typescript-language-server',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  # Rust
-  {
-    name: 'rust-analyzer',
-    filetype: ['rust'],
-    path: '/home/mac/.cargo/bin/rust-analyzer',
-    args: [],
-    syncInit: v:true
-  },
-  # Python
-  {
-    name: 'pylsp',
-    filetype: ['python'],
-    path: 'pylsp',
-    args: [],
-    syncInit: v:true
-  },
-  # Go
-  {
-    name: 'gopls',
-    filetype: ['go', 'gomod'],
-    path: '/home/mac/go/bin/gopls',
-    args: [],
-    syncInit: v:true
-  },
-  # C/C++
-  {
-    name: 'ccls',
-    filetype: ['c', 'cpp'],
-    path: 'ccls',
-    args: [],
-    syncInit: v:true
-  },
-  # Kotlin
-  {
-    name: 'kotlin-language-server',
-    filetype: ['kotlin'],
-    path: '/home/mac/.local/share/kotlin-language-server/server/bin/kotlin-language-server',
-    args: [],
-    syncInit: v:true
-  },
-  # Java
-  {
-    name: 'eclipse.jdt.ls',
-    filetype: ['java'],
-    path: 'java',
-    args: ['-Declipse.application=org.eclipse.jdt.ls.core.id1',
-           '-Dosgi.bundles.defaultStartLevel=4',
-           '-Declipse.product=org.eclipse.jdt.ls.core.product',
-           '-Dlog.protocol=true',
-           '-Dlog.level=ALL',
-           '-Xms1g',
-           '-Xmx2G',
-           '--add-modules=ALL-SYSTEM',
-           '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-           '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-           '-jar', '/home/mac/.local/share/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar',
-           '-configuration', '/home/mac/.local/share/eclipse.jdt.ls/config_linux',
-           '-data', '/tmp/jdtls-workspace'],
-    syncInit: v:true
-  },
-  # PHP
-  {
-    name: 'phpactor',
-    filetype: ['php'],
-    path: '/home/mac/.composer/vendor/bin/phpactor',
-    args: ['language-server'],
-    syncInit: v:true
-  },
-  # Ruby
-  {
-    name: 'solargraph',
-    filetype: ['ruby'],
-    path: 'solargraph',
-    args: ['stdio'],
-    syncInit: v:true
-  },
-  # Shell/Bash
-  {
-    name: 'bash-language-server',
-    filetype: ['sh', 'bash'],
-    path: 'bash-language-server',
-    args: ['start'],
-    syncInit: v:true
-  },
-  # YAML
-  {
-    name: 'yaml-language-server',
-    filetype: ['yaml', 'yml'],
-    path: 'yaml-language-server',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  # JSON
-  {
-    name: 'vscode-json-language-server',
-    filetype: ['json'],
-    path: 'vscode-json-language-server',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  # HTML/CSS
-  {
-    name: 'vscode-html-language-server',
-    filetype: ['html'],
-    path: 'vscode-html-language-server',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  {
-    name: 'vscode-css-language-server',
-    filetype: ['css', 'scss', 'sass'],
-    path: 'vscode-css-language-server',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  # Dockerfile
-  {
-    name: 'docker-langserver',
-    filetype: ['dockerfile'],
-    path: 'docker-langserver',
-    args: ['--stdio'],
-    syncInit: v:true
-  },
-  # Lua
-  {
-    name: 'lua-language-server',
-    filetype: ['lua'],
-    path: 'lua-language-server',
-    args: [],
-    syncInit: v:true
-  }
-]
+# LSP Servers Configuration
+var lspServers = []
+
+if is_mac
+  # macOS LSP servers
+  lspServers = [{
+    name: 'clangd',
+    filetype: ['c'],
+    path: 'clangd',
+    args: ['--background-index']
+  }, {
+    name: 'sourcekit',
+    filetype: ['swift'],
+    path: 'sourcekit-lsp',
+    args: []
+  }]
+else
+  # Linux LSP servers
+  lspServers = [
+    # JavaScript/TypeScript - Deno or TypeScript LSP
+    {
+      name: 'deno',
+      filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+      path: '/home/mac/.deno/bin/deno',
+      args: ['lsp'],
+    },
+    {
+      name: 'typescript-language-server',
+      filetype: ['typescript', 'typescriptreact', 'javascript', 'javascriptreact'],
+      path: 'typescript-language-server',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    # Rust
+    {
+      name: 'rust-analyzer',
+      filetype: ['rust'],
+      path: '/home/mac/.cargo/bin/rust-analyzer',
+      args: [],
+      syncInit: v:true
+    },
+    # Python
+    {
+      name: 'pylsp',
+      filetype: ['python'],
+      path: 'pylsp',
+      args: [],
+      syncInit: v:true
+    },
+    # Go
+    {
+      name: 'gopls',
+      filetype: ['go', 'gomod'],
+      path: '/home/mac/go/bin/gopls',
+      args: [],
+      syncInit: v:true
+    },
+    # C/C++
+    {
+      name: 'ccls',
+      filetype: ['c', 'cpp'],
+      path: 'ccls',
+      args: [],
+      syncInit: v:true
+    },
+    # Kotlin
+    {
+      name: 'kotlin-language-server',
+      filetype: ['kotlin'],
+      path: '/home/mac/.local/share/kotlin-language-server/server/bin/kotlin-language-server',
+      args: [],
+      syncInit: v:true
+    },
+    # Java
+    {
+      name: 'eclipse.jdt.ls',
+      filetype: ['java'],
+      path: 'java',
+      args: ['-Declipse.application=org.eclipse.jdt.ls.core.id1',
+             '-Dosgi.bundles.defaultStartLevel=4',
+             '-Declipse.product=org.eclipse.jdt.ls.core.product',
+             '-Dlog.protocol=true',
+             '-Dlog.level=ALL',
+             '-Xms1g',
+             '-Xmx2G',
+             '--add-modules=ALL-SYSTEM',
+             '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+             '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+             '-jar', '/home/mac/.local/share/eclipse.jdt.ls/plugins/org.eclipse.equinox.launcher_*.jar',
+             '-configuration', '/home/mac/.local/share/eclipse.jdt.ls/config_linux',
+             '-data', '/tmp/jdtls-workspace'],
+      syncInit: v:true
+    },
+    # PHP
+    {
+      name: 'phpactor',
+      filetype: ['php'],
+      path: '/home/mac/.composer/vendor/bin/phpactor',
+      args: ['language-server'],
+      syncInit: v:true
+    },
+    # Ruby
+    {
+      name: 'solargraph',
+      filetype: ['ruby'],
+      path: 'solargraph',
+      args: ['stdio'],
+      syncInit: v:true
+    },
+    # Shell/Bash
+    {
+      name: 'bash-language-server',
+      filetype: ['sh', 'bash'],
+      path: 'bash-language-server',
+      args: ['start'],
+      syncInit: v:true
+    },
+    # YAML
+    {
+      name: 'yaml-language-server',
+      filetype: ['yaml', 'yml'],
+      path: 'yaml-language-server',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    # JSON
+    {
+      name: 'vscode-json-language-server',
+      filetype: ['json'],
+      path: 'vscode-json-language-server',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    # HTML/CSS
+    {
+      name: 'vscode-html-language-server',
+      filetype: ['html'],
+      path: 'vscode-html-language-server',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    {
+      name: 'vscode-css-language-server',
+      filetype: ['css', 'scss', 'sass'],
+      path: 'vscode-css-language-server',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    # Dockerfile
+    {
+      name: 'docker-langserver',
+      filetype: ['dockerfile'],
+      path: 'docker-langserver',
+      args: ['--stdio'],
+      syncInit: v:true
+    },
+    # Lua
+    {
+      name: 'lua-language-server',
+      filetype: ['lua'],
+      path: 'lua-language-server',
+      args: [],
+      syncInit: v:true
+    }
+  ]
+endif
+
 autocmd User LspSetup call LspAddServer(lspServers)
 
-# Formatting functions
-def FormatBuffer()
-  var ft = &filetype
-  if ft == 'python'
-    silent! execute '%!black --quiet -'
-  elseif ft == 'rust'
-    silent! execute '%!rustfmt'
-  elseif ft == 'go'
-    silent! execute '%!goimports'
-  elseif ft == 'javascript' || ft == 'typescript' || ft == 'json' || ft == 'css' || ft == 'html'
-    silent! execute '%!prettier --stdin-filepath=' .. expand('%')
-  elseif ft == 'c' || ft == 'cpp'
-    silent! execute '%!clang-format'
-  elseif ft == 'sh' || ft == 'bash'
-    silent! execute '%!shfmt -i 4'
-  elseif ft == 'kotlin'
-    # Note: ktlint doesn't support stdin formatting, so we format the file directly
-    silent! execute '!ktlint -F %'
-    edit!
-  endif
-enddef
+# Formatting functions (Linux only)
+if !is_mac
+  def FormatBuffer()
+    var ft = &filetype
+    if ft == 'python'
+      silent! execute '%!black --quiet -'
+    elseif ft == 'rust'
+      silent! execute '%!rustfmt'
+    elseif ft == 'go'
+      silent! execute '%!goimports'
+    elseif ft == 'javascript' || ft == 'typescript' || ft == 'json' || ft == 'css' || ft == 'html'
+      silent! execute '%!prettier --stdin-filepath=' .. expand('%')
+    elseif ft == 'c' || ft == 'cpp'
+      silent! execute '%!clang-format'
+    elseif ft == 'sh' || ft == 'bash'
+      silent! execute '%!shfmt -i 4'
+    elseif ft == 'kotlin'
+      # Note: ktlint doesn't support stdin formatting, so we format the file directly
+      silent! execute '!ktlint -F %'
+      edit!
+    endif
+  enddef
 
-# Auto-format on save for supported filetypes
-augroup AutoFormat
-  autocmd!
-  autocmd BufWritePre *.py,*.rs,*.go,*.js,*.ts,*.json,*.css,*.html,*.c,*.cpp,*.sh,*.kt call FormatBuffer()
-augroup END
+  # Auto-format on save for supported filetypes (Linux only)
+  augroup AutoFormat
+    autocmd!
+    autocmd BufWritePre *.py,*.rs,*.go,*.js,*.ts,*.json,*.css,*.html,*.c,*.cpp,*.sh,*.kt call FormatBuffer()
+  augroup END
+endif
 
-# Language-specific settings
-augroup LanguageSettings
-  autocmd!
-  # Python: Use ruff for linting
-  autocmd FileType python setlocal makeprg=ruff\ check\ %
-  
-  # Go: Set tab width to match Go conventions
-  autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
-  
-  # YAML: Use 2 spaces
-  autocmd FileType yaml,yml setlocal tabstop=2 shiftwidth=2
-  
-  # JSON: Use 2 spaces
-  autocmd FileType json setlocal tabstop=2 shiftwidth=2
-  
-  # Shell scripts: Use 4 spaces
-  autocmd FileType sh,bash setlocal tabstop=4 shiftwidth=4
-  
-  # Kotlin: Use 4 spaces (standard Kotlin style)
-  autocmd FileType kotlin setlocal tabstop=4 shiftwidth=4
-augroup END
+# Language-specific settings (Linux only)
+if !is_mac
+  augroup LanguageSettings
+    autocmd!
+    # Python: Use ruff for linting
+    autocmd FileType python setlocal makeprg=ruff\ check\ %
+    
+    # Go: Set tab width to match Go conventions
+    autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
+    
+    # YAML: Use 2 spaces
+    autocmd FileType yaml,yml setlocal tabstop=2 shiftwidth=2
+    
+    # JSON: Use 2 spaces
+    autocmd FileType json setlocal tabstop=2 shiftwidth=2
+    
+    # Shell scripts: Use 4 spaces
+    autocmd FileType sh,bash setlocal tabstop=4 shiftwidth=4
+    
+    # Kotlin: Use 4 spaces (standard Kotlin style)
+    autocmd FileType kotlin setlocal tabstop=4 shiftwidth=4
+  augroup END
+endif
 
 # Lightline configuration
 g:lightline = {
@@ -281,7 +314,7 @@ g:lightline = {
              ['gitbranch', 'readonly', 'filename', 'modified']],
     'right': [['lineinfo'],
               ['percent'],
-              ['filetype']]
+              is_mac ? [] : ['filetype']]
   },
   'component_function': {
     'gitbranch': 'FugitiveHead'
@@ -318,8 +351,13 @@ endfor
 # LSP mappings
 nnoremap <leader>ca :LspCodeAction<CR>
 vnoremap <leader>ca :LspCodeAction<CR>
+if is_mac
+  cnoremap <leader>ca :LspCodeAction<CR>
+endif
 nnoremap <leader>f :Files<CR>
-nnoremap <leader>F :call FormatBuffer()<CR>
+if !is_mac
+  nnoremap <leader>F :call FormatBuffer()<CR>
+endif
 nnoremap <leader>l :LspCodeLens<CR>
 nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>r :LspRename<CR>
@@ -328,7 +366,9 @@ nnoremap [d :LspDiagPrevWrap<CR>
 nnoremap ]d :LspDiagNextWrap<CR>
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap gi :LspGotoImpl<CR>
-nnoremap gr :LspShowReferences<CR>
+if !is_mac
+  nnoremap gr :LspShowReferences<CR>
+endif
 
 # Clear Highlight Search
 nnoremap <silent> <Esc> <Cmd>nohlsearch<CR>
