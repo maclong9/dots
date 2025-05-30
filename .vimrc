@@ -117,8 +117,7 @@ g:lightline = {
     'left': [['mode', 'paste'],
              ['gitbranch', 'readonly', 'filename', 'modified']],
     'right': [['lineinfo'],
-              ['percent'],
-              ['fileformat', 'fileencoding', 'filetype']]
+              ['percent']]
   },
   'component_function': {
     'gitbranch': 'FugitiveHead'
