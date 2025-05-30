@@ -36,12 +36,12 @@ sudo xbps-install -y clang-tools-extra cmake make ccls
 
 # PHP
 printf "Installing PHP tools...\n"
-sudo xbps-install -y php php-composer
+sudo xbps-install -y php composer
 composer global require phpactor/phpactor
 
 # Ruby
 printf "Installing Ruby tools...\n"
-sudo xbps-install -y ruby ruby-devel bundler
+sudo xbps-install -y ruby ruby-devel
 gem install solargraph
 
 # Go
@@ -56,7 +56,7 @@ sudo npm install -g yaml-language-server dockerfile-language-server-nodejs bash-
 
 # Database tools
 printf "Installing database tools...\n"
-sudo xbps-install -y postgresql-client sqlite mariadb-client redis
+sudo xbps-install -y postgresql sqlite mariadb-client redis
 
 # Docker and container tools
 printf "Installing container tools...\n"
