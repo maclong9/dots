@@ -10,7 +10,7 @@
 	br = "!f() { git branch -m $1; }; f"
 	bs = "switch"
 	ca = "!f() { git commit --amend -m \"$1\"; }; f"
-	cl = "!f() { if [[ \"$1\" =~ ^-h|--https ]]; then proto=\"https\"; shift; else proto=\"ssh\"; fi; if [[ \"$1\" =~ .*/.* ]]; then repo=\"$1\"; else repo=\"maclong9/$1\"; fi; if [ \"$proto\" = \"ssh\" ]; then git clone git@github.com:$repo.git; else git clone https://github.com/$repo.git; fi; }; f"
+	cl = "!f() { gh repo clone }; f"
 	d = "diff"
 	l = "log --oneline --decorate --all"
 	lg = "log --graph --oneline --decorate --all"
