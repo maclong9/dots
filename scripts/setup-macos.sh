@@ -49,10 +49,10 @@ curl -LO "https://github.com/cli/cli/releases/download/$GH_VERSION/gh_${GH_VERSI
 tar -xzf gh_${GH_VERSION#v}_macOS_arm64.tar.gz
 
 # Install binary to /usr/local/bin
-sudo cp gh_${GH_VERSION#v}_macOS_arm64/bin/gh /usr/local/bin/
+sudo mv gh_${GH_VERSION#v}_macOS_arm64/bin/gh /usr/local/bin/
 
 # Clean up
-rm -rf gh_${GH_VERSION#v}_macOS_arm64.tar.gz gh_${GH_VERSION#v}_macOS_arm64/
+rm -rf gh_${GH_VERSION#v}_macOS_arm64/
 
 # Verify installation
 echo "GitHub CLI installed successfully:"
