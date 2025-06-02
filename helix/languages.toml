@@ -1,0 +1,152 @@
+[[language]]
+name = "swift"
+language-servers = ["sourcekit-lsp"]
+formatter = { command = "swift-format", args = ["--assume-filename", "file.swift"] }
+
+[[language]]
+name = "typescript"
+language-servers = ["typescript-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+
+[[language]]
+name = "javascript"
+language-servers = ["typescript-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "babel"] }
+
+[[language]]
+name = "tsx"
+language-servers = ["typescript-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+
+[[language]]
+name = "jsx"
+language-servers = ["typescript-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "babel"] }
+
+[[language]]
+name = "css"
+language-servers = ["vscode-css-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "css"] }
+
+[[language]]
+name = "scss"
+language-servers = ["vscode-css-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "scss"] }
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "tailwindcss-language-server"]
+formatter = { command = "prettier", args = ["--parser", "html"] }
+
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer"]
+
+[[language]]
+name = "python"
+language-servers = ["pylsp"]
+formatter = { command = "black", args = ["-"] }
+
+[[language]]
+name = "go"
+language-servers = ["gopls"]
+
+[[language]]
+name = "c"
+language-servers = ["ccls"]
+
+[[language]]
+name = "cpp"
+language-servers = ["ccls"]
+
+[[language]]
+name = "php"
+language-servers = ["phpactor"]
+
+[[language]]
+name = "bash"
+language-servers = ["bash-language-server"]
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
+
+[[language]]
+name = "json"
+language-servers = ["vscode-json-language-server"]
+formatter = { command = "prettier", args = ["--parser", "json"] }
+
+[[language]]
+name = "dockerfile"
+language-servers = ["docker-langserver"]
+
+[[language]]
+name = "lua"
+language-servers = ["lua-language-server"]
+
+# Language server configurations
+[language-server.sourcekit-lsp]
+command = "sourcekit-lsp"
+
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+[language-server.tailwindcss-language-server]
+command = "tailwindcss-language-server"
+args = ["--stdio"]
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[language-server.pylsp]
+command = "pylsp"
+
+[language-server.gopls]
+command = "/home/mac/go/bin/gopls"
+
+[language-server.ccls]
+command = "ccls"
+
+[language-server.phpactor]
+command = "/home/mac/.composer/vendor/bin/phpactor"
+args = ["language-server"]
+
+[language-server.bash-language-server]
+command = "bash-language-server"
+args = ["start"]
+
+[language-server.yaml-language-server]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-json-language-server]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-html-language-server]
+command = "vscode-html-language-server"
+args = ["--stdio"]
+
+[language-server.vscode-css-language-server]
+command = "vscode-css-language-server"
+args = ["--stdio"]
+
+[language-server.docker-langserver]
+command = "docker-langserver"
+args = ["--stdio"]
+
+[language-server.lua-language-server]
+command = "lua-language-server"
+
+[language-server.lua-language-server.config.Lua.runtime]
+version = "LuaJIT"
+
+[language-server.lua-language-server.config.Lua.diagnostics]
+globals = ["vim"]
+
+[language-server.lua-language-server.config.Lua.workspace]
+checkThirdParty = false
+
+[language-server.lua-language-server.config.Lua.telemetry]
+enable = false

@@ -1,0 +1,37 @@
+theme = "vesper"
+
+[editor]
+line-number = "relative"
+cursorline = true
+auto-completion = true
+completion-trigger-len = 1
+bufferline = "multiple"
+true-color = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
+center = []
+right = ["diagnostics", "selections", "register", "position"] 
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
+[editor.whitespace.render]
+space = "none"
+tab = "none"
+newline = "none"
+
+[editor.indent-guides]
+render = true
+
+[keys.insert]
+"C-[" = "normal_mode"
