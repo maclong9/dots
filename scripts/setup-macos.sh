@@ -45,19 +45,18 @@ GH_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep
 echo "Latest GitHub CLI version: $GH_VERSION"
 
 # Download and install GitHub CLI
-curl -LO "https://github.com/cli/cli/releases/download/$GH_VERSION/gh_${GH_VERSION#v}_macOS_arm64.tar.gz"
-tar -xzf gh_${GH_VERSION#v}_macOS_arm64.tar.gz
-
-# Install binary to /usr/local/bin
-sudo mv gh_${GH_VERSION#v}_macOS_arm64/bin/gh /usr/local/bin/
+curl -LO "https://github.com/cli/cli/releases/download/$GH_VERSION/gh_${GH_VERSION#v}_macOS_arm64.zip"
+unzip "gh_${GH_VERSION#v}_macOS_arm64.zip"
+sudo cp "gh_${GH_VERSION#v}_macOS_arm64/bin/gh" /usr/local/bin/
 
 # Clean up
-rm -rf gh_${GH_VERSION#v}_macOS_arm64/
+rm -rf "gh_${GH_VERSION#v}_macOS_arm64.zip" "gh_${GH_VERSION#v}_macOS_arm64/"
 
 # Verify installation
 echo "GitHub CLI installed successfully:"
 gh --version
 
+# Configure GitHub CLI
 gh auth login
 gh extension install github/gh-copilot
 
