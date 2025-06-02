@@ -19,6 +19,29 @@ done
 sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
 sudo sed -i '' '3s/^#//' /etc/pam.d/sudo_local
 
+# Install latest Swift List from GitHub releases
+echo "Installing latest Swift List from GitHub releases..."
+SLS_VERSION=$(curl -s https://api.github.com/repos/maclong9/list/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+echo "Latest Swift List version: $SLS_VERSION"
+
+# Download and install Swift List
+echo "Downloading Swift List..."
+sudo curl -L "https://github.com/maclong9/list/releases/download/$SLS_VERSION/sls" -o /usr/local/bin/sls
+
+# Make it executable
+sudo chmod +x /usr/local/bin/sls
+
+# Install binary and runtime to /usr/local/bin
+sudo cp helix-$HELIX_VERSION-aarch64-macos/hx /usr/local/bin/
+sudo cp -r helix-$HELIX_VERSION-aarch64-macos/runtime /usr/local/bin/
+
+# Clean up
+rm -rf helix-$HELIX_VERSION-aarch64-macos.tar.xz helix-$HELIX_VERSION-aarch64-macos/
+
+# Verify installation
+echo "Helix installed successfully:"
+hx --version
+
 # Install latest Helix from GitHub releases
 echo "Installing latest Helix from GitHub releases..."
 HELIX_VERSION=$(curl -s https://api.github.com/repos/helix-editor/helix/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
