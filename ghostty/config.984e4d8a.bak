@@ -13,4 +13,3 @@ keybind = global:alt+j=goto_split:down
 keybind = global:alt+k=goto_split:up
 keybind = global:alt+l=goto_split:right
 keybind = global:super+§=toggle_quick_terminal
-keybind = shift+enter=text:\n

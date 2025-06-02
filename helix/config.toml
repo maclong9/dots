@@ -23,7 +23,7 @@ right = ["diagnostics", "selections", "register", "position"]
 
 [editor.lsp]
 display-messages = true
-display-inlay-hints = true
+display-inlay-hints = false
 
 [editor.whitespace.render]
 space = "none"
