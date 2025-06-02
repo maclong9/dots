@@ -6,15 +6,11 @@ echo "Setting up macOS-specific configurations..."
 git clone https://github.com/maclong9/dots "$HOME/.config"
 
 # Symlink to Home Directory
-for file in "$HOME"/.config/.*; do
-    base="$(basename "$file")"
-    case "$base" in
-        "." | ".." | ".*" | ".git" | ".gitignore") continue ;;
-    esac
-
-    target="$HOME/$base"
-    [ -e "$target" ] && rm -rf "$target"
-    ln -s "$(pwd)/$file" "$target"
+cd "$HOME/.config"
+for file in .*; do
+    [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ] && [ "$file" != ".gitignore" ] || continue
+    [ -e "$HOME/$file" ] && rm -rf "$HOME/$file"
+    ln -s "$HOME/.config/$file" "$HOME/$file"
 done
 
 # Enable Touch ID for `sudo`
