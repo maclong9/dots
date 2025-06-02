@@ -8,7 +8,9 @@ git clone https://github.com/maclong9/dots "$HOME/.config"
 # Symlink to Home Directory
 cd "$HOME/.config"
 for file in .*; do
-    [ "$file" != "." ] && [ "$file" != ".." ] && [ "$file" != ".git" ] && [ "$file" != ".gitignore" ] || continue
+    case "$file" in
+        "." | ".." | ".git" | ".gitignore") continue ;;
+    esac
     [ -e "$HOME/$file" ] && rm -rf "$HOME/$file"
     ln -s "$HOME/.config/$file" "$HOME/$file"
 done
