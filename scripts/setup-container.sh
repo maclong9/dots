@@ -9,15 +9,13 @@ printf "Installing core tools...\n"
 sudo xbps-install -Syu base-devel curl git github-cli helix jq unzip wget zsh
 
 # Symlink to Home Directory
-for file in /Users/mac/.config/.*; do
-    base="$(basename "$file")"
-    case "$base" in
+cd "/Users/mac/.config"
+for file in .*; do
+    case "$file" in
         "." | ".." | ".git" | ".gitignore") continue ;;
     esac
-
-    target="$HOME/$base"
-    [ -e "$target" ] && rm -rf "$target"
-    ln -s "$(pwd)/$file" "$target"
+    [ -e "$HOME/$file" ] && rm -rf "$HOME/$file"
+    ln -s "$HOME/.config/$file" "$HOME/$file"
 done
 
 sudo chsh mac -s /usr/bin/zsh
