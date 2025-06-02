@@ -12,12 +12,13 @@ sudo xbps-install -Syu base-devel curl git github-cli helix jq unzip wget zsh
 cd "/Users/mac/.config"
 for file in .*; do
     case "$file" in
-        "." | ".." | ".git" | ".gitignore") continue ;;
+        "." | ".." | ".git" | ".gitconfig" | ".gitignore") continue ;;
     esac
     [ -e "$HOME/$file" ] && rm -rf "$HOME/$file"
     ln -s "/Users/mac/.config/$file" "$HOME/$file"
 done
 ln -s /Users/mac/.config "$HOME"/.config
+cp /Users/mac/.config/.gitconfig "$HOME"/.gitconfig
 
 sudo chsh mac -s /usr/bin/zsh
 
