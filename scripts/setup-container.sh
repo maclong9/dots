@@ -15,8 +15,9 @@ for file in .*; do
         "." | ".." | ".git" | ".gitignore") continue ;;
     esac
     [ -e "$HOME/$file" ] && rm -rf "$HOME/$file"
-    ln -s "$HOME/.config/$file" "$HOME/$file"
+    ln -s "/Users/mac/.config/$file" "$HOME/$file"
 done
+ln -s /Users/mac/.config "$HOME"/.config
 
 sudo chsh mac -s /usr/bin/zsh
 
@@ -77,7 +78,7 @@ sudo xbps-install -y docker docker-compose podman
 
 mkdir -p "$HOME"/work
 
-printf 'export path="$HOME/.deno/bin:$HOME/.cargo/bin:$PATH"' > "$HOME/.zprofile"
+printf 'export PATH="$HOME/.deno/bin:$HOME/.cargo/bin:$PATH"' > "$HOME/.zprofile"
 
 printf "\nDevelopment container setup completed.\n"
 printf "Run 'source ~/.zshrc' and add your SSH key where needed\n"
