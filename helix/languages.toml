@@ -1,10 +1,11 @@
+# Node.js TypeScript configuration
 [[language]]
 name = "typescript"
 scope = "source.ts"
 injection-regex = "^(ts|typescript)$"
 file-types = ["ts", "mts", "cts"]
-shebangs = ["deno", "node"]
-roots = ["package.json", "tsconfig.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+shebangs = ["node"]
+roots = ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "tsconfig.json", "jsconfig.json"]
 language-servers = [
   { name = "typescript-language-server", except-features = ["format"] },
   "tailwindcss-ls",
@@ -14,7 +15,7 @@ auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 2, unit = "  " }
 
-# Deno-specific TypeScript configuration
+# Deno TypeScript configuration
 [[language]]
 name = "typescript"
 scope = "source.ts"
@@ -27,12 +28,13 @@ auto-format = true
 formatter = { command = "deno", args = ["fmt", "-"] }
 indent = { tab-width = 2, unit = "  " }
 
+# Node.js TSX configuration
 [[language]]
 name = "tsx"
 scope = "source.tsx"
 injection-regex = "^(tsx)$"
 file-types = ["tsx"]
-roots = ["package.json", "tsconfig.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+roots = ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "tsconfig.json", "jsconfig.json"]
 language-servers = [
   { name = "typescript-language-server", except-features = ["format"] },
   "tailwindcss-ls",
@@ -42,7 +44,7 @@ auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 2, unit = "  " }
 
-# Deno-specific TSX configuration
+# Deno TSX configuration
 [[language]]
 name = "tsx"
 scope = "source.tsx"
@@ -55,13 +57,14 @@ auto-format = true
 formatter = { command = "deno", args = ["fmt", "-"] }
 indent = { tab-width = 2, unit = "  " }
 
+# Node.js JavaScript configuration
 [[language]]
 name = "javascript"
 scope = "source.js"
 injection-regex = "^(js|javascript)$"
 file-types = ["js", "mjs", "cjs", "jsm"]
-shebangs = ["node", "deno"]
-roots = ["package.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+shebangs = ["node"]
+roots = ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "jsconfig.json"]
 language-servers = [
   { name = "typescript-language-server", except-features = ["format"] },
   "eslint"
@@ -70,7 +73,7 @@ auto-format = true
 formatter = { command = "prettier", args = ["--parser", "javascript"] }
 indent = { tab-width = 2, unit = "  " }
 
-# Deno-specific JavaScript configuration
+# Deno JavaScript configuration
 [[language]]
 name = "javascript"
 scope = "source.js"
@@ -83,12 +86,13 @@ auto-format = true
 formatter = { command = "deno", args = ["fmt", "-"] }
 indent = { tab-width = 2, unit = "  " }
 
+# Node.js JSX configuration
 [[language]]
 name = "jsx"
 scope = "source.jsx"
 injection-regex = "^(jsx)$"
 file-types = ["jsx"]
-roots = ["package.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+roots = ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "jsconfig.json"]
 language-servers = [
   { name = "typescript-language-server", except-features = ["format"] },
   "tailwindcss-ls",
@@ -98,7 +102,7 @@ auto-format = true
 formatter = { command = "prettier", args = ["--parser", "javascript"] }
 indent = { tab-width = 2, unit = "  " }
 
-# Deno-specific JSX configuration
+# Deno JSX configuration
 [[language]]
 name = "jsx"
 scope = "source.jsx"
