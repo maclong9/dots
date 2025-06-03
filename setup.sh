@@ -55,11 +55,11 @@ fi
 # Install mise tools
 echo "📦 Installing development tools via mise..."
 curl https://mise.run | sh
-mise install deno github-cli helix node pnpm shellcheck shfmt
+mise install deno github-cli helix node shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-pnpm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
+npm i -g @anthropic-ai/claude-code eslint prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Configure GitHub CLI
