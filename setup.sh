@@ -52,12 +52,10 @@ else
     echo "✅ Swift List installed"
 fi
 
-# Installing mise
-curl https://mise.run | sh
-
-# Install mise packages
+# Install mise tools
 echo "📦 Installing development tools via mise..."
-mise install deno gh helix node pnpm shellcheck shfmt
+curl https://mise.run | sh
+mise install deno github-cli helix node pnpm shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
