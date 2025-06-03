@@ -10,6 +10,7 @@ node = "latest"
 shellcheck = "latest"
 shfmt = "latest"
 "aqua:docker/cli" = "latest"
+"ubi:maclong9/list" = { version = "latest", exe = "sls" }
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:eslint" = "latest"
 "npm:prettier" = "latest"
