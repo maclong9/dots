@@ -7,7 +7,7 @@ auto-completion = true
 completion-trigger-len = 1
 bufferline = "multiple"
 true-color = true
-shell = ["zsh", "-i", "-c"]
+shell = ["zsh", "-c"]
 
 [editor.cursor-shape]
 insert = "bar"
