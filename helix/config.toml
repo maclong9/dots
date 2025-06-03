@@ -38,6 +38,13 @@ render = true
 "C-j" = "jump_view_down"
 "C-k" = "jump_view_up"
 "C-l" = "jump_view_right"
+"C-S-h" = "swap_view_left"
+"C-S-j" = "swap_view_down"
+"C-S-k" = "swap_view_up"
+"C-S-l" = "swap_view_right"
 
 [keys.insert]
+"C-[" = "normal_mode"
+
+[keys.select]
 "C-[" = "normal_mode"

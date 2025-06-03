@@ -85,6 +85,7 @@ warning = { fg = "beige" }
 
 "ui.virtual.whitespace" = { fg = "dim-gray" }
 "ui.virtual.inlay-hint" = { bg = "dark-gray", fg = "gray" }
+"ui.virtual.jump-label" = { bg = "dark-gray", fg = "red" }
 
 "ui.text" = { fg = "white" }
 "ui.text.inactive" = { fg = "comment" }
