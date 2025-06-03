@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#!/bin/sh
-
 set -e  # Exit on any error
 
 echo "🚀 Starting macOS development environment setup..."
@@ -59,7 +57,19 @@ if command -v port >/dev/null 2>&1; then
     echo "📦 MacPorts already installed, updating..."
     sudo port selfupdate
 else
-    echo "📦 Installing MacPorts..."
+    echo "📦 Fetching latest MacPorts release..."
+    
+    # Get latest release info from GitHub API
+    latest_release=$(curl -s https://api.github.com/repos/macports/macports-base/releases/latest)
+    latest_version=$(echo "$latest_release" | grep '"tag_name":' | cut -d'"' -f4 | sed 's/^v//')
+    
+    if [ -z "$latest_version" ]; then
+        echo "❌ Failed to fetch latest MacPorts version"
+        exit 1
+    fi
+    
+    echo "📦 Latest MacPorts version: $latest_version"
+    
     # Detect macOS version dynamically
     macos_version=$(sw_vers -productVersion)
     major_version=$(echo "$macos_version" | cut -d. -f1)
@@ -76,14 +86,20 @@ else
             ;;
     esac
     
-    pkg_file="MacPorts-2.10.7-${pkg_version}.pkg"
-    curl -O "https://github.com/macports/macports-base/releases/download/v2.10.7/${pkg_file}"
+    # Construct download URL and filename
+    pkg_file="MacPorts-${latest_version}-${pkg_version}.pkg"
+    download_url="https://github.com/macports/macports-base/releases/download/v${latest_version}/${pkg_file}"
+    
+    echo "📦 Downloading ${pkg_file}..."
+    curl -L -O "$download_url"
     
     if [ ! -f "$pkg_file" ]; then
         echo "❌ Failed to download MacPorts package"
+        echo "URL attempted: $download_url"
         exit 1
     fi
     
+    echo "📦 Installing MacPorts..."
     sudo installer -pkg "$pkg_file" -target /
     rm -f "$pkg_file"
     
@@ -124,7 +140,12 @@ if command -v pbcopy >/dev/null 2>&1; then
     echo "📋 SSH public key copied to clipboard"
 fi
 
-echo "\n✨ Setup completed successfully!\n"
-echo "Next steps:\n"
-echo "1. Run 'source ~/.zshrc' or restart your terminal\n"
+echo ""
+echo "✨ Setup completed successfully!"
+echo ""
+echo "Next steps:"
+echo "1. Run 'source ~/.zshrc' or restart your terminal"
 echo "2. Add your SSH key to GitHub/GitLab/etc."
+echo "3. Verify installation with: helix --version"
+echo ""
+echo "🎸 Ready to code with punk rock efficiency!"
