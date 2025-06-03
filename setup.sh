@@ -114,14 +114,12 @@ fi
 
 # Install MacPorts packages
 echo "📦 Installing development tools via MacPorts..."
-sudo port install colima deno docker docker-compose ffmpeg gh helix nodejs22 shellcheck shfmt
+sudo port install colima deno docker docker-compose ffmpeg gh helix nodejs22 pnpm shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-# Use the MacPorts node/npm
-export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-
-npm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
+/opt/local/bin/pnpm setup
+/opt/local/bin/pnpm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Setup SSH Key
@@ -132,6 +130,10 @@ if [ ! -f ~/.ssh/id_rsa ]; then
 else
     echo "SSH key already exists"
 fi
+
+# Configure GitHub CLI
+gh auth login
+gh extension install github/gh-copilot
 
 # Copy public key to clipboard
 if command -v pbcopy >/dev/null 2>&1; then
