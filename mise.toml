@@ -3,7 +3,6 @@
 docker-compose = "latest"
 colima = "latest"
 deno = "latest"
-ffmpeg = "latest"
 github-cli = "latest"
 helix = "latest"
 lima = "latest"
