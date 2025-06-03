@@ -59,7 +59,7 @@ curl https://mise.run | sh
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-npm i -g @anthropic-ai/claude-code eslint prettier typescript \
+"$HOME/.local/share/mise/installs/node/latest/bin/npm" i -g @anthropic-ai/claude-code eslint prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Configure GitHub CLI
