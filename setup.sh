@@ -114,7 +114,7 @@ fi
 
 # Install MacPorts packages
 echo "📦 Installing development tools via MacPorts..."
-sudo port install colima deno docker docker-compose ffmpeg gh helix nodejs22 npm10 shellcheck shfmt
+sudo port install colima deno docker docker-compose ffmpeg gh git-filter-repo helix nodejs22 npm10 shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
