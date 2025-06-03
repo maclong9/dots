@@ -34,6 +34,10 @@ render = true
 [keys.normal]
 "S-h" = "goto_previous_buffer"
 "S-l" = "goto_next_buffer"
+"C-h" = "jump_view_left"
+"C-j" = "jump_view_down"
+"C-k" = "jump_view_up"
+"C-l" = "jump_view_right"
 
 [keys.insert]
 "C-[" = "normal_mode"

@@ -22,3 +22,11 @@ kp() { kill -9 $(lsof -ti tcp:$1) }
 
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
+
+# pnpm
+export PNPM_HOME="/home/mac/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
