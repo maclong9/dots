@@ -1,5 +1,4 @@
 # General Settings
-PATH="$HOME/.local/share/mise/installs:$PATH"
 PROMPT="%F{white}%n@%m %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 autoload -Uz compinit && compinit
@@ -23,3 +22,6 @@ kp() { kill -9 $(lsof -ti tcp:$1) }
 
 # Make Directory and Navigate Into
 mkcd() { mkdir $1 && cd $1; }
+
+# Activate mise
+eval "$(/Users/mac/.local/bin/mise activate zsh)"
