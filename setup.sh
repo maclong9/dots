@@ -121,6 +121,10 @@ echo "🛠️  Installing language servers..."
 sudo npm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
+# Configure GitHub CLI
+gh auth login
+gh extension install github/gh-copilot
+
 # Setup SSH Key
 echo "🔑 Setting up SSH key..."
 if [ ! -f ~/.ssh/id_rsa ]; then
@@ -129,10 +133,6 @@ if [ ! -f ~/.ssh/id_rsa ]; then
 else
     echo "SSH key already exists"
 fi
-
-# Configure GitHub CLI
-gh auth login
-gh extension install github/gh-copilot
 
 # Copy public key to clipboard
 if command -v pbcopy >/dev/null 2>&1; then
