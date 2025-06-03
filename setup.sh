@@ -114,12 +114,11 @@ fi
 
 # Install MacPorts packages
 echo "📦 Installing development tools via MacPorts..."
-sudo port install colima deno docker docker-compose ffmpeg gh helix nodejs22 pnpm shellcheck shfmt
+sudo port install colima deno docker docker-compose ffmpeg gh helix nodejs22 npm10 shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-/opt/local/bin/pnpm setup
-/opt/local/bin/pnpm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
+sudo npm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Setup SSH Key
