@@ -140,12 +140,7 @@ if command -v pbcopy >/dev/null 2>&1; then
     echo "📋 SSH public key copied to clipboard"
 fi
 
-echo ""
-echo "✨ Setup completed successfully!"
-echo ""
-echo "Next steps:"
-echo "1. Run 'source ~/.zshrc' or restart your terminal"
-echo "2. Add your SSH key to GitHub/GitLab/etc."
-echo "3. Verify installation with: helix --version"
-echo ""
-echo "🎸 Ready to code with punk rock efficiency!"
+echo "\n✨ Setup completed successfully!\n"
+echo "Next steps:\n"
+echo "1. Run 'source ~/.zshrc' or restart your terminal\n"
+echo "2. Add your SSH key to GitHub/GitLab/etc.\n"
