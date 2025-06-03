@@ -55,8 +55,7 @@ fi
 # Install mise toolse
 echo "📦 Installing development tools via mise..."
 curl https://mise.run | sh
-eval "$(/Users/mac/.local/bin/mise activate zsh)"
-mise install deno github-cli helix node shellcheck shfmt
+~/.local/bin/mise install deno github-cli helix node shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
