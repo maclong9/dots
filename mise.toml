@@ -1,5 +1,6 @@
 [tools]
-"aqua:docker/cli" = "latest"
+"aqua:docker/cli" = "28.2.2"
+docker-compose = "latest"
 colima = "latest"
 deno = "latest"
 ffmpeg = "latest"
