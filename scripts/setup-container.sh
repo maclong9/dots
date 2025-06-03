@@ -6,7 +6,7 @@ cd && sudo passwd mac
 
 # Update xbps and install core tools
 printf "Installing core tools...\n"
-sudo xbps-install -Syu base-devel curl git github-cli helix jq unzip wget zsh
+sudo xbps-install -Syu base-devel curl ffmpeg git github-cli helix jq unzip wget zsh
 
 # Symlink to Home Directory
 cd "/Users/mac/.config"
@@ -77,8 +77,10 @@ sudo xbps-install -y postgresql sqlite mariadb-client redis
 printf "Installing container tools...\n"
 sudo xbps-install -y docker docker-compose podman
 
+# Git and ZSH Environment Configuration
 mkdir -p "$HOME"/work
-
+cp /Users/mac/.gitconfig "$HOME"/.gitconfig
+sed -i 's/maclong9@icloud\.com/mac@wearequantum.co.uk/g' "$HOME/.gitconfig"
 printf 'export PATH="$HOME/.deno/bin:$HOME/.cargo/bin:$PATH"' > "$HOME/.zprofile"
 
 printf "\nDevelopment container setup completed.\n"

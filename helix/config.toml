@@ -7,14 +7,12 @@ auto-completion = true
 completion-trigger-len = 1
 bufferline = "multiple"
 true-color = true
+shell = ["zsh", "-i", "-c"]
 
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
 select = "underline"
-
-[editor.file-picker]
-hidden = false
 
 [editor.statusline]
 left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
@@ -32,6 +30,10 @@ newline = "none"
 
 [editor.indent-guides]
 render = true
+
+[keys.normal]
+"S-h" = "goto_previous_buffer"
+"S-l" = "goto_next_buffer"
 
 [keys.insert]
 "C-[" = "normal_mode"
