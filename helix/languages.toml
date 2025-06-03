@@ -1,124 +1,267 @@
 [[language]]
-name = "swift"
-language-servers = ["sourcekit-lsp"]
-formatter = { command = "swift-format", args = ["--assume-filename", "file.swift"] }
+name = "typescript"
+scope = "source.ts"
+injection-regex = "^(ts|typescript)$"
+file-types = ["ts", "mts", "cts"]
+shebangs = ["deno", "node"]
+roots = ["package.json", "tsconfig.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "tailwindcss-ls",
+  "eslint"
+]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+indent = { tab-width = 2, unit = "  " }
 
+# Deno-specific TypeScript configuration
 [[language]]
 name = "typescript"
-language-servers = ["typescript-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "typescript"] }
-
-[[language]]
-name = "javascript"
-language-servers = ["typescript-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "babel"] }
+scope = "source.ts"
+injection-regex = "^(ts|typescript)$"
+file-types = ["ts", "mts", "cts"]
+shebangs = ["deno"]
+roots = ["deno.json", "deno.jsonc", "deno.lock"]
+language-servers = ["deno-lsp"]
+auto-format = true
+formatter = { command = "deno", args = ["fmt", "-"] }
+indent = { tab-width = 2, unit = "  " }
 
 [[language]]
 name = "tsx"
-language-servers = ["typescript-language-server", "tailwindcss-language-server"]
+scope = "source.tsx"
+injection-regex = "^(tsx)$"
+file-types = ["tsx"]
+roots = ["package.json", "tsconfig.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "tailwindcss-ls",
+  "eslint"
+]
+auto-format = true
 formatter = { command = "prettier", args = ["--parser", "typescript"] }
+indent = { tab-width = 2, unit = "  " }
+
+# Deno-specific TSX configuration
+[[language]]
+name = "tsx"
+scope = "source.tsx"
+injection-regex = "^(tsx)$"
+file-types = ["tsx"]
+shebangs = ["deno"]
+roots = ["deno.json", "deno.jsonc", "deno.lock"]
+language-servers = ["deno-lsp"]
+auto-format = true
+formatter = { command = "deno", args = ["fmt", "-"] }
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "javascript"
+scope = "source.js"
+injection-regex = "^(js|javascript)$"
+file-types = ["js", "mjs", "cjs", "jsm"]
+shebangs = ["node", "deno"]
+roots = ["package.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "eslint"
+]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "javascript"] }
+indent = { tab-width = 2, unit = "  " }
+
+# Deno-specific JavaScript configuration
+[[language]]
+name = "javascript"
+scope = "source.js"
+injection-regex = "^(js|javascript)$"
+file-types = ["js", "mjs", "cjs", "jsm"]
+shebangs = ["deno"]
+roots = ["deno.json", "deno.jsonc", "deno.lock"]
+language-servers = ["deno-lsp"]
+auto-format = true
+formatter = { command = "deno", args = ["fmt", "-"] }
+indent = { tab-width = 2, unit = "  " }
 
 [[language]]
 name = "jsx"
-language-servers = ["typescript-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "babel"] }
+scope = "source.jsx"
+injection-regex = "^(jsx)$"
+file-types = ["jsx"]
+roots = ["package.json", "jsconfig.json", "deno.json", "deno.jsonc", "deno.lock"]
+language-servers = [
+  { name = "typescript-language-server", except-features = ["format"] },
+  "tailwindcss-ls",
+  "eslint"
+]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "javascript"] }
+indent = { tab-width = 2, unit = "  " }
 
+# Deno-specific JSX configuration
 [[language]]
-name = "css"
-language-servers = ["vscode-css-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "css"] }
-
-[[language]]
-name = "scss"
-language-servers = ["vscode-css-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "scss"] }
-
-[[language]]
-name = "html"
-language-servers = ["vscode-html-language-server", "tailwindcss-language-server"]
-formatter = { command = "prettier", args = ["--parser", "html"] }
-
-[[language]]
-name = "rust"
-language-servers = ["rust-analyzer"]
-
-[[language]]
-name = "python"
-language-servers = ["pylsp"]
-formatter = { command = "black", args = ["-"] }
-
-[[language]]
-name = "go"
-language-servers = ["gopls"]
-
-[[language]]
-name = "c"
-language-servers = ["ccls"]
-
-[[language]]
-name = "cpp"
-language-servers = ["ccls"]
-
-[[language]]
-name = "php"
-language-servers = ["phpactor"]
-
-[[language]]
-name = "bash"
-language-servers = ["bash-language-server"]
-
-[[language]]
-name = "yaml"
-language-servers = ["yaml-language-server"]
+name = "jsx"
+scope = "source.jsx"
+injection-regex = "^(jsx)$"
+file-types = ["jsx"]
+shebangs = ["deno"]
+roots = ["deno.json", "deno.jsonc", "deno.lock"]
+language-servers = ["deno-lsp"]
+auto-format = true
+formatter = { command = "deno", args = ["fmt", "-"] }
+indent = { tab-width = 2, unit = "  " }
 
 [[language]]
 name = "json"
+scope = "source.json"
+injection-regex = "^(json)$"
+file-types = ["json", "arb", "ipynb", "geojson", "gltf", "webmanifest"]
+roots = []
 language-servers = ["vscode-json-language-server"]
+auto-format = true
 formatter = { command = "prettier", args = ["--parser", "json"] }
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "html"
+scope = "text.html.basic"
+injection-regex = "^(html|htm)$"
+file-types = ["html", "htm", "shtml", "xhtml"]
+roots = []
+language-servers = ["vscode-html-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "html"] }
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "css"
+scope = "source.css"
+injection-regex = "^(css)$"
+file-types = ["css"]
+roots = []
+language-servers = ["vscode-css-language-server", "tailwindcss-ls"]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "css"] }
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "bash"
+scope = "source.bash"
+injection-regex = "^(bash|sh|zsh)$"
+file-types = ["sh", "bash", "zsh", ".bash_login", ".bash_logout", ".bash_profile", ".bashrc", ".profile", ".zshenv", ".zlogin", ".zlogout", ".zprofile", ".zshrc", "APKBUILD", "PKGBUILD", "eclass", "ebuild", "bazelrc", "Renviron", "zlogin", "zlogout", "zprofile", "zshenv", "zshrc"]
+shebangs = ["sh", "bash", "dash", "zsh"]
+roots = []
+language-servers = ["shellcheck"]
+auto-format = true
+formatter = { command = "shfmt", args = ["-i", "4"] }
+indent = { tab-width = 4, unit = "    " }
 
 [[language]]
 name = "dockerfile"
-language-servers = ["docker-langserver"]
+scope = "source.dockerfile"
+injection-regex = "^(dockerfile|docker)$"
+file-types = ["Dockerfile", "dockerfile", "Containerfile", "containerfile"]
+roots = ["Dockerfile", "Containerfile"]
+language-servers = []
+indent = { tab-width = 2, unit = "  " }
 
 [[language]]
-name = "lua"
-language-servers = ["lua-language-server"]
+name = "yaml"
+scope = "source.yaml"
+injection-regex = "^(yml|yaml)$"
+file-types = ["yml", "yaml"]
+roots = []
+language-servers = []
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "yaml"] }
+indent = { tab-width = 2, unit = "  " }
 
-# Language server configurations
-[language-server.sourcekit-lsp]
-command = "sourcekit-lsp"
+[[language]]
+name = "toml"
+scope = "source.toml"
+injection-regex = "^(toml)$"
+file-types = ["toml", "poetry.lock", "Cargo.lock"]
+roots = ["Cargo.toml", "pyproject.toml"]
+language-servers = []
+indent = { tab-width = 2, unit = "  " }
 
+[[language]]
+name = "markdown"
+scope = "source.md"
+injection-regex = "^(md|markdown)$"
+file-types = ["md", "markdown", "mkd", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook"]
+roots = []
+language-servers = []
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "markdown"] }
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "latex"
+scope = "source.tex"
+injection-regex = "^(tex|latex)$"
+file-types = ["tex", "sty", "cls", "Rd", "bbx", "cbx"]
+roots = ["main.tex", "root.tex", ".latexmkrc"]
+language-servers = ["texlab"]
+auto-format = false
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "bibtex"
+scope = "source.bib"
+injection-regex = "^(bib|bibtex)$"
+file-types = ["bib"]
+roots = []
+language-servers = ["texlab"]
+auto-format = false
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "git-commit"
+scope = "text.git-commit"
+file-types = ["COMMIT_EDITMSG", "MERGE_MSG"]
+roots = []
+language-servers = []
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "git-rebase"
+scope = "text.git-rebase"
+file-types = ["git-rebase-todo"]
+roots = []
+language-servers = []
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "git-config"
+scope = "source.gitconfig"
+file-types = [".gitconfig", ".gitmodules", "gitconfig", "gitmodules"]
+roots = []
+language-servers = []
+indent = { tab-width = 4, unit = "\t" }
+
+[[language]]
+name = "swift"
+scope = "source.swift"
+injection-regex = "^(swift)$"
+file-types = ["swift"]
+roots = ["Package.swift"]
+language-servers = ["sourcekit-lsp"]
+auto-format = true
+formatter = { command = "swift", args = ["format", "--in-place"] }
+indent = { tab-width = 4, unit = "    " }
+
+# Language Server configurations
 [language-server.typescript-language-server]
 command = "typescript-language-server"
 args = ["--stdio"]
+config.hostInfo = "helix"
 
-[language-server.tailwindcss-language-server]
-command = "tailwindcss-language-server"
-args = ["--stdio"]
-
-[language-server.rust-analyzer]
-command = "rust-analyzer"
-
-[language-server.pylsp]
-command = "pylsp"
-
-[language-server.gopls]
-command = "/home/mac/go/bin/gopls"
-
-[language-server.ccls]
-command = "ccls"
-
-[language-server.phpactor]
-command = "/home/mac/.composer/vendor/bin/phpactor"
-args = ["language-server"]
-
-[language-server.bash-language-server]
-command = "bash-language-server"
-args = ["start"]
-
-[language-server.yaml-language-server]
-command = "yaml-language-server"
-args = ["--stdio"]
+[language-server.deno-lsp]
+command = "deno"
+args = ["lsp"]
+config.deno.enable = true
+config.deno.unstable = true
 
 [language-server.vscode-json-language-server]
 command = "vscode-json-language-server"
@@ -132,21 +275,27 @@ args = ["--stdio"]
 command = "vscode-css-language-server"
 args = ["--stdio"]
 
-[language-server.docker-langserver]
-command = "docker-langserver"
+[language-server.tailwindcss-ls]
+command = "tailwindcss-language-server"
 args = ["--stdio"]
 
-[language-server.lua-language-server]
-command = "lua-language-server"
+[language-server.eslint]
+command = "vscode-eslint-language-server"
+args = ["--stdio"]
 
-[language-server.lua-language-server.config.Lua.runtime]
-version = "LuaJIT"
+[language-server.texlab]
+command = "texlab"
 
-[language-server.lua-language-server.config.Lua.diagnostics]
-globals = ["vim"]
+[language-server.shellcheck]
+command = "shellcheck"
+args = ["--format=json", "-"]
 
-[language-server.lua-language-server.config.Lua.workspace]
-checkThirdParty = false
+[language-server.sourcekit-lsp]
+command = "sourcekit-lsp"
 
-[language-server.lua-language-server.config.Lua.telemetry]
-enable = false
+[[language]]
+name = "jsonc"
+scope = "source.json"
+injection-regex = "^(jsonc)$"
+file-types = ["jsonc"]
+roots = []
