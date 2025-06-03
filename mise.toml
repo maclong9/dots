@@ -1,0 +1,12 @@
+[tools]
+"aqua:docker/cli" = "latest"
+act = "latest"
+colima = "latest"
+deno = "latest"
+ffmpeg = "latest"
+github-cli = "latest"
+helix = "latest"
+lima = "latest"
+node = "latest"
+shellcheck = "latest"
+shfmt = "latest"
