@@ -114,8 +114,7 @@ fi
 
 # Install MacPorts packages
 echo "📦 Installing development tools via MacPorts..."
-sudo port install deno docker docker-compose ffmpeg gh helix nodejs22 \
-    shellcheck shfmt texlive +medium texlab
+sudo port install deno docker docker-compose ffmpeg gh helix nodejs22 shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
