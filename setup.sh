@@ -59,7 +59,7 @@ mise install deno github-cli helix node pnpm shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-sudo npm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
+pnpm i -g @anthropic-ai/claude-code eslint pnpm prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Configure GitHub CLI
