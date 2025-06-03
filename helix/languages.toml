@@ -149,8 +149,8 @@ formatter = { command = "prettier", args = ["--parser", "css"] }
 indent = { tab-width = 2, unit = "  " }
 
 [[language]]
-name = "shell"
-scope = "source.sh"
+name = "bash"
+scope = "source.bash"
 injection-regex = "^(bash|sh|zsh)$"
 file-types = ["sh", "bash", "zsh", ".bash_login", ".bash_logout", ".bash_profile", ".bashrc", ".profile", ".zshenv", ".zlogin", ".zlogout", ".zprofile", ".zshrc", "APKBUILD", "PKGBUILD", "eclass", "ebuild", "bazelrc", "Renviron", "zlogin", "zlogout", "zprofile", "zshenv", "zshrc"]
 shebangs = ["sh", "bash", "dash", "zsh"]
