@@ -9,9 +9,7 @@ lima = "latest"
 node = "latest"
 shellcheck = "latest"
 shfmt = "latest"
-# aqua
 "aqua:docker/cli" = "latest"
-# npm
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:eslint" = "latest"
 "npm:prettier" = "latest"
