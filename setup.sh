@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e  # Exit on any error
+set -e # Exit on any error
 
 echo "🚀 Starting macOS development environment setup..."
 
@@ -18,7 +18,7 @@ cd "$HOME/.config"
 
 for file in .*; do
     case "$file" in
-        "." | ".." | ".git" | ".gitignore") continue ;;
+    "." | ".." | ".git" | ".gitignore") continue ;;
     esac
     if [ -e "$HOME/$file" ]; then
         echo "Backing up existing $file..."
@@ -42,8 +42,8 @@ fi
 echo "📦 Installing Swift List..."
 sudo mkdir -p /usr/local/bin
 download_url=$(curl -s \
-    https://api.github.com/repos/maclong9/list/releases/latest | \
-    grep "browser_download_url.*sls" | \
+    https://api.github.com/repos/maclong9/list/releases/latest |
+    grep "browser_download_url.*sls" |
     cut -d\" -f4)
 
 if [ -z "$download_url" ]; then
@@ -57,9 +57,7 @@ fi
 # Install mise toolse
 echo "📦 Installing development tools via mise..."
 curl https://mise.run | sh
-mise use -g deno@latest github-cli@latest helix@latest node@latest shellcheck@latest shfmt@latest
 mise install
-
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
