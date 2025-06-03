@@ -34,6 +34,11 @@ fi
 printf "📦 Installing development tools via mise..."
 curl https://mise.run | sh
 mise install
+COMPLETIONS="$HOME/.local/share/zsh/completions/"
+mkdir -p "$COMPLETIONS"
+mise completion zsh >"$COMPLETIONS/_mise"
+gh completion zsh >"$COMPLETIONS/_gh"
+docker completion zsh >"$COMPLETIONS/_docker"
 
 # Configure GitHub CLI
 gh auth login

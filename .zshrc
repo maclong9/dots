@@ -1,6 +1,7 @@
 # General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
+typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
 autoload -Uz compinit && compinit
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 
