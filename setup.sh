@@ -57,7 +57,7 @@ curl https://mise.run | sh
 
 # Install mise packages
 echo "📦 Installing development tools via mise..."
-mise install deno gh git-filter-repo helix nodejs22 npm10 shellcheck shfmt
+mise install deno gh helix node pnpm shellcheck shfmt
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
