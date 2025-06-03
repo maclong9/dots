@@ -1,0 +1,7 @@
+[tools]
+helix = "latest"
+node = "latest"
+github-cli = "latest"
+deno = "latest"
+shellcheck = "latest"
+shfmt = "latest"

@@ -4,6 +4,8 @@ set -e  # Exit on any error
 
 echo "🚀 Starting macOS development environment setup..."
 
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/installs/node/latest/bin/:$HOME/.local/share/mise/installs/github-cli/latest/gh_2.74.0_macOS_arm64/bin:$PATH"
+
 # Clone and Symlink Dotfiles
 echo "📁 Setting up dotfiles..."
 if [ -d "$HOME/.config" ]; then
@@ -55,11 +57,13 @@ fi
 # Install mise toolse
 echo "📦 Installing development tools via mise..."
 curl https://mise.run | sh
-~/.local/bin/mise install deno github-cli helix node shellcheck shfmt
+mise use -g deno@latest github-cli@latest helix@latest node@latest shellcheck@latest shfmt@latest
+mise install
+
 
 # Install Language Servers via npm
 echo "🛠️  Installing language servers..."
-"$HOME/.local/share/mise/installs/node/latest/bin/npm" i -g @anthropic-ai/claude-code eslint prettier typescript \
+npm i -g @anthropic-ai/claude-code eslint prettier typescript \
     typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
 
 # Configure GitHub CLI
