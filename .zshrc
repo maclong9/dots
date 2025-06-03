@@ -1,5 +1,5 @@
 # General Settings
-PROMPT="%F{white}%n@%m %B%F{brightwhite}%~
+PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 autoload -Uz compinit && compinit
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
@@ -19,9 +19,6 @@ alias spu="swift package update"
 
 # Kill Port
 kp() { kill -9 $(lsof -ti tcp:$1) }
-
-# Make Directory and Navigate Into
-mkcd() { mkdir $1 && cd $1; }
 
 # Activate mise
 eval "$(/Users/mac/.local/bin/mise activate zsh)"
