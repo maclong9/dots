@@ -59,20 +59,6 @@ echo "📦 Installing development tools via mise..."
 curl https://mise.run | sh
 mise install
 
-# Install OrbStack
-echo "🐳 Installing OrbStack..."
-curl -L "https://orbstack.dev/download/stable/latest/arm64" -o "/tmp/orbstack.dmg"
-sudo hdiutil attach "/tmp/orbstack.dmg" -nobrowse -quiet
-sudo cp -R "/Volumes/OrbStack/OrbStack.app" "/Applications/"
-sudo hdiutil detach "/Volumes/OrbStack" -quiet
-rm "/tmp/orbstack.dmg"
-echo "✅ OrbStack installed"
-
-# Install Language Servers via npm
-echo "🛠️  Installing language servers..."
-npm i -g @anthropic-ai/claude-code eslint prettier typescript \
-    typescript-language-server vscode-langservers-extracted @tailwindcss/language-server
-
 # Configure GitHub CLI
 gh auth login
 gh extension install github/gh-copilot
@@ -86,7 +72,6 @@ else
     echo "SSH key already exists"
 fi
 
-# Copy public key to clipboard
 if command -v pbcopy >/dev/null 2>&1; then
     cat ~/.ssh/id_rsa.pub | pbcopy
     echo "📋 SSH public key copied to clipboard"
