@@ -1,6 +1,5 @@
 [tools]
 "aqua:docker/cli" = "latest"
-act = "latest"
 colima = "latest"
 deno = "latest"
 ffmpeg = "latest"
