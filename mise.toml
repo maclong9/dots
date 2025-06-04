@@ -1,18 +1,12 @@
 [settings]
 experimental = true
 [tools]
-# mise
-docker-compose = "latest"
-colima = "latest"
 deno = "latest"
 github-cli = "latest"
 helix = "latest"
-lima = "latest"
 node = "lts"
 shellcheck = "latest"
 shfmt = "latest"
-usage = "latest"
-"aqua:docker/cli" = "latest"
 "spm:maclong9/list" = "latest"
 "ubi:mas-cli/mas" = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
