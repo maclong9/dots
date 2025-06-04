@@ -47,7 +47,7 @@ rm /tmp/ghostty.dmg
 echo "Installing OrbStack..."
 curl -L "https://orbstack.dev/download/stable/latest/arm64" -o /tmp/orbstack.dmg
 hdiutil attach /tmp/orbstack.dmg -quiet
-cp -R "/Volumes/OrbStack/OrbStack.app" /Applications/
+cp -R /Volumes/*Orb*/OrbStack.app /Applications
 hdiutil detach "/Volumes/OrbStack" -quiet
 rm /tmp/orbstack.dmg
 
