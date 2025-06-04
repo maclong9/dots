@@ -58,6 +58,18 @@ if command -v pbcopy >/dev/null 2>&1; then
     printf "📋 SSH public key copied to clipboard"
 fi
 
+# Install all apps
+mas install 409203825  # Numbers
+mas install 409183694  # Keynote
+mas install 409201541  # Pages
+mas install 634148309  # Logic Pro
+mas install 424389933  # Final Cut Pro
+mas install 424390742  # Compressor
+mas install 434290957  # Motion
+mas install 634159523  # MainStage
+mas install 1289583905 # Pixelmator Pro
+mas install 497799835  # Xcode
+
 printf "\n✨ Setup completed successfully!\n"
 printf "Next steps:\n"
 printf "1. Run 'source ~/.zshrc' or restart your terminal\n"
