@@ -51,18 +51,6 @@ cp -R "/Volumes/OrbStack/OrbStack.app" /Applications/
 hdiutil detach "/Volumes/OrbStack" -quiet
 rm /tmp/orbstack.dmg
 
-# Install App Store apps
-mas install 409203825  # Numbers
-mas install 409183694  # Keynote
-mas install 409201541  # Pages
-mas install 634148309  # Logic Pro
-mas install 424389933  # Final Cut Pro
-mas install 424390742  # Compressor
-mas install 434290957  # Motion
-mas install 634159523  # MainStage
-mas install 1289583905 # Pixelmator Pro
-mas install 497799835  # Xcode
-
 # Configure GitHub CLI
 gh auth login
 gh extension install github/gh-copilot
