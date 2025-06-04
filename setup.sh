@@ -48,7 +48,7 @@ echo "Installing OrbStack..."
 curl -L "https://orbstack.dev/download/stable/latest/arm64" -o /tmp/orbstack.dmg
 hdiutil attach /tmp/orbstack.dmg -quiet
 cp -R /Volumes/*Orb*/OrbStack.app /Applications
-hdiutil detach "/Volumes/OrbStack" -quiet
+hdiutil detach "/Volumes/*Orb*" -quiet
 rm /tmp/orbstack.dmg
 
 # Configure GitHub CLI
