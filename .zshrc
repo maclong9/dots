@@ -8,7 +8,6 @@ setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 # Aliases
 alias g="git"
 alias ls="sls -cli"
-alias la="sls -clia"
 alias mkdir="mkdir -p"
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
