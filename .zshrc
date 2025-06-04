@@ -7,6 +7,7 @@ setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 
 # Aliases
 alias g="git"
+alias cd="z"
 alias ls="sls -cli"
 alias mkdir="mkdir -p"
 alias sf="swift format --recursive --in-place"
@@ -20,5 +21,6 @@ alias spu="swift package update"
 # Kill Port
 kp() { kill -9 $(lsof -ti tcp:$1) }
 
-# Activate mise
+# Activate tools
 eval "$(/Users/mac/.local/bin/mise activate zsh)"
+eval "$(zoxide init zsh)"

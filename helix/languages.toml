@@ -16,17 +16,17 @@ formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 2, unit = "  " }
 
 # Deno TypeScript configuration
-[[language]]
-name = "typescript"
-scope = "source.ts"
-injection-regex = "^(ts|typescript)$"
-file-types = ["ts", "mts", "cts"]
-shebangs = ["deno"]
-roots = ["deno.json", "deno.jsonc", "deno.lock"]
-language-servers = ["deno-lsp"]
-auto-format = true
-formatter = { command = "deno", args = ["fmt", "-"] }
-indent = { tab-width = 2, unit = "  " }
+# [[language]]
+# name = "typescript"
+# scope = "source.ts"
+# injection-regex = "^(ts|typescript)$"
+# file-types = ["ts", "mts", "cts"]
+# shebangs = ["deno"]
+# roots = ["deno.json", "deno.jsonc", "deno.lock"]
+# language-servers = ["deno-lsp"]
+# auto-format = true
+# formatter = { command = "deno", args = ["fmt", "-"] }
+# indent = { tab-width = 2, unit = "  " }
 
 # Node.js TSX configuration
 [[language]]
@@ -45,17 +45,17 @@ formatter = { command = "prettier", args = ["--parser", "typescript"] }
 indent = { tab-width = 2, unit = "  " }
 
 # Deno TSX configuration
-[[language]]
-name = "tsx"
-scope = "source.tsx"
-injection-regex = "^(tsx)$"
-file-types = ["tsx"]
-shebangs = ["deno"]
-roots = ["deno.json", "deno.jsonc", "deno.lock"]
-language-servers = ["deno-lsp"]
-auto-format = true
-formatter = { command = "deno", args = ["fmt", "-"] }
-indent = { tab-width = 2, unit = "  " }
+# [[language]]
+# name = "tsx"
+# scope = "source.tsx"
+# injection-regex = "^(tsx)$"
+# file-types = ["tsx"]
+# shebangs = ["deno"]
+# roots = ["deno.json", "deno.jsonc", "deno.lock"]
+# language-servers = ["deno-lsp"]
+# auto-format = true
+# formatter = { command = "deno", args = ["fmt", "-"] }
+# indent = { tab-width = 2, unit = "  " }
 
 # Node.js JavaScript configuration
 [[language]]
@@ -74,17 +74,17 @@ formatter = { command = "prettier", args = ["--parser", "javascript"] }
 indent = { tab-width = 2, unit = "  " }
 
 # Deno JavaScript configuration
-[[language]]
-name = "javascript"
-scope = "source.js"
-injection-regex = "^(js|javascript)$"
-file-types = ["js", "mjs", "cjs", "jsm"]
-shebangs = ["deno"]
-roots = ["deno.json", "deno.jsonc", "deno.lock"]
-language-servers = ["deno-lsp"]
-auto-format = true
-formatter = { command = "deno", args = ["fmt", "-"] }
-indent = { tab-width = 2, unit = "  " }
+# [[language]]
+# name = "javascript"
+# scope = "source.js"
+# injection-regex = "^(js|javascript)$"
+# file-types = ["js", "mjs", "cjs", "jsm"]
+# shebangs = ["deno"]
+# roots = ["deno.json", "deno.jsonc", "deno.lock"]
+# language-servers = ["deno-lsp"]
+# auto-format = true
+# formatter = { command = "deno", args = ["fmt", "-"] }
+# indent = { tab-width = 2, unit = "  " }
 
 # Node.js JSX configuration
 [[language]]
@@ -103,17 +103,17 @@ formatter = { command = "prettier", args = ["--parser", "javascript"] }
 indent = { tab-width = 2, unit = "  " }
 
 # Deno JSX configuration
-[[language]]
-name = "jsx"
-scope = "source.jsx"
-injection-regex = "^(jsx)$"
-file-types = ["jsx"]
-shebangs = ["deno"]
-roots = ["deno.json", "deno.jsonc", "deno.lock"]
-language-servers = ["deno-lsp"]
-auto-format = true
-formatter = { command = "deno", args = ["fmt", "-"] }
-indent = { tab-width = 2, unit = "  " }
+# [[language]]
+# name = "jsx"
+# scope = "source.jsx"
+# injection-regex = "^(jsx)$"
+# file-types = ["jsx"]
+# shebangs = ["deno"]
+# roots = ["deno.json", "deno.jsonc", "deno.lock"]
+# language-servers = ["deno-lsp"]
+# auto-format = true
+# formatter = { command = "deno", args = ["fmt", "-"] }
+# indent = { tab-width = 2, unit = "  " }
 
 [[language]]
 name = "json"
