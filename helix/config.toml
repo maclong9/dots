@@ -3,8 +3,6 @@ theme = "vesper"
 [editor]
 line-number = "relative"
 cursorline = true
-auto-completion = true
-completion-trigger-len = 1
 bufferline = "multiple"
 true-color = true
 shell = ["zsh", "-c"]
@@ -19,17 +17,7 @@ hidden = false
 
 [editor.statusline]
 left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
-center = []
 right = ["diagnostics", "selections", "register", "position"] 
-
-[editor.lsp]
-display-messages = true
-display-inlay-hints = false
-
-[editor.whitespace.render]
-space = "none"
-tab = "none"
-newline = "none"
 
 [editor.indent-guides]
 render = true
