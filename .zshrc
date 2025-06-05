@@ -1,4 +1,4 @@
-# General Settings
+General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
@@ -8,6 +8,7 @@ setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 # Aliases
 alias g="git"
 alias cd="z"
+alias cdi="zi"
 alias ls="sls -cli"
 alias mkdir="mkdir -p"
 alias sf="swift format --recursive --in-place"

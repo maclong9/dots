@@ -2,7 +2,10 @@
 
 set -e # Exit on any error
 printf "🚀 Starting macOS development environment setup..."
-export PATH="$HOME/.local/bin:$HOME/.local/share/mise/installs/node/latest/bin/:$HOME/.local/share/mise/installs/github-cli/latest/gh_2.74.0_macOS_arm64/bin:$PATH"
+export PATH="$HOME/.local/bin:\
+$HOME/.local/share/mise/installs/node/latest/bin:\
+$HOME/.local/share/mise/installs/github-cli/latest/gh_2.74.0_macOS_arm64/bin:\
+$PATH"
 
 # Clone and Symlink Dotfiles
 git clone https://github.com/maclong9/dots "$HOME/.config"

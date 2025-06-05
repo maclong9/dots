@@ -152,7 +152,7 @@ indent = { tab-width = 2, unit = "  " }
 name = "bash"
 scope = "source.bash"
 injection-regex = "^(bash|sh|zsh)$"
-file-types = ["sh", "bash", "zsh", ".bash_login", ".bash_logout", ".bash_profile", ".bashrc", ".profile", ".zshenv", ".zlogin", ".zlogout", ".zprofile", ".zshrc", "APKBUILD", "PKGBUILD", "eclass", "ebuild", "bazelrc", "Renviron", "zlogin", "zlogout", "zprofile", "zshenv", "zshrc"]
+file-types = ["config","sh", "bash", "zsh", ".bash_login", ".bash_logout", ".bash_profile", ".bashrc", ".profile", ".zshenv", ".zlogin", ".zlogout", ".zprofile", ".zshrc", "APKBUILD", "PKGBUILD", "eclass", "ebuild", "bazelrc", ".bash_aliases"]
 shebangs = ["sh", "bash", "dash", "zsh"]
 roots = []
 language-servers = ["shellcheck"]

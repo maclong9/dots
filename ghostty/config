@@ -7,10 +7,10 @@ window-padding-x = 12
 window-padding-y = 8
 window-theme = dark
 macos-option-as-alt = true
-keybind = global:alt+3=text:#
+keybind = alt+3=text:#
+keybind = shift+enter=text:\n
 keybind = global:alt+h=goto_split:left
 keybind = global:alt+j=goto_split:down
 keybind = global:alt+k=goto_split:up
 keybind = global:alt+l=goto_split:right
 keybind = global:super+§=toggle_quick_terminal
-keybind = shift+enter=text:\n
