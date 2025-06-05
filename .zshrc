@@ -1,11 +1,14 @@
+# General Settings
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY PROMPT_SUBST
 autoload -Uz vcs_info compinit && compinit
+typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
+
+# Prompt Configuration
 precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats '%F{10}  %F{7}%b%f'
+zstyle ':vcs_info:git:*' formats $'%F{7} on%F{10} \u200A%b%f'
 zstyle ':vcs_info:*' enable git
 PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 %F{%(?.10.9)}%Bλ%b%f '
-typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
 
 # Aliases
 alias g="git"
