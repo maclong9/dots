@@ -1,9 +1,11 @@
-# General Settings
-PROMPT="%F{white}%n %B%F{brightwhite}%~
-%F{%(?.blue.red)}%Bλ%b%f "
+setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY PROMPT_SUBST
+autoload -Uz vcs_info compinit && compinit
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats '%F{10}  %F{7}%b%f'
+zstyle ':vcs_info:*' enable git
+PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
+%F{%(?.10.9)}%Bλ%b%f '
 typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
-autoload -Uz compinit && compinit
-setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY
 
 # Aliases
 alias g="git"

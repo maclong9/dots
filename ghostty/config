@@ -1,16 +1,15 @@
-theme = "vesper"
-macos-icon = "xray"
 font-family = "SF Mono"
-font-size = 11
 font-feature = +calt, +liga, +dlig
-window-padding-x = 12
-window-padding-y = 8
-window-theme = dark
-macos-option-as-alt = true
+font-size = 11
 keybind = alt+3=text:#
-keybind = shift+enter=text:\n
 keybind = global:alt+h=goto_split:left
 keybind = global:alt+j=goto_split:down
 keybind = global:alt+k=goto_split:up
 keybind = global:alt+l=goto_split:right
 keybind = global:super+§=toggle_quick_terminal
+keybind = shift+enter=text:\n
+macos-option-as-alt = true
+theme = "vesper"
+window-padding-x = 12
+window-padding-y = 8
+window-theme = dark
