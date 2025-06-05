@@ -195,7 +195,7 @@ scope = "source.md"
 injection-regex = "^(md|markdown)$"
 file-types = ["md", "markdown", "mkd", "mdwn", "mdown", "markdn", "mdtxt", "mdtext", "workbook"]
 roots = []
-language-servers = []
+language-servers = ["harper-ls"]
 auto-format = true
 formatter = { command = "prettier", args = ["--parser", "markdown"] }
 indent = { tab-width = 2, unit = "  " }
@@ -250,9 +250,9 @@ scope = "source.swift"
 injection-regex = "^(swift)$"
 file-types = ["swift"]
 roots = ["Package.swift"]
-language-servers = ["sourcekit-lsp"]
+language-servers = ["sourcekit-lsp", "swift lint", "harper-ls"]
 auto-format = true
-formatter = { command = "swift", args = ["format", "--in-place"] }
+formatter = { command = "swift", args = ["format", "--stdin"] }
 indent = { tab-width = 4, unit = "    " }
 
 # Language Server configurations
@@ -296,6 +296,10 @@ args = ["--format=json", "-"]
 
 [language-server.sourcekit-lsp]
 command = "sourcekit-lsp"
+
+[language-server.harper-ls]
+command = "harper-ls"
+args = ["--stdio"]
 
 [[language]]
 name = "jsonc"
