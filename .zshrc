@@ -1,4 +1,4 @@
-General Settings
+# General Settings
 PROMPT="%F{white}%n %B%F{brightwhite}%~
 %F{%(?.blue.red)}%Bλ%b%f "
 typeset -gaU fpath=($fpath ~/.local/share/zsh/completions)
