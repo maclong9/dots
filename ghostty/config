@@ -10,6 +10,7 @@ keybind = global:super+§=toggle_quick_terminal
 keybind = shift+enter=text:\n
 macos-option-as-alt = true
 theme = "vesper"
+window-height = 32
 window-padding-x = 12
 window-padding-y = 8
 window-theme = dark
