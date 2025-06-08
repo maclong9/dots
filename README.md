@@ -34,6 +34,9 @@ curl -fsSl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup
 - **Ghostty** - Modern terminal emulator
 - **OrbStack** - Docker Desktop alternative for macOS
 
+> [!NOTE]
+> Installation of App Store applications is handled via Migration Assistant or a Time Machine Backup. 
+
 ### Development Tools (via mise)
 - **Deno** - Modern JavaScript/TypeScript runtime
 - **Jujitsu (jj)** - Next-generation version control
