@@ -109,6 +109,7 @@ PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 # Aliases
 alias cat="bat"            
 alias cd="z"
+alias cdi="zi"
 alias la="sls -clia"          
 alias ls="sls -cli"        
 
