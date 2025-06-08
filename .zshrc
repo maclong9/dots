@@ -47,6 +47,30 @@ fi
 # zsh-autocomplete
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+    bindkey -M emacs \
+        "^[p"   .history-search-backward \
+        "^[n"   .history-search-forward \
+        "^P"    .up-line-or-history \
+        "^[OA"  .up-line-or-history \
+        "^[[A"  .up-line-or-history \
+        "^N"    .down-line-or-history \
+        "^[OB"  .down-line-or-history \
+        "^[[B"  .down-line-or-history \
+        "^R"    .history-incremental-search-backward \
+        "^S"    .history-incremental-search-forward \
+        #
+    bindkey -a \
+        "^P"    .up-history \
+        "^N"    .down-history \
+        "k"     .up-line-or-history \
+        "^[OA"  .up-line-or-history \
+        "^[[A"  .up-line-or-history \
+        "j"     .down-line-or-history \
+        "^[OB"  .down-line-or-history \
+        "^[[B"  .down-line-or-history \
+        "/"     .vi-history-search-backward \
+        "?"     .vi-history-search-forward \
+        #
 fi
 
 # jj completions
