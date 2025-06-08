@@ -70,6 +70,7 @@ fi
 if ! command -v mise > /dev/null 2>&1; then
     log_info "Installing mise..."
     curl https://mise.run | sh
+    log_success "mise installed"
 else
     log_success "mise already installed"
 fi
@@ -219,18 +220,21 @@ else
 fi
 
 # Configure ssh key
-ssh-keygen -t ed25519 -C "hello@maclong.uk" -f ~/.ssh/id_ed25519 -N ""
-eval "$(ssh-agent -s)"
-printf "
-Host github.com
-  AddKeysToAgent yes
-  UseKeychain yes
-  IdentityFile ~/.ssh/id_ed25519
-
-" > "$HOME/.ssh/config"
-cat "$HOME/.ssh/id_ed25519.pub" | pbcopy
+if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+    ssh-keygen -t ed25519 -C "hello@maclong.uk" -f ~/.ssh/id_ed25519 -N ""
+    eval "$(ssh-agent -s)"
+    printf "
+    Host github.com
+      AddKeysToAgent yes
+      UseKeychain yes
+      IdentityFile ~/.ssh/id_ed25519
+    
+    " > "$HOME/.ssh/config"
+    cat "$HOME/.ssh/id_ed25519.pub" | pbcopy
+    log_success "ssh key generated"
+fi
 
 log_success "Setup complete!\n"
 printf "Next steps:\n"
 printf "1. Restart your terminal or run: source ~/.zshrc\n"
-printf "2. Set up SSH keys on GitHub\n"
+printf "2. Set up SSH keys on remote\n"
