@@ -34,32 +34,3 @@ fzf = "latest"
 [env]
 EDITOR = "hx"
 PAGER = "bat"
-
-# Task definitions
-[tasks.sf]
-description = "Format Swift code recursively"
-run = "swift format --recursive --in-place"
-
-[tasks.sl]
-description = "Lint Swift code recursively"
-run = "swift format lint --recursive"
-
-[tasks.sr]
-description = "Run Swift package"
-run = "swift run"
-
-[tasks.st]
-description = "Test Swift package"
-run = "swift test"
-
-[tasks.sb]
-description = "Build Swift package"
-run = "swift build"
-
-[tasks.sbr]
-description = "Build Swift package in release mode"
-run = "swift build -c release"
-
-[tasks.spu]
-description = "Update Swift package dependencies"
-run = "swift package update"
