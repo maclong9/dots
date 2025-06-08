@@ -1,0 +1,22 @@
+# Jujitsu Configuration
+# Next-generation version control system configuration
+
+[user]
+name = "Mac Long"
+email = "hello@maclong.uk"
+
+[signing]
+sign-all = true
+backend = "ssh"
+key = "/Users/mac/.ssh/id_rsa"
+
+# UI preferences
+[ui]
+default-command = "log"
+editor = "hx"
+
+# Conditional configuration for work repositories
+[[--scope]]
+--when.repositories = ["~/Developer/work"]
+[--scope.user]
+email = "mac@work.com"
