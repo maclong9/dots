@@ -220,29 +220,19 @@ else
     log_warning "mise.toml not found, skipping tool installation"
 fi
 
+# Configure ssh key
+ssh-keygen -t ed25519 -C "hello@maclong.uk" -f ~/.ssh/id_ed25519 -N ""
+eval "$(ssh-agent -s)"
+printf "
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+
+" > "$HOME/.ssh/config"
+cat "$HOME/.ssh/id_ed25519.pub" | pbcopy
+
 log_success "Setup complete!\n"
 printf "Next steps:\n"
 printf "1. Restart your terminal or run: source ~/.zshrc\n"
-printf "2. Configure Git with your details:\n"
-printf "   git config --global user.name 'Your Name'\n"
-printf "   git config --global user.email 'your.email@example.com'\n"
-printf "3. Set up SSH keys for GitHub if needed\n"
-printf "4. Test Touch ID for sudo by running: sudo echo 'Touch ID works!'\n\n"
-printf "Installed applications:\n"
-printf " - Ghostty (Terminal)\n"
-printf " - OrbStack (Docker alternative)\n\n"
-printf "Security features:\n"
-printf " - Touch ID enabled for sudo authentication\n\n"
-printf "Development tools available via mise:\n"
-printf " - Node.js 20\n"
-printf " - Deno\n"
-printf " - Jujitsu (jj)\n"
-printf " - GitHub CLI (gh)\n"
-printf " - Helix editor (hx)\n"
-printf " - Various other tools\n\n"
-printf "Directory structure:\n"
-printf " - ~/.config: dotfiles repository (maclong9/dots)\n"
-printf " - ~/Developer/personal: web-ui, list, portfolio\n"
-printf " - ~/Developer/clients: (empty, for freelance clients)\n"
-printf " - ~/Developer/study: comp-sci\n"
-printf " - ~/Developer/work: (empty, for work repositories)\n"
+printf "2. Set up SSH keys on GitHub\n"
