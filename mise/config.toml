@@ -1,0 +1,63 @@
+# mise configuration file
+# Manages development tools and runtime versions
+
+[settings]
+# Enable experimental features
+experimental = true
+
+[tools]
+# Swift Package Manager tools
+"spm:maclong9/list" = "latest"
+
+# Development tools
+"deno" = "latest"
+"jj" = "latest"      # Jujutsu version control
+"gh" = "latest"      # GitHub CLI
+"helix" = "latest"   # Helix editor
+"bat" = "latest"     # Better cat
+"shellcheck" = "latest"  # Shell script linter
+"shfmt" = "latest"   # Shell formatter
+
+# JavaScript/TypeScript ecosystem
+"node" = "lts"
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:eslint" = "latest"
+"npm:prettier" = "latest"
+"npm:typescript" = "latest"
+"npm:typescript-language-server" = "latest"
+"npm:vscode-langservers-extracted" = "latest"
+"npm:@tailwindcss/language-server" = "latest"
+
+# Environment variables
+[env]
+EDITOR = "hx"
+PAGER = "bat"
+
+# Task definitions
+[tasks.sf]
+description = "Format Swift code recursively"
+run = "swift format --recursive --in-place"
+
+[tasks.sl]
+description = "Lint Swift code recursively"
+run = "swift format lint --recursive"
+
+[tasks.sr]
+description = "Run Swift package"
+run = "swift run"
+
+[tasks.st]
+description = "Test Swift package"
+run = "swift test"
+
+[tasks.sb]
+description = "Build Swift package"
+run = "swift build"
+
+[tasks.sbr]
+description = "Build Swift package in release mode"
+run = "swift build -c release"
+
+[tasks.spu]
+description = "Update Swift package dependencies"
+run = "swift package update"
