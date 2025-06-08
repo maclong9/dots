@@ -103,7 +103,7 @@ zstyle ':vcs_info:*' enable git
 setopt PROMPT_SUBST
 
 # Custom prompt
-PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
+PROMPT='%F{7}%n %B%F{15}%~%b
 %F{%(?.10.9)}%Bλ%b%f '
 
 # Aliases
@@ -111,6 +111,7 @@ alias cat="bat"
 alias cd="z"
 alias cdi="zi"
 alias jgp="jj git push"
+alias jd="jj describe -m"
 alias la="sls -clia"          
 alias ls="sls -cli"        
 
