@@ -47,6 +47,8 @@ fi
 # zsh-autocomplete
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+    bindkey              '^I'         menu-complete
+    bindkey "$terminfo[kcbt]" reverse-menu-complete
     bindkey -M emacs \
         "^[p"   .history-search-backward \
         "^[n"   .history-search-forward \
