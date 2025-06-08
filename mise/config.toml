@@ -28,6 +28,7 @@ experimental = true
 "npm:typescript-language-server" = "latest"
 "npm:vscode-langservers-extracted" = "latest"
 "npm:@tailwindcss/language-server" = "latest"
+fzf = "latest"
 
 # Environment variables
 [env]
