@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # macOS Development Environment Setup Script
 # Configures development tools, applications, and dotfiles
@@ -14,23 +14,23 @@ NC='\033[0m' # No Color
 
 # Logging functions
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    printf "${BLUE}[INFO]${NC} %s\n" "$1"
 }
 
 log_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    printf "${GREEN}[SUCCESS]${NC} %s\n" "$1"
 }
 
 log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
+    printf "${YELLOW}[WARNING]${NC} %s\n" "$1"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    printf "${RED}[ERROR]${NC} %s\n" "$1"
 }
 
 # Check if we're on macOS
-if [[ "$(uname)" != "Darwin" ]]; then
+if [ "$(uname)" != "Darwin" ]; then
     log_error "This script is designed for macOS only"
     exit 1
 fi
@@ -47,7 +47,7 @@ mkdir -p "$HOME/Developer/study"
 mkdir -p "$HOME/Developer/work"
 
 # Install mise
-if ! command -v mise &> /dev/null; then
+if ! command -v mise > /dev/null 2>&1; then
     log_info "Installing mise..."
     curl https://mise.run | sh
 else
@@ -58,7 +58,7 @@ fi
 log_info "Installing applications..."
 
 # Install Ghostty
-if [[ ! -d "/Applications/Ghostty.app" ]]; then
+if [ ! -d "/Applications/Ghostty.app" ]; then
     log_info "Installing Ghostty..."
     curl -L -o /tmp/Ghostty.dmg https://release.files.ghostty.org/1.1.3/Ghostty.dmg
     hdiutil attach /tmp/Ghostty.dmg -quiet
@@ -71,7 +71,7 @@ else
 fi
 
 # Install OrbStack
-if [[ ! -d "/Applications/OrbStack.app" ]]; then
+if [ ! -d "/Applications/OrbStack.app" ]; then
     log_info "Installing OrbStack..."
     curl -L -o /tmp/OrbStack.dmg https://orbstack.dev/download/stable/latest/arm64
     hdiutil attach /tmp/OrbStack.dmg -quiet
@@ -87,7 +87,7 @@ fi
 log_info "Installing Zsh plugins..."
 
 # zsh-autosuggestions
-if [[ ! -d "$HOME/.local/share/zsh/zsh-autosuggestions" ]]; then
+if [ ! -d "$HOME/.local/share/zsh/zsh-autosuggestions" ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.local/share/zsh/zsh-autosuggestions"
     log_success "zsh-autosuggestions installed"
 else
@@ -95,7 +95,7 @@ else
 fi
 
 # zsh-syntax-highlighting
-if [[ ! -d "$HOME/.local/share/zsh/zsh-syntax-highlighting" ]]; then
+if [ ! -d "$HOME/.local/share/zsh/zsh-syntax-highlighting" ]; then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting "$HOME/.local/share/zsh/zsh-syntax-highlighting"
     log_success "zsh-syntax-highlighting installed"
 else
@@ -103,7 +103,7 @@ else
 fi
 
 # zsh-autocomplete
-if [[ ! -d "$HOME/.local/share/zsh/zsh-autocomplete" ]]; then
+if [ ! -d "$HOME/.local/share/zsh/zsh-autocomplete" ]; then
     git clone https://github.com/marlonrichert/zsh-autocomplete "$HOME/.local/share/zsh/zsh-autocomplete"
     log_success "zsh-autocomplete installed"
 else
@@ -111,7 +111,7 @@ else
 fi
 
 # zsh-completions
-if [[ ! -d "$HOME/.local/share/zsh/zsh-completions" ]]; then
+if [ ! -d "$HOME/.local/share/zsh/zsh-completions" ]; then
     git clone https://github.com/zsh-users/zsh-completions "$HOME/.local/share/zsh/zsh-completions"
     log_success "zsh-completions installed"
 else
@@ -120,7 +120,7 @@ fi
 
 # Clone dotfiles repository to ~/.config
 log_info "Cloning dotfiles repository..."
-if [[ ! -d "$HOME/.config/.git" ]]; then
+if [ ! -d "$HOME/.config/.git" ]; then
     git clone https://github.com/maclong9/dots "$HOME/.config"
     log_success "Dotfiles repository cloned to ~/.config"
 else
@@ -132,25 +132,25 @@ log_info "Cloning repositories..."
 
 # Personal repositories
 cd "$HOME/Developer/personal"
-personal_repos=("web-ui" "list" "portfolio")
-for repo in "${personal_repos[@]}"; do
-    if [[ ! -d "$repo" ]]; then
-        log_info "Cloning $repo..."
+personal_repos="web-ui list portfolio"
+for repo in $personal_repos; do
+    if [ ! -d "$repo" ]; then
+        log_info "Cloning %s..." "$repo"
         git clone "https://github.com/maclong9/$repo"
     else
-        log_success "$repo already exists"
+        log_success "%s already exists" "$repo"
     fi
 done
 
 # Study repositories
 cd "$HOME/Developer/study"
-study_repos=("comp-sci")
-for repo in "${study_repos[@]}"; do
-    if [[ ! -d "$repo" ]]; then
-        log_info "Cloning $repo..."
+study_repos="comp-sci"
+for repo in $study_repos; do
+    if [ ! -d "$repo" ]; then
+        log_info "Cloning %s..." "$repo"
         git clone "https://github.com/maclong9/$repo"
     else
-        log_success "$repo already exists"
+        log_success "%s already exists" "$repo"
     fi
 done
 
@@ -161,31 +161,28 @@ cd "$HOME"
 log_info "Creating symbolic links for configuration files..."
 
 # Symlink dotfiles from ~/.config to ~/
-config_files=(
-    ".zshrc"
-    ".vimrc" 
-)
+config_files=".zshrc .vimrc"
 
-for file in "${config_files[@]}"; do
-    if [[ -f "$HOME/.config/$file" ]]; then
+for file in $config_files; do
+    if [ -f "$HOME/.config/$file" ]; then
         # Remove existing file/symlink if it exists
-        if [[ -e "$HOME/$file" ]] || [[ -L "$HOME/$file" ]]; then
+        if [ -e "$HOME/$file" ] || [ -L "$HOME/$file" ]; then
             rm "$HOME/$file"
         fi
         
         # Create symlink
         ln -s "$HOME/.config/$file" "$HOME/$file"
-        log_success "Symlinked $file"
+        log_success "Symlinked %s" "$file"
     else
-        log_warning "$file not found in ~/.config"
+        log_warning "%s not found in ~/.config" "$file"
     fi
 done
 
 # Install tools via mise
 log_info "Installing development tools with mise..."
-if [[ -f "$HOME/.config/mise.toml" ]]; then
+if [ -f "$HOME/.config/mise.toml" ]; then
     # Source mise if it's just been installed
-    if [[ -f "$HOME/.local/bin/mise" ]]; then
+    if [ -f "$HOME/.local/bin/mise" ]; then
         export PATH="$HOME/.local/bin:$PATH"
     fi
     
@@ -195,30 +192,26 @@ else
     log_warning "mise.toml not found, skipping tool installation"
 fi
 
-log_success "Setup complete!"
-echo ""
-echo "Next steps:"
-echo "1. Restart your terminal or run: source ~/.zshrc"
-echo "2. Configure Git with your details:"
-echo "   git config --global user.name 'Your Name'"
-echo "   git config --global user.email 'your.email@example.com'"
-echo "3. Set up SSH keys for GitHub if needed"
-echo ""
-echo "Installed applications:"
-echo "- Ghostty (Terminal)"
-echo "- OrbStack (Docker alternative)"
-echo ""
-echo "Development tools available via mise:"
-echo "- Node.js 20"
-echo "- Deno"
-echo "- Jujitsu (jj)"
-echo "- GitHub CLI (gh)"
-echo "- Helix editor (hx)"
-echo "- Various other tools"
-echo ""
-echo "Directory structure:"
-echo "- ~/.config: dotfiles repository (maclong9/dots)"
-echo "- ~/Developer/personal: web-ui, list, portfolio"
-echo "- ~/Developer/clients: (empty, for freelance clients)"
-echo "- ~/Developer/study: comp-sci"
-echo "- ~/Developer/work: (empty, for work repositories)"
+log_success "Setup complete!\n"
+printf "Next steps:\n"
+printf "1. Restart your terminal or run: source ~/.zshrc\n"
+printf "2. Configure Git with your details:\n"
+printf "   git config --global user.name 'Your Name'\n"
+printf "   git config --global user.email 'your.email@example.com'\n"
+printf "3. Set up SSH keys for GitHub if needed\n\n"
+printf "Installed applications:\n"
+printf "- Ghostty (Terminal)\n"
+printf "- OrbStack (Docker alternative)\n\n"
+printf "Development tools available via mise:\n"
+printf "- Node.js 20\n"
+printf "- Deno\n"
+printf "- Jujitsu (jj)\n"
+printf "- GitHub CLI (gh)\n"
+printf "- Helix editor (hx)\n"
+printf "- Various other tools\n\n"
+printf "Directory structure:\n"
+printf "- ~/.config: dotfiles repository (maclong9/dots)\n"
+printf "- ~/Developer/personal: web-ui, list, portfolio\n"
+printf "- ~/Developer/clients: (empty, for freelance clients)\n"
+printf "- ~/Developer/study: comp-sci\n"
+printf "- ~/Developer/work: (empty, for work repositories)\n"
