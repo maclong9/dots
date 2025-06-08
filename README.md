@@ -49,7 +49,7 @@ curl -fsSl https://github.com/maclong9/dots | sh
   - `@tailwindcss/language-server`
 
 ### Swift Package Manager Tools
-- **maclong9/list** - Custom Swift package
+- **maclong9/list** - UNIX `ls` clone written in Swift
 
 ### Shell Configuration
 - **ZSH** with plugins:
