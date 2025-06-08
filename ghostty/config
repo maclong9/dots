@@ -8,4 +8,10 @@ window-padding-y = 8
 window-theme = dark
 macos-option-as-alt = true
 keybind = shift+3=text:#
-keybind = super+§=show_quick_terminal
+keybind = meta-h=goto_split:left
+keybind = alt-h=goto_split:left
+keybind = alt-j=goto_split:up
+keybind = alt-k=goto_split:down
+keybind = alt-l=goto_split:right
+keybind = alt-+=equalize_splits
+keybind = global:super+§=show_quick_terminal
