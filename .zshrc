@@ -59,6 +59,11 @@ if command -v mise >/dev/null 2>&1; then
     source "$HOME/.local/share/zsh/completions/_mise"
 fi
 
+# zoxide setup
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+
 # zsh-syntax-highlighting (must be loaded last)
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
