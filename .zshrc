@@ -1,6 +1,8 @@
 # Zsh Configuration
 # Modern shell setup with plugins, completions, and custom prompt
 
+PATH="$HOME/.local/bin/:$PATH"
+
 # Initialize mise for tool management
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"
@@ -42,21 +44,24 @@ if [[ -f "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh" ]]; the
     source "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh"
 fi
 
-# zsh-syntax-highlighting (must be loaded last)
-if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-    source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
 # zsh-autocomplete
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
 fi
 
+# zsh-syntax-highlighting (must be loaded last)
+if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+    source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+
 # Git integration for prompt
 autoload -Uz vcs_info
 precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats $'%F{7} on%F{10} \u2009%b%f'
+zstyle ':vcs_info:git:*' formats $'%F{7} on%F{10}  %b%f'
 zstyle ':vcs_info:*' enable git
+
+# Enable prompt substitution
+setopt PROMPT_SUBST
 
 # Custom prompt
 PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
