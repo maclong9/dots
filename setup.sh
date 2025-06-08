@@ -46,6 +46,51 @@ mkdir -p "$HOME/Developer/clients"
 mkdir -p "$HOME/Developer/study" 
 mkdir -p "$HOME/Developer/work"
 
+# Enable Touch ID for sudo
+log_info "Configuring Touch ID for sudo..."
+PAM_SUDO_FILE="/etc/pam.d/sudo"
+TOUCHID_LINE="auth       sufficient     pam_tid.so"
+
+# Check if Touch ID is already configured
+if grep -q "pam_tid.so" "$PAM_SUDO_FILE" 2>/dev/null; then
+    log_success "Touch ID for sudo already configured"
+else
+    # Check if device supports Touch ID
+    if /usr/bin/bioutil -r -s 2>/dev/null | grep -q "Touch ID"; then
+        log_info "Touch ID detected, enabling for sudo..."
+        
+        # Create a temporary file with the new configuration
+        TMP_FILE=$(mktemp)
+        
+        # Add the Touch ID line at the beginning of the auth section
+        {
+            echo "# sudo: auth account password session"
+            echo "$TOUCHID_LINE"
+        } > "$TMP_FILE"
+        
+        # Append the rest of the original file (skip the first comment line)
+        tail -n +2 "$PAM_SUDO_FILE" >> "$TMP_FILE" 2>/dev/null || {
+            # If file doesn't exist or is empty, create basic sudo pam config
+            cat >> "$TMP_FILE" << 'EOF'
+auth       include        sudo_local
+auth       sufficient     pam_smartcard.so
+auth       required       pam_opendirectory.so
+account    required       pam_permit.so
+password   required       pam_deny.so
+session    required       pam_permit.so
+EOF
+        }
+        
+        # Replace the original file (requires sudo)
+        sudo cp "$TMP_FILE" "$PAM_SUDO_FILE"
+        rm "$TMP_FILE"
+        
+        log_success "Touch ID enabled for sudo"
+    else
+        log_warning "Touch ID not available on this device, skipping configuration"
+    fi
+fi
+
 # Install mise
 if ! command -v mise > /dev/null 2>&1; then
     log_info "Installing mise..."
@@ -206,10 +251,13 @@ printf "1. Restart your terminal or run: source ~/.zshrc\n"
 printf "2. Configure Git with your details:\n"
 printf "   git config --global user.name 'Your Name'\n"
 printf "   git config --global user.email 'your.email@example.com'\n"
-printf "3. Set up SSH keys for GitHub if needed\n\n"
+printf "3. Set up SSH keys for GitHub if needed\n"
+printf "4. Test Touch ID for sudo by running: sudo echo 'Touch ID works!'\n\n"
 printf "Installed applications:\n"
 printf " - Ghostty (Terminal)\n"
 printf " - OrbStack (Docker alternative)\n\n"
+printf "Security features:\n"
+printf " - Touch ID enabled for sudo authentication\n\n"
 printf "Development tools available via mise:\n"
 printf " - Node.js 20\n"
 printf " - Deno\n"
@@ -223,4 +271,3 @@ printf " - ~/Developer/personal: web-ui, list, portfolio\n"
 printf " - ~/Developer/clients: (empty, for freelance clients)\n"
 printf " - ~/Developer/study: comp-sci\n"
 printf " - ~/Developer/work: (empty, for work repositories)\n"
-
