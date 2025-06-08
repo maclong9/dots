@@ -204,7 +204,7 @@ if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
 fi
 
 # Re-clone repository with `jj`
-export PATH="$HOME/.local/share/mise/shims"
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 rm -rf "$HOME/.config"
 jj git clone https://github.com/maclong9/dots "$HOME/.config"
 
