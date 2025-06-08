@@ -7,7 +7,7 @@ A streamlined macOS development environment using standard `.config` directory s
 ## Automated
 
 ```sh
-curl -fsSl https://github.com/maclong9/dots | sh
+curl -fsSl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh
 ```
 
 ## Manually
