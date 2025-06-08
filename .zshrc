@@ -110,6 +110,7 @@ PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 alias cat="bat"            
 alias cd="z"
 alias cdi="zi"
+alias jgp="jj git push"
 alias la="sls -clia"          
 alias ls="sls -cli"        
 
@@ -127,4 +128,9 @@ kp() {
     else
         echo "No process found on port $1"
     fi
+}
+
+# Set bookmark to revision
+jbs() {
+    jj bookmark set $1 -r $2
 }
