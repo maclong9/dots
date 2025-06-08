@@ -8,7 +8,7 @@ email = "hello@maclong.uk"
 [signing]
 sign-all = true
 backend = "ssh"
-key = "/Users/mac/.ssh/id_rsa"
+key = "/Users/mac/.ssh/id_ed25519"
 
 # UI preferences
 [ui]
