@@ -15,6 +15,7 @@ experimental = true
 "helix" = "latest"   
 "bat" = "latest"     
 "shellcheck" = "latest"
+"usage" = "latest"
 "shfmt" = "latest"   
 
 # JavaScript/TypeScript ecosystem
