@@ -17,6 +17,7 @@ experimental = true
 "shellcheck" = "latest"
 "usage" = "latest"
 "shfmt" = "latest"   
+"zoxide" = "latest"
 
 # JavaScript/TypeScript ecosystem
 "node" = "lts"
