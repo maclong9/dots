@@ -208,7 +208,7 @@ done
 
 # Install tools via mise
 log_info "Installing development tools with mise..."
-if [ -f "$HOME/.config/mise.toml" ]; then
+if [ -f "$HOME/.local/bin/mise" ]; then
     export PATH="$HOME/.local/bin:$PATH"
     mise install
     mkdir -p "$HOME/.local/share/zsh/completions"
