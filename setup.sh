@@ -106,45 +106,32 @@ fi
 # Install Zsh plugins
 log_info "Installing Zsh plugins..."
 
-# zsh-autosuggestions
-if [ ! -d "$HOME/.local/share/zsh/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.local/share/zsh/zsh-autosuggestions"
-    log_success "zsh-autosuggestions installed"
-else
-    log_success "zsh-autosuggestions already installed"
-fi
+# Define plugins with their repositories
+plugins="
+zsh-autosuggestions:https://github.com/zsh-users/zsh-autosuggestions
+zsh-syntax-highlighting:https://github.com/zsh-users/zsh-syntax-highlighting
+zsh-autocomplete:https://github.com/marlonrichert/zsh-autocomplete
+zsh-completions:https://github.com/zsh-users/zsh-completions
+zsh-you-should-use:https://github.com/MichaelAquilina/zsh-you-should-use
+"
 
-# zsh-syntax-highlighting
-if [ ! -d "$HOME/.local/share/zsh/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$HOME/.local/share/zsh/zsh-syntax-highlighting"
-    log_success "zsh-syntax-highlighting installed"
-else
-    log_success "zsh-syntax-highlighting already installed"
-fi
-
-# zsh-autocomplete
-if [ ! -d "$HOME/.local/share/zsh/zsh-autocomplete" ]; then
-    git clone https://github.com/marlonrichert/zsh-autocomplete "$HOME/.local/share/zsh/zsh-autocomplete"
-    log_success "zsh-autocomplete installed"
-else
-    log_success "zsh-autocomplete already installed"
-fi
-
-# zsh-completions
-if [ ! -d "$HOME/.local/share/zsh/zsh-completions" ]; then
-    git clone https://github.com/zsh-users/zsh-completions "$HOME/.local/share/zsh/zsh-completions"
-    log_success "zsh-completions installed"
-else
-    log_success "zsh-completions already installed"
-fi
-
-# zsh-you-should-use
-if [ ! -d "$HOME/.local/share/zsh/zsh-you-should-use" ]; then
-    git clone https://github.com/MichaelAquilina/zsh-you-should-use "$HOME/.local/share/zsh/zsh-you-should-use"
-    log_success "zsh-you-should-use installed"
-else
-    log_success "zsh-you-should-use already installed"
-fi
+# Install each plugin
+for plugin_line in $plugins; do
+    # Skip empty lines
+    [ -z "$plugin_line" ] && continue
+    
+    # Extract plugin name and repository URL
+    plugin_name="${plugin_line%%:*}"
+    repo_url="${plugin_line##*:}"
+    plugin_dir="$HOME/.local/share/zsh/$plugin_name"
+    
+    if [ ! -d "$plugin_dir" ]; then
+        git clone "$repo_url" "$plugin_dir"
+        log_success "$plugin_name installed"
+    else
+        log_success "$plugin_name already installed"
+    fi
+done
 
 # Clone dotfiles repository to ~/.config
 log_info "Cloning dotfiles repository..."
@@ -170,9 +157,9 @@ for file in $config_files; do
         
         # Create symlink
         ln -s "$HOME/.config/$file" "$HOME/$file"
-        log_success "Symlinked %s" "$file"
+        log_success "Symlinked $file"
     else
-        log_warning "%s not found in ~/.config" "$file"
+        log_warning "$file not found in ~/.config"
     fi
 done
 
