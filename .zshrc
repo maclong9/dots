@@ -109,12 +109,6 @@ PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 # Aliases
 alias cat="bat"            
 alias cd="z"
-alias j="jj"
-alias jd="jj describe -m"
-alias je="jj edit"
-alias jl="jj log"
-alias jn="jj new"
-alias js="jj status"
 alias la="sls -clia"          
 alias ls="sls -cli"        
 
