@@ -39,7 +39,6 @@ log_info "Starting macOS development environment setup..."
 
 # Create directory structure
 log_info "Creating directory structure..."
-mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.local/share/zsh"
 mkdir -p "$HOME/Developer/personal"
 mkdir -p "$HOME/Developer/clients"
@@ -156,36 +155,6 @@ else
     log_success "Dotfiles repository already exists in ~/.config"
 fi
 
-# Clone other repositories
-log_info "Cloning repositories..."
-
-# Personal repositories
-cd "$HOME/Developer/personal"
-personal_repos="web-ui list portfolio"
-for repo in $personal_repos; do
-    if [ ! -d "$repo" ]; then
-        log_info "Cloning %s..." "$repo"
-        git clone "https://github.com/maclong9/$repo"
-    else
-        log_success "%s already exists" "$repo"
-    fi
-done
-
-# Study repositories
-cd "$HOME/Developer/study"
-study_repos="comp-sci"
-for repo in $study_repos; do
-    if [ ! -d "$repo" ]; then
-        log_info "Cloning %s..." "$repo"
-        git clone "https://github.com/maclong9/$repo"
-    else
-        log_success "%s already exists" "$repo"
-    fi
-done
-
-# Return to home directory
-cd "$HOME"
-
 # Create symbolic links for configuration files
 log_info "Creating symbolic links for configuration files..."
 
@@ -233,6 +202,11 @@ if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
     cat "$HOME/.ssh/id_ed25519.pub" | pbcopy
     log_success "ssh key generated"
 fi
+
+# Re-clone repository with `jj`
+export PATH="$HOME/.local/share/mise/shims"
+rm -rf "$HOME/.config"
+jj git clone https://github.com/maclong9/dots "$HOME/.config"
 
 log_success "Setup complete!\n"
 printf "Next steps:\n"
