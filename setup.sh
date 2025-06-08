@@ -205,8 +205,10 @@ fi
 
 # Re-clone repository with `jj`
 export PATH="$HOME/.local/share/mise/shims:$PATH"
+jj git clone https://github.com/maclong9/dots "$HOME/config"
 rm -rf "$HOME/.config"
-jj git clone https://github.com/maclong9/dots "$HOME/.config"
+mv "$HOME/config" "$HOME/.config"
+
 
 log_success "Setup complete!\n"
 printf "Next steps:\n"
