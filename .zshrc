@@ -1,7 +1,7 @@
 # Zsh Configuration
 # Modern shell setup with plugins, completions, and custom prompt
 
-PATH="$HOME/.local/bin/:$PATH"
+PATH="$HOME/.local/bin/:$HOME/.local/share/mise/shims/:$PATH"
 
 # Initialize mise for tool management
 if command -v mise >/dev/null 2>&1; then
