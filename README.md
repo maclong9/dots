@@ -2,31 +2,11 @@
 
 A streamlined macOS development environment using standard `.config` directory structure with `mise` for tool management.
 
-## Quick Start
-
-## Automated
+## Usage
 
 ```sh
 curl -fsSl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh
 ```
-
-## Manually
-1. **Clone this repository:**
-   ```sh
-   git clone https://github.com/maclong9/dots ~/.config
-   cd ~/.config
-   ```
-
-2. **Run the setup script:**
-   ```sh
-   chmod +x setup.sh
-   ./setup.sh
-   ```
-
-3. **Restart your terminal** or run:
-   ```sh
-   source ~/.zshrc
-   ```
 
 ## What Gets Installed
 
@@ -44,10 +24,12 @@ curl -fsSl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup
 - **bat** - Enhanced `cat` command
 - **shellcheck** - Shell script linter
 - **shfmt** - Shell formatter
-- **Node.js 20** with npm packages:
+- **zoxide (z)** - Jump to directories fuzzily
+- **Node.js LTS** Long Term Service node version with npm packages:
   - `@anthropic-ai/claude-code` - AI coding assistant
   - `eslint`, `prettier` - Code linting and formatting
   - `typescript` and language server
+  - `vscode-langservers-extracted` for code editor
   - `@tailwindcss/language-server`
 
 ### Swift Package Manager Tools
