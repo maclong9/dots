@@ -37,6 +37,11 @@ if [[ -f "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
+# zsh-you-should-use
+if [[ -f "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh" ]]; then
+    source "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh"
+fi
+
 # zsh-syntax-highlighting (must be loaded last)
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

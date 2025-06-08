@@ -118,6 +118,14 @@ else
     log_success "zsh-completions already installed"
 fi
 
+# zsh-you-should-use
+if [ ! -d "$HOME/.local/share/zsh/zsh-you-should-use" ]; then
+    git clone https://github.com/MichaelAquilina/zsh-you-should-use "$HOME/.local/share/zsh/zsh-you-should-use"
+    log_success "zsh-you-should-use installed"
+else
+    log_success "zsh-you-should-use already installed"
+fi
+
 # Clone dotfiles repository to ~/.config
 log_info "Cloning dotfiles repository..."
 if [ ! -d "$HOME/.config/.git" ]; then
