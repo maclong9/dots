@@ -46,49 +46,26 @@ mkdir -p "$HOME/Developer/clients"
 mkdir -p "$HOME/Developer/study" 
 mkdir -p "$HOME/Developer/work"
 
-# Enable Touch ID for sudo
-log_info "Configuring Touch ID for sudo..."
-PAM_SUDO_FILE="/etc/pam.d/sudo"
-TOUCHID_LINE="auth       sufficient     pam_tid.so"
+SUDO_LOCAL_FILE="/etc/pam.d/sudo_local"
+SUDO_LOCAL_TEMPLATE="/etc/pam.d/sudo_local.template"
 
-# Check if Touch ID is already configured
-if grep -q "pam_tid.so" "$PAM_SUDO_FILE" 2>/dev/null; then
+# Ensure Touch ID for sudo isn't already configured
+if [ -f "$SUDO_LOCAL_FILE" ] && grep -q "^auth.*pam_tid.so" "$SUDO_LOCAL_FILE" 2>/dev/null; then
     log_success "Touch ID for sudo already configured"
 else
-    # Check if device supports Touch ID
-    if /usr/bin/bioutil -r -s 2>/dev/null | grep -q "Touch ID"; then
-        log_info "Touch ID detected, enabling for sudo..."
+    # Copy template to sudo_local and uncomment the Touch ID line
+    sudo cp "$SUDO_LOCAL_TEMPLATE" "$SUDO_LOCAL_FILE"
+    sudo sed -i '' 's/^#auth.*sufficient.*pam_tid\.so/auth       sufficient     pam_tid.so/' "$SUDO_LOCAL_FILE"
         
-        # Create a temporary file with the new configuration
-        TMP_FILE=$(mktemp)
-        
-        # Add the Touch ID line at the beginning of the auth section
-        {
-            echo "# sudo: auth account password session"
-            echo "$TOUCHID_LINE"
-        } > "$TMP_FILE"
-        
-        # Append the rest of the original file (skip the first comment line)
-        tail -n +2 "$PAM_SUDO_FILE" >> "$TMP_FILE" 2>/dev/null || {
-            # If file doesn't exist or is empty, create basic sudo pam config
-            cat >> "$TMP_FILE" << 'EOF'
-auth       include        sudo_local
-auth       sufficient     pam_smartcard.so
-auth       required       pam_opendirectory.so
-account    required       pam_permit.so
-password   required       pam_deny.so
-session    required       pam_permit.so
-EOF
-        }
-        
-        # Replace the original file (requires sudo)
-        sudo cp "$TMP_FILE" "$PAM_SUDO_FILE"
-        rm "$TMP_FILE"
-        
+    # Verify the configuration was applied
+    if grep -q "^auth.*pam_tid.so" "$SUDO_LOCAL_FILE" 2>/dev/null; then
         log_success "Touch ID enabled for sudo"
     else
-        log_warning "Touch ID not available on this device, skipping configuration"
+        log_error "Failed to enable Touch ID for sudo"
+        return 1
     fi
+else
+    log_warning "Touch ID not available on this device, skipping configuration"
 fi
 
 # Install mise
@@ -120,8 +97,8 @@ if [ ! -d "/Applications/OrbStack.app" ]; then
     log_info "Installing OrbStack..."
     curl -L -o /tmp/OrbStack.dmg https://orbstack.dev/download/stable/latest/arm64
     hdiutil attach /tmp/OrbStack.dmg -quiet
-    cp -R "/Volumes/Install OrbStack/OrbStack.app" /Applications/
-    hdiutil detach "/Volumes/OrbStack" -quiet
+    cp -R "/Volumes/Install OrbStack v1.11.3/OrbStack.app" /Applications/
+    hdiutil detach "/Volumes/Install OrbStack v1.11.3" -quiet
     rm /tmp/OrbStack.dmg
     log_success "OrbStack installed"
 else
