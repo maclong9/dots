@@ -40,7 +40,6 @@ curl -fsSl https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup
 ### Development Tools (via mise)
 - **Deno** - Modern JavaScript/TypeScript runtime
 - **Jujitsu (jj)** - Next-generation version control
-- **GitHub CLI (gh)** - GitHub command-line interface
 - **Helix (hx)** - Modal text editor with LSP support
 - **bat** - Enhanced `cat` command
 - **shellcheck** - Shell script linter

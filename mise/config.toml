@@ -12,7 +12,6 @@ experimental = true
 # Development tools
 "deno" = "latest"
 "jj" = "latest"      # Jujutsu version control
-"gh" = "latest"      # GitHub CLI
 "helix" = "latest"   # Helix editor
 "bat" = "latest"     # Better cat
 "shellcheck" = "latest"  # Shell script linter
