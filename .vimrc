@@ -1,9 +1,6 @@
 " Vim Configuration
-" Modern Vim setup with vim9script
 
-vim9script
-
-# Basic Configuration
+" Basic Configuration
 set autoindent            " Automatically indent new lines to match the previous line
 set expandtab             " Convert tabs to spaces when inserting
 set hlsearch              " Highlight all matches when searching
@@ -23,20 +20,19 @@ set timeoutlen=500        " Time to wait for mapped sequence to complete
 set updatetime=250        " Time before swap file is written and CursorHold fires
 colorscheme habamax       " Set colorscheme
 
-# Netrw Configuration
+" Netrw Configuration
 autocmd FileType netrw setlocal nu rnu
-g:netrw_banner = 0
-g:netrw_liststyle = 3
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
 
-# Auto-Commands for transparent background
+" Transparent Background
 augroup colors
-    autocmd VimEnter,ColorScheme * {
-      hi Normal guibg=NONE ctermbg=NONE
-      hi NonText guibg=NONE ctermbg=NONE
-      hi LineNr guibg=NONE ctermbg=NONE
-      hi SignColumn guibg=NONE ctermbg=NONE
-      hi VertSplit guibg=NONE ctermbg=NONE
-      hi StatusLine guibg=NONE ctermbg=NONE
-      hi StatusLineNC guibg=NONE ctermbg=NONE
-    }
+    autocmd!
+    autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi NonText guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi StatusLine guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi StatusLineNC guibg=NONE ctermbg=NONE
 augroup END
