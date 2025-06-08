@@ -215,6 +215,8 @@ if [ -f "$HOME/.config/mise.toml" ]; then
     fi
     
     mise install
+    mkdir -p "$HOME/.local/share/zsh/completions"
+    mise completion zsh > "$HOME/.local/share/zsh/completions/_mise"
     log_success "Development tools installed"
 else
     log_warning "mise.toml not found, skipping tool installation"
