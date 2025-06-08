@@ -120,7 +120,7 @@ if [ ! -d "/Applications/OrbStack.app" ]; then
     log_info "Installing OrbStack..."
     curl -L -o /tmp/OrbStack.dmg https://orbstack.dev/download/stable/latest/arm64
     hdiutil attach /tmp/OrbStack.dmg -quiet
-    cp -R "/Volumes/OrbStack/OrbStack.app" /Applications/
+    cp -R "/Volumes/Install OrbStack/OrbStack.app" /Applications/
     hdiutil detach "/Volumes/OrbStack" -quiet
     rm /tmp/OrbStack.dmg
     log_success "OrbStack installed"
