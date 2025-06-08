@@ -6,7 +6,7 @@ name = "Mac Long"
 email = "hello@maclong.uk"
 
 [signing]
-sign-all = true
+behavior = "own"
 backend = "ssh"
 key = "/Users/mac/.ssh/id_ed25519"
 
