@@ -25,7 +25,7 @@ SAVEHIST=10000
 # Load zsh plugins
 ZSH_PLUGINS_DIR="$HOME/.local/share/zsh"
 
-# zsh-completions (must be loaded before compinit)
+# zsh-completions 
 if [[ -d "$ZSH_PLUGINS_DIR/zsh-completions" ]]; then
     fpath=("$ZSH_PLUGINS_DIR/zsh-completions/src" $fpath)
 fi
@@ -47,6 +47,11 @@ fi
 # zsh-autocomplete
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+fi
+
+# jj completions
+if command -v jj >/dev/null 2>&1; then
+    source <(COMPLETE=zsh jj)
 fi
 
 # zsh-syntax-highlighting (must be loaded last)
