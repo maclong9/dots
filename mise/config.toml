@@ -11,11 +11,11 @@ experimental = true
 
 # Development tools
 "deno" = "latest"
-"jj" = "latest"      # Jujutsu version control
-"helix" = "latest"   # Helix editor
-"bat" = "latest"     # Better cat
-"shellcheck" = "latest"  # Shell script linter
-"shfmt" = "latest"   # Shell formatter
+"jj" = "latest"      
+"helix" = "latest"   
+"bat" = "latest"     
+"shellcheck" = "latest"
+"shfmt" = "latest"   
 
 # JavaScript/TypeScript ecosystem
 "node" = "lts"
