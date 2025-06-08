@@ -64,8 +64,6 @@ else
         log_error "Failed to enable Touch ID for sudo"
         return 1
     fi
-else
-    log_warning "Touch ID not available on this device, skipping configuration"
 fi
 
 # Install mise
