@@ -54,6 +54,11 @@ if command -v jj >/dev/null 2>&1; then
     source <(COMPLETE=zsh jj)
 fi
 
+# mise completions
+if command -v mise >/dev/null 2>&1; then
+    source "$HOME/.local/share/zsh/completions/_mise"
+fi
+
 # zsh-syntax-highlighting (must be loaded last)
 if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
     source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
