@@ -115,7 +115,7 @@ alias jd="jj describe -m"
 alias la="sls -clia"          
 alias ls="sls -cli"        
 alias sf="swift format --recursive --in-place"
-alias sl ="swift format lint --recursive"
+alias sl="swift format lint --recursive"
 
 # Utility functions
 # Kill process on specific port
