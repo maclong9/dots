@@ -77,7 +77,7 @@ tools_init() {
 tools_init
 
 # Custom prompt
-PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
+PROMPT='%F{7}%n %B%F{15}%~
 %F{%(?.10.9)}%Bλ%b%f '
 
 # Aliases
