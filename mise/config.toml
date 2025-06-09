@@ -10,17 +10,19 @@ experimental = true
 "spm:maclong9/list" = "latest"
 
 # Development tools
-"deno" = "latest"
-"jj" = "latest"      
-"helix" = "latest"   
 "bat" = "latest"     
+"fzf" = "latest"
+"harper-ls" = "latest"
+"helix" = "latest"   
+"jj" = "latest"      
 "shellcheck" = "latest"
-"usage" = "latest"
 "shfmt" = "latest"   
+"usage" = "latest"
 "zoxide" = "latest"
 
 # JavaScript/TypeScript ecosystem
 "node" = "lts"
+"deno" = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:eslint" = "latest"
 "npm:prettier" = "latest"
@@ -28,7 +30,6 @@ experimental = true
 "npm:typescript-language-server" = "latest"
 "npm:vscode-langservers-extracted" = "latest"
 "npm:@tailwindcss/language-server" = "latest"
-fzf = "latest"
 
 # Environment variables
 [env]

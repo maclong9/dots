@@ -1,142 +1,119 @@
-# Zsh Configuration
-# Modern shell setup with plugins, completions, and custom prompt
+# ZSH Configuration
+# Modern shell setup with optimized loading
 
-PATH="$HOME/.local/bin/:$HOME/.local/share/mise/shims/:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
-# Initialize mise for tool management
-if command -v mise >/dev/null 2>&1; then
-    eval "$(mise activate zsh)"
-fi
-
-# Zsh options
-setopt AUTO_CD              # Automatically cd into directories
-setopt CORRECT              # Correct typos in commands
-setopt INTERACTIVE_COMMENTS # Allow comments in interactive shells
-setopt SHARE_HISTORY        # Share history between sessions
-setopt HIST_IGNORE_DUPS     # Don't record duplicate commands
-setopt HIST_IGNORE_SPACE    # Don't record commands starting with space
-setopt HIST_VERIFY          # Show command before executing from history
+# ZSH options
+setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS
+setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_VERIFY PROMPT_SUBST
 
 # History configuration
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+export HISTFILE=~/.zsh_history
+export HISTSIZE=10000
+export SAVEHIST=10000
 
-# Load zsh plugins
-ZSH_PLUGINS_DIR="$HOME/.local/share/zsh"
-
-# zsh-completions 
-if [[ -d "$ZSH_PLUGINS_DIR/zsh-completions" ]]; then
-    fpath=("$ZSH_PLUGINS_DIR/zsh-completions/src" $fpath)
-fi
-
-# Initialize completion system
+# Initialize completions early
 autoload -Uz compinit
-compinit
+compinit -C
 
-# zsh-autosuggestions
-if [[ -f "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "$ZSH_PLUGINS_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
+# cache completions
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path ~/.zsh/cache
 
-# zsh-you-should-use
-if [[ -f "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh" ]]; then
-    source "$ZSH_PLUGINS_DIR/zsh-you-should-use/you-should-use.plugin.zsh"
-fi
+# Load plugins with error handling and existence checks
+ZSH_PLUGINS_DIR="$HOME/.local/share/zsh"
+plugins=(
+	"zsh-completions/src:fpath"
+	"zsh-autosuggestions/zsh-autosuggestions.zsh:source"
+	"zsh-you-should-use/you-should-use.plugin.zsh:source"
+	"zsh-autocomplete/zsh-autocomplete.plugin.zsh:source"
+	"zsh-syntax-highlighting/zsh-syntax-highlighting.zsh:source"
+)
 
-# zsh-autocomplete
-if [[ -f "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
-    source "$ZSH_PLUGINS_DIR/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-    bindkey              '^I'         menu-complete
-    bindkey "$terminfo[kcbt]" reverse-menu-complete
-    bindkey -M emacs \
-        "^[p"   .history-search-backward \
-        "^[n"   .history-search-forward \
-        "^P"    .up-line-or-history \
-        "^[OA"  .up-line-or-history \
-        "^[[A"  .up-line-or-history \
-        "^N"    .down-line-or-history \
-        "^[OB"  .down-line-or-history \
-        "^[[B"  .down-line-or-history \
-        "^R"    .history-incremental-search-backward \
-        "^S"    .history-incremental-search-forward \
-        #
-    bindkey -a \
-        "^P"    .up-history \
-        "^N"    .down-history \
-        "k"     .up-line-or-history \
-        "^[OA"  .up-line-or-history \
-        "^[[A"  .up-line-or-history \
-        "j"     .down-line-or-history \
-        "^[OB"  .down-line-or-history \
-        "^[[B"  .down-line-or-history \
-        "/"     .vi-history-search-backward \
-        "?"     .vi-history-search-forward \
-        #
-fi
+for plugin in $plugins; do
+	plugin_path="${plugin%:*}"
+	action="${plugin#*:}"
+	full_path="$ZSH_PLUGINS_DIR/$plugin_path"
 
-# jj completions
-if command -v jj >/dev/null 2>&1; then
-    source <(COMPLETE=zsh jj)
-fi
+	if [[ "$action" == "fpath" && -d "$full_path" ]]; then
+		fpath=("$full_path" $fpath)
+	elif [[ "$action" == "source" && -f "$full_path" ]]; then
+		source "$full_path"
+	fi
+done
 
-# mise completions
-if command -v mise >/dev/null 2>&1; then
-    source "$HOME/.local/share/zsh/completions/_mise"
-fi
+# zsh-autocomplete keybindings
+bindkey '^I' menu-complete
+bindkey "$terminfo[kcbt]" reverse-menu-complete
+bindkey -M emacs \
+	"^[p" .history-search-backward \
+	"^[n" .history-search-forward \
+	"^P" .up-line-or-history \
+	"^[OA" .up-line-or-history \
+	"^[[A" .up-line-or-history \
+	"^N" .down-line-or-history \
+	"^[OB" .down-line-or-history \
+	"^[[B" .down-line-or-history \
+	"^R" .history-incremental-search-backward \
+	"^S" .history-incremental-search-forward
+bindkey -a \
+	"^P" .up-history \
+	"^N" .down-history \
+	"k" .up-line-or-history \
+	"^[OA" .up-line-or-history \
+	"^[[A" .up-line-or-history \
+	"j" .down-line-or-history \
+	"^[OB" .down-line-or-history \
+	"^[[B" .down-line-or-history \
+	"/" .vi-history-search-backward \
+	"?" .vi-history-search-forward
 
-# zoxide setup
-if command -v zoxide >/dev/null 2>&1; then
-    eval "$(zoxide init zsh)"
-fi
-
-# zsh-syntax-highlighting (must be loaded last)
-if [[ -f "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-    source "$ZSH_PLUGINS_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
-
-# Git integration for prompt
-autoload -Uz vcs_info
-precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats $'%F{7} on%F{10}  %b%f'
-zstyle ':vcs_info:*' enable git
-
-# Enable prompt substitution
-setopt PROMPT_SUBST
+# External tool integrations
+tools_init() {
+	command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+	command -v jj >/dev/null 2>&1 && source <(COMPLETE=zsh jj)
+	[[ -f "$HOME/.local/share/zsh/completions/_mise" ]] && source "$HOME/.local/share/zsh/completions/_mise"
+}
+tools_init
 
 # Custom prompt
-PROMPT='%F{7}%n %B%F{15}%~%b
+PROMPT='%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 %F{%(?.10.9)}%Bλ%b%f '
 
 # Aliases
-alias cat="bat"            
+## File operations
+alias cat="bat"
+alias ls="sls -cli"
+alias la="sls -clia"
+
+## Directory navigation
 alias cd="z"
 alias cdi="zi"
-alias jgp="jj git push"
-alias jd="jj describe -m"
-alias jn="jj new"
-alias la="sls -clia"          
-alias ls="sls -cli"        
+
+## Development tools
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
 
+## Version control (JJ)
+alias jgp="jj git push"
+alias jd="jj describe -m"
+alias jn="jj new"
+
 # Utility functions
-# Kill process on specific port
+
+## Kill Process on Given Port
 kp() {
-    if [[ -z "$1" ]]; then
-        echo "Usage: kp <port>"
-        return 1
-    fi
-    local pid=$(lsof -ti tcp:$1)
-    if [[ -n "$pid" ]]; then
-        kill -9 $pid
-        echo "Killed process on port $1"
-    else
-        echo "No process found on port $1"
-    fi
+	[[ -z "$1" ]] && {
+		echo "Usage: kp <port>"
+		return 1
+	}
+	local pid=$(lsof -ti tcp:$1)
+	if [[ -n "$pid" ]]; then
+		kill -9 $pid && echo "Killed process on port $1"
+	else
+		echo "No process found on port $1"
+	fi
 }
 
-# Set bookmark to revision
-jbs() {
-    jj bookmark set $1 -r $2
-}
+# Set Given Bookmark to Given Revision
+jbs() { jj bookmark set "$1" -r "$2"; }
