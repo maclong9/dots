@@ -34,6 +34,7 @@ augroup colors
     autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi StatusLine guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi StatusLineNC guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi StatusLine guibg=NONE ctermbg=NONE guifg=LightGray ctermfg=LightGray
+    autocmd VimEnter,ColorScheme * hi StatusLineNC guibg=NONE ctermbg=NONE guifg=LightGray ctermfg=LightGray
+
 augroup END
