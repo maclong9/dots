@@ -31,5 +31,3 @@
 	rebase = false
 [gpg]
 	format = ssh
-[includeIf "gitdir:~/Developer/work/"]
-    path = ~/.gitconfig-work
