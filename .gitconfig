@@ -1,7 +1,7 @@
 [user]
 	email = "hello@maclong.uk"
 	name = "Mac Long"
-	signingKey = /Users/mac/.ssh/id_rsa
+	signingKey = /Users/mac/.ssh/id_ed25519
 [alias]
 	aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
 	ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
