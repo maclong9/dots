@@ -81,9 +81,9 @@ setup_development_environment() {
 
 	# Define plugins with their repositories
 	plugins="
-	zsh-syntax-highlighting:github.com/zsh-users/zsh-syntax-highlighting
-	zsh-completions:github.com/zsh-users/zsh-completions
-	zsh-you-should-use:github.com/MichaelAquilina/zsh-you-should-use
+	zsh-syntax-highlighting:https://github.com/zsh-users/zsh-syntax-highlighting
+	zsh-completions:https://github.com/zsh-users/zsh-completions
+	zsh-you-should-use:https://github.com/MichaelAquilina/zsh-you-should-use
 	"
 
 	# Install each plugin
