@@ -52,36 +52,6 @@ setup_macos() {
 			return 1
 		fi
 	fi
-
-	# Install applications via DMG
-	log_info "Installing macOS applications..."
-
-	# Install Ghostty
-	if [ ! -d "/Applications/Ghostty.app" ]; then
-		log_info "Installing Ghostty..."
-		curl -L -o /tmp/Ghostty.dmg https://release.files.ghostty.org/1.1.3/Ghostty.dmg
-		hdiutil attach /tmp/Ghostty.dmg -quiet
-		cp -R "/Volumes/Ghostty/Ghostty.app" /Applications/
-		hdiutil detach "/Volumes/Ghostty" -quiet
-		rm /tmp/Ghostty.dmg
-		log_success "Ghostty installed"
-	else
-		log_success "Ghostty already installed"
-	fi
-
-	# Install OrbStack
-	if [ ! -d "/Applications/OrbStack.app" ]; then
-		log_info "Installing OrbStack..."
-		curl -L -o /tmp/OrbStack.dmg https://orbstack.dev/download/stable/latest/arm64
-		hdiutil attach /tmp/OrbStack.dmg -quiet
-		cp -R "/Volumes/Install OrbStack v1.11.3/OrbStack.app" /Applications/
-		hdiutil detach "/Volumes/Install OrbStack v1.11.3" -quiet
-		rm /tmp/OrbStack.dmg
-		log_success "OrbStack installed"
-	else
-		log_success "OrbStack already installed"
-	fi
-
 	log_success "macOS-specific setup complete"
 }
 
@@ -113,7 +83,6 @@ setup_development_environment() {
 	plugins="
 	zsh-autosuggestions:https://github.com/zsh-users/zsh-autosuggestions
 	zsh-syntax-highlighting:https://github.com/zsh-users/zsh-syntax-highlighting
-	zsh-autocomplete:https://github.com/marlonrichert/zsh-autocomplete
 	zsh-completions:https://github.com/zsh-users/zsh-completions
 	zsh-you-should-use:https://github.com/MichaelAquilina/zsh-you-should-use
 	"
