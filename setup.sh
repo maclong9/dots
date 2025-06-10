@@ -64,9 +64,6 @@ setup_development_environment() {
 	mkdir -p "$HOME/Developer/study"
 	mkdir -p "$HOME/Developer/work"
 
-	# Install Zsh plugins
-	log_info "Installing Zsh plugins..."
-
 	# Clone dotfiles repository to ~/.config
 	log_info "Cloning dotfiles repository..."
 	if [ ! -d "$HOME/.config/.git" ]; then
