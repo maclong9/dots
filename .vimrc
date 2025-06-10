@@ -18,7 +18,6 @@ set splitright            " Open new vertical splits to the right
 set tabstop=4             " Number of spaces that a tab character represents
 set timeoutlen=500        " Time to wait for mapped sequence to complete
 set updatetime=250        " Time before CursorHold fires
-colorscheme habamax       " Set colorscheme
 syntax enable             " Enable syntax highlighting
 
 " Netrw Configuration
