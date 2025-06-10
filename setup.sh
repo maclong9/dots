@@ -76,22 +76,27 @@ setup_development_environment() {
 	# Create symbolic links for configuration files
 	log_info "Creating symbolic links for configuration files..."
 
-	# Symlink dotfiles from ~/.config to ~/
-	config_files=".zshrc .vimrc"
+	# Symlink all hidden dotfiles from ~/.config to ~/
+	find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while read -r config_file; do
+	    filename=$(basename "$config_file")
 
-	for file in $config_files; do
-		if [ -f "$HOME/.config/$file" ]; then
-			# Remove existing file/symlink if it exists
-			if [ -e "$HOME/$file" ] || [ -L "$HOME/$file" ]; then
-				rm "$HOME/$file"
-			fi
-
-			# Create symlink
-			ln -s "$HOME/.config/$file" "$HOME/$file"
-			log_success "Symlinked $file"
-		else
-			log_warning "$file not found in ~/.config"
-		fi
+     	    # Skip navigagtion and git
+	    case "$filename" in
+	        "." | ".." | ".git")
+	            continue
+	            ;;
+	    esac
+	    
+	    target="$HOME/$filename"
+	    
+	    # Clear the path for new connections
+	    if [ -e "$target" ] || [ -L "$target" ]; then
+	        rm "$target"
+	    fi
+	    
+	    # Forge the link
+	    ln -s "$config_file" "$target"
+	    log_success "Symlinked $filename"
 	done
 
 	# Configure ssh key
