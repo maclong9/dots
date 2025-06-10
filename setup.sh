@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Cross-Platform Development Environment Setup Script
-# Configures development tools, applications, and dotfiles
-
 set -e
 
 # Colors for output
@@ -67,42 +64,8 @@ setup_development_environment() {
 	mkdir -p "$HOME/Developer/study"
 	mkdir -p "$HOME/Developer/work"
 
-	# Install mise
-	if ! command -v mise >/dev/null 2>&1; then
-		log_info "Installing mise..."
-		curl https://mise.run | sh
-		log_success "mise installed"
-	else
-		log_success "mise already installed"
-	fi
-
 	# Install Zsh plugins
 	log_info "Installing Zsh plugins..."
-
-	# Define plugins with their repositories
-	plugins="
-	zsh-syntax-highlighting:https://github.com/zsh-users/zsh-syntax-highlighting
-	zsh-completions:https://github.com/zsh-users/zsh-completions
-	zsh-you-should-use:https://github.com/MichaelAquilina/zsh-you-should-use
-	"
-
-	# Install each plugin
-	for plugin_line in $plugins; do
-		# Skip empty lines
-		[ -z "$plugin_line" ] && continue
-
-		# Extract plugin name and repository URL
-		plugin_name="${plugin_line%%:*}"
-		repo_url="${plugin_line##*:}"
-		plugin_dir="$HOME/.local/share/zsh/$plugin_name"
-
-		if [ ! -d "$plugin_dir" ]; then
-			git clone "$repo_url" "$plugin_dir"
-			log_success "$plugin_name installed"
-		else
-			log_success "$plugin_name already installed"
-		fi
-	done
 
 	# Clone dotfiles repository to ~/.config
 	log_info "Cloning dotfiles repository..."
@@ -134,18 +97,6 @@ setup_development_environment() {
 		fi
 	done
 
-	# Install tools via mise
-	log_info "Installing development tools with mise..."
-	if [ -f "$HOME/.local/bin/mise" ]; then
-		export PATH="$HOME/.local/bin:$PATH"
-		mise install
-		mkdir -p "$HOME/.local/share/zsh/completions"
-		mise completion zsh >"$HOME/.local/share/zsh/completions/_mise"
-		log_success "Development tools installed"
-	else
-		log_warning "mise.toml not found, skipping tool installation"
-	fi
-
 	# Configure ssh key
 	if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
 		ssh-keygen -t ed25519 -C "hello@maclong.uk" -f ~/.ssh/id_ed25519 -N ""
@@ -168,13 +119,7 @@ setup_development_environment() {
 			cat "$HOME/.ssh/id_ed25519.pub"
 		fi
 	fi
-
-	# Re-clone repository with `jj`
-	export PATH="$HOME/.local/share/mise/shims:$PATH"
-	jj git clone https://github.com/maclong9/dots "$HOME/config"
-	rm -rf "$HOME/.config"
-	mv "$HOME/config" "$HOME/.config"
-
+ 
 	log_success "Development environment setup complete!"
 }
 
