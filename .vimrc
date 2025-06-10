@@ -6,7 +6,7 @@ set expandtab             " Convert tabs to spaces when inserting
 set hlsearch              " Highlight all matches when searching
 set ignorecase            " Ignore case when searching
 set incsearch             " Show search matches as you type
-set laststatus=2          " Always show the status line
+set laststatus=0          " Never show the status line
 set noswapfile            " Disable creation of swap files
 set number                " Display line numbers on the left side
 set relativenumber        " Show relative line numbers (distance from current line)
@@ -17,7 +17,7 @@ set smartcase             " Override ignorecase if search contains uppercase let
 set splitright            " Open new vertical splits to the right
 set tabstop=4             " Number of spaces that a tab character represents
 set timeoutlen=500        " Time to wait for mapped sequence to complete
-set updatetime=250        " Time before swap file is written and CursorHold fires
+set updatetime=250        " Time before CursorHold fires
 colorscheme habamax       " Set colorscheme
 syntax enable             " Enable syntax highlighting
 
@@ -34,7 +34,4 @@ augroup colors
     autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi StatusLine guibg=NONE ctermbg=NONE guifg=LightGray ctermfg=LightGray
-    autocmd VimEnter,ColorScheme * hi StatusLineNC guibg=NONE ctermbg=NONE guifg=LightGray ctermfg=LightGray
-
 augroup END
