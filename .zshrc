@@ -17,7 +17,7 @@ alias g='git'
 alias lcc='fc -ln -1 | sed "s/^/λ /" | tee /tmp/last_cmd.log && script -q /tmp/last_out.log "$(fc -ln -1)" && { cat /tmp/last_cmd.log; cat /tmp/last_out.log; } | pbcopy'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
-alias dev="container exec -t -i development zsh"
+alias dev="container exec -t -i dev zsh"
 
 # Kill Process on Given Port
 kp() {
