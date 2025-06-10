@@ -106,7 +106,7 @@ setup_development_environment() {
 	log_info "Creating directory structure..."
 	mkdir -p "$HOME/.local/share/zsh"
 	mkdir -p "$HOME/Developer/personal"
-	mkdir -p "$HOME/Developer/clients"
+	mkdir -p "$HOME/Developer/freelance"
 	mkdir -p "$HOME/Developer/study"
 	mkdir -p "$HOME/Developer/work"
 
