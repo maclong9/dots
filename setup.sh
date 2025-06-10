@@ -26,6 +26,52 @@ log_error() {
 	printf "${RED}[ERROR]${NC} %s\n" "$1"
 }
 
+# Download vesper theme files
+setup_vesper_themes() {
+	log_info "Setting up vesper theme files..."
+
+	# Base URL for the gist
+	BASE_URL="https://gist.githubusercontent.com/maclong9/23b0fcf52d3d8c15345839cf6cd6b540/raw/9425cc252f8eaa4f762a39dba8f253be884facf4"
+
+	# Create vim colors directory
+	mkdir -p "$HOME/.vim/colors"
+
+	# Download vesper.vim to ~/.vim/colors/
+	log_info "Downloading vesper.vim theme..."
+	if curl -fsSL "$BASE_URL/vesper.vim" -o "$HOME/.vim/colors/vesper.vim"; then
+		log_success "Downloaded vesper.vim to ~/.vim/colors/"
+	else
+		log_error "Failed to download vesper.vim"
+		return 1
+	fi
+
+	# macOS-specific theme files
+	if [ "$(uname)" = "Darwin" ]; then
+		# Download vesper.terminal to home directory (Terminal.app will find it there)
+		log_info "Downloading vesper.terminal theme..."
+		if curl -fsSL "$BASE_URL/vesper.terminal" -o "$HOME/vesper.terminal"; then
+			log_success "Downloaded vesper.terminal to ~/vesper.terminal"
+			log_info "To use: Open Terminal.app > Preferences > Profiles > Import and select ~/vesper.terminal"
+		else
+			log_error "Failed to download vesper.terminal"
+		fi
+
+		# Create Xcode themes directory and download vesper.xccolorscheme
+		XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+		mkdir -p "$XCODE_THEMES_DIR"
+		
+		log_info "Downloading vesper.xccolorscheme theme..."
+		if curl -fsSL "$BASE_URL/vesper.xcccolortheme" -o "$XCODE_THEMES_DIR/vesper.xccolorscheme"; then
+			log_success "Downloaded vesper.xccolorscheme to Xcode themes directory"
+			log_info "To use: Open Xcode > Preferences > Themes and select Vesper"
+		else
+			log_error "Failed to download vesper.xccolorscheme"
+		fi
+	fi
+
+	log_success "Vesper theme setup complete"
+}
+
 # macOS-specific setup function
 setup_macos() {
 	log_info "Running macOS-specific setup..."
@@ -39,7 +85,7 @@ setup_macos() {
 	else
 		# Copy template to sudo_local and uncomment the Touch ID line
 		sudo cp "$SUDO_LOCAL_TEMPLATE" "$SUDO_LOCAL_FILE"
-		sudo sed -i '' 's/^#auth.*sufficient.*pam_tid\.so/auth       sufficient     pam_tid.so/' "$SUDO_LOCAL_FILE"
+        sudo sed -i '' 's/^#//' "$SUDO_LOCAL_FILE"
 
 		# Verify the configuration was applied
 		if grep -q "^auth.*pam_tid.so" "$SUDO_LOCAL_FILE" 2>/dev/null; then
@@ -121,6 +167,9 @@ setup_development_environment() {
 			cat "$HOME/.ssh/id_ed25519.pub"
 		fi
 	fi
+
+	# Setup vesper themes
+	setup_vesper_themes
  
 	log_success "Development environment setup complete!"
 }
@@ -139,3 +188,5 @@ log_success "Setup complete!\n"
 printf "Next steps:\n"
 printf "1. Restart your terminal or run: source ~/.zshrc\n"
 printf "2. Set up SSH keys on remote\n"
+printf "3. Import vesper.terminal theme in Terminal.app preferences (macOS only)\n"
+printf "4. Select Vesper theme in Xcode preferences (macOS only)\n"

@@ -18,12 +18,17 @@ set splitright            " Open new vertical splits to the right
 set tabstop=4             " Number of spaces that a tab character represents
 set timeoutlen=500        " Time to wait for mapped sequence to complete
 set updatetime=250        " Time before CursorHold fires
+set termguicolors         " Enable 24-bit RGB colors
+colorscheme vesper        " Set custom colorscheme
 syntax enable             " Enable syntax highlighting
 
 " Netrw Configuration
 autocmd FileType netrw setlocal nu rnu
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+
+" Mappings
+nnoremap <Ctrl-[> :noh<CR>
 
 " Transparent Background
 augroup colors
