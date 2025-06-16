@@ -207,6 +207,24 @@ setup_macos() {
 	log_success "macOS-specific setup complete"
 }
 
+# Create development directories 
+create_dev_directories() {
+	log_info "Creating directory structure..."
+	log_debug "Creating developer directories"
+	
+	directories="$HOME/Developer/personal $HOME/Developer/freelance $HOME/Developer/study $HOME/Developer/work"
+	directory_count=0
+	
+	# Process each directory using word splitting
+	for dir in $directories; do
+		log_debug "Creating directory: $dir"
+		mkdir -p "$dir"
+		directory_count=$((directory_count + 1))
+	done
+	
+	log_debug "Created $directory_count developer directories"
+}
+
 # Main setup function
 setup_development_environment() {
 	log_info "Starting development environment setup..."
@@ -214,19 +232,7 @@ setup_development_environment() {
 	log_debug "Current user: $(whoami)"
 
 	# Create directory structure
-	log_info "Creating directory structure..."
-	directories=(
-		"$HOME/Developer/personal"
-		"$HOME/Developer/freelance"
-		"$HOME/Developer/study"
-		"$HOME/Developer/work"
-	)
-	
-	for dir in "${directories[@]}"; do
-		log_debug "Creating directory: $dir"
-		mkdir -p "$dir"
-	done
-	log_debug "Created ${#directories[@]} developer directories"
+	create_dev_directories
 
 	# Clone dotfiles repository to ~/.config
 	log_info "Cloning dotfiles repository..."
@@ -248,18 +254,6 @@ setup_development_environment() {
 	log_info "Creating symbolic links for configuration files..."
 	log_debug "Searching for dotfiles in: $HOME/.config"
 
-	# Count dotfiles first
-	dotfile_count=0
-	find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while read -r config_file; do
-		filename=$(basename "$config_file")
-		case "$filename" in
-			"." | ".." | ".git")
-				continue
-				;;
-		esac
-		dotfile_count=$((dotfile_count + 1))
-	done
-	
 	log_debug "Found dotfiles to symlink"
 
 	# Symlink all hidden dotfiles from ~/.config to ~/
