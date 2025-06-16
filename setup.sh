@@ -2,7 +2,8 @@
 set -e
 
 # Load common functions
-. "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh
+. /tmp/utils.sh
 
 # Setup environment variables
 parse_args "$@"
