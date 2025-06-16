@@ -26,50 +26,69 @@ log_error() {
 	printf "${RED}[ERROR]${NC} %s\n" "$1"
 }
 
-# Download vesper theme files
-setup_vesper_themes() {
-	log_info "Setting up vesper theme files..."
+# Setup colorschemes from ~/.config/colors
+setup_colors() {
+	log_info "Setting up colorscheme files..."
 
-	# Base URL for the gist
-	BASE_URL="https://gist.githubusercontent.com/maclong9/23b0fcf52d3d8c15345839cf6cd6b540/raw/9425cc252f8eaa4f762a39dba8f253be884facf4"
+	COLORS_DIR="$HOME/.config/colors"
+	
+	if [ ! -d "$COLORS_DIR" ]; then
+		log_warning "Colors directory $COLORS_DIR not found, skipping colorscheme setup"
+		return 0
+	fi
 
-	# Create vim colors directory
+	# Setup vim colors directory
 	mkdir -p "$HOME/.vim/colors"
 
-	# Download vesper.vim to ~/.vim/colors/
-	log_info "Downloading vesper.vim theme..."
-	if curl -fsSL "$BASE_URL/vesper.vim" -o "$HOME/.vim/colors/vesper.vim"; then
-		log_success "Downloaded vesper.vim to ~/.vim/colors/"
-	else
-		log_error "Failed to download vesper.vim"
-		return 1
-	fi
-
-	# macOS-specific theme files
+	# Setup Xcode themes directory (macOS only)
 	if [ "$(uname)" = "Darwin" ]; then
-		# Download vesper.terminal to home directory (Terminal.app will find it there)
-		log_info "Downloading vesper.terminal theme..."
-		if curl -fsSL "$BASE_URL/vesper.terminal" -o "$HOME/vesper.terminal"; then
-			log_success "Downloaded vesper.terminal to ~/vesper.terminal"
-			log_info "To use: Open Terminal.app > Preferences > Profiles > Import and select ~/vesper.terminal"
-		else
-			log_error "Failed to download vesper.terminal"
-		fi
-
-		# Create Xcode themes directory and download vesper.xccolorscheme
 		XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 		mkdir -p "$XCODE_THEMES_DIR"
-		
-		log_info "Downloading vesper.xccolorscheme theme..."
-		if curl -fsSL "$BASE_URL/vesper.xcccolortheme" -o "$XCODE_THEMES_DIR/vesper.xccolorscheme"; then
-			log_success "Downloaded vesper.xccolorscheme to Xcode themes directory"
-			log_info "To use: Open Xcode > Preferences > Themes and select Vesper"
-		else
-			log_error "Failed to download vesper.xccolorscheme"
-		fi
 	fi
 
-	log_success "Vesper theme setup complete"
+	# Process each colorscheme directory
+	for colorscheme_dir in "$COLORS_DIR"/*; do
+		if [ -d "$colorscheme_dir" ]; then
+			colorscheme_name=$(basename "$colorscheme_dir")
+			log_info "Processing colorscheme: $colorscheme_name"
+
+			# Symlink vim colorscheme files
+			for vim_file in "$colorscheme_dir"/*.vim; do
+				if [ -f "$vim_file" ]; then
+					vim_filename=$(basename "$vim_file")
+					target="$HOME/.vim/colors/$vim_filename"
+					
+					# Remove existing file/symlink if it exists
+					if [ -e "$target" ] || [ -L "$target" ]; then
+						rm "$target"
+					fi
+					
+					ln -s "$vim_file" "$target"
+					log_success "Symlinked vim colorscheme: $vim_filename"
+				fi
+			done
+
+			# Symlink Xcode colorscheme files (macOS only)
+			if [ "$(uname)" = "Darwin" ]; then
+				for xcode_file in "$colorscheme_dir"/*.xccolorscheme; do
+					if [ -f "$xcode_file" ]; then
+						xcode_filename=$(basename "$xcode_file")
+						target="$XCODE_THEMES_DIR/$xcode_filename"
+						
+						# Remove existing file/symlink if it exists
+						if [ -e "$target" ] || [ -L "$target" ]; then
+							rm "$target"
+						fi
+						
+						ln -s "$xcode_file" "$target"
+						log_success "Symlinked Xcode colorscheme: $xcode_filename"
+					fi
+				done
+			fi
+		fi
+	done
+
+	log_success "Colorscheme setup complete"
 }
 
 # macOS-specific setup function
@@ -117,6 +136,9 @@ setup_development_environment() {
 	else
 		log_success "Dotfiles repository already exists in ~/.config"
 	fi
+
+	# Setup colorschemes (after config is cloned)
+	setup_colors
 
 	# Create symbolic links for configuration files
 	log_info "Creating symbolic links for configuration files..."
@@ -166,9 +188,6 @@ setup_development_environment() {
 			cat "$HOME/.ssh/id_ed25519.pub"
 		fi
 	fi
-
-	# Setup vesper themes
-	setup_vesper_themes
  
 	log_success "Development environment setup complete!"
 }
@@ -187,5 +206,4 @@ log_success "Setup complete!\n"
 printf "Next steps:\n"
 printf "1. Restart your terminal or run: source ~/.zshrc\n"
 printf "2. Set up SSH keys on remote\n"
-printf "3. Import vesper.terminal theme in Terminal.app preferences (macOS only)\n"
-printf "4. Select Vesper theme in Xcode preferences (macOS only)\n"
+printf "3. Configure colorschemes in your editors\n"
