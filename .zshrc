@@ -1,5 +1,3 @@
-export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
-
 # ZSH options
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS
 setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_VERIFY
@@ -14,7 +12,7 @@ PROMPT='%F{7}%n %B%F{15}%~
 
 # Aliases
 alias g='git'
-alias lcc='fc -ln -1 | sed "s/^/λ /" | tee /tmp/last_cmd.log && script -q /tmp/last_out.log "$(fc -ln -1)" && { cat /tmp/last_cmd.log; cat /tmp/last_out.log; } | pbcopy'
+alias clc='fc -ln -1 | sed "s/^/λ /" | tee /tmp/last_cmd.log && script -q /tmp/last_out.log "$(fc -ln -1)" && { cat /tmp/last_cmd.log; cat /tmp/last_out.log; } | pbcopy'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
 alias dev="container exec -t -i development zsh"
