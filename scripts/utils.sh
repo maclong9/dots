@@ -2,9 +2,7 @@
 
 #!/bin/sh
 
-# ================================================================
 # POSIX Shell Utility Functions
-# ================================================================
 #
 # Provides logging, argument parsing, filesystem helpers,
 # and safe symbolic link creation.
@@ -12,8 +10,9 @@
 # Designed for sourcing into other POSIX-compliant shell scripts.
 #
 # Usage:
-#   . ./path/to/this_file.sh # POSIX-compliant way to source
-#   . "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" # For remote sourcing
+#   curl -fsSL \
+#       "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
+#       -o /tmp/utils.sh && . /tmp/utils.sh
 #
 # Once sourced, you may call functions such as:
 #   parse_args "$@"
@@ -28,14 +27,29 @@
 
 # ANSI Color Codes
 
+# Regular Colors
+BLACK='\033[0;30m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
+WHITE='\033[0;37m'
+
+# Bright Colors
+BRIGHT_BLACK='\033[1;30m'
+BRIGHT_RED='\033[1;31m'
+BRIGHT_GREEN='\033[1;32m'
+BRIGHT_YELLOW='\033[1;33m'
+BRIGHT_BLUE='\033[1;34m'
+BRIGHT_MAGENTA='\033[1;35m'
+BRIGHT_CYAN='\033[1;36m'
+BRIGHT_WHITE='\033[1;37m'
+
+# Reset
 NC='\033[0m' # No Color
 
-DEBUG=${DEBUG:-false}
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
 # Function: parse_args
@@ -58,18 +72,6 @@ IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 parse_args() {
   while [ $# -gt 0 ]; do
     case $1 in
-      --debug)
-        DEBUG=true
-        shift
-        ;;
-      --verbose)
-        VERBOSE=true
-        shift
-        ;;
-      --is-mac)
-        IS_MAC=true
-        shift
-        ;;
       --*=*)
         key="${1#--}"
         var_name=$(echo "${key%%=*}" | tr '[:lower:]-' '[:upper:]_')
@@ -126,7 +128,6 @@ count_files() {
 #
 # Notes:
 #   - Removes existing file or symlink at target location.
-#   - Logs progress and result if DEBUG is enabled.
 safe_symlink() {
   source_file="$1"
   target_file="$2"
