@@ -23,6 +23,15 @@
 	spo = "stash pop"
 	spu = "stash push -u"
 	u = "reset --soft HEAD~1"
+	cl = "!f() { \
+        if echo \"$1\" | grep -q \"^https://\"; then \
+            git clone \"$1\"; \
+        elif echo \"$1\" | grep -q \"/\"; then \
+            git clone \"git@github.com:$1.git\"; \
+        else \
+            git clone \"git@github.com:maclong9/$1.git\"; \
+        fi; \
+	}; f"
 [init]
 	defaultBranch = "main"
 [push]
