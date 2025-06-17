@@ -23,13 +23,13 @@ DEV_DIRECTORIES="$HOME/Developer/personal $HOME/Developer/clients $HOME/Develope
 
 # Symlink all matching files from color scheme directory
 process_colorscheme_files() {
-  colors_dir="$1"; pattern="$2"; tgt="$3"; type="$4"
+  colors_dir="$1"; pattern="$2"; target="$3"; type="$4"
   count=$(count_files "$colors_dir/$pattern")
   name=$(basename "$colors_dir")
   if [ "$count" -gt 0 ]; then
     log_debug "Found $count $type files in $name"
     for f in "$colors_dir"/$pattern; do
-      [ -f "$f" ] && safe_symlink "$f" "$tgt/$(basename "$f")"
+      [ -f "$f" ] && safe_symlink "$f" "$target/$(basename "$f")"
     done
   else
     log_debug "No $type files in $name"
