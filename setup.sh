@@ -1,81 +1,99 @@
 #!/bin/sh
 set -e
 
-# Ensure required tooling exists
-for cmd in git curl ln mkdir; do
-  command -v $cmd >/dev/null 2>&1 || { echo "$cmd required"; exit 1; }
+# Ensure required tools exist
+REQUIRED_CMDS="git curl ln mkdir"
+for cmd in $REQUIRED_CMDS; do
+  command -v "$cmd" >/dev/null 2>&1 || {
+    echo "$cmd required" >&2
+    exit 1
+  }
 done
 
-# Load common functions and environment variables
-if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-    -o /tmp/utils.sh || ! . /tmp/utils.sh; then
-    echo "Failed to load utils.sh" >&2
-    exit 1
+# Load shared functions and env variables
+UTILS_URL="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+UTILS_TMP="/tmp/utils.sh"
+if ! curl -fsSL "$UTILS_URL" -o "$UTILS_TMP" || ! . "$UTILS_TMP"; then
+  echo "Failed to load utils.sh" >&2
+  exit 1
 fi
 
-# Parse args and define core paths and constants
+# Parse arguments and set constants
 parse_args "$@"
+
 COLORS_DIR="$HOME/.config/colors"
 VIM_COLORS_DIR="$HOME/.vim/colors"
 XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 DOTFILES_REPO="https://github.com/maclong9/dots"
-DEV_DIRECTORIES="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
+DEV_DIRS="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
-# Symlink all matching files from color scheme directory
+# Symlink matching files from colorscheme directory
 process_colorscheme_files() {
-  colors_dir="$1"; pattern="$2"; target="$3"; type="$4"
+  colors_dir="$1"
+  pattern="$2"
+  target_dir="$3"
+  file_type="$4"
+
   count=$(count_files "$colors_dir/$pattern")
-  name=$(basename "$colors_dir")
+  dir_name=$(basename "$colors_dir")
+
   if [ "$count" -gt 0 ]; then
-    log_debug "Found $count $type files in $name"
-    for f in "$colors_dir"/$pattern; do
-      [ -f "$f" ] && safe_symlink "$f" "$target/$(basename "$f")"
+    log_debug "Found $count $file_type files in $dir_name"
+    for file in "$colors_dir"/$pattern; do
+      [ -f "$file" ] && safe_symlink "$file" "$target_dir/$(basename "$file")"
     done
   else
-    log_debug "No $type files in $name"
+    log_debug "No $file_type files in $dir_name"
   fi
 }
 
-# Install editor and IDE color schemes
+# Setup color schemes for editors and IDEs
 setup_colors() {
   log_info "Installing colorschemes..."
-  [ ! -d "$COLORS_DIR" ] && {
-    log_warning "No colors dir, skipping"
-    return
-  }
-  ensure_directory "$VIM_COLORS_DIR"
-  [ "$IS_MAC" = true ] && ensure_directory "$XCODE_THEMES_DIR"
 
-  for dir in "$COLORS_DIR"/*; do
-    [ ! -d "$dir" ] && continue
-    name=$(basename "$dir")
-    log_info "Scheme: $name"
-    process_colorscheme_files "$dir" "*.vim" "$VIM_COLORS_DIR" vim
-    [ "$IS_MAC" = true ] && \
-      process_colorscheme_files "$dir" \
-        "*.xccolortheme" "$XCODE_THEMES_DIR" Xcode
+  if [ ! -d "$COLORS_DIR" ]; then
+    log_warning "Colors directory missing, skipping color setup"
+    return
+  fi
+
+  ensure_directory "$VIM_COLORS_DIR"
+  if [ "$IS_MAC" = true ]; then
+    ensure_directory "$XCODE_THEMES_DIR"
+  fi
+
+  for scheme_dir in "$COLORS_DIR"/*; do
+    [ ! -d "$scheme_dir" ] && continue
+
+    scheme_name=$(basename "$scheme_dir")
+    log_info "Processing scheme: $scheme_name"
+
+    process_colorscheme_files "$scheme_dir" "*.vim" "$VIM_COLORS_DIR" "vim"
+    if [ "$IS_MAC" = true ]; then
+      process_colorscheme_files "$scheme_dir" "*.xccolortheme" "$XCODE_THEMES_DIR" "Xcode"
+    fi
   done
-  log_success "Color setup done"
+
+  log_success "Color setup complete"
 }
 
-# Enable Touch ID authentication for sudo
+# Enable Touch ID authentication for sudo (macOS only)
 setup_touch_id() {
   log_info "Configuring Touch ID for sudo..."
-  sudo_local=/etc/pam.d/sudo_local
-  tmpl=/etc/pam.d/sudo_local.template
 
-  if [ -f "$sudo_local" ] && \
-     grep -q "^auth.*pam_tid.so" "$sudo_local"; then
+  sudo_local="/etc/pam.d/sudo_local"
+  sudo_template="/etc/pam.d/sudo_local.template"
+
+  if [ -f "$sudo_local" ] && grep -q "^auth.*pam_tid.so" "$sudo_local"; then
     log_success "Touch ID already enabled"
     return
   fi
 
-  [ ! -f "$tmpl" ] && {
-    log_error "Template $tmpl missing"
+  if [ ! -f "$sudo_template" ]; then
+    log_error "Missing template: $sudo_template"
     return 1
-  }
+  fi
 
-  sudo cp "$tmpl" "$sudo_local"
+  sudo cp "$sudo_template" "$sudo_local"
   sudo sed -i '' 's/^#//' "$sudo_local"
 
   if grep -q "^auth.*pam_tid.so" "$sudo_local"; then
@@ -86,72 +104,83 @@ setup_touch_id() {
   fi
 }
 
-# Create personal dev directory structure
+# Create development directories
 create_dev_directories() {
-  log_info "Creating dev directories..."
-  for d in $DEV_DIRECTORIES; do
-    ensure_directory "$d"
+  log_info "Creating development directories..."
+
+  for dir_path in $DEV_DIRS; do
+    ensure_directory "$dir_path"
   done
-  log_debug "Dev dirs created"
+
+  log_debug "Development directories created"
 }
 
-# Clone dotfiles if not already present
+# Clone dotfiles repository if not present
 setup_dotfiles() {
   log_info "Installing dotfiles..."
+
   rm -rf "$HOME/.config"
-  log_debug "Cloning $DOTFILES_REPO"
+  log_debug "Cloning repository $DOTFILES_REPO"
   git clone "$DOTFILES_REPO" "$HOME/.config"
   log_success "Dotfiles cloned"
 }
 
-# Symlink dotfiles from .config to $HOME
+# Symlink dotfiles from ~/.config to $HOME
 link_dotfiles() {
-  log_info "Linking config dotfiles..."
-  find "$HOME/.config" -maxdepth 1 -name ".*" -type f |
-    while IFS= read -r cf; do
-      fn=$(basename "$cf")
-      case "$fn" in .|..|.git) continue ;; esac
-      safe_symlink "$cf" "$HOME/$fn"
-    done
+  log_info "Linking dotfiles from .config to home..."
+
+  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while IFS= read -r config_file; do
+    filename=$(basename "$config_file")
+    case "$filename" in
+      .|..|.git) continue ;;
+    esac
+    safe_symlink "$config_file" "$HOME/$filename"
+  done
 }
 
-# Generate and configure SSH key if missing
+# Generate SSH key if missing and add to ssh-agent
 setup_ssh() {
-  key="$HOME/.ssh/id_ed25519"
-  [ -f "$key" ] && {
-    log_debug "SSH key exists"
+  ssh_key="$HOME/.ssh/id_ed25519"
+
+  if [ -f "$ssh_key" ]; then
+    log_debug "SSH key already exists"
     return
-  }
-  log_info "Generating SSH key..."
-  ssh-keygen -t ed25519 -C "hello@maclong.uk" \
-    -f "$key" -N ""
+  fi
+
+  log_info "Generating new SSH key..."
+  ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$ssh_key" -N ""
+
   eval "$(ssh-agent -s)"
-  printf "Host github.com\n  AddKeysToAgent yes\n  UseKeychain yes\n  IdentityFile ~/.ssh/id_ed25519\n" \
-    > "$HOME/.ssh/config"
+
+  printf "Host github.com\n  AddKeysToAgent yes\n  UseKeychain yes\n  IdentityFile ~/.ssh/id_ed25519\n" > "$HOME/.ssh/config"
+
   if [ "$IS_MAC" = true ]; then
-    cat "$key.pub" | pbcopy
-    log_success "SSH key in clipboard"
+    cat "$ssh_key.pub" | pbcopy
+    log_success "SSH public key copied to clipboard"
   else
     log_success "SSH key generated"
-    log_info "Pub key:"
-    cat "$key.pub"
+    log_info "Public key contents:"
+    cat "$ssh_key.pub"
   fi
 }
 
-# Main bootstrap sequence
+# Main bootstrap function
 main() {
-  log_debug "Args: $*"
-  log_info "Bootstrapping dev env..."
+  log_debug "Arguments: $*"
+  log_info "Starting bootstrap process..."
+
   create_dev_directories
   setup_dotfiles
   setup_colors
   link_dotfiles
   setup_ssh
-  [ "$IS_MAC" = true ] && setup_touch_id
 
-  log_success "Setup done!"
-  printf "\nNext: restart shell, add SSH key, apply themes.\n"
+  if [ "$IS_MAC" = true ]; then
+    setup_touch_id
+  fi
+
+  log_success "Setup complete!"
+  printf "\nNext steps:\n- Restart your shell\n- Add your SSH key to services\n- Apply your themes\n"
 }
 
 main "$@"
-
