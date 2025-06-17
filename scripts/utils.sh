@@ -14,16 +14,7 @@
 #       "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
 #       -o /tmp/utils.sh && . /tmp/utils.sh
 #
-# Once sourced, you may call functions such as:
-#   parse_args "$@"
-#   log_info "Starting build..."
-#   safe_symlink ./src/file ~/.config/file
-#
-# Optional Environment Variables:
-#   DEBUG       Enables debug output.
-#   IS_MAC      Checks if the system is macOS (auto-detected if unset).
-#
-# ================================================================
+# Once sourced, you may call functions such as required
 
 # ANSI Color Codes
 
@@ -50,6 +41,7 @@ BRIGHT_WHITE='\033[1;37m'
 # Reset
 NC='\033[0m' # No Color
 
+# Checks if the system is macOS (auto-detected if unset).
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
 # Function: parse_args
