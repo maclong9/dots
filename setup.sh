@@ -1,11 +1,16 @@
 #!/bin/sh
 set -e
 
-# Load common functions
+# Ensure required tooling exists
+for cmd in git curl ln mkdir; do
+  command -v $cmd >/dev/null 2>&1 || { echo "$cmd required"; exit 1; }
+done
+
+# Load common functions and environment variables
 curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
     -o /tmp/utils.sh && . /tmp/utils.sh
 
-# Setup environment variables
+# Parse args and define core paths and constants
 parse_args "$@"
 COLORS_DIR="$HOME/.config/colors"
 VIM_COLORS_DIR="$HOME/.vim/colors"
@@ -13,8 +18,7 @@ XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 DOTFILES_REPO="https://github.com/maclong9/dots"
 DEV_DIRECTORIES="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
-# Setup Colorschemes
-
+# Symlink all matching files from color scheme directory
 process_colorscheme_files() {
   colors_dir="$1"; pattern="$2"; tgt="$3"; type="$4"
   count=$(count_files "$colors_dir/$pattern")
@@ -29,6 +33,7 @@ process_colorscheme_files() {
   fi
 }
 
+# Install editor and IDE color schemes
 setup_colors() {
   log_info "Installing colorschemes..."
   [ ! -d "$COLORS_DIR" ] && {
@@ -50,7 +55,7 @@ setup_colors() {
   log_success "Color setup done"
 }
 
-# Setup Touch ID for sudo
+# Enable Touch ID authentication for sudo
 setup_touch_id() {
   log_info "Configuring Touch ID for sudo..."
   sudo_local=/etc/pam.d/sudo_local
@@ -78,7 +83,7 @@ setup_touch_id() {
   fi
 }
 
-# Setup Dev Directories
+# Create personal dev directory structure
 create_dev_directories() {
   log_info "Creating dev directories..."
   for d in $DEV_DIRECTORIES; do
@@ -87,7 +92,7 @@ create_dev_directories() {
   log_debug "Dev dirs created"
 }
 
-# Setup Dotfiles
+# Clone dotfiles if not already present
 setup_dotfiles() {
   log_info "Installing dotfiles..."
   if [ ! -d "$HOME/.config/.git" ]; then
@@ -99,6 +104,7 @@ setup_dotfiles() {
   fi
 }
 
+# Symlink dotfiles from .config to $HOME
 link_dotfiles() {
   log_info "Linking config dotfiles..."
   find "$HOME/.config" -maxdepth 1 -name ".*" -type f |
@@ -109,7 +115,7 @@ link_dotfiles() {
     done
 }
 
-# Setup SSH Key
+# Generate and configure SSH key if missing
 setup_ssh() {
   key="$HOME/.ssh/id_ed25519"
   [ -f "$key" ] && {
@@ -132,7 +138,7 @@ setup_ssh() {
   fi
 }
 
-# Main Function
+# Main bootstrap sequence
 main() {
   log_debug "Args: $*"
   log_info "Bootstrapping dev env..."
@@ -148,3 +154,4 @@ main() {
 }
 
 main "$@"
+
