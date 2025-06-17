@@ -1,4 +1,4 @@
-name: Bootstrap Environment Test
+name: Setup Environment Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test-bootstrap:
+  test-setup:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,11 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run bootstrap script
+      - name: Run setup script
         shell: sh
         run: |
-          chmod +x ./bootstrap.sh
-          ./bootstrap.sh --debug
+          chmod +x ./setup.sh
+          ./setup.sh --debug
 
       - name: Verify directories created
         shell: sh
