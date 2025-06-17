@@ -38,7 +38,7 @@ jobs:
         shell: sh
         run: |
           # Example: check .bashrc or .zshrc symlink from ~/.config
-          for f in .bashrc .zshrc; do
+          for f in .gitconfig .vimrc .zshrc; do
             target="$HOME/$f"
             if [ -e "$target" ] && [ ! -L "$target" ]; then
               echo "$target exists but is not a symlink"
@@ -51,6 +51,10 @@ jobs:
         run: |
           if [ ! -d "$HOME/.config/colors" ]; then
             echo "~/.config/colors directory missing"
+            exit 1
+          fi
+          if [ ! -d "$HOME/.vim/colors" ]; then
+            echo "~/.vim/colors directory missing"
             exit 1
           fi
 
