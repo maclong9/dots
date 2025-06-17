@@ -32,7 +32,7 @@ let g:netrw_liststyle = 3
 nnoremap <C-[> :nohlsearch<CR>
 
 " Git Configuration
-command! -nargs=* G execute '!git' <q-args>
+command! -nargs=* -complete=file G execute '!git' <q-args>
 
 " Transparent Background
 augroup colors
