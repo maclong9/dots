@@ -1,37 +1,29 @@
 [user]
 	email = "hello@maclong.uk"
 	name = "Mac Long"
-	signingKey = /Users/mac/.ssh/id_ed25519
+	signingKey = ~/.ssh/id_ed25519
 [alias]
 	aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
 	ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
 	b = "branch"
-	bd = "branch -d"
 	br = "!f() { git branch -m $1; }; f"
 	bs = "switch"
 	ca = "!f() { git commit --amend -m \"$1\"; }; f"
+	cl = "!f() { if echo \"$1\" | grep -q \"^https://\"; then git clone \"$1\"; elif echo \"$1\" | grep -q \"/\"; then git clone \"git@github.com:$1.git\"; else git clone \"git@github.com:maclong9/$1.git\"; fi; }; f"
 	d = "diff"
 	l = "log --oneline --decorate --all"
 	lg = "log --graph --oneline --decorate --all"
 	p = "push"
 	pl = "pull"
 	plo = "pull origin"
-	pf = "push --force"
 	r = "restore"
-	st = "status"
 	sh = "show"
 	spo = "stash pop"
 	spu = "stash push -u"
+	st = "status"
 	u = "reset --soft HEAD~1"
-	cl = "!f() { \
-        if echo \"$1\" | grep -q \"^https://\"; then \
-            git clone \"$1\"; \
-        elif echo \"$1\" | grep -q \"/\"; then \
-            git clone \"git@github.com:$1.git\"; \
-        else \
-            git clone \"git@github.com:maclong9/$1.git\"; \
-        fi; \
-	}; f"
+    bd = "!f() { read -p 'Delete branch $1? [y/N] ' yn; case $yn in [Yy]*) git branch -d $1;; *) echo 'Cancelled.';; esac; }; f"
+    pff = "push --force-with-lease"
 [init]
 	defaultBranch = "main"
 [push]
