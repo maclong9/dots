@@ -7,8 +7,11 @@ for cmd in git curl ln mkdir; do
 done
 
 # Load common functions and environment variables
-curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-    -o /tmp/utils.sh && . /tmp/utils.sh
+if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
+    -o /tmp/utils.sh || ! . /tmp/utils.sh; then
+    echo "Failed to load utils.sh" >&2
+    exit 1
+fi
 
 # Parse args and define core paths and constants
 parse_args "$@"
