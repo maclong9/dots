@@ -15,10 +15,9 @@ PROMPT='%F{7}%n %B%F{15}%~
 
 # Aliases
 alias g='git'
-alias clc='fc -ln -1 | sed "s/^/λ /" | tee /tmp/last_cmd.log && script -q /tmp/last_out.log "$(fc -ln -1)" && { cat /tmp/last_cmd.log; cat /tmp/last_out.log; } | pbcopy'
+alias clc='fc -ln -1 > /tmp/last_cmd.log && CMD=$(< /tmp/last_cmd.log) && eval "$CMD" > /tmp/last_out.log 2>&1 && { echo "λ $CMD"; echo "⇣"; cat /tmp/last_out.log; } | pbcopy'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
-alias dev="container exec -t -i development zsh"
 
 # Navigate to iCloud
 cdi() {
