@@ -1,3 +1,6 @@
+# Load Completions
+autoload -Uz compinit && compinit
+
 # ZSH options
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS
 setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_VERIFY
@@ -16,6 +19,24 @@ alias clc='fc -ln -1 | sed "s/^/λ /" | tee /tmp/last_cmd.log && script -q /tmp/
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
 alias dev="container exec -t -i development zsh"
+
+# Navigate to iCloud
+cdi() {
+  base="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+  target="$base"
+  [ "$#" -gt 0 ] && target="$base/$*"
+  [ -d "$target" ] && cd "$target" || {
+    printf 'Directory does not exist: %s\n' "$target" >&2
+    return 1
+  }
+}
+
+# Completions for iCloud Navigation
+_cdi_completion() {
+  local base="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+  _path_files -W "$base" -/
+}
+compdef _cdi_completion cdi
 
 # Kill Process on Given Port
 kp() {
