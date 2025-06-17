@@ -18,14 +18,8 @@ if ! curl -fsSL "$UTILS_URL" -o "$UTILS_TMP" || ! . "$UTILS_TMP"; then
   exit 1
 fi
 
-# Parse arguments and set constants
+# Parse arguments
 parse_args "$@"
-
-COLORS_DIR="$HOME/.config/colors"
-VIM_COLORS_DIR="$HOME/.vim/colors"
-XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
-DOTFILES_REPO="https://github.com/maclong9/dots"
-DEV_DIRS="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
 # Symlink matching files from colorscheme directory
 process_colorscheme_files() {
@@ -49,6 +43,10 @@ process_colorscheme_files() {
 
 # Setup color schemes for editors and IDEs
 setup_colors() {
+  COLORS_DIR="$HOME/.config/colors"
+  VIM_COLORS_DIR="$HOME/.vim/colors"
+  XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+
   log_info "Installing colorschemes..."
 
   if [ ! -d "$COLORS_DIR" ]; then
@@ -106,6 +104,8 @@ setup_touch_id() {
 
 # Create development directories
 create_dev_directories() {
+  DEV_DIRS="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
+
   log_info "Creating development directories..."
 
   for dir_path in $DEV_DIRS; do
@@ -117,6 +117,8 @@ create_dev_directories() {
 
 # Clone dotfiles repository if not present
 setup_dotfiles() {
+  DOTFILES_REPO="https://github.com/maclong9/dots"
+
   log_info "Installing dotfiles..."
 
   rm -rf "$HOME/.config"
