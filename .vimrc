@@ -20,7 +20,7 @@ set tabstop=4             " Number of spaces that a tab character represents
 set termguicolors         " Enable 24-bit RGB colors
 set timeoutlen=500        " Time to wait for mapped sequence to complete
 set updatetime=250        " Time before CursorHold fires
-set wildmenu              " Enables menu for tab completion 
+set wildmenu              " Menu for tab completion 
 syntax enable             " Enable syntax highlighting
 
 " Netrw Configuration
@@ -30,6 +30,12 @@ let g:netrw_liststyle = 3
 
 " Mappings
 nnoremap <C-[> :nohlsearch<CR>
+cnoremap        <C-A> <Home>
+cnoremap        <C-A> <Home>
+cnoremap   <C-X><C-A> <C-A>
+cnoremap        <C-B> <Left>
+cnoremap <expr> <C-D> getcmdpos()>strlen(getcmdline())?"\<Lt>C-D>":"\<Lt>Del>"
+cnoremap <expr> <C-F> getcmdpos()>strlen(getcmdline())?&cedit:"\<Lt>Right>"
 
 " Git Configuration
 command! -nargs=* -complete=file G execute '!git' <q-args>
