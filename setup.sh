@@ -11,7 +11,7 @@ COLORS_DIR="$HOME/.config/colors"
 VIM_COLORS_DIR="$HOME/.vim/colors"
 XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 DOTFILES_REPO="https://github.com/maclong9/dots"
-DEV_DIRECTORIES="$HOME/Developer/personal $HOME/Developer/freelance $HOME/Developer/study $HOME/Developer/work"
+DEV_DIRECTORIES="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
 # Setup Colorschemes
 
