@@ -1,6 +1,7 @@
 " Vim Configuration
 
 " Basic Configuration
+colorscheme vesper        " Set custom colorscheme
 set autoindent            " Automatically indent new lines to match the previous line
 set expandtab             " Convert tabs to spaces when inserting
 set hlsearch              " Highlight all matches when searching
@@ -16,10 +17,10 @@ set signcolumn=yes        " Ensure signcolumn is always visible
 set smartcase             " Override ignorecase if search contains uppercase letters
 set splitright            " Open new vertical splits to the right
 set tabstop=4             " Number of spaces that a tab character represents
+set termguicolors         " Enable 24-bit RGB colors
 set timeoutlen=500        " Time to wait for mapped sequence to complete
 set updatetime=250        " Time before CursorHold fires
-set termguicolors         " Enable 24-bit RGB colors
-colorscheme vesper        " Set custom colorscheme
+set wildmenu              " Enables menu for tab completion 
 syntax enable             " Enable syntax highlighting
 
 " Netrw Configuration
@@ -36,9 +37,9 @@ command! -nargs=* G execute '!git' <q-args>
 " Transparent Background
 augroup colors
     autocmd!
-    autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi NonText guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi NonText guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
 augroup END
