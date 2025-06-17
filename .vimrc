@@ -30,6 +30,9 @@ let g:netrw_liststyle = 3
 " Mappings
 nnoremap <C-[> :nohlsearch<CR>
 
+" Git Configuration
+command! -nargs=* G execute '!git' <q-args>
+
 " Transparent Background
 augroup colors
     autocmd!
