@@ -95,13 +95,10 @@ create_dev_directories() {
 # Clone dotfiles if not already present
 setup_dotfiles() {
   log_info "Installing dotfiles..."
-  if [ ! -d "$HOME/.config/.git" ]; then
-    log_debug "Cloning $DOTFILES_REPO"
-    git clone "$DOTFILES_REPO" "$HOME/.config"
-    log_success "Dotfiles cloned"
-  else
-    log_success "Dotfiles already present"
-  fi
+  rm -rf "$HOME/.config"
+  log_debug "Cloning $DOTFILES_REPO"
+  git clone "$DOTFILES_REPO" "$HOME/.config"
+  log_success "Dotfiles cloned"
 }
 
 # Symlink dotfiles from .config to $HOME
