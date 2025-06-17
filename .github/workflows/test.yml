@@ -3,8 +3,14 @@ name: Setup Environment Test
 on:
   push:
     branches: [main]
+    paths:
+      - 'setup.sh'
+      - 'scripts/utils.sh'
   pull_request:
     branches: [main]
+    paths:
+      - 'setup.sh'
+      - 'scripts/utils.sh'
 
 jobs:
   test-setup:
@@ -26,7 +32,6 @@ jobs:
       - name: Verify directories created
         shell: sh
         run: |
-          # Verify Developer dirs
           for d in "$HOME/Developer/personal" "$HOME/Developer/clients" "$HOME/Developer/study" "$HOME/Developer/work"; do
             if [ ! -d "$d" ]; then
               printf "Missing directory: $d"
@@ -37,7 +42,6 @@ jobs:
       - name: Verify symlinked dotfiles
         shell: sh
         run: |
-          # Example: check .bashrc or .zshrc symlink from ~/.config
           for f in .gitconfig .vimrc .zshrc; do
             target="$HOME/$f"
             if [ -e "$target" ] && [ ! -L "$target" ]; then
@@ -61,10 +65,10 @@ jobs:
       - name: Ensure SSH key exists
         shell: sh
         run: |
-            if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-                printf "SSH Key generation failed"
-                exit 1
-            fi
+          if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+              printf "SSH Key generation failed"
+              exit 1
+          fi
 
       - name: List files for debugging
         if: failure()
@@ -74,4 +78,3 @@ jobs:
           ls -la "$HOME"
           printf "Config directory contents:"
           ls -la "$HOME/.config"
-
