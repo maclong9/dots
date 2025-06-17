@@ -1,0 +1,65 @@
+name: Bootstrap Environment Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-bootstrap:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run bootstrap script
+        shell: sh
+        run: |
+          chmod +x ./bootstrap.sh
+          ./bootstrap.sh --debug
+
+      - name: Verify directories created
+        shell: sh
+        run: |
+          # Verify Developer dirs
+          for d in "$HOME/Developer/personal" "$HOME/Developer/clients" "$HOME/Developer/study" "$HOME/Developer/work"; do
+            if [ ! -d "$d" ]; then
+              echo "Missing directory: $d"
+              exit 1
+            fi
+          done
+
+      - name: Verify symlinked dotfiles
+        shell: sh
+        run: |
+          # Example: check .bashrc or .zshrc symlink from ~/.config
+          for f in .bashrc .zshrc; do
+            target="$HOME/$f"
+            if [ -e "$target" ] && [ ! -L "$target" ]; then
+              echo "$target exists but is not a symlink"
+              exit 1
+            fi
+          done
+
+      - name: Verify colors directory exists
+        shell: sh
+        run: |
+          if [ ! -d "$HOME/.config/colors" ]; then
+            echo "~/.config/colors directory missing"
+            exit 1
+          fi
+
+      - name: List files for debugging
+        if: failure()
+        shell: sh
+        run: |
+          echo "Home directory contents:"
+          ls -la "$HOME"
+          echo "Config directory contents:"
+          ls -la "$HOME/.config"
+
