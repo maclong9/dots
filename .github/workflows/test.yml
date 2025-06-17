@@ -29,7 +29,7 @@ jobs:
           # Verify Developer dirs
           for d in "$HOME/Developer/personal" "$HOME/Developer/clients" "$HOME/Developer/study" "$HOME/Developer/work"; do
             if [ ! -d "$d" ]; then
-              echo "Missing directory: $d"
+              printf "Missing directory: $d"
               exit 1
             fi
           done
@@ -41,7 +41,7 @@ jobs:
           for f in .gitconfig .vimrc .zshrc; do
             target="$HOME/$f"
             if [ -e "$target" ] && [ ! -L "$target" ]; then
-              echo "$target exists but is not a symlink"
+              printf "$target exists but is not a symlink"
               exit 1
             fi
           done
@@ -50,20 +50,28 @@ jobs:
         shell: sh
         run: |
           if [ ! -d "$HOME/.config/colors" ]; then
-            echo "~/.config/colors directory missing"
+            printf "~/.config/colors directory missing"
             exit 1
           fi
           if [ ! -d "$HOME/.vim/colors" ]; then
-            echo "~/.vim/colors directory missing"
+            printf "~/.vim/colors directory missing"
             exit 1
           fi
+
+      - name: Ensure SSH key exists
+        shell: sh
+        run: |
+            if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
+                printf "SSH Key generation failed"
+                exit 1
+            fi
 
       - name: List files for debugging
         if: failure()
         shell: sh
         run: |
-          echo "Home directory contents:"
+          printf "Home directory contents:"
           ls -la "$HOME"
-          echo "Config directory contents:"
+          printf "Config directory contents:"
           ls -la "$HOME/.config"
 
