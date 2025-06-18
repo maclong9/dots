@@ -182,7 +182,7 @@ log_success() {
 # Usage:
 #   log_warning "File not found, skipping."
 log_warning() {
-  printf "${YELLOW}[WARNING]${NC} %s\n" "$1"
+  printf "${YELLOW}[WARNING]${NC} %s\n" "$1" >&2
 }
 
 # Function: log_error
@@ -192,7 +192,7 @@ log_warning() {
 # Usage:
 #   log_error "Unable to write to /etc."
 log_error() {
-  printf "${RED}[ERROR]${NC} %s\n" "$1"
+  printf "${RED}[ERROR]${NC} %s\n" "$1" >&2
 }
 
 # Function: log_debug
@@ -203,6 +203,6 @@ log_error() {
 #   log_debug "Resolved path: $path"
 log_debug() {
   if [ "$DEBUG" = true ]; then
-    printf "${CYAN}[DEBUG]${NC} %s\n" "$1"
+    printf "${CYAN}[DEBUG]${NC} %s\n" "$1" >&2
   fi
 }
