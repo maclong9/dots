@@ -232,19 +232,62 @@ safe_symlink() {
 
   log debug "Processing file: $source_file -> $target_file"
 
+  # Validate source file exists
+  if [ ! -f "$source_file" ]; then
+    log error "Source file does not exist: $source_file"
+    return 1
+  fi
+
+  # Get absolute path of source file
+  source_file=$(cd "$(dirname "$source_file")" && pwd)/$(basename "$source_file")
+  
+  # Ensure target directory exists
+  target_dir=$(dirname "$target_file")
+  if [ ! -d "$target_dir" ]; then
+    log debug "Creating target directory: $target_dir"
+    if ! mkdir -p "$target_dir"; then
+      log error "Failed to create target directory: $target_dir"
+      return 1
+    fi
+  fi
+
+  # Backup existing regular file (not symlink)
   if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
     backup_file "$target_file" >/dev/null
     log debug "Backed up existing file: $target_file"
   fi
 
+  # Remove existing file or symlink
   if [ -e "$target_file" ] || [ -L "$target_file" ]; then
     log debug "Removing existing file/symlink: $target_file"
-    rm "$target_file"
+    if ! rm "$target_file"; then
+      log error "Failed to remove existing file: $target_file"
+      return 1
+    fi
   fi
 
-  ln -s "$source_file" "$target_file"
+  # Create the symlink
+  log debug "Creating symlink: $source_file -> $target_file"
+  if ! ln -s "$source_file" "$target_file"; then
+    log error "Failed to create symlink from $source_file to $target_file"
+    return 1
+  fi
+
+  # Verify the symlink was created successfully
+  if [ ! -L "$target_file" ]; then
+    log error "Symlink was not created: $target_file"
+    return 1
+  fi
+
+  # Verify the symlink points to the correct target
+  if [ "$(readlink "$target_file")" != "$source_file" ]; then
+    log error "Symlink points to wrong target. Expected: $source_file, Got: $(readlink "$target_file")"
+    return 1
+  fi
+
   log success "Symlinked $filename"
-  log debug "Created symlink: $source_file -> $target_file"
+  log debug "Successfully created symlink: $source_file -> $target_file"
+  return 0
 }
 
 # Creates directory and parent directories if they don't exist.
