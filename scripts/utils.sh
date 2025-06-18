@@ -101,7 +101,6 @@ parse_args() {
 spinner() {
     message="$1"
     shift
-    pid
 
     printf "%s " "$message"
 
