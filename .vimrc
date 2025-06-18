@@ -32,7 +32,6 @@ let g:netrw_liststyle = 3
 nnoremap <C-[> :nohlsearch<CR>
 cnoremap        <C-A> <Home>
 cnoremap        <C-A> <Home>
-cnoremap   <C-X><C-A> <C-A>
 cnoremap        <C-B> <Left>
 cnoremap <expr> <C-D> getcmdpos()>strlen(getcmdline())?"\<Lt>C-D>":"\<Lt>Del>"
 cnoremap <expr> <C-F> getcmdpos()>strlen(getcmdline())?&cedit:"\<Lt>Right>"
