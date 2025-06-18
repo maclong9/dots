@@ -14,7 +14,7 @@
 #       "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
 #       -o /tmp/utils.sh && . /tmp/utils.sh
 #
-# Once sourced, you may call functions such as required
+# Once sourced, you may call functions and environment variables as required
 
 # ANSI Color Codes
 
