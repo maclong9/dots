@@ -30,7 +30,7 @@ process_colorscheme_files() {
     log debug "Found $count $4 files in $scheme"
     for file in "$1"/$2; do
       [ -f "$file" ] || continue
-      spinner "Symlinking $4 file $(basename "$file")" safe_symlink "$file" "$3/$(basename "$file)" || return 1
+      spinner "Symlinking $4 file $(basename "$file")" safe_symlink "$file" "$3/$(basename "$file")"
     done
   else
     log debug "No $4 files in $scheme"
