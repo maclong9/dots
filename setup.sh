@@ -120,7 +120,7 @@ link_dotfiles() {
   log info "Linking dotfiles from .config to home..."
   find "$HOME/.config" -maxdepth 1 -name ".*" -type f -not -name '.git' -exec sh -c '
     spinner "Symlinking $(basename "{}")" safe_symlink "{}" "$HOME/$(basename "{}")"
-  ' \;
+  '
   log success "Dotfiles linked"
 }
 
