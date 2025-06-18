@@ -46,6 +46,17 @@ jobs:
           fi
           cat checksums.txt
 
+      - name: Make scripts executable
+        shell: sh
+        run: |
+          chmod +x ./setup.sh
+          chmod +x ./scripts/utils.sh
+
+      - name: Run setup script
+        shell: sh
+        run: |
+          ./setup.sh --debug
+
       - name: Install ShellCheck
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then
@@ -57,17 +68,6 @@ jobs:
       - name: Run ShellCheck
         run: |
           shellcheck -x setup.sh scripts/utils.sh
-
-      - name: Make scripts executable
-        shell: sh
-        run: |
-          chmod +x ./setup.sh
-          chmod +x ./scripts/utils.sh
-
-      - name: Run setup script
-        shell: sh
-        run: |
-          ./setup.sh --debug
 
       - name: Verify directories created
         shell: sh
