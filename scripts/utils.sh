@@ -102,7 +102,7 @@ spinner() {
     message="$1"
     shift
 
-    tmp_err=$(mktemp 2>/dev/null || echo "/tmp/spinner_error_$$.log")
+    tmp_err=$(mktemp 2>/dev/null || echo "/tmp/spinner_error_$.log")
 
     printf "%s " "$message"
 
