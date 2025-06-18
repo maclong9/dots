@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
     printf "%s\n" "$cmd required" >&2
@@ -9,17 +8,22 @@ for cmd in git curl ln mkdir; do
   }
 done
 
-
+printf "Downloading utils.sh...\n"
 if ! curl -fsSL \
   "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-  -o /tmp/utils.sh || ! . /tmp/utils.sh
+  -o /tmp/utils.sh
 then
-  printf "%s\n" "Failed to load utils.sh" >&2
+  printf "Failed to download utils.sh\n" >&2
   exit 1
 fi
+printf "Downloaded utils.sh, sourcing...\n"
+if ! . /tmp/utils.sh; then
+  printf "Failed to source utils.sh\n" >&2
+  exit 1
+fi
+printf "utils.sh sourced successfully\n"
 
 parse_args "$@"
-
 
 process_colorscheme_files() {
   [ ! -d "$1" ] && return
