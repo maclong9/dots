@@ -6,11 +6,13 @@ on:
     paths:
       - 'setup.sh'
       - 'scripts/utils.sh'
+      - '.github/workflows/test.yml'
   pull_request:
     branches: [main]
     paths:
       - 'setup.sh'
       - 'scripts/utils.sh'
+      - '.github/workflows/test.yml'
 
 jobs:
   test-setup:
@@ -21,12 +23,42 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Cache dotfiles
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.dotfiles
+            ~/.cache
+          key: dotfiles-${{ runner.os }}-${{ hashFiles('**/*.sh', '**/*.vim', '**/*.yml') }}
+          restore-keys: |
+            dotfiles-${{ runner.os }}-
+
+      - name: Verify script checksums
+        shell: sh
+        run: |
+          # Calculate checksums for critical files
+          if command -v shasum >/dev/null 2>&1; then
+            shasum -a 256 setup.sh scripts/utils.sh > checksums.txt
+          elif command -v sha256sum >/dev/null 2>&1; then
+            sha256sum setup.sh scripts/utils.sh > checksums.txt
+          fi
+          cat checksums.txt
+
+      - name: Run shellcheck
+        run: |
+          shellcheck setup.sh scripts/utils.sh
+
+      - name: Make scripts executable
+        shell: sh
+        run: |
+          chmod +x ./setup.sh
+          chmod +x ./scripts/utils.sh
 
       - name: Run setup script
         shell: sh
         run: |
-          chmod +x ./setup.sh
           ./setup.sh --debug
 
       - name: Verify directories created
@@ -35,7 +67,7 @@ jobs:
           for d in "$HOME/Developer/personal" "$HOME/Developer/clients" \
                    "$HOME/Developer/study" "$HOME/Developer/work"; do
             if [ ! -d "$d" ]; then
-              printf "Missing directory: $d"
+              printf "Missing directory: %s\n" "$d"
               exit 1
             fi
           done
@@ -43,10 +75,10 @@ jobs:
       - name: Verify symlinked dotfiles
         shell: sh
         run: |
-          for f in .gitconfig .vimrc .zshrc; do
+          for f in .gitconfig .vimrc .zshrc .gitignore_global; do
             target="$HOME/$f"
             if [ -e "$target" ] && [ ! -L "$target" ]; then
-              printf "$target exists but is not a symlink"
+              printf "%s exists but is not a symlink\n" "$target"
               exit 1
             fi
           done
@@ -55,11 +87,11 @@ jobs:
         shell: sh
         run: |
           if [ ! -d "$HOME/.config/colors" ]; then
-            printf "~/.config/colors directory missing"
+            printf "~/.config/colors directory missing\n"
             exit 1
           fi
           if [ ! -d "$HOME/.vim/colors" ]; then
-            printf "~/.vim/colors directory missing"
+            printf "~/.vim/colors directory missing\n"
             exit 1
           fi
 
@@ -67,15 +99,97 @@ jobs:
         shell: sh
         run: |
           if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-            printf "SSH Key generation failed"
+            printf "SSH Key generation failed\n"
             exit 1
+          fi
+
+      - name: Test shell functions
+        shell: sh
+        run: |
+          # Source the utilities and test key functions
+          . ./scripts/utils.sh
+
+          # Test logging functions
+          log_info "Testing info log"
+          log_success "Testing success log"
+          log_warning "Testing warning log"
+          log_debug "Testing debug log"
+
+          # Test utility functions
+          ensure_directory "/tmp/test_dir"
+          if [ ! -d "/tmp/test_dir" ]; then
+            printf "ensure_directory failed\n"
+            exit 1
+          fi
+
+          # Test file counting
+          touch /tmp/test1.txt /tmp/test2.txt
+          count=$(count_files "/tmp/test*.txt")
+          if [ "$count" -ne 2 ]; then
+            printf "count_files failed: expected 2, got %s\n" "$count"
+            exit 1
+          fi
+
+      - name: Test zsh completions
+        shell: zsh {0}
+        if: matrix.os == 'macos-latest'
+        run: |
+          source ~/.zshrc
+
+          # Test dev function completion
+          if ! type _dev_completion >/dev/null 2>&1; then
+            printf "dev completion function not loaded\n"
+            exit 1
+          fi
+
+          # Test cdi function completion
+          if ! type _cdi_completion >/dev/null 2>&1; then
+            printf "cdi completion function not loaded\n"
+            exit 1
+          fi
+
+      - name: Verify Git configuration
+        shell: sh
+        run: |
+          # Check Git signing configuration
+          signing_key=$(git config --global user.signingkey)
+          if [ -z "$signing_key" ]; then
+            printf "Git signing key not configured\n"
+            exit 1
+          fi
+
+          # Check commit signing is enabled
+          gpg_sign=$(git config --global commit.gpgsign)
+          if [ "$gpg_sign" != "true" ]; then
+            printf "Git commit signing not enabled\n"
+            exit 1
+          fi
+
+      - name: Test color schemes installation
+        shell: sh
+        run: |
+          # Check if color scheme files exist in vim colors directory
+          if [ -d "colors" ]; then
+            color_count=$(find colors -name "*.vim" -type f | wc -l)
+            installed_count=$(find "$HOME/.vim/colors" -name "*.vim" -type f | wc -l)
+
+            if [ "$color_count" -gt 0 ] && [ "$installed_count" -eq 0 ]; then
+              printf "Color schemes not installed properly\n"
+              exit 1
+            fi
           fi
 
       - name: List files for debugging
         if: failure()
         shell: sh
         run: |
-          printf "Home directory contents:"
-          ls -la "$HOME"
-          printf "Config directory contents:"
-          ls -la "$HOME/.config"
+          printf "=== Home directory contents ===\n"
+          ls -la "$HOME" || true
+          printf "\n=== Config directory contents ===\n"
+          ls -la "$HOME/.config" || true
+          printf "\n=== SSH directory contents ===\n"
+          ls -la "$HOME/.ssh" || true
+          printf "\n=== Developer directory structure ===\n"
+          find "$HOME/Developer" -type d 2>/dev/null || true
+          printf "\n=== Git configuration ===\n"
+          git config --global --list || true

@@ -1,45 +1,105 @@
 " Vim Configuration
 
-" Basic Configuration
-colorscheme vesper        " Set custom colorscheme
-set autoindent            " Automatically indent new lines to match the previous line
-set expandtab             " Convert tabs to spaces when inserting
-set hlsearch              " Highlight all matches when searching
-set ignorecase            " Ignore case when searching
-set incsearch             " Show search matches as you type
-set laststatus=0          " Never show the status line
-set noswapfile            " Disable creation of swap files
-set number                " Display line numbers on the left side
-set relativenumber        " Show relative line numbers (distance from current line)
-set scrolloff=999         " Keep cursor away from top/bottom edges
-set shiftwidth=4          " Number of spaces used for each step of autoindent
-set signcolumn=yes        " Ensure signcolumn is always visible
-set smartcase             " Override ignorecase if search contains uppercase letters
-set splitright            " Open new vertical splits to the right
-set tabstop=4             " Number of spaces that a tab character represents
-set termguicolors         " Enable 24-bit RGB colors
-set timeoutlen=500        " Time to wait for mapped sequence to complete
-set updatetime=250        " Time before CursorHold fires
-set wildmenu              " Menu for tab completion 
-syntax enable             " Enable syntax highlighting
+" General Settings
+syntax enable
+if exists('+termguicolors')
+    set termguicolors            " Enable 24-bit RGB colors
+endif
+colorscheme vesper               " Set custom colorscheme
+
+" Editor behavior
+set autoindent                   " Automatically indent new lines
+set expandtab                    " Convert tabs to spaces
+set shiftwidth=4                 " Indentation width
+set tabstop=4                    " Tab display width
+set softtabstop=4                " Tab key behavior
+set smartindent                  " Context-aware indenting
+set backspace=indent,eol,start   " Sensible backspace
+
+" Visual enhancements
+set number                       " Line numbers
+set relativenumber               " Relative line numbers
+set cursorline                   " Highlight current line
+set showmatch                    " Highlight matching brackets
+set signcolumn=yes               " Always show sign column
+set scrolloff=8                  " Keep cursor away from edges
+set sidescrolloff=8              " Horizontal scroll offset
+set wrap                         " Wrap long lines
+set linebreak                    " Break at word boundaries
+
+" Search and navigation
+set hlsearch                     " Highlight search results
+set incsearch                    " Incremental search
+set ignorecase                   " Case-insensitive search
+set smartcase                    " Case-sensitive if uppercase present
+set gdefault                     " Global replace by default
+
+" File handling
+set undofile                     " Persistent undo
+set undodir=$HOME/.vim/undo      " Undo directory
+set autoread                     " Auto-reload changed files
+
+" Interface
+set laststatus=2                 " Always show status line
+set wildmenu                     " Enhanced command completion
+set wildmode=longest:full,full   " Improve tab completion results
+set splitright                   " Vertical splits to the right
+set splitbelow                   " Horizontal splits below
+set mouse=a                      " Enable mouse support
+
+" Performance
+set timeoutlen=500               " Faster key sequences
+set updatetime=250               " Faster updates
+set lazyredraw                   " Don't redraw during macros
+set re=0                         " Enable new regex engine
+
+" Create undo directory if it doesn't exist
+if !isdirectory($HOME . '/.vim/undo')
+    call mkdir($HOME . '/.vim/undo', 'p')
+endif
 
 " Netrw Configuration
-autocmd FileType netrw setlocal nu rnu
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
+autocmd FileType netrw setlocal nu rnu
 
-" Mappings
+" Key Mappings
+
+" Clear search highlighting
 nnoremap <C-[> :nohlsearch<CR>
-cnoremap        <C-A> <Home>
-cnoremap        <C-A> <Home>
-cnoremap        <C-B> <Left>
+nnoremap <leader>/ :nohlsearch<CR>
+
+" Better command line editing
+cnoremap <C-A> <Home>
+cnoremap <C-B> <Left>
 cnoremap <expr> <C-D> getcmdpos()>strlen(getcmdline())?"\<Lt>C-D>":"\<Lt>Del>"
 cnoremap <expr> <C-F> getcmdpos()>strlen(getcmdline())?&cedit:"\<Lt>Right>"
 
-" Git Configuration
-command! -nargs=* -complete=file G execute '!git' <q-args>
+" Window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
-" Transparent Background
+" Buffer navigation
+nnoremap <leader>b :buffers<CR>:buffer<Space>
+nnoremap <leader>n :bnext<CR>
+nnoremap <leader>p :bprevious<CR>
+nnoremap <leader>d :bdelete<CR>
+
+" Git integration - simple git command
+command! -nargs=* -complete=file G !git <args>
+
+" File type specific settings
+augroup filetypes
+    autocmd!
+    autocmd FileType javascript,typescript,json setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType yaml,yml setlocal shiftwidth=2 tabstop=2 softtabstop=2
+    autocmd FileType swift setlocal shiftwidth=4 tabstop=4 softtabstop=4
+    autocmd FileType markdown setlocal wrap linebreak spell
+augroup END
+
+" Transparent background and cursor line styling
 augroup colors
     autocmd!
     autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
@@ -47,4 +107,17 @@ augroup colors
     autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
+    autocmd VimEnter,ColorScheme * hi CursorLine guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
+    autocmd VimEnter,ColorScheme * hi CursorLineNr guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
+augroup END
+
+" Auto-commands for productivity
+augroup productivity
+    autocmd!
+    " Return to last edit position
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+    " Auto-save when focus is lost
+    autocmd FocusLost * silent! wa
+    " Trim trailing whitespace on save
+    autocmd BufWritePre * :%s/\s\+$//e
 augroup END

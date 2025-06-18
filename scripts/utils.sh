@@ -1,26 +1,10 @@
 #!/bin/sh
 
-# POSIX Shell Utility Functions
-#
-# Provides logging, argument parsing, filesystem helpers,
-# and safe symbolic link creation.
-#
-# Designed for sourcing into other POSIX-compliant shell scripts.
-#
-# Usage:
-#   if ! curl -fsSL \
-#     "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-#     -o /tmp/utils.sh || ! . /tmp/utils.sh
-#   then
-#     printf "%s\n" "Failed to load utils.sh" >&2
-#     exit 1
-#   fi
-#
-# Once sourced, you may call functions and environment variables as required
+# MARK: - Constants
 
-# ANSI Color Codes
-
-# Regular Colors
+# Defines ANSI color codes and system detection variables.
+#
+# Sets up color codes for logging and determines if the system is macOS.
 BLACK='\033[0;30m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -30,7 +14,6 @@ MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 
-# Bright Colors
 BRIGHT_BLACK='\033[1;30m'
 BRIGHT_RED='\033[1;31m'
 BRIGHT_GREEN='\033[1;32m'
@@ -40,29 +23,47 @@ BRIGHT_MAGENTA='\033[1;35m'
 BRIGHT_CYAN='\033[1;36m'
 BRIGHT_WHITE='\033[1;37m'
 
-# Reset
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Checks if the system is macOS
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
-# Function: parse_args
+# MARK: - Functions
+
+# Logs a message with a specified level.
 #
-# Parses command-line arguments into environment variables.
+# Outputs a formatted message to stdout or stderr based on the log level, with appropriate color coding.
 #
-# Supported flags:
-#   --debug          Enable debug logging.
-#   --verbose        Enable verbose output.
-#   --is-mac         Force IS_MAC=true.
-#   --key=value      Set environment variable KEY=VALUE.
-#   --flag           Set environment variable FLAG=true.
+# - Parameters:
+#   - level: Log level (info, success, warning, error, debug).
+#   - message: Message to log.
+# - Usage:
+#   ```sh
+#   log info "Starting process..."
+#   log debug "Debugging info"  # Only shown if DEBUG=true
+#   ```
+log() {
+  level="$1"
+  message="$2"
+  case "$level" in
+    info) printf "${BLUE}[INFO]${NC} %s\n" "$message" ;;
+    success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
+    warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
+    error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
+    debug) [ "$DEBUG" = true ] && printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2 ;;
+  esac
+}
+
+# Parses command line arguments and sets environment variables.
 #
-# Usage:
+# Converts `--key=value` and `--flag` arguments to uppercase environment variables (e.g., `--debug` becomes `DEBUG=true`).
+#
+# - Parameters:
+#   - args: All command line arguments.
+# - Usage:
+#   ```sh
 #   parse_args "$@"
-#
-# Notes:
-#   - Relies on `eval` for dynamic var assignment.
-#   - Converts flags and key names to uppercase.
+#   echo $DEBUG  # Outputs: true if --debug was passed
+#   ```
 parse_args() {
   while [ $# -gt 0 ]; do
     case $1 in
@@ -85,21 +86,115 @@ parse_args() {
   done
 }
 
-# Function: count_files
+# Displays a spinner animation while running a command.
 #
-# Counts the number of regular files matching a given pattern.
+# Shows a rotating spinner with a message while executing a command in the background.
 #
-# Parameters:
-#   $1 - A glob pattern (e.g. "*.txt")
+# - Parameters:
+#   - message: Message to display alongside the spinner.
+#   - command: Command and arguments to execute.
+# - Returns:
+#   - The exit code of the executed command.
+# - Usage:
+#   ```sh
+#   spinner "Processing files..." sleep 2
+#   ```
+spinner() {
+    local message="$1"
+    shift
+    local pid
+
+    printf "%s " "$message"
+
+    "$@" >/dev/null 2>&1 &
+    pid=$!
+
+    local chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+    local i=0
+    while kill -0 $pid 2>/dev/null; do
+        char=$(printf "%s" "$chars" | cut -c$((i % 10 + 1)))
+        printf "\r%s %s" "$message" "$char"
+        sleep 0.1
+        i=$((i + 1))
+    done
+
+    wait $pid
+    local exit_code=$?
+
+    if [ $exit_code -eq 0 ]; then
+        printf "\r%s ✓\n" "$message"
+    else
+        printf "\r%s ✗\n" "$message"
+    fi
+
+    return $exit_code
+}
+
+# Ensures a required command is available on the system.
 #
-# Returns:
-#   Integer count of matching regular files.
+# Checks if a command exists and logs an error if not found.
 #
-# Usage:
-#   count=$(count_files "*.md")
+# - Parameters:
+#   - tool: Command name to check.
+#   - install_hint: Optional installation hint message.
+# - Returns:
+#   - 0 if the tool is found.
+#   - 1 if the tool is not found.
+# - Usage:
+#   ```sh
+#   require_tool git "Install git using your package manager"
+#   ```
+require_tool() {
+    local tool="$1"
+    local install_hint="$2"
+
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        log error "Required tool '$tool' not found"
+        [ -n "$install_hint" ] && log info "$install_hint"
+        return 1
+    fi
+
+    log debug "Found $tool: $(command -v "$tool")"
+    return 0
+}
+
+# Creates a timestamped backup of an existing file.
 #
-# Notes:
-#   - Only counts files (not directories or symlinks).
+# Copies a file to a backup with a timestamp suffix before modification.
+#
+# - Parameters:
+#   - file: Path to the file to back up.
+# - Returns:
+#   - The path to the backup file, if created.
+# - Usage:
+#   ```sh
+#   backup_file ~/.vimrc
+#   # Creates ~/.vimrc.backup.20241215_143022
+#   ```
+backup_file() {
+    local file="$1"
+    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+
+    if [ -f "$file" ] && [ ! -L "$file" ]; then
+        cp "$file" "$backup"
+        log debug "Backed up $file to $backup"
+        echo "$backup"
+    fi
+}
+
+# Counts files matching a pattern.
+#
+# Returns the number of files that match the given pattern.
+#
+# - Parameters:
+#   - pattern: File pattern/glob to match.
+# - Returns:
+#   - The number of matching files.
+# - Usage:
+#   ```sh
+#   count=$(count_files "*.txt")
+#   echo $count
+#   ```
 count_files() {
   pattern="$1"
   count=0
@@ -109,104 +204,226 @@ count_files() {
   echo $count
 }
 
-# Function: safe_symlink
+# Creates symbolic links safely with backup and cleanup.
 #
-# Creates or replaces a symbolic link.
+# Backs up existing files, removes old symlinks, and creates new symbolic links.
 #
-# Parameters:
-#   $1 - Source file path.
-#   $2 - Target symlink path.
-#
-# Usage:
-#   safe_symlink "./dotfiles/.vimrc" "$HOME/.vimrc"
-#
-# Notes:
-#   - Removes existing file or symlink at target location.
+# - Parameters:
+#   - source_file: Source file path (target of symlink).
+#   - target_file: Destination path (where symlink will be created).
+# - Usage:
+#   ```sh
+#   safe_symlink "$PWD/.vimrc" "$HOME/.vimrc"
+#   ```
 safe_symlink() {
   source_file="$1"
   target_file="$2"
   filename=$(basename "$source_file")
-  
-  log_debug "Processing file: $source_file -> $target_file"
-  
+
+  log debug "Processing file: $source_file -> $target_file"
+
+  if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
+    backup_file "$target_file" >/dev/null
+    log debug "Backed up existing file: $target_file"
+  fi
+
   if [ -e "$target_file" ] || [ -L "$target_file" ]; then
-    log_debug "Removing existing file/symlink: $target_file"
+    log debug "Removing existing file/symlink: $target_file"
     rm "$target_file"
   fi
-  
+
   ln -s "$source_file" "$target_file"
-  log_success "Symlinked $filename"
-  log_debug "Created symlink: $source_file -> $target_file"
+  log success "Symlinked $filename"
+  log debug "Created symlink: $source_file -> $target_file"
 }
 
-# Function: ensure_directory
+# Creates directory and parent directories if they don't exist.
 #
-# Ensures a directory exists, creating it if necessary.
+# Equivalent to `mkdir -p`, creates the full directory path.
 #
-# Parameters:
-#   $1 - Path to directory.
-#
-# Usage:
-#   ensure_directory "$HOME/.config/myapp"
-#
-# Notes:
-#   - Uses `mkdir -p`.
+# - Parameters:
+#   - dir: Directory path to create.
+# - Usage:
+#   ```sh
+#   ensure_directory "$HOME/.config/colors"
+#   ```
 ensure_directory() {
   dir="$1"
-  log_debug "Creating directory: $dir"
+  log debug "Creating directory: $dir"
   mkdir -p "$dir"
 }
 
-# Logging Utilities
+# Downloads a file from a URL with progress indication.
+#
+# Uses `curl` or `wget` to download files with fallback support.
+#
+# - Parameters:
+#   - url: URL to download from.
+#   - dest: Local destination path.
+# - Returns:
+#   - 0 on success.
+#   - 1 if neither `curl` nor `wget` is available.
+# - Usage:
+#   ```sh
+#   download_file "https://example.com/file" "/tmp/file"
+#   ```
+download_file() {
+    local url="$1"
+    local dest="$2"
+    local filename=$(basename "$dest")
 
-# Function: log_info
-#
-# Logs an informational message (blue).
-#
-# Usage:
-#   log_info "Starting installation..."
-log_info() {
-  printf "${BLUE}[INFO]${NC} %s\n" "$1"
+    log debug "Downloading $filename from $url"
+
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL "$url" -o "$dest"
+    elif command -v wget >/dev/null 2>&1; then
+        wget -q "$url" -O "$dest"
+    else
+        log error "Neither curl nor wget available"
+        return 1
+    fi
 }
 
-# Function: log_success
+# Verifies file integrity using SHA-256 checksum.
 #
-# Logs a success message (green).
+# Compares a file's checksum against an expected value.
 #
-# Usage:
-#   log_success "Files synced."
-log_success() {
-  printf "${GREEN}[SUCCESS]${NC} %s\n" "$1"
+# - Parameters:
+#   - file: File path to verify.
+#   - expected: Expected SHA-256 checksum.
+# - Returns:
+#   - 0 if checksum matches or no checksum tool is available.
+#   - 1 if checksum does not match.
+# - Usage:
+#   ```sh
+#   verify_checksum "/tmp/file" "abc123def456..."
+#   ```
+verify_checksum() {
+    local file="$1"
+    local expected="$2"
+    local actual
+
+    if command -v shasum >/dev/null 2>&1; then
+        actual=$(shasum -a 256 "$file" | cut -d' ' -f1)
+    elif command -v sha256sum >/dev/null 2>&1; then
+        actual=$(sha256sum "$file" | cut -d' ' -f1)
+    else
+        log warning "No checksum tool available, skipping verification"
+        return 0
+    fi
+
+    if [ "$actual" = "$expected" ]; then
+        log success "Checksum verified for $(basename "$file")"
+        return 0
+    else
+        log error "Checksum mismatch for $(basename "$file")"
+        log error "Expected: $expected"
+        log error "Actual:   $actual"
+        return 1
+    fi
 }
 
-# Function: log_warning
+# Prompts user for yes/no confirmation.
 #
-# Logs a warning message (yellow).
+# Displays an interactive prompt with default value support.
 #
-# Usage:
-#   log_warning "File not found, skipping."
-log_warning() {
-  printf "${YELLOW}[WARNING]${NC} %s\n" "$1" >&2
+# - Parameters:
+#   - message: Prompt message to display.
+#   - default: Default response (optional, defaults to 'n').
+# - Returns:
+#   - 0 for yes.
+#   - 1 for no.
+# - Usage:
+#   ```sh
+#   if prompt_user "Continue setup?" "y"; then
+#       echo "Proceeding..."
+#   fi
+#   ```
+prompt_user() {
+    local message="$1"
+    local default="${2:-n}"
+    local response
+
+    while true; do
+        printf "%s [y/N]: " "$message"
+        read -r response
+        response=${response:-$default}
+
+        case "$response" in
+            [Yy]|[Yy][Ee][Ss]) return 0 ;;
+            [Nn]|[Nn][Oo]) return 1 ;;
+            *) printf "Please answer yes or no.\n" ;;
+        esac
+    done
 }
 
-# Function: log_error
+# Generates an SSH key pair if it doesn't exist.
 #
-# Logs an error message (red).
+# Creates an Ed25519 SSH key with proper permissions and configuration.
 #
-# Usage:
-#   log_error "Unable to write to /etc."
-log_error() {
-  printf "${RED}[ERROR]${NC} %s\n" "$1" >&2
+# - Parameters:
+#   - None
+# - Usage:
+#   ```sh
+#   create_ssh_key
+#   ```
+create_ssh_key() {
+    local ssh_dir="$HOME/.ssh"
+    local key_path="$ssh_dir/id_ed25519"
+
+    ensure_directory "$ssh_dir"
+    chmod 700 "$ssh_dir"
+
+    if [ ! -f "$key_path" ]; then
+        log info "Generating SSH key..."
+        ssh-keygen -t ed25519 -f "$key_path" -N "" -C "$(whoami)@$(hostname)"
+        chmod 600 "$key_path"
+        chmod 644 "${key_path}.pub"
+        log success "SSH key generated at $key_path"
+    else
+        log debug "SSH key already exists at $key_path"
+    fi
 }
 
-# Function: log_debug
+# Configures Git to use SSH key for commit signing.
 #
-# Logs a debug message (cyan) only if DEBUG=true.
+# Sets up Git configuration for SSH-based commit signing.
 #
-# Usage:
-#   log_debug "Resolved path: $path"
-log_debug() {
-  if [ "$DEBUG" = true ]; then
-    printf "${CYAN}[DEBUG]${NC} %s\n" "$1" >&2
-  fi
+# - Parameters:
+#   - None
+# - Usage:
+#   ```sh
+#   setup_git_signing
+#   ```
+setup_git_signing() {
+    local key_path="$HOME/.ssh/id_ed25519"
+
+    if [ -f "$key_path" ]; then
+        git config --global user.signingkey "$key_path"
+        git config --global commit.gpgsign true
+        git config --global gpg.format ssh
+        log success "Git signing configured with SSH key"
+    else
+        log warning "SSH key not found, skipping Git signing setup"
+    fi
+}
+
+# Creates standard development directory structure.
+#
+# Sets up organized project directories under `~/Developer`.
+#
+# - Parameters:
+#   - None
+# - Usage:
+#   ```sh
+#   create_developer_dirs
+#   ```
+create_developer_dirs() {
+    local base_dir="$HOME/Developer"
+    local dirs="personal clients study work"
+
+    for dir in $dirs; do
+        ensure_directory "$base_dir/$dir"
+        log success "Created directory: $base_dir/$dir"
+    done
 }

@@ -1,37 +1,102 @@
 [user]
-    email = "hello@maclong.uk"
-    name = "Mac Long"
-    signingKey = ~/.ssh/id_ed25519
-[alias]
-    aac = "!f() { git add . && git commit -S -m \"$1\"; }; f"
-    ac = "!f() { git add $1 && git commit -S -m \"$2\"; }; f"
-    b = "branch"
-    br = "!f() { git branch -m $1; }; f"
-    bs = "switch"
-    ca = "!f() { git commit --amend -m \"$1\"; }; f"
-    cl = "!f() { if echo \"$1\" | grep -q \"^https://\"; then git clone \"$1\"; \
-        elif echo \"$1\" | grep -q \"/\"; then git clone \"git@github.com:$1.git\"; \
-        else git clone \"git@github.com:maclong9/$1.git\"; fi; }; f"
-    d = "diff"
-    l = "log --oneline --decorate --all"
-    lg = "log --graph --oneline --decorate --all"
-    p = "push"
-    pl = "pull"
-    plo = "pull origin"
-    r = "restore"
-    sh = "show"
-    spo = "stash pop"
-    spu = "stash push -u"
-    st = "status"
-    u = "reset --soft HEAD~1"
-    bd = "!f() { read -p 'Delete branch $1? [y/N] ' yn; \
-        case $yn in [Yy]*) git branch -d $1;; *) echo 'Cancelled.';; esac; }; f"
-    pf = "push --force-with-lease"
+    name = Mac Long
+    email = hello@maclong.uk
+    signingkey = ~/.ssh/id_ed25519
+
+[core]
+    editor = vim
+    autocrlf = input
+    pager = less -FRX
+    excludesfile = ~/.gitignore_global
+
 [init]
-    defaultBranch = "main"
-[push]
-    autoSetupRemote = true
-[pull]
-    rebase = false
+    defaultBranch = main
+
+[commit]
+    gpgsign = true
+
 [gpg]
     format = ssh
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+
+[merge]
+    conflictstyle = diff3
+    tool = vimdiff
+
+[diff]
+    algorithm = histogram
+    colorMoved = default
+
+[status]
+    showUntrackedFiles = all
+
+[branch]
+    autosetupmerge = always
+    autosetuprebase = always
+
+[alias]
+    # Status and info
+    s = status --short --branch
+    st = status
+
+    # Logging
+    l = log --oneline --graph --decorate --all
+    ll = log --graph --pretty=format:'%C(yellow)%h%Creset -%C(red)%d%Creset %s %C(green)(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    last = log -1 HEAD --stat
+
+    # Branching
+    b = branch
+    ba = branch -a
+    bd = branch -d
+    bD = branch -D
+    co = checkout
+    cob = checkout -b
+    com = checkout main
+
+    # Adding and committing
+    a = add
+    aa = add --all
+    ap = add --patch
+    c = commit
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+    aac = "!f() { git add --all && git commit -m \"$1\"; }; f"
+
+    # Diffing
+    d = diff
+    dc = diff --cached
+    ds = diff --stat
+
+    # Stashing
+    sth = stash
+    stp = stash pop
+    stl = stash list
+    sts = stash show -p
+
+    # Remote operations
+    f = fetch
+    fa = fetch --all
+    p = push
+    pf = push --force-with-lease
+    pu = push -u origin HEAD
+    pl = pull
+
+    # Reset operations
+    unstage = reset HEAD --
+    uncommit = reset --soft HEAD~1
+
+[color]
+    ui = auto
+[includeIf "gitdir:~/Developer/work/"]
+    path = ~/.gitconfig-work
