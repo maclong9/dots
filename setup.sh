@@ -1,6 +1,4 @@
 #!/bin/sh
-set -e
-
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
     printf "%s\n" "$cmd required" >&2
@@ -8,20 +6,15 @@ for cmd in git curl ln mkdir; do
   }
 done
 
-printf "Downloading utils.sh...\n"
-if ! curl -fsSL \
-  "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-  -o /tmp/utils.sh
-then
+if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh; then
   printf "Failed to download utils.sh\n" >&2
   exit 1
 fi
-printf "Downloaded utils.sh, sourcing...\n"
+
 if ! . /tmp/utils.sh; then
   printf "Failed to source utils.sh\n" >&2
   exit 1
 fi
-printf "utils.sh sourced successfully\n"
 
 parse_args "$@"
 
@@ -159,7 +152,7 @@ setup_ssh() {
 
 main() {
   log debug "Arguments: $*"
-  log info "Starting bootstrap process..."
+  log info "Initialising developer environment..."
 
   spinner "Creating development directories" create_dev_directories
   spinner "Setting up dotfiles" setup_dotfiles
