@@ -4,7 +4,7 @@ set -e
 # Ensure required tools exist
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
-    printf "%s required\n" "$cmd" >&2
+    printf "%s\n" "$cmd required" >&2
     exit 1
   }
 done
@@ -14,7 +14,7 @@ if ! curl -fsSL \
   "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
   -o /tmp/utils.sh || ! . /tmp/utils.sh
 then
-  printf "Failed to load utils.sh\n" >&2
+  printf "%s\n" "Failed to load utils.sh" >&2
   exit 1
 fi
 
@@ -137,8 +137,12 @@ setup_ssh() {
   ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""
   eval "$(ssh-agent -s)"
 
-  printf "Host github.com\n  AddKeysToAgent yes\n  UseKeychain yes\n  IdentityFile \
-~/.ssh/id_ed25519\n" > "$HOME/.ssh/config"
+  printf "%s\n" \
+    "Host github.com" \
+    "  AddKeysToAgent yes" \
+    "  UseKeychain yes" \
+    "  IdentityFile ~/.ssh/id_ed25519" \
+    > "$HOME/.ssh/config"
 
   if [ "$IS_MAC" = true ]; then
     cat "$key.pub" | pbcopy
@@ -162,8 +166,12 @@ main() {
   [ "$IS_MAC" = true ] && setup_touch_id
 
   log_success "Setup complete!"
-  printf "\nNext steps:\n- Restart your shell\n- Add your SSH key to services\n- \
-Apply your themes\n"
+  printf "%s\n" \
+    "" \
+    "Next steps:" \
+    "- Restart your shell" \
+    "- Add your SSH key to services" \
+    "- Apply your themes"
 }
 
 main "$@"
