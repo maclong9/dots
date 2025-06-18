@@ -106,6 +106,7 @@ spinner() {
 
     printf "%s " "$message"
 
+    # Run command and capture both stdout and stderr
     "$@" > /dev/null 2> "$tmp_err" &
     pid=$!
 
@@ -125,8 +126,12 @@ spinner() {
         printf "\r%s ✓\n" "$message"
     else
         printf "\r%s ✗\n" "$message"
+        # Always show errors to stderr for debugging
         if [ -s "$tmp_err" ]; then
-            printf "%s\n" "$(cat "$tmp_err")" >&2
+            log error "Command failed with output:"
+            cat "$tmp_err" >&2
+        else
+            log error "Command failed with exit code $exit_code (no error output captured)"
         fi
     fi
 
