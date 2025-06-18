@@ -22,8 +22,8 @@
 	spu = "stash push -u"
 	st = "status"
 	u = "reset --soft HEAD~1"
-    bd = "!f() { read -p 'Delete branch $1? [y/N] ' yn; case $yn in [Yy]*) git branch -d $1;; *) echo 'Cancelled.';; esac; }; f"
-    pff = "push --force-with-lease"
+        bd = "!f() { read -p 'Delete branch $1? [y/N] ' yn; case $yn in [Yy]*) git branch -d $1;; *) echo 'Cancelled.';; esac; }; f"
+        pf = "push --force-with-lease"
 [init]
 	defaultBranch = "main"
 [push]
