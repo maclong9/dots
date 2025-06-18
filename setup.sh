@@ -120,12 +120,13 @@ setup_dotfiles() {
 
 link_dotfiles() {
   log info "Linking dotfiles from .config to home..."
-  find "$HOME/.config" -maxdepth 1 -name ".*" -type f -not -name '.git' -exec sh -c '
-      for file; do
-        name=$(basename "$file")
-        spinner "Symlinking $name" safe_symlink "$file" "$HOME/$name"
-      done
-  ' sh {} +
+  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while IFS= read -r config_file; do
+    filename=$(basename "$config_file")
+    case "$filename" in
+      .|..|.git) continue ;;
+    esac
+    safe_symlink "$config_file" "$HOME/$filename"
+  done
   log success "Dotfiles linked"
 }
 
