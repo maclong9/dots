@@ -48,7 +48,7 @@ log() {
     success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
     warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
     error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
-    debug) [ "$DEBUG" = true ] && printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2 ;;
+    debug) printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2 ;;
   esac
 }
 
@@ -240,7 +240,7 @@ safe_symlink() {
 
   # Get absolute path of source file
   source_file=$(cd "$(dirname "$source_file")" && pwd)/$(basename "$source_file")
-  
+
   # Ensure target directory exists
   target_dir=$(dirname "$target_file")
   if [ ! -d "$target_dir" ]; then
