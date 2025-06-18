@@ -9,13 +9,14 @@ for cmd in git curl ln mkdir; do
   }
 done
 
-if curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh; then
-  . /tmp/utils.sh
-else
+
+if ! curl -fsSL \
+  "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
+  -o /tmp/utils.sh || ! . /tmp/utils.sh
+then
   printf "%s\n" "Failed to load utils.sh" >&2
   exit 1
 fi
-
 
 parse_args "$@"
 
@@ -66,13 +67,12 @@ setup_colors() {
 setup_touch_id() {
   log info "Configuring Touch ID for sudo..."
 
-  if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
-      log success "Touch ID enabled"
-    else
-      log error "Failed to enable Touch ID"
-      return 1
-    fi
-
+  if [ -f /etc/pam.d/sudo_local ] && \
+     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local
+  then
+    log success "Touch ID already enabled"
+    return
+  fi
 
   [ ! -f /etc/pam.d/sudo_local.template ] && {
     log error "Missing template: /etc/pam.d/sudo_local.template"
@@ -82,13 +82,11 @@ setup_touch_id() {
   spinner "Configuring Touch ID" sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
   sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local
 
-  if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
-      log success "Touch ID enabled"
-    else
+  grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && \
+    log success "Touch ID enabled" || {
       log error "Failed to enable Touch ID"
       return 1
-    fi
-
+    }
 }
 
 create_dev_directories() {
@@ -120,13 +118,9 @@ setup_dotfiles() {
 
 link_dotfiles() {
   log info "Linking dotfiles from .config to home..."
-  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while IFS= read -r config_file; do
-    filename=$(basename "$config_file")
-    case "$filename" in
-      .|..|.git) continue ;;
-    esac
-    safe_symlink "$config_file" "$HOME/$filename"
-  done
+  find "$HOME/.config" -maxdepth 1 -name ".*" -type f -not -name '.git' -exec sh -c '
+    spinner "Symlinking $(basename "{}")" safe_symlink "{}" "$HOME/$(basename "{}")"
+  '
   log success "Dotfiles linked"
 }
 
@@ -150,7 +144,7 @@ setup_ssh() {
     > "$HOME/.ssh/config"
 
   if [ "$IS_MAC" = true ]; then
-    pbcopy < "$key.pub"
+    cat "$key.pub" | pbcopy
     log success "SSH public key copied to clipboard"
   else
     log success "SSH key generated"
