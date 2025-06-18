@@ -8,9 +8,13 @@
 # Designed for sourcing into other POSIX-compliant shell scripts.
 #
 # Usage:
-#   curl -fsSL \
-#       "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-#       -o /tmp/utils.sh && . /tmp/utils.sh
+#   if ! curl -fsSL \
+#     "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
+#     -o /tmp/utils.sh || ! . /tmp/utils.sh
+#   then
+#     printf "%s\n" "Failed to load utils.sh" >&2
+#     exit 1
+#   fi
 #
 # Once sourced, you may call functions and environment variables as required
 

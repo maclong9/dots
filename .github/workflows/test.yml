@@ -32,7 +32,8 @@ jobs:
       - name: Verify directories created
         shell: sh
         run: |
-          for d in "$HOME/Developer/personal" "$HOME/Developer/clients" "$HOME/Developer/study" "$HOME/Developer/work"; do
+          for d in "$HOME/Developer/personal" "$HOME/Developer/clients" \
+                   "$HOME/Developer/study" "$HOME/Developer/work"; do
             if [ ! -d "$d" ]; then
               printf "Missing directory: $d"
               exit 1
@@ -66,8 +67,8 @@ jobs:
         shell: sh
         run: |
           if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-              printf "SSH Key generation failed"
-              exit 1
+            printf "SSH Key generation failed"
+            exit 1
           fi
 
       - name: List files for debugging
