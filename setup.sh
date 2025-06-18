@@ -10,8 +10,9 @@ for cmd in git curl ln mkdir; do
 done
 
 # Load shared functions and env variables
-if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh \
-  || ! . /tmp/utils.sh
+if ! curl -fsSL \
+  "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
+  -o /tmp/utils.sh || ! . /tmp/utils.sh
 then
   printf "Failed to load utils.sh\n" >&2
   exit 1
@@ -28,7 +29,8 @@ process_colorscheme_files() {
   if [ "$count" -gt 0 ]; then
     log_debug "Found $count $4 files in $scheme"
     for file in "$1"/$2; do
-      [ -f "$file" ] && safe_symlink "$file" "$3/$(basename "$file")"
+      [ -f "$file" ] && \
+        safe_symlink "$file" "$3/$(basename "$file")"
     done
   else
     log_debug "No $4 files in $scheme"
@@ -44,14 +46,18 @@ setup_colors() {
   log_info "Installing colorschemes..."
 
   ensure_directory "$HOME/.vim/colors"
-  [ "$IS_MAC" = true ] && ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+  [ "$IS_MAC" = true ] && \
+    ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
   for scheme_dir in "$HOME/.config/colors"/*; do
     [ -d "$scheme_dir" ] || continue
 
     log_info "Processing scheme: $(basename "$scheme_dir")"
-    process_colorscheme_files "$scheme_dir" "*.vim" "$HOME/.vim/colors" "vim"
-    [ "$IS_MAC" = true ] && process_colorscheme_files "$scheme_dir" "*.xccolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" "Xcode"
+    process_colorscheme_files "$scheme_dir" "*.vim" \
+      "$HOME/.vim/colors" "vim"
+    [ "$IS_MAC" = true ] && \
+      process_colorscheme_files "$scheme_dir" "*.xccolortheme" \
+      "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" "Xcode"
   done
 
   log_success "Color setup complete"
@@ -60,7 +66,9 @@ setup_colors() {
 setup_touch_id() {
   log_info "Configuring Touch ID for sudo..."
 
-  if [ -f /etc/pam.d/sudo_local ] && grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
+  if [ -f /etc/pam.d/sudo_local ] && \
+     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local
+  then
     log_success "Touch ID already enabled"
     return
   fi
@@ -73,8 +81,8 @@ setup_touch_id() {
   sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
   sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local
 
-  grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local \
-    && log_success "Touch ID enabled" || {
+  grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && \
+    log_success "Touch ID enabled" || {
       log_error "Failed to enable Touch ID"
       return 1
     }
@@ -107,7 +115,8 @@ setup_dotfiles() {
 link_dotfiles() {
   log_info "Linking dotfiles from .config to home..."
 
-  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | while IFS= read -r file; do
+  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | \
+  while IFS= read -r file; do
     name=$(basename "$file")
     case "$name" in
       .|..|.git) continue ;;
@@ -128,8 +137,8 @@ setup_ssh() {
   ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""
   eval "$(ssh-agent -s)"
 
-  printf "Host github.com\n  AddKeysToAgent yes\n  UseKeychain yes\n  IdentityFile ~/.ssh/id_ed25519\n" \
-    > "$HOME/.ssh/config"
+  printf "Host github.com\n  AddKeysToAgent yes\n  UseKeychain yes\n  IdentityFile \
+~/.ssh/id_ed25519\n" > "$HOME/.ssh/config"
 
   if [ "$IS_MAC" = true ]; then
     cat "$key.pub" | pbcopy
@@ -153,7 +162,9 @@ main() {
   [ "$IS_MAC" = true ] && setup_touch_id
 
   log_success "Setup complete!"
-  printf "\nNext steps:\n- Restart your shell\n- Add your SSH key to services\n- Apply your themes\n"
+  printf "\nNext steps:\n- Restart your shell\n- Add your SSH key to services\n- \
+Apply your themes\n"
 }
 
 main "$@"
+
