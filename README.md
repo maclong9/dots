@@ -9,6 +9,7 @@ To bootstrap a new environment (macOS recommended):
 ```sh
 curl -fsSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh
 ```
+
 > **Note:** It’s recommended to use [containers](https://github.com/apple/container/tree/main) for development.
 
 ---
@@ -29,3 +30,4 @@ curl -fsSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup
 1. Restart your terminal or run: `source ~/.zshrc`
 2. Set up SSH keys for remote use (add your public key to GitHub).
 3. Configure color schemes in your editors as needed.
+
