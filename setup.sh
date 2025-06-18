@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Ensure required tools exist
+
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
     printf "%s\n" "$cmd required" >&2
@@ -9,7 +9,7 @@ for cmd in git curl ln mkdir; do
   }
 done
 
-# Load shared functions and env variables
+
 if ! curl -fsSL \
   "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
   -o /tmp/utils.sh || ! . /tmp/utils.sh
@@ -20,6 +20,7 @@ fi
 
 parse_args "$@"
 
+
 process_colorscheme_files() {
   [ ! -d "$1" ] && return
 
@@ -27,32 +28,32 @@ process_colorscheme_files() {
   scheme=$(basename "$1")
 
   if [ "$count" -gt 0 ]; then
-    log_debug "Found $count $4 files in $scheme"
+    log debug "Found $count $4 files in $scheme"
     for file in "$1"/$2; do
       [ -f "$file" ] && \
-        safe_symlink "$file" "$3/$(basename "$file")"
+        spinner "Symlinking $4 file $(basename "$file")" safe_symlink "$file" "$3/$(basename "$file")"
     done
   else
-    log_debug "No $4 files in $scheme"
+    log debug "No $4 files in $scheme"
   fi
 }
 
 setup_colors() {
   [ ! -d "$HOME/.config/colors" ] && {
-    log_warning "Colors directory missing, skipping color setup"
+    log warning "Colors directory missing, skipping color setup"
     return
   }
 
-  log_info "Installing colorschemes..."
+  log info "Installing colorschemes..."
 
-  ensure_directory "$HOME/.vim/colors"
+  spinner "Creating Vim colors directory" ensure_directory "$HOME/.vim/colors"
   [ "$IS_MAC" = true ] && \
-    ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+    spinner "Creating Xcode colors directory" ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
   for scheme_dir in "$HOME/.config/colors"/*; do
     [ -d "$scheme_dir" ] || continue
 
-    log_info "Processing scheme: $(basename "$scheme_dir")"
+    log info "Processing scheme: $(basename "$scheme_dir")"
     process_colorscheme_files "$scheme_dir" "*.vim" \
       "$HOME/.vim/colors" "vim"
     [ "$IS_MAC" = true ] && \
@@ -60,36 +61,36 @@ setup_colors() {
       "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" "Xcode"
   done
 
-  log_success "Color setup complete"
+  log success "Color setup complete"
 }
 
 setup_touch_id() {
-  log_info "Configuring Touch ID for sudo..."
+  log info "Configuring Touch ID for sudo..."
 
   if [ -f /etc/pam.d/sudo_local ] && \
      grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local
   then
-    log_success "Touch ID already enabled"
+    log success "Touch ID already enabled"
     return
   fi
 
   [ ! -f /etc/pam.d/sudo_local.template ] && {
-    log_error "Missing template: /etc/pam.d/sudo_local.template"
+    log error "Missing template: /etc/pam.d/sudo_local.template"
     return 1
   }
 
-  sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
+  spinner "Configuring Touch ID" sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
   sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local
 
   grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && \
-    log_success "Touch ID enabled" || {
-      log_error "Failed to enable Touch ID"
+    log success "Touch ID enabled" || {
+      log error "Failed to enable Touch ID"
       return 1
     }
 }
 
 create_dev_directories() {
-  log_info "Creating development directories..."
+  log info "Creating development directories..."
 
   for dir in \
     "$HOME/Developer/personal" \
@@ -97,44 +98,42 @@ create_dev_directories() {
     "$HOME/Developer/study" \
     "$HOME/Developer/work"
   do
-    ensure_directory "$dir"
+    spinner "Creating directory $dir" ensure_directory "$dir"
   done
 
-  log_debug "Development directories created"
+  log success "Development directories created"
 }
 
 setup_dotfiles() {
-  log_info "Installing dotfiles..."
+  log info "Installing dotfiles..."
 
   rm -rf "$HOME/.config"
-  log_debug "Cloning repository https://github.com/maclong9/dots"
-  git clone "https://github.com/maclong9/dots" "$HOME/.config"
-  log_success "Dotfiles cloned"
+  log debug "Cloning repository https://github.com/maclong9/dots"
+  spinner "Cloning dotfiles repository" git clone "https://github.com/maclong9/dots" "$HOME/.config" || {
+    log error "Failed to clone dotfiles repository"
+    exit 1
+  }
+  log success "Dotfiles cloned"
 }
 
 link_dotfiles() {
-  log_info "Linking dotfiles from .config to home..."
-
-  find "$HOME/.config" -maxdepth 1 -name ".*" -type f | \
-  while IFS= read -r file; do
-    name=$(basename "$file")
-    case "$name" in
-      .|..|.git) continue ;;
-    esac
-    safe_symlink "$file" "$HOME/$name"
-  done
+  log info "Linking dotfiles from .config to home..."
+  find "$HOME/.config" -maxdepth 1 -name ".*" -type f -not -name '.git' -exec sh -c '
+    spinner "Symlinking $(basename "{}")" safe_symlink "{}" "$HOME/$(basename "{}")"
+  ' \;
+  log success "Dotfiles linked"
 }
 
 setup_ssh() {
   key="$HOME/.ssh/id_ed25519"
 
   [ -f "$key" ] && {
-    log_debug "SSH key already exists"
+    log debug "SSH key already exists"
     return
   }
 
-  log_info "Generating new SSH key..."
-  ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""
+  log info "Generating new SSH key..."
+  spinner "Generating SSH key" ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""
   eval "$(ssh-agent -s)"
 
   printf "%s\n" \
@@ -146,26 +145,26 @@ setup_ssh() {
 
   if [ "$IS_MAC" = true ]; then
     cat "$key.pub" | pbcopy
-    log_success "SSH public key copied to clipboard"
+    log success "SSH public key copied to clipboard"
   else
-    log_success "SSH key generated"
-    log_info "Public key contents:"
+    log success "SSH key generated"
+    log info "Public key contents:"
     cat "$key.pub"
   fi
 }
 
 main() {
-  log_debug "Arguments: $*"
-  log_info "Starting bootstrap process..."
+  log debug "Arguments: $*"
+  log info "Starting bootstrap process..."
 
-  create_dev_directories
-  setup_dotfiles
-  setup_colors
-  link_dotfiles
-  setup_ssh
-  [ "$IS_MAC" = true ] && setup_touch_id
+  spinner "Creating development directories" create_dev_directories
+  spinner "Setting up dotfiles" setup_dotfiles
+  spinner "Setting up color schemes" setup_colors
+  spinner "Linking dotfiles" link_dotfiles
+  spinner "Setting up SSH configuration" setup_ssh
+  [ "$IS_MAC" = true ] && spinner "Configuring Touch ID" setup_touch_id
 
-  log_success "Setup complete!"
+  log success "Setup complete!"
   printf "%s\n" \
     "" \
     "Next steps:" \
@@ -175,4 +174,3 @@ main() {
 }
 
 main "$@"
-
