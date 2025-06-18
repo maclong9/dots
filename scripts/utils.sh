@@ -5,25 +5,24 @@
 # Defines ANSI color codes and system detection variables.
 #
 # Sets up color codes for logging and determines if the system is macOS.
-BLACK='\033[0;30m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-WHITE='\033[0;37m'
+export BLACK='\033[0;30m'
+export RED='\033[0;31m'
+export GREEN='\033[0;32m'
+export YELLOW='\033[0;33m'
+export BLUE='\033[0;34m'
+export MAGENTA='\033[0;35m'
+export CYAN='\033[0;36m'
+export WHITE='\033[0;37m'
 
-BRIGHT_BLACK='\033[1;30m'
-BRIGHT_RED='\033[1;31m'
-BRIGHT_GREEN='\033[1;32m'
-BRIGHT_YELLOW='\033[1;33m'
-BRIGHT_BLUE='\033[1;34m'
-BRIGHT_MAGENTA='\033[1;35m'
-BRIGHT_CYAN='\033[1;36m'
-BRIGHT_WHITE='\033[1;37m'
-
-NC='\033[0m'
+export BRIGHT_BLACK='\033[1;30m'
+export BRIGHT_RED='\033[1;31m'
+export BRIGHT_GREEN='\033[1;32m'
+export BRIGHT_YELLOW='\033[1;33m'
+export BRIGHT_BLUE='\033[1;34m'
+export BRIGHT_MAGENTA='\033[1;35m'
+export BRIGHT_CYAN='\033[1;36m'
+export BRIGHT_WHITE='\033[1;37m'
+export NC='\033[0m'
 
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
