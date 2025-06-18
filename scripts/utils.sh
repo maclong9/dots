@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#!/bin/sh
-
 # POSIX Shell Utility Functions
 #
 # Provides logging, argument parsing, filesystem helpers,
@@ -41,7 +39,7 @@ BRIGHT_WHITE='\033[1;37m'
 # Reset
 NC='\033[0m' # No Color
 
-# Checks if the system is macOS (auto-detected if unset).
+# Checks if the system is macOS
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
 # Function: parse_args
