@@ -46,7 +46,15 @@ jobs:
           fi
           cat checksums.txt
 
-      - name: Run shellcheck
+      - name: Install ShellCheck
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            sudo apt-get update && sudo apt-get install -y shellcheck
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            brew install shellcheck
+          fi
+
+      - name: Run ShellCheck
         run: |
           shellcheck setup.sh scripts/utils.sh
 
