@@ -100,17 +100,17 @@ parse_args() {
 #   spinner "Processing files..." sleep 2
 #   ```
 spinner() {
-    local message="$1"
+    message="$1"
     shift
-    local pid
+    pid
 
     printf "%s " "$message"
 
     "$@" >/dev/null 2>&1 &
     pid=$!
 
-    local chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
-    local i=0
+    chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+    i=0
     while kill -0 $pid 2>/dev/null; do
         char=$(printf "%s" "$chars" | cut -c$((i % 10 + 1)))
         printf "\r%s %s" "$message" "$char"
@@ -119,7 +119,7 @@ spinner() {
     done
 
     wait $pid
-    local exit_code=$?
+    exit_code=$?
 
     if [ $exit_code -eq 0 ]; then
         printf "\r%s ✓\n" "$message"
@@ -145,8 +145,8 @@ spinner() {
 #   require_tool git "Install git using your package manager"
 #   ```
 require_tool() {
-    local tool="$1"
-    local install_hint="$2"
+    tool="$1"
+    install_hint="$2"
 
     if ! command -v "$tool" >/dev/null 2>&1; then
         log error "Required tool '$tool' not found"
@@ -172,8 +172,8 @@ require_tool() {
 #   # Creates ~/.vimrc.backup.20241215_143022
 #   ```
 backup_file() {
-    local file="$1"
-    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+    file="$1"
+    backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
 
     if [ -f "$file" ] && [ ! -L "$file" ]; then
         cp "$file" "$backup"
@@ -259,7 +259,7 @@ ensure_directory() {
 #
 # - Parameters:
 #   - url: URL to download from.
-#   - dest: Local destination path.
+#   - dest: destination path.
 # - Returns:
 #   - 0 on success.
 #   - 1 if neither `curl` nor `wget` is available.
@@ -268,9 +268,9 @@ ensure_directory() {
 #   download_file "https://example.com/file" "/tmp/file"
 #   ```
 download_file() {
-    local url="$1"
-    local dest="$2"
-    local filename=$(basename "$dest")
+    url="$1"
+    dest="$2"
+    filename=$(basename "$dest")
 
     log debug "Downloading $filename from $url"
 
@@ -299,9 +299,9 @@ download_file() {
 #   verify_checksum "/tmp/file" "abc123def456..."
 #   ```
 verify_checksum() {
-    local file="$1"
-    local expected="$2"
-    local actual
+    file="$1"
+    expected="$2"
+    actual
 
     if command -v shasum >/dev/null 2>&1; then
         actual=$(shasum -a 256 "$file" | cut -d' ' -f1)
@@ -340,9 +340,9 @@ verify_checksum() {
 #   fi
 #   ```
 prompt_user() {
-    local message="$1"
-    local default="${2:-n}"
-    local response
+    message="$1"
+    default="${2:-n}"
+    response
 
     while true; do
         printf "%s [y/N]: " "$message"
@@ -368,8 +368,8 @@ prompt_user() {
 #   create_ssh_key
 #   ```
 create_ssh_key() {
-    local ssh_dir="$HOME/.ssh"
-    local key_path="$ssh_dir/id_ed25519"
+    ssh_dir="$HOME/.ssh"
+    key_path="$ssh_dir/id_ed25519"
 
     ensure_directory "$ssh_dir"
     chmod 700 "$ssh_dir"
@@ -396,7 +396,7 @@ create_ssh_key() {
 #   setup_git_signing
 #   ```
 setup_git_signing() {
-    local key_path="$HOME/.ssh/id_ed25519"
+    key_path="$HOME/.ssh/id_ed25519"
 
     if [ -f "$key_path" ]; then
         git config --global user.signingkey "$key_path"
@@ -419,8 +419,8 @@ setup_git_signing() {
 #   create_developer_dirs
 #   ```
 create_developer_dirs() {
-    local base_dir="$HOME/Developer"
-    local dirs="personal clients study work"
+    base_dir="$HOME/Developer"
+    dirs="personal clients study work"
 
     for dir in $dirs; do
         ensure_directory "$base_dir/$dir"
