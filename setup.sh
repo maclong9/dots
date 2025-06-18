@@ -9,14 +9,13 @@ for cmd in git curl ln mkdir; do
   }
 done
 
-
-if ! curl -fsSL \
-  "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" \
-  -o /tmp/utils.sh || ! . /tmp/utils.sh
-then
+if curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh; then
+  . /tmp/utils.sh
+else
   printf "%s\n" "Failed to load utils.sh" >&2
   exit 1
 fi
+
 
 parse_args "$@"
 
@@ -67,12 +66,13 @@ setup_colors() {
 setup_touch_id() {
   log info "Configuring Touch ID for sudo..."
 
-  if [ -f /etc/pam.d/sudo_local ] && \
-     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local
-  then
-    log success "Touch ID already enabled"
-    return
-  fi
+  if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
+      log success "Touch ID enabled"
+    else
+      log error "Failed to enable Touch ID"
+      return 1
+    fi
+
 
   [ ! -f /etc/pam.d/sudo_local.template ] && {
     log error "Missing template: /etc/pam.d/sudo_local.template"
@@ -144,7 +144,7 @@ setup_ssh() {
     > "$HOME/.ssh/config"
 
   if [ "$IS_MAC" = true ]; then
-    cat "$key.pub" | pbcopy
+    pbcopy < "$key.pub"
     log success "SSH public key copied to clipboard"
   else
     log success "SSH key generated"
