@@ -56,7 +56,7 @@ jobs:
 
       - name: Run ShellCheck
         run: |
-          shellcheck setup.sh scripts/utils.sh
+          shellcheck -x setup.sh scripts/utils.sh
 
       - name: Make scripts executable
         shell: sh
