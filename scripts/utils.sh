@@ -102,30 +102,37 @@ spinner() {
     message="$1"
     shift
 
+    tmp_err=$(mktemp 2>/dev/null || echo "/tmp/spinner_error_$$.log")
+
     printf "%s " "$message"
 
-    "$@" >/dev/null 2>&1 &
+    "$@" > /dev/null 2> "$tmp_err" &
     pid=$!
 
     chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
     i=0
-    while kill -0 $pid 2>/dev/null; do
+    while kill -0 "$pid" 2>/dev/null; do
         char=$(printf "%s" "$chars" | cut -c$((i % 10 + 1)))
         printf "\r%s %s" "$message" "$char"
         sleep 0.1
         i=$((i + 1))
     done
 
-    wait $pid
+    wait "$pid"
     exit_code=$?
 
-    if [ $exit_code -eq 0 ]; then
+    if [ "$exit_code" -eq 0 ]; then
         printf "\r%s ✓\n" "$message"
     else
         printf "\r%s ✗\n" "$message"
+        if [ -s "$tmp_err" ]; then
+            printf "%s\n" "$(cat "$tmp_err")" >&2
+        fi
     fi
 
-    return $exit_code
+    rm -f "$tmp_err"
+
+    return "$exit_code"
 }
 
 # Ensures a required command is available on the system.
