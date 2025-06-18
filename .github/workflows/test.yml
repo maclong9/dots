@@ -106,10 +106,10 @@ jobs:
           . ./scripts/utils.sh
 
           # Test logging functions
-          log_info "Testing info log"
-          log_success "Testing success log"
-          log_warning "Testing warning log"
-          log_debug "Testing debug log"
+          log info "Testing info log"
+          log success "Testing success log"
+          log warning "Testing warning log"
+          log debug "Testing debug log"
 
           # Test utility functions
           ensure_directory "/tmp/test_dir"
