@@ -4,14 +4,14 @@ set -e
 # Ensure required tools exist
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
-    echo "$cmd required" >&2
+    printf "%s required" "$cmd" >&2
     exit 1
   }
 done
 
 # Load shared functions and env variables
 if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh || ! . /tmp/utils.sh; then
-  echo "Failed to load utils.sh" >&2
+  printf "Failed to load utils.sh" >&2
   exit 1
 fi
 
