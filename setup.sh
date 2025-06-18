@@ -3,63 +3,115 @@
 # Fail fast if basic commands missing
 for cmd in git curl ln mkdir; do
   command -v "$cmd" >/dev/null 2>&1 || {
-    printf "%s\n" "$cmd required" >&2
+    printf "ERROR: %s required but not found\n" "$cmd" >&2
     exit 1
   }
 done
 
 if ! curl -fsSL "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh" -o /tmp/utils.sh; then
-  printf "Failed to download utils.sh\n" >&2
+  printf "ERROR: Failed to download utils.sh\n" >&2
   exit 1
 fi
 
 if ! . /tmp/utils.sh; then
-  printf "Failed to source utils.sh\n" >&2
+  printf "ERROR: Failed to source utils.sh\n" >&2
   exit 1
 fi
 
 parse_args "$@"
 
 process_colorscheme_files() {
-  [ ! -d "$1" ] && return 0
+  scheme_dir="$1"
+  pattern="$2"
+  target_dir="$3"
+  file_type="$4"
+  
+  [ ! -d "$scheme_dir" ] && return 0
 
-  count=$(count_files "$1/$2") || return 1
-  scheme=$(basename "$1")
+  count=$(count_files "$scheme_dir/$pattern") || {
+    log error "Failed to count files in $scheme_dir"
+    return 1
+  }
+  
+  scheme=$(basename "$scheme_dir")
 
   if [ "$count" -gt 0 ]; then
-    log debug "Found $count $4 files in $scheme"
-    for file in "$1"/$2; do
+    log debug "Found $count $file_type files in $scheme"
+    for file in "$scheme_dir"/$pattern; do
       [ -f "$file" ] || continue
-      spinner "Symlinking $4 file $(basename "$file")" safe_symlink "$file" "$3/$(basename "$file")"
+      
+      filename=$(basename "$file")
+      log info "Symlinking $file_type file $filename"
+      
+      if ! safe_symlink "$file" "$target_dir/$filename"; then
+        log error "Failed to symlink $filename"
+        return 1
+      fi
     done
   else
-    log debug "No $4 files in $scheme"
+    log debug "No $file_type files in $scheme"
   fi
 
   return 0
 }
 
 setup_colors() {
-  [ ! -d "$HOME/.config/colors" ] && {
+  if [ ! -d "$HOME/.config/colors" ]; then
     log warning "Colors directory missing, skipping color setup"
     return 0
-  }
+  fi
 
   log info "Installing colorschemes..."
+  log debug "Colors directory: $HOME/.config/colors"
 
-  spinner "Creating Vim colors directory" ensure_directory "$HOME/.vim/colors" || return 1
-  if [ "$IS_MAC" = true ]; then
-    spinner "Creating Xcode colors directory" ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" || return 1
+  if ! spinner "Creating Vim colors directory" ensure_directory "$HOME/.vim/colors"; then
+    log error "Failed to create Vim colors directory"
+    return 1
   fi
+  
+  if [ "$IS_MAC" = true ]; then
+    if ! spinner "Creating Xcode colors directory" ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"; then
+      log error "Failed to create Xcode colors directory"
+      return 1
+    fi
+  fi
+
+  # Check if there are any scheme directories
+  scheme_count=0
+  for scheme_dir in "$HOME/.config/colors"/*; do
+    [ -d "$scheme_dir" ] && scheme_count=$((scheme_count + 1))
+  done
+
+  if [ "$scheme_count" -eq 0 ]; then
+    log warning "No colorscheme directories found in $HOME/.config/colors"
+    return 0
+  fi
+
+  log debug "Found $scheme_count colorscheme directories"
 
   for scheme_dir in "$HOME/.config/colors"/*; do
     [ -d "$scheme_dir" ] || continue
 
-    log info "Processing scheme: $(basename "$scheme_dir")"
-    process_colorscheme_files "$scheme_dir" "*.vim" "$HOME/.vim/colors" "vim" || return 1
+    scheme_name=$(basename "$scheme_dir")
+    log info "Processing scheme: $scheme_name"
+    log debug "Scheme directory: $scheme_dir"
+    
+    # List files in the scheme directory for debugging
+    if [ "$DEBUG" = true ]; then
+      log debug "Files in $scheme_name:"
+      ls -la "$scheme_dir" >&2
+    fi
+    
+    if ! process_colorscheme_files "$scheme_dir" "*.vim" "$HOME/.vim/colors" "vim"; then
+      log error "Failed to process vim colorscheme files for $scheme_name"
+      return 1
+    fi
 
     if [ "$IS_MAC" = true ]; then
-      process_colorscheme_files "$scheme_dir" "*.xccolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" "Xcode" || return 1
+      if ! process_colorscheme_files "$scheme_dir" "*.xccolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes" "Xcode"; then
+        log error "Failed to process Xcode colorscheme files for $scheme_name"
+        return 1
+      fi
     fi
   done
 
@@ -80,13 +132,20 @@ setup_touch_id() {
     return 1
   }
 
-  spinner "Configuring Touch ID" sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local || return 1
-  sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local || return 1
+  if ! spinner "Configuring Touch ID" sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local; then
+    log error "Failed to copy Touch ID template"
+    return 1
+  fi
+  
+  if ! sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local; then
+    log error "Failed to modify Touch ID configuration"
+    return 1
+  fi
 
   if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
     log success "Touch ID enabled"
   else
-    log error "Failed to enable Touch ID"
+    log error "Failed to enable Touch ID - configuration not found"
     return 1
   fi
   return 0
@@ -96,7 +155,10 @@ create_dev_directories() {
   log info "Creating development directories..."
 
   for dir in "$HOME/Developer/personal" "$HOME/Developer/clients" "$HOME/Developer/study" "$HOME/Developer/work"; do
-    spinner "Creating directory $dir" ensure_directory "$dir" || return 1
+    if ! spinner "Creating directory $dir" ensure_directory "$dir"; then
+      log error "Failed to create directory $dir"
+      return 1
+    fi
   done
 
   log success "Development directories created"
@@ -106,16 +168,19 @@ create_dev_directories() {
 setup_dotfiles() {
   log info "Installing dotfiles..."
 
-  rm -rf "$HOME/.config" || {
-    log error "Failed to remove old .config directory"
-    return 1
-  }
+  if [ -d "$HOME/.config" ]; then
+    log debug "Removing existing .config directory"
+    if ! rm -rf "$HOME/.config"; then
+      log error "Failed to remove old .config directory"
+      return 1
+    fi
+  fi
 
   log debug "Cloning repository https://github.com/maclong9/dots"
-  spinner "Cloning dotfiles repository" git clone "https://github.com/maclong9/dots" "$HOME/.config" || {
+  if ! spinner "Cloning dotfiles repository" git clone "https://github.com/maclong9/dots" "$HOME/.config"; then
     log error "Failed to clone dotfiles repository"
     return 1
-  }
+  fi
 
   log success "Dotfiles cloned"
   return 0
@@ -124,11 +189,52 @@ setup_dotfiles() {
 link_dotfiles() {
   log info "Linking dotfiles from .config to home..."
 
-  for file in "$HOME/.config"/.*; do
-    [ -f "$file" ] || continue
-    [ "$(basename "$file")" = ".git" ] && continue
+  # Check if .config directory exists and has dotfiles
+  if [ ! -d "$HOME/.config" ]; then
+    log error ".config directory does not exist"
+    return 1
+  fi
 
-    spinner "Symlinking $(basename "$file")" safe_symlink "$file" "$HOME/$(basename "$file")" || return 1
+  # Count dotfiles first to provide better feedback
+  dotfile_count=0
+  for file in "$HOME/.config"/.*; do
+    # Skip if not a file
+    [ -f "$file" ] || continue
+    # Skip .git directory
+    filename=$(basename "$file")
+    [ "$filename" = ".git" ] && continue
+    # Skip . and .. 
+    [ "$filename" = "." ] && continue
+    [ "$filename" = ".." ] && continue
+    
+    dotfile_count=$((dotfile_count + 1))
+  done
+
+  if [ "$dotfile_count" -eq 0 ]; then
+    log warning "No dotfiles found in .config directory"
+    return 0
+  fi
+
+  log debug "Found $dotfile_count dotfiles to link"
+
+  for file in "$HOME/.config"/.*; do
+    # Skip if not a file
+    [ -f "$file" ] || continue
+    
+    filename=$(basename "$file")
+    # Skip .git directory
+    [ "$filename" = ".git" ] && continue
+    # Skip . and .. 
+    [ "$filename" = "." ] && continue
+    [ "$filename" = ".." ] && continue
+
+    target="$HOME/$filename"
+    
+    log info "Symlinking $filename"
+    if ! safe_symlink "$file" "$target"; then
+      log error "Failed to symlink $filename from $file to $target"
+      return 1
+    fi
   done
 
   log success "Dotfiles linked"
@@ -144,34 +250,55 @@ setup_ssh() {
   fi
 
   log info "Generating new SSH key..."
+  
+  # Ensure .ssh directory exists
+  if ! ensure_directory "$HOME/.ssh"; then
+    log error "Failed to create .ssh directory"
+    return 1
+  fi
+  
+  if ! chmod 700 "$HOME/.ssh"; then
+    log error "Failed to set .ssh directory permissions"
+    return 1
+  fi
+
   if ! ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""; then
     log error "SSH key generation failed"
     return 1
   fi
 
-  eval "$(ssh-agent -s)" || {
+  if ! eval "$(ssh-agent -s)"; then
     log warning "Failed to start ssh-agent"
-  }
+  fi
 
-  printf "%s\n" \
-    "Host github.com" \
-    "  AddKeysToAgent yes" \
-    "  UseKeychain yes" \
-    "  IdentityFile ~/.ssh/id_ed25519" \
-    > "$HOME/.ssh/config" || {
-      log warning "Failed to write SSH config"
-    }
+  if ! cat > "$HOME/.ssh/config" << 'EOF'
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+EOF
+  then
+    log warning "Failed to write SSH config"
+  fi
 
   if [ "$IS_MAC" = true ]; then
     if ! cat "$key.pub" | pbcopy; then
       log warning "Failed to copy SSH public key to clipboard"
-      return 1
+      log info "SSH public key contents:"
+      cat "$key.pub" || {
+        log error "Failed to display SSH public key"
+        return 1
+      }
+    else
+      log success "SSH public key copied to clipboard"
     fi
-    log success "SSH public key copied to clipboard"
   else
     log success "SSH key generated"
-    log info "Public key contents:"
-    cat "$key.pub"
+    log info "SSH public key contents:"
+    if ! cat "$key.pub"; then
+      log error "Failed to display SSH public key"
+      return 1
+    fi
   fi
 
   return 0
@@ -181,13 +308,36 @@ main() {
   log debug "Arguments: $*"
   log info "Initialising developer environment..."
 
-  spinner "Creating development directories" create_dev_directories || exit 1
-  spinner "Setting up dotfiles" setup_dotfiles || exit 1
-  spinner "Setting up color schemes" setup_colors || exit 1
-  spinner "Linking dotfiles" link_dotfiles || exit 1
-  spinner "Setting up SSH configuration" setup_ssh || exit 1
+  if ! spinner "Creating development directories" create_dev_directories; then
+    log error "Failed during development directories creation"
+    exit 1
+  fi
+  
+  if ! spinner "Setting up dotfiles" setup_dotfiles; then
+    log error "Failed during dotfiles setup"
+    exit 1
+  fi
+  
+  if ! spinner "Setting up color schemes" setup_colors; then
+    log error "Failed during color schemes setup"
+    exit 1
+  fi
+  
+  if ! spinner "Linking dotfiles" link_dotfiles; then
+    log error "Failed during dotfiles linking"
+    exit 1
+  fi
+  
+  if ! spinner "Setting up SSH configuration" setup_ssh; then
+    log error "Failed during SSH setup"
+    exit 1
+  fi
+  
   if [ "$IS_MAC" = true ]; then
-    spinner "Configuring Touch ID" setup_touch_id || exit 1
+    if ! spinner "Configuring Touch ID" setup_touch_id; then
+      log error "Failed during Touch ID configuration"
+      exit 1
+    fi
   fi
 
   log success "Setup complete!"
