@@ -170,16 +170,32 @@ setup_dotfiles() {
 
   if [ -d "$HOME/.config" ]; then
     log debug "Removing existing .config directory"
-    if ! rm -rf "$HOME/.config"; then
-      log error "Failed to remove old .config directory"
-      return 1
+    if [ "$DEBUG" = true ]; then
+      log debug "Running: rm -rf \"$HOME/.config\""
+      if ! rm -rf "$HOME/.config"; then
+        log error "Failed to remove old .config directory"
+        return 1
+      fi
+    else
+      if ! rm -rf "$HOME/.config"; then
+        log error "Failed to remove old .config directory"
+        return 1
+      fi
     fi
   fi
 
   log debug "Cloning repository https://github.com/maclong9/dots"
-  if ! spinner "Cloning dotfiles repository" git clone "https://github.com/maclong9/dots" "$HOME/.config"; then
-    log error "Failed to clone dotfiles repository"
-    return 1
+  if [ "$DEBUG" = true ]; then
+    log debug "Running: git clone https://github.com/maclong9/dots \"$HOME/.config\""
+    if ! git clone "https://github.com/maclong9/dots" "$HOME/.config"; then
+      log error "Failed to clone dotfiles repository"
+      return 1
+    fi
+  else
+    if ! spinner "Cloning dotfiles repository" git clone "https://github.com/maclong9/dots" "$HOME/.config"; then
+      log error "Failed to clone dotfiles repository"
+      return 1
+    fi
   fi
 
   log success "Dotfiles cloned"
@@ -262,15 +278,31 @@ setup_ssh() {
     return 1
   fi
 
-  if ! ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""; then
-    log error "SSH key generation failed"
-    return 1
+  log debug "Running: ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -f \"$key\" -N \"\""
+  if [ "$DEBUG" = true ]; then
+    if ! ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N ""; then
+      log error "SSH key generation failed"
+      return 1
+    fi
+  else
+    if ! ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N "" >/dev/null 2>&1; then
+      log error "SSH key generation failed"
+      return 1
+    fi
   fi
 
-  if ! eval "$(ssh-agent -s)"; then
-    log warning "Failed to start ssh-agent"
+  if [ "$DEBUG" = true ]; then
+    log debug "Starting ssh-agent"
+    if ! eval "$(ssh-agent -s)"; then
+      log warning "Failed to start ssh-agent"
+    fi
+  else
+    if ! eval "$(ssh-agent -s)" >/dev/null 2>&1; then
+      log warning "Failed to start ssh-agent"
+    fi
   fi
 
+  log debug "Writing SSH config"
   if ! cat > "$HOME/.ssh/config" << 'EOF'
 Host github.com
   AddKeysToAgent yes
@@ -282,6 +314,7 @@ EOF
   fi
 
   if [ "$IS_MAC" = true ]; then
+    log debug "Copying SSH public key to clipboard"
     if ! cat "$key.pub" | pbcopy; then
       log warning "Failed to copy SSH public key to clipboard"
       log info "SSH public key contents:"
