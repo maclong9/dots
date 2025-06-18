@@ -82,11 +82,13 @@ setup_touch_id() {
   spinner "Configuring Touch ID" sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local
   sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local
 
-  grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && \
-    log success "Touch ID enabled" || {
+  if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
+      log success "Touch ID enabled"
+    else
       log error "Failed to enable Touch ID"
       return 1
-    }
+    fi
+
 }
 
 create_dev_directories() {
@@ -119,8 +121,11 @@ setup_dotfiles() {
 link_dotfiles() {
   log info "Linking dotfiles from .config to home..."
   find "$HOME/.config" -maxdepth 1 -name ".*" -type f -not -name '.git' -exec sh -c '
-    spinner "Symlinking $(basename "{}")" safe_symlink "{}" "$HOME/$(basename "{}")"
-  '
+      for file; do
+        name=$(basename "$file")
+        spinner "Symlinking $name" safe_symlink "$file" "$HOME/$name"
+      done
+  ' sh {} +
   log success "Dotfiles linked"
 }
 
