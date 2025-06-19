@@ -102,6 +102,13 @@ spinner() {
     message="$1"
     shift
 
+    if [ "$DEBUG" = "true" ]; then
+        # In debug mode, run command directly without spinner
+        printf "%s\n" "$message"
+        "$@"
+        return $?
+    fi
+
     tmp_err=$(mktemp 2>/dev/null || echo "/tmp/spinner_error_$.log")
 
     printf "%s " "$message"
