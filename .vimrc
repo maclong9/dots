@@ -113,3 +113,8 @@ augroup productivity
     " Trim trailing whitespace on save
     autocmd BufWritePre * :%s/\s\+$//e
 augroup END
+
+" Improve Shell File Tooling
+augroup shell
+    autocmd FileType sh syntax clear shCommandSub
+augroup END
