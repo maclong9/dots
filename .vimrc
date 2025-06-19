@@ -81,12 +81,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Buffer navigation
-nnoremap <leader>b :buffers<CR>:buffer<Space>
-nnoremap <leader>n :bnext<CR>
-nnoremap <leader>p :bprevious<CR>
-nnoremap <leader>d :bdelete<CR>
-
 " Git integration - simple git command
 command! -nargs=* -complete=file G !git <args>
 
@@ -107,8 +101,6 @@ augroup colors
     autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
     autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi CursorLine guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
-    autocmd VimEnter,ColorScheme * hi CursorLineNr guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
 augroup END
 
 " Auto-commands for productivity
