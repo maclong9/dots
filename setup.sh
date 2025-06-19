@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Fail fast if basic commands missing
-for cmd in git curl ln mkdir; do
+for cmd in git curl ln mkdir launchctl; do
   command -v "$cmd" >/dev/null 2>&1 || {
     printf "ERROR: %s required but not found\n" "$cmd" >&2
     exit 1
@@ -25,24 +25,24 @@ process_colorscheme_files() {
   pattern="$2"
   target_dir="$3"
   file_type="$4"
-  
+
   [ ! -d "$scheme_dir" ] && return 0
 
   count=$(count_files "$scheme_dir/$pattern") || {
     log error "Failed to count files in $scheme_dir"
     return 1
   }
-  
+
   scheme=$(basename "$scheme_dir")
 
   if [ "$count" -gt 0 ]; then
     log debug "Found $count $file_type files in $scheme"
     for file in "$scheme_dir"/$pattern; do
       [ -f "$file" ] || continue
-      
+
       filename=$(basename "$file")
       log info "Symlinking $file_type file $filename"
-      
+
       if ! safe_symlink "$file" "$target_dir/$filename"; then
         log error "Failed to symlink $filename"
         return 1
@@ -68,7 +68,7 @@ setup_colors() {
     log error "Failed to create Vim colors directory"
     return 1
   fi
-  
+
   if [ "$IS_MAC" = true ]; then
     if ! spinner "Creating Xcode colors directory" ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"; then
       log error "Failed to create Xcode colors directory"
@@ -95,13 +95,13 @@ setup_colors() {
     scheme_name=$(basename "$scheme_dir")
     log info "Processing scheme: $scheme_name"
     log debug "Scheme directory: $scheme_dir"
-    
+
     # List files in the scheme directory for debugging
     if [ "$DEBUG" = true ]; then
       log debug "Files in $scheme_name:"
       ls -la "$scheme_dir" >&2
     fi
-    
+
     if ! process_colorscheme_files "$scheme_dir" "*.vim" "$HOME/.vim/colors" "vim"; then
       log error "Failed to process vim colorscheme files for $scheme_name"
       return 1
@@ -116,6 +116,75 @@ setup_colors() {
   done
 
   log success "Color setup complete"
+  return 0
+}
+
+setup_terminal_theme() {
+  if [ "$IS_MAC" != true ]; then
+    log debug "Not on macOS, skipping Terminal theme setup"
+    return 0
+  fi
+
+  log info "Setting up Terminal theme switching..."
+
+  # Define source and target paths
+  script_src="$HOME/.config/colors/toggle_terminal_theme.scpt"
+  script_target="$HOME/Scripts/toggle_terminal_theme.scpt"
+  plist_src="$HOME/.config/colors/com.mac.terminaltheme.plist"
+  plist_target="$HOME/Library/LaunchAgents/com.mac.terminaltheme.plist"
+
+  # Ensure Scripts directory exists
+  if ! spinner "Creating Scripts directory" ensure_directory "$HOME/Scripts"; then
+    log error "Failed to create Scripts directory"
+    return 1
+  fi
+
+  # Ensure LaunchAgents directory exists
+  if ! spinner "Creating LaunchAgents directory" ensure_directory "$HOME/Library/LaunchAgents"; then
+    log error "Failed to create LaunchAgents directory"
+    return 1
+  fi
+
+  # Symlink AppleScript
+  if [ -f "$script_src" ]; then
+    if ! spinner "Symlinking toggle_terminal_theme.scpt" safe_symlink "$script_src" "$script_target"; then
+      log error "Failed to symlink toggle_terminal_theme.scpt"
+      return 1
+    fi
+  else
+    log warning "AppleScript $script_src not found, skipping"
+  fi
+
+  # Symlink Launch Agent plist
+  if [ -f "$plist_src" ]; then
+    if ! spinner "Symlinking com.mac.terminaltheme.plist" safe_symlink "$plist_src" "$plist_target"; then
+      log error "Failed to symlink com.mac.terminaltheme.plist"
+      return 1
+    fi
+
+    # Unload existing Launch Agent if loaded
+    if launchctl list "com.mac.terminaltheme" >/dev/null 2>&1; then
+      if ! spinner "Unloading existing Launch Agent" launchctl unload "$plist_target"; then
+        log warning "Failed to unload existing Launch Agent, continuing"
+      fi
+    fi
+
+    # Load the Launch Agent
+    if ! spinner "Loading Launch Agent" launchctl load "$plist_target"; then
+      log error "Failed to load Launch Agent"
+      return 1
+    fi
+
+    # Verify Launch Agent is loaded
+    if ! launchctl list "com.mac.terminaltheme" >/dev/null 2>&1; then
+      log error "Launch Agent failed to load properly"
+      return 1
+    fi
+  else
+    log warning "Launch Agent plist $plist_src not found, skipping"
+  fi
+
+  log success "Terminal theme switching setup complete"
   return 0
 }
 
@@ -136,7 +205,7 @@ setup_touch_id() {
     log error "Failed to copy Touch ID template"
     return 1
   fi
-  
+
   if ! sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local; then
     log error "Failed to modify Touch ID configuration"
     return 1
@@ -219,10 +288,10 @@ link_dotfiles() {
     # Skip .git directory
     filename=$(basename "$file")
     [ "$filename" = ".git" ] && continue
-    # Skip . and .. 
+    # Skip . and ..
     [ "$filename" = "." ] && continue
     [ "$filename" = ".." ] && continue
-    
+
     dotfile_count=$((dotfile_count + 1))
   done
 
@@ -236,16 +305,16 @@ link_dotfiles() {
   for file in "$HOME/.config"/.*; do
     # Skip if not a file
     [ -f "$file" ] || continue
-    
+
     filename=$(basename "$file")
     # Skip .git directory
     [ "$filename" = ".git" ] && continue
-    # Skip . and .. 
+    # Skip . and ..
     [ "$filename" = "." ] && continue
     [ "$filename" = ".." ] && continue
 
     target="$HOME/$filename"
-    
+
     log info "Symlinking $filename"
     if ! safe_symlink "$file" "$target"; then
       log error "Failed to symlink $filename from $file to $target"
@@ -266,13 +335,13 @@ setup_ssh() {
   fi
 
   log info "Generating new SSH key..."
-  
+
   # Ensure .ssh directory exists
   if ! ensure_directory "$HOME/.ssh"; then
     log error "Failed to create .ssh directory"
     return 1
   fi
-  
+
   if ! chmod 700 "$HOME/.ssh"; then
     log error "Failed to set .ssh directory permissions"
     return 1
@@ -345,30 +414,34 @@ main() {
     log error "Failed during development directories creation"
     exit 1
   fi
-  
+
   if ! spinner "Setting up dotfiles" setup_dotfiles; then
     log error "Failed during dotfiles setup"
     exit 1
   fi
-  
+
   if ! spinner "Setting up color schemes" setup_colors; then
     log error "Failed during color schemes setup"
     exit 1
   fi
-  
+
   if ! spinner "Linking dotfiles" link_dotfiles; then
     log error "Failed during dotfiles linking"
     exit 1
   fi
-  
+
   if ! spinner "Setting up SSH configuration" setup_ssh; then
     log error "Failed during SSH setup"
     exit 1
   fi
-  
+
   if [ "$IS_MAC" = true ]; then
     if ! spinner "Configuring Touch ID" setup_touch_id; then
       log error "Failed during Touch ID configuration"
+      exit 1
+    fi
+    if ! spinner "Setting up Terminal theme" setup_terminal_theme; then
+      log error "Failed during Terminal theme setup"
       exit 1
     fi
   fi
