@@ -48,7 +48,11 @@ log() {
     success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
     warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
     error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
-    debug) printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2 ;;
+    debug) 
+      if [ "$DEBUG" = "true" ]; then
+        printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
+      fi
+      ;;
   esac
 }
 
