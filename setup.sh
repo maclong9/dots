@@ -25,24 +25,24 @@ process_colorscheme_files() {
   pattern="$2"
   target_dir="$3"
   file_type="$4"
-  
+
   [ ! -d "$scheme_dir" ] && return 0
 
   count=$(count_files "$scheme_dir/$pattern") || {
     log error "Failed to count files in $scheme_dir"
     return 1
   }
-  
+
   scheme=$(basename "$scheme_dir")
 
   if [ "$count" -gt 0 ]; then
     log debug "Found $count $file_type files in $scheme"
     for file in "$scheme_dir"/$pattern; do
       [ -f "$file" ] || continue
-      
+
       filename=$(basename "$file")
       log info "Symlinking $file_type file $filename"
-      
+
       if ! safe_symlink "$file" "$target_dir/$filename"; then
         log error "Failed to symlink $filename"
         return 1
@@ -68,7 +68,7 @@ setup_colors() {
     log error "Failed to create Vim colors directory"
     return 1
   fi
-  
+
   if [ "$IS_MAC" = true ]; then
     if ! spinner "Creating Xcode colors directory" ensure_directory "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"; then
       log error "Failed to create Xcode colors directory"
@@ -95,13 +95,13 @@ setup_colors() {
     scheme_name=$(basename "$scheme_dir")
     log info "Processing scheme: $scheme_name"
     log debug "Scheme directory: $scheme_dir"
-    
+
     # List files in the scheme directory for debugging
     if [ "$DEBUG" = true ]; then
       log debug "Files in $scheme_name:"
       ls -la "$scheme_dir" >&2
     fi
-    
+
     if ! process_colorscheme_files "$scheme_dir" "*.vim" "$HOME/.vim/colors" "vim"; then
       log error "Failed to process vim colorscheme files for $scheme_name"
       return 1
@@ -136,7 +136,7 @@ setup_touch_id() {
     log error "Failed to copy Touch ID template"
     return 1
   fi
-  
+
   if ! sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local; then
     log error "Failed to modify Touch ID configuration"
     return 1
@@ -219,10 +219,10 @@ link_dotfiles() {
     # Skip .git directory
     filename=$(basename "$file")
     [ "$filename" = ".git" ] && continue
-    # Skip . and .. 
+    # Skip . and ..
     [ "$filename" = "." ] && continue
     [ "$filename" = ".." ] && continue
-    
+
     dotfile_count=$((dotfile_count + 1))
   done
 
@@ -236,16 +236,16 @@ link_dotfiles() {
   for file in "$HOME/.config"/.*; do
     # Skip if not a file
     [ -f "$file" ] || continue
-    
+
     filename=$(basename "$file")
     # Skip .git directory
     [ "$filename" = ".git" ] && continue
-    # Skip . and .. 
+    # Skip . and ..
     [ "$filename" = "." ] && continue
     [ "$filename" = ".." ] && continue
 
     target="$HOME/$filename"
-    
+
     log info "Symlinking $filename"
     if ! safe_symlink "$file" "$target"; then
       log error "Failed to symlink $filename from $file to $target"
@@ -266,13 +266,13 @@ setup_ssh() {
   fi
 
   log info "Generating new SSH key..."
-  
+
   # Ensure .ssh directory exists
   if ! ensure_directory "$HOME/.ssh"; then
     log error "Failed to create .ssh directory"
     return 1
   fi
-  
+
   if ! chmod 700 "$HOME/.ssh"; then
     log error "Failed to set .ssh directory permissions"
     return 1
@@ -345,27 +345,27 @@ main() {
     log error "Failed during development directories creation"
     exit 1
   fi
-  
+
   if ! spinner "Setting up dotfiles" setup_dotfiles; then
     log error "Failed during dotfiles setup"
     exit 1
   fi
-  
+
   if ! spinner "Setting up color schemes" setup_colors; then
     log error "Failed during color schemes setup"
     exit 1
   fi
-  
+
   if ! spinner "Linking dotfiles" link_dotfiles; then
     log error "Failed during dotfiles linking"
     exit 1
   fi
-  
+
   if ! spinner "Setting up SSH configuration" setup_ssh; then
     log error "Failed during SSH setup"
     exit 1
   fi
-  
+
   if [ "$IS_MAC" = true ]; then
     if ! spinner "Configuring Touch ID" setup_touch_id; then
       log error "Failed during Touch ID configuration"
