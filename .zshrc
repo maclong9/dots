@@ -22,23 +22,29 @@ if [[ ! -f "$HOME/.zshrc.zwc" || "$HOME/.zshrc" -nt "$HOME/.zshrc.zwc" ]]; then
     zcompile "$HOME/.zshrc"
 fi
 
+# Load version control system info
 autoload -Uz vcs_info
 
+# Enable git support
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' %B%F{6} %b%f'
-zstyle ':vcs_info:git:*' formats ' %B%F{6}⎇ %b%f'
-zstyle ':vcs_info:git:*' actionformats ' %B%F{6}⎇ %b|%a%f'
+
+# Configure git branch display formats
+zstyle ':vcs_info:git:*' formats ' %B%F{10}⎇ %b%f'
+zstyle ':vcs_info:git:*' actionformats ' %B%F{10}⎇ %b|%a%f'
+
+# Enable change detection
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr ' ●'
 zstyle ':vcs_info:git:*' unstagedstr ' ✚'
-zstyle ':vcs_info:git:*' formats ' %B%F{6}⎇ %b%u%c%f'
+
+# Format with change indicators
+zstyle ':vcs_info:git:*' formats ' %B%F{10}⎇ %b%u%c%f'
 
 precmd() {
-  vcs_info
-  PROMPT="%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
+    vcs_info
+    PROMPT="%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 %F{%(?.10.9)}%Bλ%b%f "
 }
-
 
 # Define aliases for common commands.
 alias g='git'
