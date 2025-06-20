@@ -1,4 +1,4 @@
-# Modern UNIX Development Environment
+# UNIX Development Environment
 
 A comprehensive, POSIX-compliant dotfiles configuration for productive development on macOS and Linux.
 
@@ -21,4 +21,4 @@ curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 - Restart your terminal or run `source "$HOME/.zshrc"`.
 - Add your SSH key to remote.
 - Configure color schemes in your editors as needed.
-- Run your development container as required.
+- Run your development container as required using `dev-start` and `dev-exec`.
