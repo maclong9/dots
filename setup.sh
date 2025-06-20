@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set -e
-trap 'log error "Setup failed at line $LINENO"' ERR
-
 # Error if basic commands missing
 for cmd in git curl ln mkdir; do
 	command -v "$cmd" > /dev/null 2>&1 || {

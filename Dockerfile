@@ -1,16 +1,15 @@
-FROM alpine:latest
+FROM debian:latest
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     git \
-    deno \
     curl \
     zsh \
     vim \
     openssh-client
-    
+
 # Set working directory
 WORKDIR /workspace
 
@@ -23,12 +22,12 @@ RUN npm install -g \
     eslint \
     prettier
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S main -u 1001
+# Create non-root user (Debian syntax)
+RUN groupadd --gid 1001 nodejs && \
+    useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home mac
 
 # Switch to non-root user
-USER main
+USER mac
 
 # Configure dotfiles
 RUN curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
