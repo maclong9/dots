@@ -36,9 +36,9 @@ let s:keyword = "#A0A0A0"
 
 " UI Highlights
 highlight Normal guifg=#FFFFFF guibg=#101010
-highlight Cursor guifg=#101010 guibg=#FFCFA8
-highlight CursorLine guibg=#151515
-highlight CursorLineNr guifg=#FFC799 guibg=#101010
+highlight Cursor guifg=#FFCFA8 guibg=#FFCFA8
+highlight CursorLine guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
+highlight CursorLineNr guifg=#FFC799 guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
 highlight LineNr guifg=#505050 guibg=#101010
 highlight StatusLine guifg=#FFFFFF guibg=#101010
 highlight StatusLineNC guifg=#65737E guibg=#101010
@@ -57,6 +57,7 @@ highlight Title guifg=#FFCFA8 gui=bold
 highlight TabLine guifg=#65737E guibg=#101010
 highlight TabLineSel guifg=#FFFFFF guibg=#151515
 highlight TabLineFill guibg=#101010
+
 
 " Syntax Highlights
 highlight Comment guifg=#8b8b8b
