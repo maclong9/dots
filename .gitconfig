@@ -99,5 +99,3 @@
 
 [color]
     ui = auto
-[includeIf "gitdir:~/Developer/work/"]
-    path = ~/.gitconfig-work
