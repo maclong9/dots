@@ -30,8 +30,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck shfmt
 
+      - name: Ensure utils script is downloaded
+        run: |
+          url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+          curl -fsSL "$url" -o /tmp/utils.sh || {
+            printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
+            exit 1
+          }
+        
       - name: Run shellcheck on setup.sh
-        run: shellcheck setup.sh
+        run: shellcheck -x setup.sh
 
       - name: Run shellcheck on utils.sh
         run: shellcheck scripts/utils.sh
