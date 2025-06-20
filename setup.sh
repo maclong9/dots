@@ -340,6 +340,69 @@ EOF
   return 0
 }
 
+build_container() {
+  log info "Installing container tool..."
+
+  pkg_url="https://github.com/apple/container/releases/download/0.1.0/container-0.1.0-installer-signed.pkg"
+  pkg_file="container-installer.pkg"
+
+  log debug "Downloading package from $pkg_url"
+  if [ "$DEBUG" = true ]; then
+    if ! curl -L -o "$pkg_file" "$pkg_url"; then
+      log error "Failed to download container package"
+      return 1
+    fi
+  else
+    if ! spinner "Downloading container package" curl -L -o "$pkg_file" "$pkg_url"; then
+      log error "Failed to download container package"
+      return 1
+    fi
+  fi
+
+  log debug "Installing package: $pkg_file"
+  if [ "$DEBUG" = true ]; then
+    if ! sudo installer -pkg "$pkg_file" -target /; then
+      log error "Failed to install container package"
+      rm -f "$pkg_file"
+      return 1
+    fi
+  else
+    if ! spinner "Installing container package" sudo installer -pkg "$pkg_file" -target /; then
+      log error "Failed to install container package"
+      rm -f "$pkg_file"
+      return 1
+    fi
+  fi
+
+  # Clean up downloaded package
+  if ! rm -f "$pkg_file"; then
+    log warning "Failed to remove downloaded package file"
+  fi
+
+  # Check if Dockerfile exists before building
+  if [ ! -f "$HOME/.config/Dockerfile" ]; then
+    log warning "Dockerfile not found at $HOME/.config/Dockerfile, skipping container build"
+    log success "Container tool installed"
+    return 0
+  fi
+
+  log debug "Building container from $HOME/.config/Dockerfile"
+  if [ "$DEBUG" = true ]; then
+    if ! container build -t dev-container "$HOME/.config/Dockerfile"; then
+      log error "Failed to build container"
+      return 1
+    fi
+  else
+    if ! spinner "Building dev container" container build -t dev-container "$HOME/.config/Dockerfile"; then
+      log error "Failed to build container" 
+      return 1
+    fi
+  fi
+
+  log success "Container setup complete"
+  return 0
+}
+
 main() {
   log debug "Arguments: $*"
   log info "Initialising developer environment..."
@@ -369,6 +432,11 @@ main() {
     exit 1
   fi
 
+  if ! spinner "Setting up container environment" build_container; then
+    log error "Failed during container setup"
+    exit 1
+  fi
+
   if [ "$IS_MAC" = true ]; then
     if ! spinner "Configuring Touch ID" setup_touch_id; then
       log error "Failed during Touch ID configuration"
@@ -382,7 +450,8 @@ main() {
     "Next steps:" \
     "- Restart your shell" \
     "- Add your SSH key to services" \
-    "- Apply your themes"
+    "- Apply your themes" \
+    "- Start your development container"
 }
 
 main "$@"
