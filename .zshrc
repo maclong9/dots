@@ -32,13 +32,8 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats ' %B%F{10}⎇ %b%f'
 zstyle ':vcs_info:git:*' actionformats ' %B%F{10}⎇ %b|%a%f'
 
-# Enable change detection
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git:*' stagedstr ' ●'
-zstyle ':vcs_info:git:*' unstagedstr ' ✚'
-
 # Format with change indicators
-zstyle ':vcs_info:git:*' formats ' %B%F{10}⎇ %b%u%c%f'
+zstyle ':vcs_info:git:*' formats ' %B%F{10}(%b)%f'
 
 precmd() {
     vcs_info
@@ -47,17 +42,17 @@ precmd() {
 }
 
 # Define aliases for common commands.
-alias g='git'
 alias clc='fc -ln -1 > /tmp/last_cmd.log && CMD=$(< /tmp/last_cmd.log) && eval "$CMD" \
 > /tmp/last_out.log 2>&1 && { echo "λ $CMD"; echo "⇣"; cat /tmp/last_out.log; } | pbcopy'
+alias dev-start='container start dev-container'
+alias dev-exec='container exec --tty --interactive dev-container zsh'
+alias g='git'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -la'
+alias ls='ls --color=auto'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
-alias ls='ls --color=auto'
-alias ll='ls -la'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Define aliases for quick editing of configuration files.
-alias vz='vim ~/.zshrc'
-alias vv='vim ~/.vimrc'
 alias vg='vim ~/.gitconfig'
+alias vv='vim ~/.vimrc'
+alias vz='vim ~/.zshrc'
