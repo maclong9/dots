@@ -16,21 +16,8 @@ A comprehensive, POSIX-compliant dotfiles configuration for productive developme
 curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 ```
 
-## 📋 Manual Installation
-
-1. Clone the repository:
-
-```sh
-git clone https://github.com/maclong9/dots.git ~/.config
-```
-
-2. Run the setup script:
-
-```sh
-~/.config/setup.sh
-```
-
-3. Restart your terminal
+> [!NOTE]
+> Make sure you restart your terminal or run `source ~/.zshrc` to enable all shell features.
 
 ## 🛠 Post-Installation
 
