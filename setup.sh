@@ -262,7 +262,6 @@ setup_ssh() {
 	cat > "$HOME/.ssh/config" << 'EOF' || log warning "Failed to write SSH config"
 Host github.com
 	AddKeysToAgent yes
-	UseKeychain yes
 	IdentityFile ~/.ssh/id_ed25519
 EOF
 
