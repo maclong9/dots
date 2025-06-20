@@ -299,7 +299,7 @@ build_container() {
 
   log debug "Building container from $HOME/.config/Dockerfile"
 
-  spinner "Starting container vm" container system start || {
+  spinner "Starting container vm" container system start --enable-kernel-install || {
     log error "Failed to start container vm"
     return 1
   }
