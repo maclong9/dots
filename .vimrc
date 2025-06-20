@@ -9,7 +9,6 @@ colorscheme vesper               " Set custom colorscheme
 
 " Editor behavior
 set autoindent                   " Automatically indent new lines
-set expandtab                    " Convert tabs to spaces
 set shiftwidth=4                 " Indentation width
 set tabstop=4                    " Tab display width
 set softtabstop=4                " Tab key behavior
