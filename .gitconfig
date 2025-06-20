@@ -66,12 +66,13 @@
     # Adding and committing
     a = add
     aa = add --all
+    ac = "!f() { msg=\"${!#}\"; set -- \"${@:1:$(($#-1))}\"; git add \"$@\"; git commit -m \"$msg\"; }; f"
+    aac = "!f() { git add --all && git commit -m \"$1\"; }; f"
     ap = add --patch
     c = commit
-    cm = commit -m
     ca = commit --amend
     can = commit --amend --no-edit
-    aac = "!f() { git add --all && git commit -m \"$1\"; }; f"
+    cm = commit -m
 
     # Diffing
     d = diff
