@@ -342,9 +342,9 @@ build_container() {
 		return 1
 	}
 
- 	spinner "Starting dev container" \
-  		container start dev-container || {
-    		log error "Failed to start container"
+ 	spinner "Creating dev container" \
+  		container create -m 4024M --name dev-container dev-container || {
+    		log error "Failed to create container"
       		return 1
 	}
 
