@@ -298,8 +298,13 @@ build_container() {
   }
 
   log debug "Building container from $HOME/.config/Dockerfile"
+
+  spinner "Starting container vm" container system start || {
+    log error "Failed to start container vm"
+    return 1
+  }
   
-  spinner "Building dev container" container build -t dev-container "$HOME/.config/Dockerfile" || {
+  spinner "Building dev container" container build -t dev-container -f "$HOME/.config/Dockerfile" || {
     log error "Failed to build container"
     return 1
   }
