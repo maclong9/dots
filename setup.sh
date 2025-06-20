@@ -303,6 +303,12 @@ build_container() {
     log error "Failed to start container vm"
     return 1
   }
+
+  # Required for now, remove once `container` doesn't require
+  spinner "Install Rosetta 2 x86 emulation" softwareupdate --install-rosetta --agree-to-license || {
+    log error "Failed to install Rosetta 2"
+    return 1
+  }
   
   spinner "Building dev container" container build -t dev-container -f "$HOME/.config/Dockerfile" || {
     log error "Failed to build container"
