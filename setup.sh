@@ -336,10 +336,16 @@ build_container() {
 		return 1
 	}
 
-	spinner "Building dev container" \
+	spinner "Building dev container image" \
 		container build -t dev-container -f "$HOME/.config/Dockerfile" || {
-		log error "Failed to build container"
+		log error "Failed to build container image"
 		return 1
+	}
+
+ 	spinner "Starting dev container" \
+  		container start dev-container || {
+    		log error "Failed to start container"
+      		return 1
 	}
 
 	log success "Container setup complete"
