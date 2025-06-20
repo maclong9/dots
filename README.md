@@ -1,33 +1,49 @@
-# POSIX Compliant UNIX System Configuration Files
+# Modern UNIX Development Environment
 
-This repository contains my personal dotfiles and scripts for configuring a productive, POSIX-compliant UNIX or macOS development environment. The setup prioritizes portability, clarity, and ease of use.
+A comprehensive, POSIX-compliant dotfiles configuration for productive development on macOS and Linux.
 
-## Quick Start
+## ✨ Features
 
-To bootstrap a new environment (macOS recommended):
+- **Shell**: Modern Zsh configuration with git integration and smart completions
+- **Editor**: Vim setup with syntax highlighting and productivity enhancements
+- **Git**: Comprehensive Git configuration with useful aliases and SSH signing
+- **Colors**: Consistent color schemes across Vim, Terminal, and Xcode
+- **Scripts**: Utility functions for development workflow automation
+
+## 🚀 Quick Installation
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/setup.sh | sh
+curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 ```
 
-> **Note:** It’s recommended to use [containers](https://github.com/apple/container/tree/main) for development.
+## 📋 Manual Installation
 
----
+1. Clone the repository:
 
-## Main Files and Directories
+```sh
+git clone https://github.com/maclong9/dots.git ~/.config
+```
 
-- **`.gitconfig`** — Git configuration with useful aliases and SSH signing.
-- **`.vimrc`** — Modern Vim configuration for UI, productivity, and color enhancements.
-- **`.zshrc`** — Z shell config: prompts, aliases, and functions.
-- **`setup.sh`** — Automated script for environment initialization.
-- **`colors/`** — Custom color schemes for Vim (and Terminal.app/Xcode on macOS).
-- **`scripts/`** — Collection of shell scripts for various tasks and automation. Each script is POSIX-compliant and intended to improve workflow efficiency.
+2. Run the setup script:
 
----
+```sh
+~/.config/setup.sh
+```
 
-## Next Steps After Setup
+3. Restart your terminal
 
-1. Restart your terminal or run: `source ~/.zshrc`
-2. Set up SSH keys for remote use (add your public key to GitHub).
-3. Configure color schemes in your editors as needed.
+## 🛠 Post-Installation
 
+- Add your SSH key to GitHub/GitLab
+- Customize git user information
+- Install development tools via scripts/dev-setup.sh
+
+```txt
+📁 Structure
+├── colors/           # Color schemes for various applications
+├── scripts/          # Utility scripts and functions
+├── .gitconfig        # Git configuration with aliases
+├── .vimrc            # Vim editor configuration
+├── .zshrc            # Zsh shell configuration
+└── setup.sh          # Automated installation script
+```
