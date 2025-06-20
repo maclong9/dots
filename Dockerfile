@@ -1,5 +1,8 @@
 FROM debian:latest
 
+# Ensure color terminal in container
+TERM=xterm-256color
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     nodejs \
