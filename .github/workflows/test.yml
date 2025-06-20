@@ -28,10 +28,7 @@ jobs:
       - name: Install shellcheck and shfmt
         run: |
           sudo apt-get update
-          sudo apt-get install -y shellcheck
-          wget -O- -nv https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 > shfmt
-          chmod +x shfmt
-          sudo mv shfmt /usr/local/bin/
+          sudo apt-get install -y shellcheck shfmt
 
       - name: Run shellcheck on setup.sh
         run: shellcheck setup.sh
