@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     openssh-client
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR ~/Developer
 
 # Install global npm packages
 RUN npm install -g \
