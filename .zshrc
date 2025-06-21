@@ -45,6 +45,7 @@ precmd() {
 alias clc='fc -ln -1 > /tmp/last_cmd.log && CMD=$(< /tmp/last_cmd.log) && eval "$CMD" \
 > /tmp/last_out.log 2>&1 && { echo "λ $CMD"; echo "⇣"; cat /tmp/last_out.log; } | pbcopy'
 alias dev-start='container start dev-container'
+alias dev-stop='container stop dev-container'
 alias dev-exec='container exec --tty --interactive dev-container zsh'
 alias g='git'
 alias l='ls -CF'
