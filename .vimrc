@@ -66,7 +66,6 @@ autocmd FileType netrw setlocal nu rnu
 
 " Clear search highlighting
 nnoremap <C-[> :nohlsearch<CR>
-nnoremap <leader>/ :nohlsearch<CR>
 
 " Better command line editing
 cnoremap <C-A> <Home>
