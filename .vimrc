@@ -79,17 +79,8 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Git integration - simple git command
+" Git integration
 command! -nargs=* -complete=file G !git <args>
-
-" File type specific settings
-augroup filetypes
-    autocmd!
-    autocmd FileType javascript,typescript,json setlocal shiftwidth=2 tabstop=2 softtabstop=2
-    autocmd FileType yaml,yml setlocal shiftwidth=2 tabstop=2 softtabstop=2
-    autocmd FileType swift setlocal shiftwidth=4 tabstop=4 softtabstop=4
-    autocmd FileType markdown setlocal wrap linebreak spell
-augroup END
 
 " Transparent background and cursor line styling
 augroup colors
