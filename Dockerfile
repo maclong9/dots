@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     zsh \
+	shellcheck \
+	shfmt \
     vim \
     openssh-client
 
