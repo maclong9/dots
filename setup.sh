@@ -44,10 +44,7 @@ process_colorscheme_files() {
         [ -f "$file" ] || continue
         filename=$(basename "$file")
         log info "Symlinking $file_type file $filename"
-        safe_symlink "$file" "$target_dir/$filename" || {
-            log error "Failed to symlink $filename"
-            return 1
-        }
+        run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" "Failed to symlink $filename" || return 1
     done
 }
 
@@ -61,10 +58,7 @@ setup_xcode_tools() {
     fi
 
     # Install command line tools
-    xcode-select --install || {
-        log error "Failed to install Xcode command line tools"
-        return 1
-    }
+    run_or_fail "xcode-select --install" "Failed to install Xcode command line tools" || return 1
 
     # Wait for installation to complete
     log info "Waiting for Xcode command line tools installation to complete..."
@@ -83,18 +77,12 @@ setup_colors() {
 
     log info "Installing colorschemes..."
 
-    ensure_directory "$HOME/.vim/colors" || {
-        log error "Failed to create Vim colors directory"
-        return 1
-    }
+    run_or_fail "ensure_directory \"$HOME/.vim/colors\"" "Failed to create Vim colors directory" || return 1
 
     if [ "$IS_MAC" = true ]; then
         xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-        ensure_directory "$xcode_dir" || {
-            log error "Failed to create Xcode colors directory"
-            return 1
-        }
+        run_or_fail "ensure_directory \"$xcode_dir\"" "Failed to create Xcode colors directory" || return 1
     fi
 
     # Count and check scheme directories
@@ -151,15 +139,9 @@ setup_touch_id() {
         return 1
     }
 
-    sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local || {
-        log error "Failed to copy Touch ID template"
-        return 1
-    }
+    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template" || return 1
 
-    sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local || {
-        log error "Failed to modify Touch ID configuration"
-        return 1
-    }
+    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration" || return 1
 
     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
         log success "Touch ID enabled"
@@ -176,10 +158,7 @@ create_dev_directories() {
     dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
     for dir in $dirs; do
-        ensure_directory "$dir" || {
-            log error "Failed to create directory $dir"
-            return 1
-        }
+        run_or_fail "ensure_directory \"$dir\"" "Failed to create directory $dir" || return 1
     done
 
     log success "Development directories created"
@@ -191,17 +170,11 @@ setup_dotfiles() {
     [ -d "$HOME/.config" ] && {
         backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
         log debug "Backing up existing .config directory to $backup_dir"
-        mv "$HOME/.config" "$backup_dir" || {
-            log error "Failed to backup old .config directory"
-            return 1
-        }
+        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" "Failed to backup old .config directory" || return 1
         log info "Previous .config backed up to $backup_dir"
     }
 
-    git clone "https://github.com/maclong9/dots" "$HOME/.config" || {
-        log error "Failed to clone dotfiles repository"
-        return 1
-    }
+    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" "Failed to clone dotfiles repository" || return 1
 
     log success "Dotfiles cloned"
 }
@@ -237,10 +210,7 @@ link_dotfiles() {
         esac
 
         log info "Symlinking $filename"
-        safe_symlink "$file" "$HOME/$filename" || {
-            log error "Failed to symlink $filename"
-            return 1
-        }
+        run_or_fail "safe_symlink \"$file\" \"$HOME/$filename\"" "Failed to symlink $filename" || return 1
     done
 
     log success "Dotfiles linked"
@@ -265,10 +235,7 @@ setup_ssh() {
         return 1
     fi
 
-    ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$key" -N "" || {
-        log error "SSH key generation failed"
-        return 1
-    }
+    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -f \"$key\" -N \"\"" "SSH key generation failed" || return 1
 
     # Start ssh-agent
     eval "$(ssh-agent -s)" >/dev/null 2>&1 ||
@@ -301,10 +268,7 @@ build_container() {
     # Expected SHA-256 checksum for container-0.1.0-installer-signed.pkg
     expected_checksum="a1b2c3d4e5f6789abcdef1234567890abcdef1234567890abcdef1234567890ab"
 
-    download_file "$pkg_url" "$pkg_file" || {
-        log error "Failed to download container package"
-        return 1
-    }
+    run_or_fail "download_file \"$pkg_url\" \"$pkg_file\"" "Failed to download container package" || return 1
 
     # Verify checksum if available
     if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
@@ -313,8 +277,7 @@ build_container() {
         }
     fi
 
-    sudo installer -pkg "$pkg_file" -target / || {
-        log error "Failed to install container package"
+    run_or_fail "sudo installer -pkg \"$pkg_file\" -target /" "Failed to install container package" || {
         rm -f "$pkg_file"
         return 1
     }
@@ -328,26 +291,14 @@ build_container() {
         return 0
     }
 
-    container system start --enable-kernel-install || {
-        log error "Failed to start container vm"
-        return 1
-    }
+    run_or_fail "container system start --enable-kernel-install" "Failed to start container vm" || return 1
 
     # Required for now, remove once `container` doesn't require
-    softwareupdate --install-rosetta --agree-to-license || {
-        log error "Failed to install Rosetta 2"
-        return 1
-    }
+    run_or_fail "softwareupdate --install-rosetta --agree-to-license" "Failed to install Rosetta 2" || return 1
 
-    container build -t dev-container -f "$HOME/.config/Dockerfile" || {
-        log error "Failed to build container image"
-        return 1
-    }
+    run_or_fail "container build -t dev-container -f \"$HOME/.config/Dockerfile\"" "Failed to build container image" || return 1
 
-    container create -m 4024M --name dev-container dev-container || {
-        log error "Failed to create container"
-        return 1
-    }
+    run_or_fail "container create -m 4024M --name dev-container dev-container" "Failed to create container" || return 1
 
     log success "Container setup complete"
 }
@@ -356,24 +307,14 @@ setup_maintenance() {
     log info "Setting up system maintenance..."
 
     # Ensure maintenance script is executable
-    chmod +x "$HOME/.config/scripts/maintenance/maintenance.sh" || {
-        log error "Failed to make maintenance script executable"
-        return 1
-    }
+    run_or_fail "chmod +x \"$HOME/.config/scripts/maintenance/maintenance.sh\"" "Failed to make maintenance script executable" || return 1
 
     if [ "$IS_MAC" = true ]; then
         # Install LaunchAgent for macOS
         launch_agents_dir="$HOME/Library/LaunchAgents"
-        ensure_directory "$launch_agents_dir" || {
-            log error "Failed to create LaunchAgents directory"
-            return 1
-        }
+        run_or_fail "ensure_directory \"$launch_agents_dir\"" "Failed to create LaunchAgents directory" || return 1
 
-        cp "$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist" \
-            "$launch_agents_dir/com.maintenance.cleanup.plist" || {
-            log error "Failed to install LaunchAgent"
-            return 1
-        }
+        run_or_fail "cp \"$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist\" \"$launch_agents_dir/com.maintenance.cleanup.plist\"" "Failed to install LaunchAgent" || return 1
 
         # Load the LaunchAgent
         launchctl load "$launch_agents_dir/com.maintenance.cleanup.plist" 2>/dev/null ||
@@ -384,8 +325,7 @@ setup_maintenance() {
         # Install cron job for Linux
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
         cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
-        crontab /tmp/current_cron || {
-            log error "Failed to install cron job"
+        run_or_fail "crontab /tmp/current_cron" "Failed to install cron job" || {
             rm -f /tmp/current_cron
             return 1
         }
@@ -416,30 +356,15 @@ setup_swift() {
         return 0
     fi
 
-	curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gzh || {
-        log error "Failed to download swiftly"
-        return 1
-    }
+    run_or_fail "curl -O https://download.swift.org/swiftly/linux/swiftly-\$(uname -m).tar.gzh" "Failed to download swiftly" || return 1
 
-	tar zxf swiftly-$(uname -m).tar.gz || {
-        log error "Failed to download swiftly"
-        return 1
-    }
+    run_or_fail "tar zxf swiftly-\$(uname -m).tar.gz" "Failed to extract swiftly" || return 1
 
-	./swiftly init --quiet-shell-followup || {
-		log error "Failed to run swiftly"
-		return 1
-	}
+    run_or_fail "./swiftly init --quiet-shell-followup" "Failed to run swiftly" || return 1
 
-	. "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" || {
-		log error "Failed to source swiftly"
-		return 1
-	}
+    run_or_fail ". \"\${SWIFTLY_HOME_DIR:-\$HOME/.local/share/swiftly}/env.sh\"" "Failed to source swiftly" || return 1
 
-	hash -r || {
-		log error "Failed to hash"
-		return 1
-	}
+    run_or_fail "hash -r" "Failed to hash" || return 1
 }
 
 main() {
@@ -485,4 +410,4 @@ main() {
         "- System maintenance runs weekly (Mondays at 11:00 AM)"
 }
 
-main "$@"
+main "$@"n

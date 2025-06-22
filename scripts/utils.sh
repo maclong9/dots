@@ -152,6 +152,32 @@ spinner() {
     return "$exit_code"
 }
 
+# Executes a command with automatic error logging and failure handling.
+#
+# Evaluates a command string and logs an error message if the command fails.
+# Returns 1 on command failure to allow for proper error propagation.
+#
+# - Parameters:
+#   - command: Command string to execute.
+#   - error_msg: Error message to log if command fails.
+# - Returns:
+#   - 0 if command succeeds.
+#   - 1 if command fails.
+# - Usage:
+#   ```sh
+#   run_or_fail "mkdir /tmp/test" "Failed to create test directory"
+#   run_or_fail "git clone repo.git" "Failed to clone repository" || return 1
+#   ```
+run_or_fail() {
+    command="$1"
+    error_msg="$2"
+
+    eval "$command" || {
+        log error "$error_msg"
+        return 1
+    }
+}
+
 # Creates a timestamped backup of an existing file.
 #
 # Copies a file to a backup with a timestamp suffix before modification.
