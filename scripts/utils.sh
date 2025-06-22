@@ -44,15 +44,15 @@ log() {
     level="$1"
     message="$2"
     case "$level" in
-    info) printf "${BLUE}[INFO]${NC} %s\n" "$message" ;;
-    success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
-    warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
-    error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
-    debug)
-        if [ "$DEBUG" = "true" ]; then
-            printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
-        fi
-        ;;
+        info) printf "${BLUE}[INFO]${NC} %s\n" "$message" ;;
+        success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
+        warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
+        error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
+        debug)
+            if [ "$DEBUG" = "true" ]; then
+                printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
+            fi
+            ;;
     esac
 }
 
@@ -70,21 +70,21 @@ log() {
 parse_args() {
     while [ $# -gt 0 ]; do
         case $1 in
-        --*=*)
-            key="${1#--}"
-            var_name=$(echo "${key%%=*}" | tr '[:lower:]-' '[:upper:]_')
-            var_value="${key#*=}"
-            eval "${var_name}='${var_value}'"
-            shift
-            ;;
-        --*)
-            var_name=$(echo "${1#--}" | tr '[:lower:]-' '[:upper:]_')
-            eval "${var_name}=true"
-            shift
-            ;;
-        *)
-            shift
-            ;;
+            --*=*)
+                key="${1#--}"
+                var_name=$(echo "${key%%=*}" | tr '[:lower:]-' '[:upper:]_')
+                var_value="${key#*=}"
+                eval "${var_name}='${var_value}'"
+                shift
+                ;;
+            --*)
+                var_name=$(echo "${1#--}" | tr '[:lower:]-' '[:upper:]_')
+                eval "${var_name}=true"
+                shift
+                ;;
+            *)
+                shift
+                ;;
         esac
     done
 }
@@ -414,9 +414,9 @@ prompt_user() {
         response=${response:-$default}
 
         case "$response" in
-        [Yy] | [Yy][Ee][Ss]) return 0 ;;
-        [Nn] | [Nn][Oo]) return 1 ;;
-        *) printf "Please answer yes or no.\n" ;;
+            [Yy] | [Yy][Ee][Ss]) return 0 ;;
+            [Nn] | [Nn][Oo]) return 1 ;;
+            *) printf "Please answer yes or no.\n" ;;
         esac
     done
 }

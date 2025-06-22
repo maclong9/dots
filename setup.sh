@@ -192,22 +192,22 @@ link_dotfiles() {
     for file in "$HOME/.config"/.*; do
         [ -f "$file" ] || continue
         case "$(basename "$file")" in
-        . | .. | .git) continue ;;
-        *) break ;;
+            . | .. | .git) continue ;;
+            *) break ;;
         esac
     done
     [ ! -f "$file" ] || case "$(basename "$file")" in
-    . | .. | .git) {
-        log warning "No dotfiles found in .config directory"
-        return 0
-    } ;;
+        . | .. | .git) {
+            log warning "No dotfiles found in .config directory"
+            return 0
+        } ;;
     esac
 
     for file in "$HOME/.config"/.*; do
         [ -f "$file" ] || continue
         filename="$(basename "$file")"
         case "$filename" in
-        . | .. | .git) continue ;;
+            . | .. | .git) continue ;;
         esac
 
         log info "Symlinking $filename"
