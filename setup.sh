@@ -406,7 +406,7 @@ main() {
 		"- Add your SSH key to services" \
 		"- Apply your themes" \
 		"- Start your development container" \
-		"- System maintenance runs weekly (Sundays at 2:00 AM)"
+		"- System maintenance runs weekly (Mondays at 11:00 AM)"
 }
 
 main "$@"
