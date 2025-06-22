@@ -1,7 +1,5 @@
-#!/bin/bash
-# shellcheck disable=SC1090,SC2086,SC2034,SC2154,SC2207,SC2164
-# This file contains ZSH completion functions with ZSH-specific syntax
-# Many constructs here are ZSH-specific and not compatible with shellcheck's bash parsing
+#!/bin/zsh
+
 # Completion for kp (kill process on port)
 _kp_completion() {
     # shellcheck disable=SC2034  # These variables are used by ZSH completion system
@@ -39,54 +37,4 @@ _ports() {
     fi
 
     _describe 'ports' ports
-}
-
-# Completion for dev function (project navigation).
-#
-# Provides completion for top-level directories (personal, clients, study, work) and their subdirectories.
-#
-# - Parameters:
-#   - None
-# - Returns:
-#   - None
-# - Usage:
-#   ```sh
-#   dev <tab>
-#   dev personal <tab>
-#   ```
-_dev_completion() {
-    # shellcheck disable=SC2034  # These variables are used by ZSH completion system
-    local context state line
-    local base_dir="$HOME/Developer"
-    local target_dir
-
-    if [[ $CURRENT -eq 2 ]]; then
-        _values 'directory' personal clients study work
-    else
-        # shellcheck disable=SC2154  # words is provided by ZSH completion system
-        case "${words[2]}" in
-            p | personal) target_dir="$base_dir/personal" ;;
-            c | clients) target_dir="$base_dir/clients" ;;
-            s | study) target_dir="$base_dir/study" ;;
-            w | work) target_dir="$base_dir/work" ;;
-            *) target_dir="$base_dir/${words[2]}" ;;
-        esac
-
-        # Build path for deeper subdirectories
-        for ((i = 3; i < CURRENT; i++)); do
-            target_dir="$target_dir/${words[i]}"
-        done
-
-        if [ -d "$target_dir" ]; then
-            _path_files -W "$target_dir" -/
-        fi
-    fi
-}
-
-# Completion for cdi function (iCloud navigation)
-_cdi_completion() {
-    local base="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
-    if [ -d "$base" ]; then
-        _path_files -W "$base" -/
-    fi
 }
