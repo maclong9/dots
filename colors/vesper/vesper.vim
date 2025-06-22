@@ -137,18 +137,18 @@ highlight SpellLocal guifg=#65737E gui=underline
 " Status Line Configuration
 if !exists('g:vesper_statusline_configured')
     let g:vesper_statusline_configured = 1
-    
+
     " Define status line colors
-    highlight User1 guifg=#FFCFA8 guibg=#151515 gui=bold
-    highlight User2 guifg=#99FFE4 guibg=#151515 gui=NONE
-    highlight User3 guifg=#65737E guibg=NONE gui=NONE
-    highlight User4 guifg=#FFC799 guibg=#151515 gui=NONE
-    
+    highlight User1 guifg=#FFCFA8 guibg=#101010 gui=bold
+	highlight User2 guifg=#99FFE4 guibg=#101010 gui=NONE
+	highlight User3 guifg=#65737E guibg=#101010 gui=NONE
+	highlight User4 guifg=#FFC799 guibg=#101010 gui=NONE
+
     " Configure status line format
     set statusline=
-    set statusline+=%1*\ %f%*                    " File name
-    set statusline+=%3*\ %m%*                    " Modified flag
-    set statusline+=%=                           " Right align
-    set statusline+=%4*\ %l:%c%*                 " Line:Column
-    set statusline+=%1*\ %P%*                    " Percentage through file
+	set statusline+=%1*\ %f%*                    " File name
+	set statusline+=%3*\ %m%*                    " Modified flag
+	set statusline+=%3*%=%*                      " Right align with User3 color
+	set statusline+=%4*\ %l:%c%*                 " Line:Column
+	set statusline+=%1*\ %P%*                    " Percentage through file
 endif

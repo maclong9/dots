@@ -6,6 +6,7 @@ if exists('+termguicolors')
     set termguicolors            " Enable 24-bit RGB colors
 endif
 colorscheme vesper               " Set custom colorscheme
+let g:vesper_transparency = 1
 
 " Editor behavior
 set autoindent                   " Automatically indent new lines
@@ -81,10 +82,6 @@ nnoremap <C-l> <C-w>l
 
 " Git integration
 command! -nargs=* -complete=file G !git <args>
-
-" Transparency configuration for vesper colorscheme
-" Set g:vesper_transparency = 1 to enable transparent background
-let g:vesper_transparency = 1
 
 " Auto-commands for productivity
 augroup productivity
