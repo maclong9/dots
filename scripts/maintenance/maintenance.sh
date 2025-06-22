@@ -3,7 +3,8 @@
 # System maintenance script for cleaning caches and temporary files
 
 # Load utilities
-. "$HOME/.config/scripts/utils.sh"
+# shellcheck disable=SC1091
+. ../utils.sh
 
 parse_args "$@"
 
