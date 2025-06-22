@@ -472,9 +472,7 @@ main() {
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
-        if prompt_user "Install container environment?" "y"; then
-            run_step "Setting up container environment" build_container
-        fi
+        run_step "Setting up container environment" build_container
         run_step "Configuring Touch ID" setup_touch_id
     }
 
