@@ -192,22 +192,22 @@ link_dotfiles() {
 	for file in "$HOME/.config"/.*; do
 		[ -f "$file" ] || continue
 		case "$(basename "$file")" in
-			. | .. | .git) continue ;;
-			*) break ;;
+		. | .. | .git) continue ;;
+		*) break ;;
 		esac
 	done
 	[ ! -f "$file" ] || case "$(basename "$file")" in
-		. | .. | .git) {
-			log warning "No dotfiles found in .config directory"
-			return 0
-		} ;;
+	. | .. | .git) {
+		log warning "No dotfiles found in .config directory"
+		return 0
+	} ;;
 	esac
 
 	for file in "$HOME/.config"/.*; do
 		[ -f "$file" ] || continue
 		filename="$(basename "$file")"
 		case "$filename" in
-			. | .. | .git) continue ;;
+		. | .. | .git) continue ;;
 		esac
 
 		log info "Symlinking $filename"
@@ -345,7 +345,7 @@ setup_maintenance() {
 		}
 
 		cp "$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist" \
-		   "$launch_agents_dir/com.maintenance.cleanup.plist" || {
+			"$launch_agents_dir/com.maintenance.cleanup.plist" || {
 			log error "Failed to install LaunchAgent"
 			return 1
 		}
@@ -357,8 +357,8 @@ setup_maintenance() {
 		log success "Scheduled maintenance via LaunchAgent (Sundays at 2:00 AM)"
 	else
 		# Install cron job for Linux
-		crontab -l 2>/dev/null | grep -v "maintenance.sh" > /tmp/current_cron || true
-		cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >> /tmp/current_cron
+		crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
+		cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
 		crontab /tmp/current_cron || {
 			log error "Failed to install cron job"
 			rm -f /tmp/current_cron
