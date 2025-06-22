@@ -410,46 +410,36 @@ run_step() {
 setup_swift() {
     log info "Installing Swift toolchain..."
 
-    # Check if Swift is already installed
     if command -v swift >/dev/null 2>&1; then
         current_version=$(swift --version | head -n1)
         log success "Swift already installed: $current_version"
         return 0
     fi
 
-    # Install swiftly (Swift toolchain installer)
-    curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash || {
-        log error "Failed to install swiftly"
+	curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gzh || {
+        log error "Failed to download swiftly"
         return 1
     }
 
-    # Source swiftly environment
-    # shellcheck disable=SC1091  # env.sh is installed by swiftly at runtime
-    . "$HOME/.local/share/swiftly/env.sh" || {
-        log error "Failed to source swiftly environment"
+	tar zxf swiftly-$(uname -m).tar.gz || {
+        log error "Failed to download swiftly"
         return 1
     }
 
-    # Install latest Swift toolchain
-    swiftly install latest || {
-        log error "Failed to install latest Swift toolchain"
-        return 1
-    }
+	./swiftly init --quiet-shell-followup || {
+		log error "Failed to run swiftly"
+		return 1
+	}
 
-    # Use the installed toolchain
-    swiftly use latest || {
-        log error "Failed to use latest Swift toolchain"
-        return 1
-    }
+	. "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" || {
+		log error "Failed to source swiftly"
+		return 1
+	}
 
-    # Verify installation
-    if command -v swift >/dev/null 2>&1; then
-        version=$(swift --version | head -n1)
-        log success "Swift installed: $version"
-    else
-        log error "Swift installation verification failed"
-        return 1
-    fi
+	hash -r || {
+		log error "Failed to hash"
+		return 1
+	}
 }
 
 main() {
