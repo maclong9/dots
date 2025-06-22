@@ -84,7 +84,7 @@ command! -nargs=* -complete=file G !git <args>
 
 " Transparency configuration for vesper colorscheme
 " Set g:vesper_transparency = 1 to enable transparent background
-let g:vesper_transparency = 0
+let g:vesper_transparency = 1
 
 " Auto-commands for productivity
 augroup productivity

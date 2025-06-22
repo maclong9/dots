@@ -55,6 +55,8 @@ else
     highlight StatusLineNC guifg=#65737E guibg=#101010
     highlight VertSplit guifg=#505050 guibg=#101010
 endif
+" Always ensure SignColumn is transparent
+highlight SignColumn guibg=NONE ctermbg=NONE
 highlight Cursor guifg=#FFCFA8 guibg=#FFCFA8
 highlight CursorLine guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
 highlight CursorLineNr guifg=#FFC799 guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
@@ -139,7 +141,7 @@ if !exists('g:vesper_statusline_configured')
     " Define status line colors
     highlight User1 guifg=#FFCFA8 guibg=#151515 gui=bold
     highlight User2 guifg=#99FFE4 guibg=#151515 gui=NONE
-    highlight User3 guifg=#65737E guibg=#151515 gui=NONE
+    highlight User3 guifg=#65737E guibg=NONE gui=NONE
     highlight User4 guifg=#FFC799 guibg=#151515 gui=NONE
     
     " Configure status line format
@@ -147,8 +149,6 @@ if !exists('g:vesper_statusline_configured')
     set statusline+=%1*\ %f%*                    " File name
     set statusline+=%3*\ %m%*                    " Modified flag
     set statusline+=%=                           " Right align
-    set statusline+=%2*\ %y%*                    " File type
-    set statusline+=%3*\ %{&fileencoding?&fileencoding:&encoding}%*  " Encoding
     set statusline+=%4*\ %l:%c%*                 " Line:Column
     set statusline+=%1*\ %P%*                    " Percentage through file
 endif
