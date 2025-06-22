@@ -28,13 +28,6 @@ RUN npm install -g \
     eslint \
     prettier
 
-# Create non-root user (Debian syntax)
-RUN groupadd --gid 1001 nodejs && \
-    useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home mac
-
-# Switch to non-root user
-USER mac
-
 # Configure dotfiles
 RUN curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 
