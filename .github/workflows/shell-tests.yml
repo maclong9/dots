@@ -1,252 +1,251 @@
 name: Shell Script Testing
 
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    push:
+        branches: [ main, develop ]
+    pull_request:
+        branches: [ main ]
+    workflow_dispatch:
 
 jobs:
-  posix-compliance:
-    name: POSIX Compliance Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    posix-compliance:
+        name: POSIX Compliance Check
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Install shellcheck and dash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck dash
+            - name: Install shellcheck and dash
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y shellcheck dash
 
-	  - name: Download and source utilities
-		run: |
-			url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
-			curl -fsSL "$url" -o /tmp/utils.sh || {
-				printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
-				exit 1
-			}
+            - name: Download and source utilities
+              run: |
+                  url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+                  curl -fsSL "$url" -o /tmp/utils.sh || {
+                      printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
+                      exit 1
+                  }
 
-			. /tmp/utils.sh || {
-				printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
-				exit 1
-			}
+                  . /tmp/utils.sh || {
+                      printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
+                      exit 1
+                  }
 
+            - name: Run shellcheck on all shell scripts
+              run: |
+                  find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +
 
-      - name: Run shellcheck on all shell scripts
-        run: |
-          find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +
+            - name: Test POSIX compliance with dash
+              run: |
+                  for script in $(find . -name "*.sh" -type f); do
+                      echo "Testing POSIX compliance of $script with dash"
+                      dash -n "$script" || exit 1
+                  done
 
-      - name: Test POSIX compliance with dash
-        run: |
-          for script in $(find . -name "*.sh" -type f); do
-            echo "Testing POSIX compliance of $script with dash"
-            dash -n "$script" || exit 1
-          done
+    macos-testing:
+        name: macOS Compatibility Test
+        runs-on: macos-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-  macos-testing:
-    name: macOS Compatibility Test
-    runs-on: macos-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+            - name: Verify standard tools availability
+              run: |
+                  # Verify standard macOS tools are available
+                  command -v git >/dev/null 2>&1 || { echo "git not found"; exit 1; }
+                  command -v curl >/dev/null 2>&1 || { echo "curl not found"; exit 1; }
+                  command -v ln >/dev/null 2>&1 || { echo "ln not found"; exit 1; }
+                  command -v mkdir >/dev/null 2>&1 || { echo "mkdir not found"; exit 1; }
+                  echo "All required standard tools are available"
 
-      - name: Verify standard tools availability
-        run: |
-          # Verify standard macOS tools are available
-          command -v git >/dev/null 2>&1 || { echo "git not found"; exit 1; }
-          command -v curl >/dev/null 2>&1 || { echo "curl not found"; exit 1; }
-          command -v ln >/dev/null 2>&1 || { echo "ln not found"; exit 1; }
-          command -v mkdir >/dev/null 2>&1 || { echo "mkdir not found"; exit 1; }
-          echo "All required standard tools are available"
+            - name: Test setup.sh functionality
+              run: |
+                  # Test dry run of setup script
+                  chmod +x setup.sh
+                  # Create a test environment
+                  export TEST_MODE=true
+                  export DEBUG=true
+                  ./setup.sh --help || true
 
-      - name: Test setup.sh functionality
-        run: |
-          # Test dry run of setup script
-          chmod +x setup.sh
-          # Create a test environment
-          export TEST_MODE=true
-          export DEBUG=true
-          ./setup.sh --help || true
+            - name: Test utils.sh functions
+              run: |
+                  chmod +x scripts/utils.sh
+                  # Source and test key functions
+                  . scripts/utils.sh
+                  # Test logging functions
+                  log info "Testing macOS compatibility"
+                  log success "macOS test successful"
 
-      - name: Test utils.sh functions
-        run: |
-          chmod +x scripts/utils.sh
-          # Source and test key functions
-          . scripts/utils.sh
-          # Test logging functions
-          log info "Testing macOS compatibility"
-          log success "macOS test successful"
+            - name: Test maintenance script
+              run: |
+                  chmod +x scripts/maintenance/maintenance.sh
+                  cd scripts/maintenance
+                  # Test with debug mode
+                  export DEBUG=true
+                  ./maintenance.sh || true
 
-      - name: Test maintenance script
-        run: |
-          chmod +x scripts/maintenance/maintenance.sh
-          cd scripts/maintenance
-          # Test with debug mode
-          export DEBUG=true
-          ./maintenance.sh || true
+            - name: Verify file operations work on macOS
+              run: |
+                  # Test symlink creation (common operation in setup.sh)
+                  mkdir -p test_dir
+                  echo "test content" > test_file
+                  ln -sf "$(pwd)/test_file" test_dir/test_link
+                  [ -L test_dir/test_link ] && echo "Symlink test passed"
+                  rm -rf test_dir test_file
 
-      - name: Verify file operations work on macOS
-        run: |
-          # Test symlink creation (common operation in setup.sh)
-          mkdir -p test_dir
-          echo "test content" > test_file
-          ln -sf "$(pwd)/test_file" test_dir/test_link
-          [ -L test_dir/test_link ] && echo "Symlink test passed"
-          rm -rf test_dir test_file
+    debian-testing:
+        name: Debian Compatibility Test
+        runs-on: ubuntu-latest
+        container:
+            image: debian:bookworm-slim
+        steps:
+            - name: Install basic tools
+              run: |
+                  apt-get update
+                  apt-get install -y git curl ca-certificates
 
-  debian-testing:
-    name: Debian Compatibility Test
-    runs-on: ubuntu-latest
-    container:
-      image: debian:bookworm-slim
-    steps:
-      - name: Install basic tools
-        run: |
-          apt-get update
-          apt-get install -y git curl ca-certificates
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+            - name: Test setup.sh functionality
+              run: |
+                  chmod +x setup.sh
+                  export TEST_MODE=true
+                  export DEBUG=true
+                  ./setup.sh --help || true
 
-      - name: Test setup.sh functionality
-        run: |
-          chmod +x setup.sh
-          export TEST_MODE=true
-          export DEBUG=true
-          ./setup.sh --help || true
+            - name: Test utils.sh functions
+              run: |
+                  chmod +x scripts/utils.sh
+                  . scripts/utils.sh
+                  log info "Testing Debian compatibility"
+                  log success "Debian test successful"
 
-      - name: Test utils.sh functions
-        run: |
-          chmod +x scripts/utils.sh
-          . scripts/utils.sh
-          log info "Testing Debian compatibility"
-          log success "Debian test successful"
+            - name: Test maintenance script
+              run: |
+                  chmod +x scripts/maintenance/maintenance.sh
+                  cd scripts/maintenance
+                  export DEBUG=true
+                  ./maintenance.sh || true
 
-      - name: Test maintenance script
-        run: |
-          chmod +x scripts/maintenance/maintenance.sh
-          cd scripts/maintenance
-          export DEBUG=true
-          ./maintenance.sh || true
+            - name: Test with minimal POSIX shell
+              run: |
+                  # Install dash for strict POSIX testing
+                  apt-get install -y dash
+                  for script in $(find . -name "*.sh" -type f); do
+                      echo "Testing $script with dash"
+                      dash "$script" --help 2>/dev/null || echo "Script $script tested"
+                  done
 
-      - name: Test with minimal POSIX shell
-        run: |
-          # Install dash for strict POSIX testing
-          apt-get install -y dash
-          for script in $(find . -name "*.sh" -type f); do
-            echo "Testing $script with dash"
-            dash "$script" --help 2>/dev/null || echo "Script $script tested"
-          done
+    integration-tests:
+        name: Integration and Security Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-  integration-tests:
-    name: Integration and Security Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+            - name: Install testing tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y shellcheck bats shfmt
 
-      - name: Install testing tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck bats shfmt
+            - name: Format check with shfmt
+              run: |
+                  find . -name "*.sh" -type f -exec shfmt -d -i 4 -ci {} +
 
-      - name: Format check with shfmt
-        run: |
-          find . -name "*.sh" -type f -exec shfmt -d -i 4 -ci {} +
+            - name: Advanced shellcheck analysis
+              run: |
+                  find . -name "*.sh" -type f -exec shellcheck \
+                      -s sh \
+                      -e SC1091 \
+                      -f json {} + > shellcheck-results.json || true
 
-      - name: Advanced shellcheck analysis
-        run: |
-          find . -name "*.sh" -type f -exec shellcheck \
-            -s sh \
-            -e SC1091 \
-            -f json {} + > shellcheck-results.json || true
+                  # Display results
+                  if [ -s shellcheck-results.json ]; then
+                      echo "Shellcheck findings:"
+                      cat shellcheck-results.json
+                  fi
 
-          # Display results
-          if [ -s shellcheck-results.json ]; then
-            echo "Shellcheck findings:"
-            cat shellcheck-results.json
-          fi
+            - name: Security scan for common issues
+              run: |
+                  echo "Scanning for potential security issues..."
 
-      - name: Security scan for common issues
-        run: |
-          echo "Scanning for potential security issues..."
+                  # Check for hardcoded credentials
+                  if grep -r -E "(password|secret|key|token).*=" . --include="*.sh"; then
+                      echo "Warning: Potential hardcoded credentials found"
+                  fi
 
-          # Check for hardcoded credentials
-          if grep -r -E "(password|secret|key|token).*=" . --include="*.sh"; then
-            echo "Warning: Potential hardcoded credentials found"
-          fi
+                  # Check for unsafe rm operations
+                  if grep -r "rm -rf.*\$" . --include="*.sh"; then
+                      echo "Warning: Potentially unsafe rm operations found"
+                  fi
 
-          # Check for unsafe rm operations
-          if grep -r "rm -rf.*\$" . --include="*.sh"; then
-            echo "Warning: Potentially unsafe rm operations found"
-          fi
+                  # Check for command injection vulnerabilities
+                  if grep -r "eval.*\$" . --include="*.sh"; then
+                      echo "Warning: Potential command injection via eval found"
+                  fi
 
-          # Check for command injection vulnerabilities
-          if grep -r "eval.*\$" . --include="*.sh"; then
-            echo "Warning: Potential command injection via eval found"
-          fi
+            - name: Test script dependencies
+              run: |
+                  echo "Checking script dependencies..."
+                  for script in $(find . -name "*.sh" -type f); do
+                      echo "Dependencies for $script:"
+                      grep -E "command -v|which|type" "$script" || echo "No explicit dependency checks"
+                      echo "---"
+                  done
 
-      - name: Test script dependencies
-        run: |
-          echo "Checking script dependencies..."
-          for script in $(find . -name "*.sh" -type f); do
-            echo "Dependencies for $script:"
-            grep -E "command -v|which|type" "$script" || echo "No explicit dependency checks"
-            echo "---"
-          done
+            - name: Test URL accessibility
+              run: |
+                  # Test if external URLs in scripts are accessible
+                  urls=$(grep -r -o "https://[^\"']*" . --include="*.sh" | cut -d: -f2- | sort -u)
+                  for url in $urls; do
+                      echo "Testing URL: $url"
+                      curl -sSf --connect-timeout 10 --max-time 30 "$url" > /dev/null || echo "Warning: $url not accessible"
+                  done
 
-      - name: Test URL accessibility
-        run: |
-          # Test if external URLs in scripts are accessible
-          urls=$(grep -r -o "https://[^\"']*" . --include="*.sh" | cut -d: -f2- | sort -u)
-          for url in $urls; do
-            echo "Testing URL: $url"
-            curl -sSf --connect-timeout 10 --max-time 30 "$url" > /dev/null || echo "Warning: $url not accessible"
-          done
+    functionality-tests:
+        name: Functionality Tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-  functionality-tests:
-    name: Functionality Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+            - name: Test utility functions
+              run: |
+                  . scripts/utils.sh
 
-      - name: Test utility functions
-        run: |
-          . scripts/utils.sh
+                  # Test logging functions
+                  log info "Testing info log"
+                  log success "Testing success log"
+                  log warning "Testing warning log"
+                  log debug "Testing debug log"
 
-          # Test logging functions
-          log info "Testing info log"
-          log success "Testing success log"
-          log warning "Testing warning log"
-          log debug "Testing debug log"
+                  # Test color definitions
+                  echo -e "${GREEN}Green text test${NC}"
+                  echo -e "${RED}Red text test${NC}"
 
-          # Test color definitions
-          echo -e "${GREEN}Green text test${NC}"
-          echo -e "${RED}Red text test${NC}"
+            - name: Test cross-platform compatibility
+              run: |
+                  # Test commands that behave differently on different systems
+                  echo "Testing date command compatibility..."
+                  date "+%Y-%m-%d %H:%M:%S"
 
-      - name: Test cross-platform compatibility
-        run: |
-          # Test commands that behave differently on different systems
-          echo "Testing date command compatibility..."
-          date "+%Y-%m-%d %H:%M:%S"
+                  echo "Testing find command compatibility..."
+                  find . -name "*.sh" -type f | head -5
 
-          echo "Testing find command compatibility..."
-          find . -name "*.sh" -type f | head -5
+                  echo "Testing sed compatibility..."
+                  echo "test string" | sed 's/test/TEST/'
 
-          echo "Testing sed compatibility..."
-          echo "test string" | sed 's/test/TEST/'
+            - name: Performance and resource tests
+              run: |
+                  echo "Testing script execution time..."
+                  time_start=$(date +%s)
 
-      - name: Performance and resource tests
-        run: |
-          echo "Testing script execution time..."
-          time_start=$(date +%s)
+                  # Run maintenance script in dry-run mode if possible
+                  cd scripts/maintenance
+                  timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
 
-          # Run maintenance script in dry-run mode if possible
-          cd scripts/maintenance
-          timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
-
-          time_end=$(date +%s)
-          echo "Script execution took $((time_end - time_start)) seconds"
+                  time_end=$(date +%s)
+                  echo "Script execution took $((time_end - time_start)) seconds"
