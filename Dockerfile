@@ -22,12 +22,9 @@ WORKDIR ~/Developer
 
 # Install global npm packages
 RUN npm install -g \
-    @anthropic-ai/claude-code \
-    vercel \
-    vite \
-    typescript \
-    eslint \
-    prettier
+	@anthropic-ai/claude-code \
+	vercel \	
+	wrangler
 
 # Configure dotfiles
 RUN curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
