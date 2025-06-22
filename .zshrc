@@ -1,11 +1,10 @@
 # Load ZSH completions.
 autoload -Uz compinit && compinit -C
 
-# Source custom functions and completions
-. "$HOME/.config/scripts/utils.sh"
-. "$HOME/.config/scripts/completions/_utils.sh"
-. "$HOME/.config/scripts/functions.zsh"
-. "$HOME/.config/scripts/completions/_functions.zsh"
+# Source custom functions and completions dynamically
+find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \( -name "*.sh" -o -name "*.zsh" \) | while read -r script; do
+    [ -r "$script" ] && . "$script"
+done
 
 # Configure ZSH options for behavior and history.
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS

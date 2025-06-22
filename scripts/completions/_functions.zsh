@@ -1,6 +1,10 @@
-
+#!/bin/bash
+# shellcheck disable=SC1090,SC2086,SC2034,SC2154,SC2207,SC2164
+# This file contains ZSH completion functions with ZSH-specific syntax
+# Many constructs here are ZSH-specific and not compatible with shellcheck's bash parsing
 # Completion for kp (kill process on port)
 _kp_completion() {
+    # shellcheck disable=SC2034  # These variables are used by ZSH completion system
     local context state line
 
     _arguments \
@@ -51,6 +55,7 @@ _ports() {
 #   dev personal <tab>
 #   ```
 _dev_completion() {
+    # shellcheck disable=SC2034  # These variables are used by ZSH completion system
     local context state line
     local base_dir="$HOME/Developer"
     local target_dir
@@ -58,16 +63,17 @@ _dev_completion() {
     if [[ $CURRENT -eq 2 ]]; then
         _values 'directory' personal clients study work
     else
+        # shellcheck disable=SC2154  # words is provided by ZSH completion system
         case "${words[2]}" in
-            p|personal) target_dir="$base_dir/personal" ;;
-            c|clients) target_dir="$base_dir/clients" ;;
-            s|study) target_dir="$base_dir/study" ;;
-            w|work) target_dir="$base_dir/work" ;;
+            p | personal) target_dir="$base_dir/personal" ;;
+            c | clients) target_dir="$base_dir/clients" ;;
+            s | study) target_dir="$base_dir/study" ;;
+            w | work) target_dir="$base_dir/work" ;;
             *) target_dir="$base_dir/${words[2]}" ;;
         esac
 
         # Build path for deeper subdirectories
-        for (( i=3; i<CURRENT; i++ )); do
+        for ((i = 3; i < CURRENT; i++)); do
             target_dir="$target_dir/${words[i]}"
         done
 
@@ -84,4 +90,3 @@ _cdi_completion() {
         _path_files -W "$base" -/
     fi
 }
-

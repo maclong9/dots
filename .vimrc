@@ -82,15 +82,9 @@ nnoremap <C-l> <C-w>l
 " Git integration
 command! -nargs=* -complete=file G !git <args>
 
-" Transparent background and cursor line styling
-augroup colors
-    autocmd!
-    autocmd VimEnter,ColorScheme * hi LineNr guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi NonText guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi Normal guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi SignColumn guibg=NONE ctermbg=NONE
-    autocmd VimEnter,ColorScheme * hi VertSplit guibg=NONE ctermbg=NONE
-augroup END
+" Transparency configuration for vesper colorscheme
+" Set g:vesper_transparency = 1 to enable transparent background
+let g:vesper_transparency = 0
 
 " Auto-commands for productivity
 augroup productivity

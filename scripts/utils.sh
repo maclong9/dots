@@ -113,12 +113,13 @@ spinner() {
         return $?
     fi
 
+    tmp_out=$(mktemp 2>/dev/null || echo "/tmp/spinner_out_$.log")
     tmp_err=$(mktemp 2>/dev/null || echo "/tmp/spinner_error_$.log")
 
     printf "%s " "$message"
 
     # Run command and capture both stdout and stderr
-    "$@" >/dev/null 2>"$tmp_err" &
+    "$@" >"$tmp_out" 2>"$tmp_err" &
     pid=$!
 
     chars="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
@@ -137,7 +138,7 @@ spinner() {
         printf "\r%s ✓\n" "$message"
     else
         printf "\r%s ✗\n" "$message"
-        # Always show errors to stderr for debugging
+        # Show errors to stderr for debugging
         if [ -s "$tmp_err" ]; then
             log error "Command failed with output:"
             cat "$tmp_err" >&2
@@ -146,38 +147,11 @@ spinner() {
         fi
     fi
 
-    rm -f "$tmp_err"
+    rm -f "$tmp_out" "$tmp_err"
 
     return "$exit_code"
 }
 
-# Ensures a required command is available on the system.
-#
-# Checks if a command exists and logs an error if not found.
-#
-# - Parameters:
-#   - tool: Command name to check.
-#   - install_hint: Optional installation hint message.
-# - Returns:
-#   - 0 if the tool is found.
-#   - 1 if the tool is not found.
-# - Usage:
-#   ```sh
-#   require_tool git "Install git using your package manager"
-#   ```
-require_tool() {
-    tool="$1"
-    install_hint="$2"
-
-    if ! command -v "$tool" >/dev/null 2>&1; then
-        log error "Required tool '$tool' not found"
-        [ -n "$install_hint" ] && log info "$install_hint"
-        return 1
-    fi
-
-    log debug "Found $tool: $(command -v "$tool")"
-    return 0
-}
 
 # Creates a timestamped backup of an existing file.
 #
@@ -421,56 +395,6 @@ prompt_user() {
     done
 }
 
-# Generates an SSH key pair if it doesn't exist.
-#
-# Creates an Ed25519 SSH key with proper permissions and configuration.
-#
-# - Parameters:
-#   - None
-# - Usage:
-#   ```sh
-#   create_ssh_key
-#   ```
-create_ssh_key() {
-    ssh_dir="$HOME/.ssh"
-    key_path="$ssh_dir/id_ed25519"
-
-    ensure_directory "$ssh_dir"
-    chmod 700 "$ssh_dir"
-
-    if [ ! -f "$key_path" ]; then
-        log info "Generating SSH key..."
-        ssh-keygen -t ed25519 -f "$key_path" -N "" -C "$(whoami)@$(hostname)"
-        chmod 600 "$key_path"
-        chmod 644 "${key_path}.pub"
-        log success "SSH key generated at $key_path"
-    else
-        log debug "SSH key already exists at $key_path"
-    fi
-}
-
-# Configures Git to use SSH key for commit signing.
-#
-# Sets up Git configuration for SSH-based commit signing.
-#
-# - Parameters:
-#   - None
-# - Usage:
-#   ```sh
-#   setup_git_signing
-#   ```
-setup_git_signing() {
-    key_path="$HOME/.ssh/id_ed25519"
-
-    if [ -f "$key_path" ]; then
-        git config --global user.signingkey "$key_path"
-        git config --global commit.gpgsign true
-        git config --global gpg.format ssh
-        log success "Git signing configured with SSH key"
-    else
-        log warning "SSH key not found, skipping Git signing setup"
-    fi
-}
 
 # Creates standard development directory structure.
 #
@@ -480,9 +404,9 @@ setup_git_signing() {
 #   - None
 # - Usage:
 #   ```sh
-#   create_developer_dirs
+#   create_dev_directories
 #   ```
-create_developer_dirs() {
+create_dev_directories() {
     base_dir="$HOME/Developer"
     dirs="personal clients study work"
 

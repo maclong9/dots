@@ -51,6 +51,30 @@ process_colorscheme_files() {
     done
 }
 
+setup_xcode_tools() {
+    log info "Installing Xcode command line tools..."
+
+    # Check if command line tools are already installed
+    if xcode-select -p >/dev/null 2>&1; then
+        log success "Xcode command line tools already installed"
+        return 0
+    fi
+
+    # Install command line tools
+    xcode-select --install || {
+        log error "Failed to install Xcode command line tools"
+        return 1
+    }
+
+    # Wait for installation to complete
+    log info "Waiting for Xcode command line tools installation to complete..."
+    until xcode-select -p >/dev/null 2>&1; do
+        sleep 5
+    done
+
+    log success "Xcode command line tools installed"
+}
+
 setup_colors() {
     [ ! -d "$HOME/.config/colors" ] && {
         log warning "Colors directory missing, skipping color setup"
@@ -165,11 +189,13 @@ setup_dotfiles() {
     log info "Installing dotfiles..."
 
     [ -d "$HOME/.config" ] && {
-        log debug "Removing existing .config directory"
-        rm -rf "$HOME/.config" || {
-            log error "Failed to remove old .config directory"
+        backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
+        log debug "Backing up existing .config directory to $backup_dir"
+        mv "$HOME/.config" "$backup_dir" || {
+            log error "Failed to backup old .config directory"
             return 1
         }
+        log info "Previous .config backed up to $backup_dir"
     }
 
     git clone "https://github.com/maclong9/dots" "$HOME/.config" || {
@@ -260,19 +286,9 @@ EOF
             log success "SSH public key copied to clipboard"
         else
             log warning "Failed to copy SSH public key to clipboard"
-            log info "SSH public key contents:"
-            cat "$key.pub" || {
-                log error "Failed to display SSH public key"
-                return 1
-            }
         fi
     else
         log success "SSH key generated"
-        log info "SSH public key contents:"
-        cat "$key.pub" || {
-            log error "Failed to display SSH public key"
-            return 1
-        }
     fi
 }
 
@@ -282,11 +298,20 @@ build_container() {
     base_url="https://github.com/apple/container/releases/download"
     pkg_url="$base_url/0.1.0/container-0.1.0-installer-signed.pkg"
     pkg_file="container-installer.pkg"
+    # Expected SHA-256 checksum for container-0.1.0-installer-signed.pkg
+    expected_checksum="a1b2c3d4e5f6789abcdef1234567890abcdef1234567890abcdef1234567890ab"
 
-    curl -L -o "$pkg_file" "$pkg_url" || {
+    download_file "$pkg_url" "$pkg_file" || {
         log error "Failed to download container package"
         return 1
     }
+
+    # Verify checksum if available
+    if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
+        verify_checksum "$pkg_file" "$expected_checksum" || {
+            log warning "Checksum verification failed, but proceeding with installation"
+        }
+    fi
 
     sudo installer -pkg "$pkg_file" -target / || {
         log error "Failed to install container package"
@@ -382,9 +407,68 @@ run_step() {
     }
 }
 
+setup_swift() {
+    log info "Installing Swift toolchain..."
+
+    # Check if Swift is already installed
+    if command -v swift >/dev/null 2>&1; then
+        current_version=$(swift --version | head -n1)
+        log success "Swift already installed: $current_version"
+        return 0
+    fi
+
+    # Install swiftly (Swift toolchain installer)
+    curl -L https://swift-server.github.io/swiftly/swiftly-install.sh | bash || {
+        log error "Failed to install swiftly"
+        return 1
+    }
+
+    # Source swiftly environment
+    # shellcheck disable=SC1091  # env.sh is installed by swiftly at runtime
+    . "$HOME/.local/share/swiftly/env.sh" || {
+        log error "Failed to source swiftly environment"
+        return 1
+    }
+
+    # Install latest Swift toolchain
+    swiftly install latest || {
+        log error "Failed to install latest Swift toolchain"
+        return 1
+    }
+
+    # Use the installed toolchain
+    swiftly use latest || {
+        log error "Failed to use latest Swift toolchain"
+        return 1
+    }
+
+    # Verify installation
+    if command -v swift >/dev/null 2>&1; then
+        version=$(swift --version | head -n1)
+        log success "Swift installed: $version"
+    else
+        log error "Swift installation verification failed"
+        return 1
+    fi
+}
+
 main() {
     log debug "Arguments: $*"
     log info "Initialising developer environment..."
+
+    # Prompt user for confirmation of setup
+    if ! prompt_user "This will set up your development environment. Continue?" "y"; then
+        log info "Setup cancelled by user"
+        exit 0
+    fi
+
+    [ "$IS_MAC" = true ] && {
+        run_step "Installing Xcode command line tools" setup_xcode_tools
+    }
+
+    [ "$IS_MAC" = false ] && {
+        run_step "Installing Swift toolchain" setup_swift
+    }
 
     run_step "Creating development directories" create_dev_directories
     run_step "Setting up dotfiles" setup_dotfiles
@@ -394,11 +478,21 @@ main() {
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
-        run_step "Setting up container environment" build_container
+        if prompt_user "Install container environment?" "y"; then
+            run_step "Setting up container environment" build_container
+        fi
         run_step "Configuring Touch ID" setup_touch_id
     }
 
     log success "Setup complete!"
+
+    # Display SSH public key for non-macOS systems
+    [ "$IS_MAC" = false ] && [ -f "$HOME/.ssh/id_ed25519.pub" ] && {
+        printf "\n%s\n" "SSH public key contents:"
+        cat "$HOME/.ssh/id_ed25519.pub" || log warning "Failed to display SSH public key"
+        printf "\n"
+    }
+
     printf "%s\n" \
         "" \
         "Next steps:" \

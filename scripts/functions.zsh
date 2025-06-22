@@ -1,3 +1,4 @@
+#!/bin/bash
 # Navigates to iCloud directories.
 #
 # Changes directory to the specified iCloud path or the iCloud root if no path is provided.
@@ -10,27 +11,20 @@
 # - Usage:
 #   ```sh
 #   cdi Documents
+#   cdi
 #   ```
-dev() {
-  local target="$HOME/Developer"
-  case "$1" in
-    p|personal) target="$target/personal" ;;
-    c|clients) target="$target/clients" ;;
-    s|study) target="$target/study" ;;
-    w|work) target="$target/work" ;;
-    *) target="$target/${1:-}" ;;
-  esac
-  shift
-  [ $# -gt 0 ] && target="$target/$*"
-  if [ -d "$target" ]; then
-    cd "$target"
-  else
-    echo "Directory not found: $target"
-    return 1
-  fi
+cdi() {
+    local target="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+    [ $# -gt 0 ] && target="$target/$*"
+    if [ -d "$target" ]; then
+        cd "$target" || return 1
+    else
+        echo "Directory not found: $target"
+        return 1
+    fi
 }
 
-# Navigates to development project directories.
+# Navigates to development directories (shorthand for cdd).
 #
 # Changes directory to the specified development directory under `~/Developer`, supporting deeper subdirectories.
 #
@@ -42,26 +36,34 @@ dev() {
 #   - 1 if the directory does not exist.
 # - Usage:
 #   ```sh
-#   dev personal project1
-#   dev p
+#   cdd personal project1
+#   cdd p
+#   dev personal project1  # alias for cdd
 #   ```
+cdd() {
+    local target="$HOME/Developer"
+    case "$1" in
+        p | personal) target="$target/personal" ;;
+        c | clients) target="$target/clients" ;;
+        s | study) target="$target/study" ;;
+        w | work) target="$target/work" ;;
+        *) target="$target/${1:-}" ;;
+    esac
+    shift
+    [ $# -gt 0 ] && target="$target/$*"
+    if [ -d "$target" ]; then
+        cd "$target" || return 1
+    else
+        echo "Directory not found: $target"
+        return 1
+    fi
+}
+
+# Alias for cdd - navigates to development project directories.
+#
+# This is an alias for the cdd function to maintain compatibility.
 dev() {
-  local target="$HOME/Developer"
-  case "$1" in
-    p|personal) target="$target/personal" ;;
-    c|clients) target="$target/clients" ;;
-    s|study) target="$target/study" ;;
-    w|work) target="$target/work" ;;
-    *) target="$target/${1:-}" ;;
-  esac
-  shift
-  [ $# -gt 0 ] && target="$target/$*"
-  if [ -d "$target" ]; then
-    cd "$target"
-  else
-    echo "Directory not found: $target"
-    return 1
-  fi
+    cdd "$@"
 }
 
 # Kills a process running on a specified port.
@@ -82,9 +84,10 @@ kp() {
         echo "Usage: kp <port>"
         return 1
     }
-    local pid=$(lsof -ti tcp:$1)
+    local pid
+    pid=$(lsof -ti tcp:"$1")
     if [[ -n "$pid" ]]; then
-        kill -9 $pid && echo "Killed process on port $1"
+        kill -9 "$pid" && echo "Killed process on port $1"
     else
         echo "No process found on port $1"
     fi

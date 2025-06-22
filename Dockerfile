@@ -1,8 +1,5 @@
 FROM debian:latest
 
-# Ensure color terminal in container
-ENV TERM=xterm-256color
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
 	cron \
@@ -15,6 +12,12 @@ RUN apt-get update && apt-get install -y \
     openssh-client \
     vim \
     zsh
+
+# Ensure color terminal in container persists across shell sessions
+RUN echo 'export TERM=xterm-256color' >> /etc/environment && \
+    echo 'export TERM=xterm-256color' >> /etc/bash.bashrc && \
+    echo 'export TERM=xterm-256color' >> /etc/zsh/zshenv
+ENV TERM=xterm-256color
 
 # Set working directory
 WORKDIR ~/Developer

@@ -11,6 +11,11 @@ endif
 " Set colorscheme name
 let g:colors_name = "vesper"
 
+" Configuration options
+if !exists('g:vesper_transparency')
+    let g:vesper_transparency = 0
+endif
+
 " Core Colors from Palette
 let s:bg = "#101010"
 let s:enhanced_surface = "#151515"
@@ -35,14 +40,24 @@ let s:comment = "#8b8b8b"
 let s:keyword = "#A0A0A0"
 
 " UI Highlights
-highlight Normal guifg=#FFFFFF guibg=#101010
+if g:vesper_transparency
+    highlight Normal guifg=#FFFFFF guibg=NONE ctermbg=NONE
+    highlight LineNr guifg=#505050 guibg=NONE ctermbg=NONE
+    highlight SignColumn guibg=NONE ctermbg=NONE
+    highlight VertSplit guifg=#505050 guibg=NONE ctermbg=NONE
+    highlight NonText guibg=NONE ctermbg=NONE
+    highlight StatusLine guifg=#FFFFFF guibg=NONE ctermbg=NONE
+    highlight StatusLineNC guifg=#65737E guibg=NONE ctermbg=NONE
+else
+    highlight Normal guifg=#FFFFFF guibg=#101010
+    highlight LineNr guifg=#505050 guibg=#101010
+    highlight StatusLine guifg=#FFFFFF guibg=#101010
+    highlight StatusLineNC guifg=#65737E guibg=#101010
+    highlight VertSplit guifg=#505050 guibg=#101010
+endif
 highlight Cursor guifg=#FFCFA8 guibg=#FFCFA8
 highlight CursorLine guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
 highlight CursorLineNr guifg=#FFC799 guibg=#2a2a2a ctermbg=8 gui=NONE cterm=NONE
-highlight LineNr guifg=#505050 guibg=#101010
-highlight StatusLine guifg=#FFFFFF guibg=#101010
-highlight StatusLineNC guifg=#65737E guibg=#101010
-highlight VertSplit guifg=#505050 guibg=#101010
 highlight Pmenu guifg=#FFFFFF guibg=#151515
 highlight PmenuSel guifg=#101010 guibg=#FFC799
 highlight PmenuSbar guifg=#FFC799 guibg=#151515
@@ -116,3 +131,24 @@ highlight SpellBad guifg=#FF8080 gui=underline
 highlight SpellCap guifg=#FFC799 gui=underline
 highlight SpellRare guifg=#99FFE4 gui=underline
 highlight SpellLocal guifg=#65737E gui=underline
+
+" Status Line Configuration
+if !exists('g:vesper_statusline_configured')
+    let g:vesper_statusline_configured = 1
+    
+    " Define status line colors
+    highlight User1 guifg=#FFCFA8 guibg=#151515 gui=bold
+    highlight User2 guifg=#99FFE4 guibg=#151515 gui=NONE
+    highlight User3 guifg=#65737E guibg=#151515 gui=NONE
+    highlight User4 guifg=#FFC799 guibg=#151515 gui=NONE
+    
+    " Configure status line format
+    set statusline=
+    set statusline+=%1*\ %f%*                    " File name
+    set statusline+=%3*\ %m%*                    " Modified flag
+    set statusline+=%=                           " Right align
+    set statusline+=%2*\ %y%*                    " File type
+    set statusline+=%3*\ %{&fileencoding?&fileencoding:&encoding}%*  " Encoding
+    set statusline+=%4*\ %l:%c%*                 " Line:Column
+    set statusline+=%1*\ %P%*                    " Percentage through file
+endif
