@@ -375,9 +375,9 @@ main() {
         run_step "Installing Xcode command line tools" setup_xcode_tools
     }
 
-    [ "$IS_MAC" = false ] && {
-        run_step "Installing Swift toolchain" setup_swift
-    }
+    #[ "$IS_MAC" = false ] && {
+    #    run_step "Installing Swift toolchain" setup_swift
+    #}
 
     run_step "Creating development directories" create_dev_directories
     run_step "Setting up dotfiles" setup_dotfiles
