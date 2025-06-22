@@ -5,15 +5,16 @@ ENV TERM=xterm-256color
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    nodejs \
-    npm \
-    git \
-    curl \
-    zsh \
+	cron \
 	shellcheck \
 	shfmt \
+    curl \
+    git \
+    nodejs \
+    npm \
+    openssh-client \
     vim \
-    openssh-client
+    zsh
 
 # Set working directory
 WORKDIR ~/Developer
