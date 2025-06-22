@@ -360,40 +360,6 @@ verify_checksum() {
     fi
 }
 
-# Prompts user for yes/no confirmation.
-#
-# Displays an interactive prompt with default value support.
-#
-# - Parameters:
-#   - message: Prompt message to display.
-#   - default: Default response (optional, defaults to 'n').
-# - Returns:
-#   - 0 for yes.
-#   - 1 for no.
-# - Usage:
-#   ```sh
-#   if prompt_user "Continue setup?" "y"; then
-#       echo "Proceeding..."
-#   fi
-#   ```
-prompt_user() {
-    message="$1"
-    default="${2:-n}"
-    response
-
-    while true; do
-        printf "%s [y/N]: " "$message"
-        read -r response
-        response=${response:-$default}
-
-        case "$response" in
-            [Yy] | [Yy][Ee][Ss]) return 0 ;;
-            [Nn] | [Nn][Oo]) return 1 ;;
-            *) printf "Please answer yes or no.\n" ;;
-        esac
-    done
-}
-
 # Creates standard development directory structure.
 #
 # Sets up organized project directories under `~/Developer`.
