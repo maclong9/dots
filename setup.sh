@@ -356,15 +356,21 @@ setup_swift() {
         return 0
     fi
 
-    run_or_fail "curl -O https://download.swift.org/swiftly/linux/swiftly-\$(uname -m).tar.gzh" "Failed to download swiftly"
+    setup_swift() {
+    log info "Installing Swift toolchain..."
 
+    if command -v swift >/dev/null 2>&1; then
+        current_version=$(swift --version | head -n1)
+        log success "Swift already installed: $current_version"
+        return 0
+    fi
+
+    run_or_fail "curl -O https://download.swift.org/swiftly/linux/swiftly-\$(uname -m).tar.gz" "Failed to download swiftly"
     run_or_fail "tar zxf swiftly-\$(uname -m).tar.gz" "Failed to extract swiftly"
-
     run_or_fail "./swiftly init --quiet-shell-followup" "Failed to run swiftly"
-
     run_or_fail ". \"\${SWIFTLY_HOME_DIR:-\$HOME/.local/share/swiftly}/env.sh\"" "Failed to source swiftly"
-
     run_or_fail "hash -r" "Failed to hash"
+}
 }
 
 main() {
@@ -375,9 +381,9 @@ main() {
         run_step "Installing Xcode command line tools" setup_xcode_tools
     }
 
-    #[ "$IS_MAC" = false ] && {
-    #    run_step "Installing Swift toolchain" setup_swift
-    #}
+    [ "$IS_MAC" = false ] && {
+        run_step "Installing Swift toolchain" setup_swift
+    }
 
     run_step "Creating development directories" create_dev_directories
     run_step "Setting up dotfiles" setup_dotfiles
