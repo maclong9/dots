@@ -65,8 +65,7 @@ setup_colors() {
 	}
 
 	if [ "$IS_MAC" = true ]; then
-		xcode_dir="$HOME/Library/Developer/Xcode/UserData"
-		xcode_dir="$xcode_dir/FontAndColorThemes"
+		xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
 		ensure_directory "$xcode_dir" || {
 			log error "Failed to create Xcode colors directory"
@@ -101,8 +100,7 @@ setup_colors() {
 		}
 
 		[ "$IS_MAC" = true ] && {
-			xcode_themes="$HOME/Library/Developer/Xcode/UserData"
-			xcode_themes="$xcode_themes/FontAndColorThemes"
+			xcode_themes="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
 			process_colorscheme_files "$scheme_dir" "*.xccolortheme" \
 				"$xcode_themes" "Xcode" || {
@@ -151,8 +149,7 @@ setup_touch_id() {
 create_dev_directories() {
 	log info "Creating development directories..."
 
-	dirs="$HOME/Developer/personal $HOME/Developer/clients"
-	dirs="$dirs $HOME/Developer/study $HOME/Developer/work"
+	dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
 	for dir in $dirs; do
 		ensure_directory "$dir" || {
@@ -330,6 +327,51 @@ build_container() {
 	log success "Container setup complete"
 }
 
+setup_maintenance() {
+	log info "Setting up system maintenance..."
+
+	# Ensure maintenance script is executable
+	chmod +x "$HOME/.config/scripts/maintenance/maintenance.sh" || {
+		log error "Failed to make maintenance script executable"
+		return 1
+	}
+
+	if [ "$IS_MAC" = true ]; then
+		# Install LaunchAgent for macOS
+		launch_agents_dir="$HOME/Library/LaunchAgents"
+		ensure_directory "$launch_agents_dir" || {
+			log error "Failed to create LaunchAgents directory"
+			return 1
+		}
+
+		cp "$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist" \
+		   "$launch_agents_dir/com.maintenance.cleanup.plist" || {
+			log error "Failed to install LaunchAgent"
+			return 1
+		}
+
+		# Load the LaunchAgent
+		launchctl load "$launch_agents_dir/com.maintenance.cleanup.plist" 2>/dev/null ||
+			log warning "Failed to load LaunchAgent (may already be loaded)"
+
+		log success "Scheduled maintenance via LaunchAgent (Sundays at 2:00 AM)"
+	else
+		# Install cron job for Linux
+		crontab -l 2>/dev/null | grep -v "maintenance.sh" > /tmp/current_cron || true
+		cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >> /tmp/current_cron
+		crontab /tmp/current_cron || {
+			log error "Failed to install cron job"
+			rm -f /tmp/current_cron
+			return 1
+		}
+		rm -f /tmp/current_cron
+
+		log success "Scheduled maintenance via cron (Sundays at 2:00 AM)"
+	fi
+
+	log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
+}
+
 run_step() {
 	step_name="$1"
 	step_function="$2"
@@ -349,6 +391,7 @@ main() {
 	run_step "Setting up color schemes" setup_colors
 	run_step "Linking dotfiles" link_dotfiles
 	run_step "Setting up SSH configuration" setup_ssh
+	run_step "Setting up system maintenance" setup_maintenance
 
 	[ "$IS_MAC" = true ] && {
 		run_step "Setting up container environment" build_container
@@ -362,7 +405,8 @@ main() {
 		"- Restart your shell" \
 		"- Add your SSH key to services" \
 		"- Apply your themes" \
-		"- Start your development container"
+		"- Start your development container" \
+		"- System maintenance runs weekly (Sundays at 2:00 AM)"
 }
 
 main "$@"

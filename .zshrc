@@ -3,9 +3,9 @@ autoload -Uz compinit && compinit -C
 
 # Source custom functions and completions
 . "$HOME/.config/scripts/utils.sh"
-. "$HOME/.config/scripts/_utils.sh"
+. "$HOME/.config/scripts/completions/_utils.sh"
 . "$HOME/.config/scripts/functions.zsh"
-. "$HOME/.config/scripts/_functions.zsh"
+. "$HOME/.config/scripts/completions/_functions.zsh"
 
 # Configure ZSH options for behavior and history.
 setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS
