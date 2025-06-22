@@ -456,12 +456,6 @@ main() {
     log debug "Arguments: $*"
     log info "Initialising developer environment..."
 
-    # Prompt user for confirmation of setup
-    if ! prompt_user "This will set up your development environment. Continue?" "y"; then
-        log info "Setup cancelled by user"
-        exit 0
-    fi
-
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
     }
