@@ -6,8 +6,6 @@
 # shellcheck disable=SC1091
 . ../utils.sh
 
-parse_args "$@"
-
 # Calculate sizes before and after cleanup
 calculate_size() {
 	path="$1"
@@ -66,34 +64,15 @@ cleanup_macos() {
 	clean_directory "$HOME/Library/Safari/Databases" "Safari databases"
 	clean_directory "$HOME/Library/Containers/com.apple.Safari/Data/Library/Caches" "Safari container caches"
 
-	# Chrome/Chromium caches
-	for browser in "Google/Chrome" "Chromium"; do
-		chrome_cache="$HOME/Library/Caches/$browser"
-		[ -d "$chrome_cache" ] && clean_directory "$chrome_cache" "$browser cache"
-
-		chrome_data="$HOME/Library/Application Support/$browser/Default"
-		[ -d "$chrome_data/Application Cache" ] && clean_directory "$chrome_data/Application Cache" "$browser app cache"
-		[ -d "$chrome_data/GPUCache" ] && clean_directory "$chrome_data/GPUCache" "$browser GPU cache"
-	done
-
-	# Firefox cache
-	for profile in "$HOME/Library/Application Support/Firefox/Profiles"/*; do
-		[ -d "$profile/cache2" ] && clean_directory "$profile/cache2" "Firefox cache"
-	done
-
 	# Development caches
 	clean_directory "$HOME/Library/Developer/Xcode/DerivedData" "Xcode derived data"
 	clean_directory "$HOME/Library/Developer/CoreSimulator/Caches" "iOS Simulator caches"
 	clean_directory "$HOME/Library/Caches/com.apple.dt.Xcode" "Xcode caches"
 
-	# Node.js and package manager caches
-	clean_directory "$HOME/.npm/_cacache" "npm cache"
-	clean_directory "$HOME/Library/Caches/Yarn" "Yarn cache"
-	clean_directory "$HOME/Library/Caches/pnpm" "pnpm cache"
-
 	# System temporary files
 	clean_files "/tmp/*" "temporary"
 	clean_files "$HOME/.Trash/*" "trash"
+	clean_files "$HOME/**/.DS_Store" "DS_Store files"
 
 	# Download folder cleanup (files older than 30 days)
 	if [ -d "$HOME/Downloads" ]; then
@@ -135,11 +114,7 @@ cleanup_linux() {
 	clean_directory "$HOME/.cargo/registry/cache" "Cargo cache"
 	clean_directory "$HOME/.gradle/caches" "Gradle caches"
 	clean_directory "$HOME/.m2/repository" "Maven repository"
-
-	# VS Code caches
-	clean_directory "$HOME/.vscode/CachedExtensions" "VS Code extension cache"
-	clean_directory "$HOME/.config/Code/logs" "VS Code logs"
-	clean_directory "$HOME/.config/Code/CachedData" "VS Code cached data"
+	clean_files "$HOME/**/node_modules/.cache" "Node.js module cache"
 
 	# System temporary files
 	clean_files "/tmp/*" "temporary"
@@ -161,31 +136,11 @@ cleanup_linux() {
 			sudo apt clean 2>/dev/null && log success "Cleaned apt cache"
 		fi
 	fi
-
-	if command -v dnf >/dev/null 2>&1; then
-		if sudo -n true 2>/dev/null; then
-			sudo dnf clean all 2>/dev/null && log success "Cleaned dnf cache"
-		fi
-	fi
-
-	if command -v pacman >/dev/null 2>&1; then
-		if sudo -n true 2>/dev/null; then
-			sudo pacman -Sc --noconfirm 2>/dev/null && log success "Cleaned pacman cache"
-		fi
-	fi
 }
 
 # Universal cleanup for both platforms
 cleanup_universal() {
 	log info "Running universal cleanup..."
-
-	# Docker cleanup
-	if command -v docker >/dev/null 2>&1; then
-		log info "Cleaning Docker resources..."
-		docker system prune -f 2>/dev/null && log success "Cleaned Docker system"
-		docker volume prune -f 2>/dev/null && log success "Cleaned Docker volumes"
-		docker image prune -f 2>/dev/null && log success "Cleaned Docker images"
-	fi
 
 	# Git cleanup in development directories
 	if [ -d "$HOME/Developer" ]; then
@@ -197,18 +152,7 @@ cleanup_universal() {
 		log success "Cleaned Git repositories"
 	fi
 
-	# Clean common development files
-	clean_files "$HOME/**/node_modules/.cache" "Node.js module cache"
-	clean_files "$HOME/**/.DS_Store" "DS_Store files"
-	clean_files "$HOME/**/Thumbs.db" "Windows thumbnail cache"
-
 	# Clean shell history duplicates
-	if [ -f "$HOME/.bash_history" ]; then
-		awk '!seen[$0]++' "$HOME/.bash_history" >/tmp/bash_history_clean
-		mv /tmp/bash_history_clean "$HOME/.bash_history"
-		log success "Cleaned bash history duplicates"
-	fi
-
 	if [ -f "$HOME/.zsh_history" ]; then
 		awk '!seen[$0]++' "$HOME/.zsh_history" >/tmp/zsh_history_clean
 		mv /tmp/zsh_history_clean "$HOME/.zsh_history"
@@ -250,15 +194,13 @@ main() {
 	log success "System maintenance completed!"
 	show_disk_usage
 
-	# Optional: restart services that benefit from cache clearing
-	if [ "$RESTART_SERVICES" = "true" ]; then
-		log info "Restarting services..."
-		if [ "$IS_MAC" = true ]; then
-			# Restart Finder and Dock
-			killall Finder 2>/dev/null || true
-			killall Dock 2>/dev/null || true
-			log success "Restarted Finder and Dock"
-		fi
+	# Restart services that benefit from cache clearing
+	log info "Restarting services..."
+	if [ "$IS_MAC" = true ]; then
+		# Restart Finder and Dock
+		killall Finder 2>/dev/null || true
+		killall Dock 2>/dev/null || true
+		log success "Restarted Finder and Dock"
 	fi
 }
 
