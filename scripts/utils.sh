@@ -152,7 +152,6 @@ spinner() {
     return "$exit_code"
 }
 
-
 # Creates a timestamped backup of an existing file.
 #
 # Copies a file to a backup with a timestamp suffix before modification.
@@ -394,7 +393,6 @@ prompt_user() {
         esac
     done
 }
-
 
 # Creates standard development directory structure.
 #
