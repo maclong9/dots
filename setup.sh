@@ -262,29 +262,6 @@ EOF
 build_container() {
     log info "Installing container tool..."
 
-    base_url="https://github.com/apple/container/releases/download"
-    pkg_url="$base_url/0.1.0/container-0.1.0-installer-signed.pkg"
-    pkg_file="container-installer.pkg"
-    # Expected SHA-256 checksum for container-0.1.0-installer-signed.pkg
-    expected_checksum="a1b2c3d4e5f6789abcdef1234567890abcdef1234567890abcdef1234567890ab"
-
-    run_or_fail "download_file \"$pkg_url\" \"$pkg_file\"" "Failed to download container package"
-
-    # Verify checksum if available
-    if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
-        verify_checksum "$pkg_file" "$expected_checksum" || {
-            log warning "Checksum verification failed, but proceeding with installation"
-        }
-    fi
-
-    run_or_fail "sudo installer -pkg \"$pkg_file\" -target /" "Failed to install container package" || {
-        rm -f "$pkg_file"
-        return 1
-    }
-
-    rm -f "$pkg_file" ||
-        log warning "Failed to remove downloaded package file"
-
     [ ! -f "$HOME/.config/Dockerfile" ] && {
         log warning "Dockerfile not found, skipping container build"
         log success "Container tool installed"
@@ -347,20 +324,21 @@ run_step() {
     }
 }
 
-setup_swift() {
-    log info "Installing Swift toolchain..."
+setup_mise() {
+    log info "Installing mise and development tools..."
 
-    if command -v swift >/dev/null 2>&1; then
-        current_version=$(swift --version | head -n1)
-        log success "Swift already installed: $current_version"
-        return 0
+    if command -v mise >/dev/null 2>&1; then
+        log success "mise already installed"
+    else
+        run_or_fail "curl https://mise.run | sh" "Failed to install mise"
+
+        # Add mise to PATH for current session
+        export PATH="$HOME/.local/bin:$PATH"
     fi
 
-    run_or_fail "curl -O https://download.swift.org/swiftly/linux/swiftly-\$(uname -m).tar.gz" "Failed to download swiftly"
-    run_or_fail "tar zxf swiftly-\$(uname -m).tar.gz" "Failed to extract swiftly"
-    run_or_fail "./swiftly init --quiet-shell-followup" "Failed to run swiftly"
-    run_or_fail ". \"\${SWIFTLY_HOME_DIR:-\$HOME/.local/share/swiftly}/env.sh\"" "Failed to source swiftly"
-    run_or_fail "hash -r" "Failed to hash"
+    # Install tools from mise.toml
+    run_or_fail "mise install" "Failed to install mise tools"
+    log success "Development tools installed via mise"
 }
 
 main() {
@@ -369,10 +347,7 @@ main() {
 
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
-    }
-
-    [ "$IS_MAC" = false ] && {
-        run_step "Installing Swift toolchain" setup_swift
+        run_step "Installing mise and development tools" setup_mise
     }
 
     run_step "Creating development directories" create_dev_directories
@@ -402,7 +377,7 @@ main() {
         "- Restart your shell" \
         "- Add your SSH key to services" \
         "- Apply your themes" \
-        "- Start your development container" \
+        "- Start your development container as needed" \
         "- System maintenance runs weekly (Mondays at 11:00 AM)"
 }
 

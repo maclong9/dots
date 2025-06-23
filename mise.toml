@@ -1,0 +1,9 @@
+[tools]
+"github-cli" = "latest
+"node" = "lts"
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:vercel" = "latest"
+"npm:wrangler" = "latest"
+"shellcheck" = "latest"
+"shfmt" = "latest"
+"ubi:apple/container" = "latest"

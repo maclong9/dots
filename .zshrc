@@ -1,6 +1,11 @@
 # Load ZSH completions.
 autoload -Uz compinit && compinit -C
 
+# Initialize mise for tool version management
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi
+
 # Source custom functions and completions dynamically
 find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \( -name "*.sh" -o -name "*.zsh" \) | while read -r script; do
     [ -r "$script" ] && . "$script"

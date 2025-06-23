@@ -45,11 +45,10 @@ set wildmenu                     " Enhanced command completion
 set wildmode=longest:full,full   " Improve tab completion results
 set splitright                   " Vertical splits to the right
 set splitbelow                   " Horizontal splits below
-set mouse=a                      " Enable mouse support
 
 " Performance
 set timeoutlen=500               " Faster key sequences
-set updatetime=250               " Faster updates
+set updatetime=1000              " Faster updates
 set lazyredraw                   " Don't redraw during macros
 set re=0                         " Enable new regex engine
 
@@ -86,12 +85,21 @@ command! -nargs=* -complete=file G !git <args>
 " Auto-commands for productivity
 augroup productivity
     autocmd!
-    " Return to last edit position
-    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+    " Return to last edit position when opening a file
+    autocmd BufReadPost *
+        \ if line("'\"") > 1 && line("'\"") <= line("$") |
+        \     exe "normal! g'\"" |
+        \ endif
+
     " Auto-save when focus is lost
     autocmd FocusLost * silent! wa
+
     " Trim trailing whitespace on save
     autocmd BufWritePre * :%s/\s\+$//e
+
+	" Clear commandline after delay
+	autocmd CursorHold * echo ""
 augroup END
 
 " Improve Shell File Tooling

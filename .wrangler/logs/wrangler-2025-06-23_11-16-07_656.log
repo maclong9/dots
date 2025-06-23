@@ -1,0 +1,12 @@
+
+--- 2025-06-23T11:16:07.725Z debug
+🪵  Writing logs to "/root/.config/.wrangler/logs/wrangler-2025-06-23_11-16-07_656.log"
+---
+
+--- 2025-06-23T11:16:07.725Z debug
+Metrics dispatcher: Posting data {"deviceId":"062a28bd-920b-45bb-a2e0-05a10052a08b","event":"wrangler command started","timestamp":1750677367725,"properties":{"amplitude_session_id":1750677367724,"amplitude_event_id":0,"wranglerVersion":"4.20.5","osPlatform":"Linux","osVersion":"#1 SMP Tue May 20 15:19:05 UTC 2025","nodeVersion":20,"packageManager":"npm","isFirstUsage":false,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":false,"hasAssets":false,"argsUsed":["host","port"],"argsCombination":"host, port","command":"wrangler dev","args":{"host":"<REDACTED>","port":8787,"xJsonConfig":true,"j":true,"latest":true,"noBundle":false,"remote":false,"r":false,"testScheduled":false,"xVectorizeBindToProd":false,"xImagesLocalMode":false}}}
+---
+
+--- 2025-06-23T11:16:07.729Z debug
+.env file not found at ".env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
