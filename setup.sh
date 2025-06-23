@@ -222,7 +222,6 @@ setup_mise() {
 }
 
 install_container() {
-    build_container() {
     log info "Installing container tool..."
 
     base_url="https://github.com/apple/container/releases/download"
