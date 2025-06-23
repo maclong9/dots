@@ -200,7 +200,7 @@ setup_mise() {
 
     # Add mise to PATH for this session
     export PATH="$HOME/.local/bin:$PATH"
-    
+
     # Check if mise.toml exists before trying to trust it
     if [ -f "$HOME/.config/mise.toml" ]; then
         # Change to the .config directory to trust the mise.toml file
@@ -208,16 +208,16 @@ setup_mise() {
             log error "Failed to change to .config directory"
             return 1
         }
-        
+
         run_or_fail "mise trust -a" "Failed to trust mise.toml"
         run_or_fail "mise install" "Failed to install mise tools"
-        
+
         # Return to original directory (optional, but good practice)
         cd - >/dev/null || true
     else
         log warning "mise.toml not found, skipping mise tool installation"
     fi
-    
+
     log success "Development tools installed via mise"
 }
 
