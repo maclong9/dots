@@ -291,7 +291,7 @@ setup_mise() {
     fi
 
     # Install tools from mise.toml
-    run_or_fail "$HOME/.local/bin/mise install" "Failed to install mise tools"
+    run_or_fail "mise install" "Failed to install mise tools"
     log success "Development tools installed via mise"
 }
 

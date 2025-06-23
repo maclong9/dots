@@ -1,9 +1,11 @@
 # Load ZSH completions.
 autoload -Uz compinit && compinit -C
 
+PATH="$HOME/.local/bin/:$HOME/.local/share/mise/shims/:$PATH"
+
 # Initialize mise for tool version management
 if command -v mise >/dev/null 2>&1; then
-    eval "$($HOME/.local/bin/mise activate zsh)"
+    eval "$(mise activate zsh)"
 fi
 
 # Source custom functions and completions dynamically
