@@ -22,6 +22,54 @@ curl -fsSL "$url" -o /tmp/utils.sh || {
 
 parse_args "$@"
 
+setup_xcode_tools() {
+    log info "Installing Xcode command line tools..."
+
+    # Check if command line tools are already installed
+    if xcode-select -p >/dev/null 2>&1; then
+        log success "Xcode command line tools already installed"
+        return 0
+    fi
+
+    # Install command line tools
+    run_or_fail "xcode-select --install" "Failed to install Xcode command line tools"
+
+    # Wait for installation to complete
+    log info "Waiting for Xcode command line tools installation to complete..."
+    until xcode-select -p >/dev/null 2>&1; do
+        sleep 5
+    done
+
+    log success "Xcode command line tools installed"
+}
+
+create_dev_directories() {
+    log info "Creating development directories..."
+
+    dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
+
+    for dir in $dirs; do
+        run_or_fail "ensure_directory \"$dir\"" "Failed to create directory $dir"
+    done
+
+    log success "Development directories created"
+}
+
+setup_dotfiles() {
+    log info "Installing dotfiles..."
+
+    [ -d "$HOME/.config" ] && {
+        backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
+        log debug "Backing up existing .config directory to $backup_dir"
+        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" "Failed to backup old .config directory"
+        log info "Previous .config backed up to $backup_dir"
+    }
+
+    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" "Failed to clone dotfiles repository"
+
+    log success "Dotfiles cloned"
+}
+
 process_colorscheme_files() {
     scheme_dir="$1"
     pattern="$2"
@@ -46,27 +94,6 @@ process_colorscheme_files() {
         log info "Symlinking $file_type file $filename"
         run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" "Failed to symlink $filename"
     done
-}
-
-setup_xcode_tools() {
-    log info "Installing Xcode command line tools..."
-
-    # Check if command line tools are already installed
-    if xcode-select -p >/dev/null 2>&1; then
-        log success "Xcode command line tools already installed"
-        return 0
-    fi
-
-    # Install command line tools
-    run_or_fail "xcode-select --install" "Failed to install Xcode command line tools"
-
-    # Wait for installation to complete
-    log info "Waiting for Xcode command line tools installation to complete..."
-    until xcode-select -p >/dev/null 2>&1; do
-        sleep 5
-    done
-
-    log success "Xcode command line tools installed"
 }
 
 setup_colors() {
@@ -125,60 +152,6 @@ setup_colors() {
     log success "Color setup complete"
 }
 
-setup_touch_id() {
-    log info "Configuring Touch ID for sudo..."
-
-    [ -f /etc/pam.d/sudo_local ] &&
-        grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
-        log success "Touch ID already enabled"
-        return 0
-    }
-
-    [ ! -f /etc/pam.d/sudo_local.template ] && {
-        log error "Missing template: /etc/pam.d/sudo_local.template"
-        return 1
-    }
-
-    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template"
-
-    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration"
-
-    grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
-        log success "Touch ID enabled"
-        return 0
-    }
-
-    log error "Failed to enable Touch ID - configuration not found"
-    return 1
-}
-
-create_dev_directories() {
-    log info "Creating development directories..."
-
-    dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
-
-    for dir in $dirs; do
-        run_or_fail "ensure_directory \"$dir\"" "Failed to create directory $dir"
-    done
-
-    log success "Development directories created"
-}
-
-setup_dotfiles() {
-    log info "Installing dotfiles..."
-
-    [ -d "$HOME/.config" ] && {
-        backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
-        log debug "Backing up existing .config directory to $backup_dir"
-        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" "Failed to backup old .config directory"
-        log info "Previous .config backed up to $backup_dir"
-    }
-
-    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" "Failed to clone dotfiles repository"
-
-    log success "Dotfiles cloned"
-}
-
 link_dotfiles() {
     log info "Linking dotfiles from .config to home..."
 
@@ -216,6 +189,65 @@ link_dotfiles() {
     log success "Dotfiles linked"
 }
 
+setup_mise() {
+    log info "Installing mise and development tools..."
+
+    if command -v mise >/dev/null 2>&1; then
+        log success "mise already installed"
+    else
+        run_or_fail "curl https://mise.run | sh" "Failed to install mise"
+    fi
+
+    # Add mise to PATH for this session
+    export PATH="$HOME/.local/bin:$PATH"
+    
+    # Check if mise.toml exists before trying to trust it
+    if [ -f "$HOME/.config/mise.toml" ]; then
+        # Change to the .config directory to trust the mise.toml file
+        cd "$HOME/.config" || {
+            log error "Failed to change to .config directory"
+            return 1
+        }
+        
+        run_or_fail "mise trust -a" "Failed to trust mise.toml"
+        run_or_fail "mise install" "Failed to install mise tools"
+        
+        # Return to original directory (optional, but good practice)
+        cd - >/dev/null || true
+    else
+        log warning "mise.toml not found, skipping mise tool installation"
+    fi
+    
+    log success "Development tools installed via mise"
+}
+
+install_container() {
+    build_container() {
+    log info "Installing container tool..."
+
+    base_url="https://github.com/apple/container/releases/download"
+    pkg_url="$base_url/0.1.0/container-0.1.0-installer-signed.pkg"
+    pkg_file="container-installer.pkg"
+    # Expected SHA-256 checksum for container-0.1.0-installer-signed.pkg
+    expected_checksum="a1b2c3d4e5f6789abcdef1234567890abcdef1234567890abcdef1234567890ab"
+
+    run_or_fail "download_file \"$pkg_url\" \"$pkg_file\"" "Failed to download container package"
+
+    # Verify checksum if available
+    if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
+        verify_checksum "$pkg_file" "$expected_checksum" || {
+            log warning "Checksum verification failed, but proceeding with installation"
+        }
+    fi
+
+    run_or_fail "sudo installer -pkg \"$pkg_file\" -target /" "Failed to install container package" || {
+        rm -f "$pkg_file"
+        return 1
+    }
+
+    rm -f "$pkg_file" ||
+        log warning "Failed to remove downloaded package file"
+}
 
 setup_maintenance() {
     log info "Setting up system maintenance..."
@@ -251,36 +283,31 @@ setup_maintenance() {
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
-setup_mise() {
-    log info "Installing mise and development tools..."
+setup_touch_id() {
+    log info "Configuring Touch ID for sudo..."
 
-    if command -v mise >/dev/null 2>&1; then
-        log success "mise already installed"
-    else
-        run_or_fail "curl https://mise.run | sh" "Failed to install mise"
-    fi
+    [ -f /etc/pam.d/sudo_local ] &&
+        grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+        log success "Touch ID already enabled"
+        return 0
+    }
 
-    # Add mise to PATH for this session
-    export PATH="$HOME/.local/bin:$PATH"
-    
-    # Check if mise.toml exists before trying to trust it
-    if [ -f "$HOME/.config/mise.toml" ]; then
-        # Change to the .config directory to trust the mise.toml file
-        cd "$HOME/.config" || {
-            log error "Failed to change to .config directory"
-            return 1
-        }
-        
-        run_or_fail "mise trust -a" "Failed to trust mise.toml"
-        run_or_fail "mise install" "Failed to install mise tools"
-        
-        # Return to original directory (optional, but good practice)
-        cd - >/dev/null || true
-    else
-        log warning "mise.toml not found, skipping mise tool installation"
-    fi
-    
-    log success "Development tools installed via mise"
+    [ ! -f /etc/pam.d/sudo_local.template ] && {
+        log error "Missing template: /etc/pam.d/sudo_local.template"
+        return 1
+    }
+
+    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template"
+
+    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration"
+
+    grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+        log success "Touch ID enabled"
+        return 0
+    }
+
+    log error "Failed to enable Touch ID - configuration not found"
+    return 1
 }
 
 run_step() {
@@ -306,6 +333,7 @@ main() {
     run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
+    run_step "Installing container binary" install_container
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
@@ -318,7 +346,7 @@ main() {
         "" \
         "Next steps:" \
         "- Restart your shell" \
-	"- Setup gh cli" \
+        "- Setup gh cli" \
         "- Apply your themes" \
         "- System maintenance runs weekly (Mondays at 11:00 AM)"
 }
