@@ -290,60 +290,6 @@ jobs:
                   time_end=$(date +%s)
                   echo "Script execution took $((time_end - time_start)) seconds"
 
-    coverage-analysis:
-        name: Code Coverage Analysis
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Install coverage tools
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y kcov
-
-            - name: Generate code coverage for shell scripts
-              run: |
-                  mkdir -p coverage
-                  
-                  # Test setup.sh with coverage
-                  export TEST_MODE=true
-                  export DEBUG=true
-                  chmod +x setup.sh
-                  kcov --exclude-path=/usr,/tmp coverage ./setup.sh --help || true
-                  
-                  # Test maintenance script with coverage
-                  cd scripts/maintenance
-                  chmod +x maintenance.sh
-                  kcov --exclude-path=/usr,/tmp ../../coverage ./maintenance.sh || true
-                  cd ../..
-
-            - name: Analyze function coverage
-              run: |
-                  echo "Analyzing function coverage in shell scripts..."
-                  
-                  # Extract all function definitions
-                  functions=$(grep -r "^[a-zA-Z_][a-zA-Z0-9_]*(" . --include="*.sh" | cut -d: -f2 | cut -d'(' -f1 | sort -u)
-                  
-                  echo "Functions found:"
-                  for func in $functions; do
-                      echo "- $func"
-                  done
-                  
-                  # Check if functions are called/tested
-                  echo "\nFunction usage analysis:"
-                  for func in $functions; do
-                      usage_count=$(grep -r "$func" . --include="*.sh" --exclude-dir=.git | grep -v "^[[:space:]]*$func(" | wc -l)
-                      echo "$func: called $usage_count times"
-                  done
-
-            - name: Upload coverage reports
-              uses: actions/upload-artifact@v4
-              with:
-                  name: coverage-reports
-                  path: coverage/
-                  retention-days: 30
-
     dotfiles-integration:
         name: Complete Dotfiles Setup Test
         runs-on: ubuntu-latest
