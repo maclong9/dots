@@ -9,4 +9,3 @@
 "shellcheck" = "latest"
 "shfmt" = "latest"
 "helix" = "latest"
-"ubi:apple/container" = "latest"
