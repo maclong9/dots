@@ -291,6 +291,7 @@ setup_mise() {
     fi
 
     # Install tools from mise.toml
+    export PATH="$HOME/.local/bin:$PATH"
     run_or_fail "mise install" "Failed to install mise tools"
     log success "Development tools installed via mise"
 }
@@ -301,13 +302,13 @@ main() {
 
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
-        run_step "Installing mise and development tools" setup_mise
     }
 
     run_step "Creating development directories" create_dev_directories
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles
+    run_step "Installing mise and development tools" setup_mise
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
