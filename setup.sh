@@ -216,49 +216,6 @@ link_dotfiles() {
     log success "Dotfiles linked"
 }
 
-setup_ssh() {
-    key="$HOME/.ssh/id_ed25519"
-
-    [ -f "$key" ] && {
-        log debug "SSH key already exists"
-        return 0
-    }
-
-    log info "Generating new SSH key..."
-
-    if ! ensure_directory "$HOME/.ssh"; then
-        log error "Failed to setup .ssh directory"
-        return 1
-    fi
-    if ! chmod 700 "$HOME/.ssh"; then
-        log error "Failed to setup .ssh directory"
-        return 1
-    fi
-
-    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -f \"$key\" -N \"\"" "SSH key generation failed"
-
-    # Start ssh-agent
-    eval "$(ssh-agent -s)" >/dev/null 2>&1 ||
-        log warning "Failed to start ssh-agent"
-
-    # Write SSH config
-    cat >"$HOME/.ssh/config" <<'EOF' || log warning "Failed to write SSH config"
-Host github.com
-	AddKeysToAgent yes
-	IdentityFile ~/.ssh/id_ed25519
-EOF
-
-    if [ "$IS_MAC" = true ]; then
-        if pbcopy <"$key.pub"; then
-            log success "SSH public key copied to clipboard"
-        else
-            log warning "Failed to copy SSH public key to clipboard"
-        fi
-    else
-        log success "SSH key generated"
-    fi
-}
-
 build_container() {
     log info "Installing container tool..."
 
@@ -351,7 +308,6 @@ main() {
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles
-    run_step "Setting up SSH configuration" setup_ssh
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
@@ -361,18 +317,11 @@ main() {
 
     log success "Setup complete!"
 
-    # Display SSH public key for non-macOS systems
-    [ "$IS_MAC" = false ] && [ -f "$HOME/.ssh/id_ed25519.pub" ] && {
-        printf "\n%s\n" "SSH public key contents:"
-        cat "$HOME/.ssh/id_ed25519.pub" || log warning "Failed to display SSH public key"
-        printf "\n"
-    }
-
     printf "%s\n" \
         "" \
         "Next steps:" \
         "- Restart your shell" \
-        "- Add your SSH key to services" \
+	"- Setup gh cli" \
         "- Apply your themes" \
         "- Start your development container as needed" \
         "- System maintenance runs weekly (Mondays at 11:00 AM)"
