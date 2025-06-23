@@ -291,7 +291,7 @@ setup_mise() {
             return 1
         }
         
-        run_or_fail "mise trust" "Failed to trust mise.toml"
+        run_or_fail "mise trust -a" "Failed to trust mise.toml"
         run_or_fail "mise install" "Failed to install mise tools"
         
         # Return to original directory (optional, but good practice)
