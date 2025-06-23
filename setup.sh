@@ -271,15 +271,6 @@ setup_maintenance() {
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
-run_step() {
-    step_name="$1"
-    step_function="$2"
-
-    spinner "$step_name" "$step_function" || {
-        log error "Failed during $step_name"
-        exit 1
-    }
-}
 
 setup_mise() {
     log info "Installing mise and development tools..."
@@ -292,8 +283,19 @@ setup_mise() {
 
     # Install tools from mise.toml
     export PATH="$HOME/.local/bin:$PATH"
+    run_or_fail "mise trust" "Failed to trust `$HOME`"
     run_or_fail "mise install" "Failed to install mise tools"
     log success "Development tools installed via mise"
+}
+
+run_step() {
+    step_name="$1"
+    step_function="$2"
+
+    spinner "$step_name" "$step_function" || {
+        log error "Failed during $step_name"
+        exit 1
+    }
 }
 
 main() {
