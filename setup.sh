@@ -271,7 +271,6 @@ setup_maintenance() {
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
-
 setup_mise() {
     log info "Installing mise and development tools..."
 
@@ -281,10 +280,26 @@ setup_mise() {
         run_or_fail "curl https://mise.run | sh" "Failed to install mise"
     fi
 
-    # Install tools from mise.toml
+    # Add mise to PATH for this session
     export PATH="$HOME/.local/bin:$PATH"
-    run_or_fail "mise trust" "Failed to trust `$HOME`"
-    run_or_fail "mise install" "Failed to install mise tools"
+    
+    # Check if mise.toml exists before trying to trust it
+    if [ -f "$HOME/.config/mise.toml" ]; then
+        # Change to the .config directory to trust the mise.toml file
+        cd "$HOME/.config" || {
+            log error "Failed to change to .config directory"
+            return 1
+        }
+        
+        run_or_fail "mise trust" "Failed to trust mise.toml"
+        run_or_fail "mise install" "Failed to install mise tools"
+        
+        # Return to original directory (optional, but good practice)
+        cd - >/dev/null || true
+    else
+        log warning "mise.toml not found, skipping mise tool installation"
+    fi
+    
     log success "Development tools installed via mise"
 }
 
