@@ -77,3 +77,5 @@ Package.resolved
 
 # GH cli
 gh/
+.claude/
+
