@@ -5,8 +5,6 @@
 
 [core]
     editor = hx
-    autocrlf = input
-    pager = less -FRX
     excludesfile = ~/.gitignore_global
 
 [init]
@@ -22,16 +20,11 @@
     rebase = true
 
 [push]
-    default = simple
     autoSetupRemote = true
 
 [rebase]
     autoStash = true
     autoSquash = true
-
-[diff]
-    algorithm = histogram
-    colorMoved = default
 
 [status]
     showUntrackedFiles = all

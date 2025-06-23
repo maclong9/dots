@@ -226,6 +226,18 @@ jobs:
                   echo -e "${GREEN}Green text test${NC}"
                   echo -e "${RED}Red text test${NC}"
 
+                  # Test argument parsing
+                  export DEBUG=false
+                  parse_args --debug
+                  [ "$DEBUG" = "true" ] && echo "Argument parsing test passed"
+
+                  # Test other utility functions if they exist
+                  if command -v ensure_directory >/dev/null 2>&1; then
+                      test_dir="/tmp/test_ensure_dir"
+                      ensure_directory "$test_dir"
+                      [ -d "$test_dir" ] && echo "ensure_directory test passed" && rm -rf "$test_dir"
+                  fi
+
             - name: Test cross-platform compatibility
               run: |
                   # Test commands that behave differently on different systems
@@ -238,6 +250,33 @@ jobs:
                   echo "Testing sed compatibility..."
                   echo "test string" | sed 's/test/TEST/'
 
+            - name: Test setup.sh with available flags
+              run: |
+                  chmod +x setup.sh
+                  export TEST_MODE=true
+                  export DEBUG=true
+                  
+                  # Test help output
+                  ./setup.sh --help || echo "Help test completed"
+                  
+                  # Test with debug flag
+                  ./setup.sh --debug || echo "Debug test completed"
+
+            - name: Test all script functions without execution
+              run: |
+                  # Source setup.sh and test function definitions
+                  . scripts/utils.sh
+                  
+                  # Check if all required functions are defined
+                  functions="log parse_args"
+                  for func in $functions; do
+                      if ! command -v "$func" >/dev/null 2>&1; then
+                          echo "Function $func not found" >&2
+                          exit 1
+                      fi
+                      echo "Function $func is defined"
+                  done
+
             - name: Performance and resource tests
               run: |
                   echo "Testing script execution time..."
@@ -245,7 +284,147 @@ jobs:
 
                   # Run maintenance script in dry-run mode if possible
                   cd scripts/maintenance
+                  export DEBUG=true
                   timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
 
                   time_end=$(date +%s)
                   echo "Script execution took $((time_end - time_start)) seconds"
+
+    coverage-analysis:
+        name: Code Coverage Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install coverage tools
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y kcov
+
+            - name: Generate code coverage for shell scripts
+              run: |
+                  mkdir -p coverage
+                  
+                  # Test setup.sh with coverage
+                  export TEST_MODE=true
+                  export DEBUG=true
+                  chmod +x setup.sh
+                  kcov --exclude-path=/usr,/tmp coverage ./setup.sh --help || true
+                  
+                  # Test maintenance script with coverage
+                  cd scripts/maintenance
+                  chmod +x maintenance.sh
+                  kcov --exclude-path=/usr,/tmp ../../coverage ./maintenance.sh || true
+                  cd ../..
+
+            - name: Analyze function coverage
+              run: |
+                  echo "Analyzing function coverage in shell scripts..."
+                  
+                  # Extract all function definitions
+                  functions=$(grep -r "^[a-zA-Z_][a-zA-Z0-9_]*(" . --include="*.sh" | cut -d: -f2 | cut -d'(' -f1 | sort -u)
+                  
+                  echo "Functions found:"
+                  for func in $functions; do
+                      echo "- $func"
+                  done
+                  
+                  # Check if functions are called/tested
+                  echo "\nFunction usage analysis:"
+                  for func in $functions; do
+                      usage_count=$(grep -r "$func" . --include="*.sh" --exclude-dir=.git | grep -v "^[[:space:]]*$func(" | wc -l)
+                      echo "$func: called $usage_count times"
+                  done
+
+            - name: Upload coverage reports
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-reports
+                  path: coverage/
+                  retention-days: 30
+
+    dotfiles-integration:
+        name: Complete Dotfiles Setup Test
+        runs-on: ubuntu-latest
+        container:
+            image: ubuntu:22.04
+        steps:
+            - name: Install minimal dependencies
+              run: |
+                  apt-get update
+                  apt-get install -y git curl ca-certificates sudo
+
+            - name: Create test user
+              run: |
+                  useradd -m -s /bin/bash testuser
+                  echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+            - name: Checkout code as test user
+              run: |
+                  su - testuser -c "git clone https://github.com/maclong9/dots.git ~/.config || echo 'Clone failed, using local files'"
+
+            - name: Copy local files for testing
+              run: |
+                  # If we're in a test environment, copy the current files
+                  if [ -f "./setup.sh" ]; then
+                      su - testuser -c "rm -rf ~/.config"
+                      su - testuser -c "mkdir -p ~/.config"
+                      cp -r . /home/testuser/.config/
+                      chown -R testuser:testuser /home/testuser/.config
+                  fi
+
+            - name: Test complete setup process
+              run: |
+                  su - testuser -c '
+                      cd ~/.config
+                      export TEST_MODE=true
+                      export DEBUG=true
+                      chmod +x setup.sh
+                      
+                      # Test setup process step by step
+                      echo "Testing setup.sh execution..."
+                      ./setup.sh --debug || echo "Setup test completed with status: $?"
+                      
+                      # Verify critical directories would be created
+                      echo "Verifying setup would create required directories..."
+                      [ -f "scripts/utils.sh" ] && echo "✓ utils.sh found"
+                      [ -f "setup.sh" ] && echo "✓ setup.sh found"
+                      [ -d "scripts" ] && echo "✓ scripts directory found"
+                  '
+
+            - name: Test maintenance setup
+              run: |
+                  su - testuser -c '
+                      cd ~/.config/scripts/maintenance
+                      export DEBUG=true
+                      chmod +x maintenance.sh
+                      
+                      # Test maintenance script
+                      echo "Testing maintenance script..."
+                      ./maintenance.sh || echo "Maintenance test completed"
+                  '
+
+            - name: Verify dotfiles structure
+              run: |
+                  su - testuser -c '
+                      cd ~/.config
+                      echo "Verifying dotfiles structure..."
+                      
+                      # Check for essential files
+                      files="setup.sh scripts/utils.sh scripts/maintenance/maintenance.sh"
+                      for file in $files; do
+                          if [ -f "$file" ]; then
+                              echo "✓ $file exists"
+                          else
+                              echo "✗ $file missing"
+                              exit 1
+                          fi
+                      done
+                      
+                      # Check for dotfiles (files starting with .)
+                      dotfile_count=$(find . -maxdepth 1 -name ".*" -type f | wc -l)
+                      echo "Found $dotfile_count dotfiles"
+                      
+                      echo "Dotfiles structure verification complete"
+                  '

@@ -12,8 +12,6 @@ Thumbs.db
 # Icon must end with two \r
 Icon
 
-# Thumbnails
-._*
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -43,7 +41,6 @@ Sessionx.vim
 
 # Temporary files
 .netrwhist
-*~
 
 # Auto-generated tag files
 tags
@@ -75,7 +72,9 @@ Package.resolved
 .env.local
 .env.*.local
 
-# GH cli
+# GitHub
 gh/
+
+# Claude AI
 .claude/
 
