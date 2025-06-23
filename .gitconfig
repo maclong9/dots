@@ -4,7 +4,7 @@
     signingkey = ~/.ssh/id_ed25519
 
 [core]
-    editor = vim
+    editor = hx
     autocrlf = input
     pager = less -FRX
     excludesfile = ~/.gitignore_global
@@ -28,10 +28,6 @@
 [rebase]
     autoStash = true
     autoSquash = true
-
-[merge]
-    conflictstyle = diff3
-    tool = vimdiff
 
 [diff]
     algorithm = histogram
@@ -99,6 +95,7 @@
 
 [color]
     ui = auto
+
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
