@@ -216,26 +216,6 @@ link_dotfiles() {
     log success "Dotfiles linked"
 }
 
-build_container() {
-    log info "Installing container tool..."
-
-    [ ! -f "$HOME/.config/Dockerfile" ] && {
-        log warning "Dockerfile not found, skipping container build"
-        log success "Container tool installed"
-        return 0
-    }
-
-    run_or_fail "container system start --enable-kernel-install" "Failed to start container vm"
-
-    # Required for now, remove once `container` doesn't require
-    run_or_fail "softwareupdate --install-rosetta --agree-to-license" "Failed to install Rosetta 2"
-
-    run_or_fail "container build -t dev-container -f \"$HOME/.config/Dockerfile\"" "Failed to build container image"
-
-    run_or_fail "container create -m 4024M --name dev-container dev-container" "Failed to create container"
-
-    log success "Container setup complete"
-}
 
 setup_maintenance() {
     log info "Setting up system maintenance..."
@@ -329,7 +309,6 @@ main() {
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
-        run_step "Setting up container environment" build_container
         run_step "Configuring Touch ID" setup_touch_id
     }
 
@@ -341,7 +320,6 @@ main() {
         "- Restart your shell" \
 	"- Setup gh cli" \
         "- Apply your themes" \
-        "- Start your development container as needed" \
         "- System maintenance runs weekly (Mondays at 11:00 AM)"
 }
 
