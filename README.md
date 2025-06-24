@@ -5,10 +5,11 @@ A comprehensive, POSIX-compliant dotfiles configuration for productive developme
 ## ✨ Features
 
 - **Shell**: Modern ZSH configuration with git integration and smart completions
-- **Editor**: Vim setup with syntax highlighting and productivity enhancements
+- **Editor**: Vim and Helix setup with syntax highlighting and productivity enhancements
 - **Git**: Comprehensive Git configuration with useful aliases and SSH signing
 - **Colors**: Consistent color schemes across Vim, Terminal, and Xcode
 - **Scripts**: Utility functions for development workflow automation
+- **Tools**: Uses `mise` to install my most used development tooling
 
 ## 🚀 Quick Installation
 
