@@ -2,7 +2,6 @@
 "github-cli" = "latest"
 "node" = "lts"
 "npm:@anthropic-ai/claude-code" = "latest"
-"npm:vercel" = "latest"
 "npm:wrangler" = "latest"
 "npm:typescript-language-server" = "latest"
 "npm:vscode-langservers-extracted" = "latest"
