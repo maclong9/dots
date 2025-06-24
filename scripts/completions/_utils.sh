@@ -56,7 +56,6 @@ _count_files_completion() {
         '1:pattern:_files'
 }
 
-
 # Register completions with zsh
 if [ -n "$ZSH_VERSION" ]; then
     # Main utility functions

@@ -15,4 +15,3 @@ window-height = 64
 window-padding-x = 12
 window-padding-y = 8
 window-theme = dark
-keybind = shift+enter=text:\n

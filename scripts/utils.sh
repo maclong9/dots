@@ -301,7 +301,6 @@ safe_symlink() {
     return 0
 }
 
-
 # Downloads a file from a URL with progress indication.
 #
 # Uses `curl` to download files with fallback support.
