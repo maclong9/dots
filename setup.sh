@@ -221,33 +221,6 @@ setup_mise() {
     log success "Development tools installed via mise"
 }
 
-install_container() {
-    log info "Installing container tool..."
-
-    base_url="https://github.com/apple/container/releases/download"
-    pkg_url="$base_url/0.1.0/container-0.1.0-installer-signed.pkg"
-    pkg_file="container-installer.pkg"
-    # Expected SHA-256 checksum for container-0.1.0-installer-signed.pkg
-    expected_checksum="a1b2c3d4e5f6789abcdef1234567890abcdef1234567890abcdef1234567890ab"
-
-    run_or_fail "download_file \"$pkg_url\" \"$pkg_file\"" "Failed to download container package"
-
-    # Verify checksum if available
-    if command -v shasum >/dev/null 2>&1 || command -v sha256sum >/dev/null 2>&1; then
-        verify_checksum "$pkg_file" "$expected_checksum" || {
-            log warning "Checksum verification failed, but proceeding with installation"
-        }
-    fi
-
-    run_or_fail "sudo installer -pkg \"$pkg_file\" -target /" "Failed to install container package" || {
-        rm -f "$pkg_file"
-        return 1
-    }
-
-    rm -f "$pkg_file" ||
-        log warning "Failed to remove downloaded package file"
-}
-
 setup_maintenance() {
     log info "Setting up system maintenance..."
 
@@ -332,7 +305,6 @@ main() {
     run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
-    run_step "Installing container binary" install_container
     run_step "Setting up system maintenance" setup_maintenance
 
     [ "$IS_MAC" = true ] && {
