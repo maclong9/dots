@@ -8,7 +8,6 @@ keybind = alt+k=goto_split:up
 keybind = alt+l=goto_split:right
 keybind = global:super+§=toggle_quick_terminal
 keybind = alt+3=text:#
-macos-icon = "xray"
 macos-option-as-alt = true
 theme = "vesper"
 window-height = 64
