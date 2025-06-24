@@ -43,13 +43,40 @@ setup_xcode_tools() {
     log success "Xcode command line tools installed"
 }
 
+setup_touch_id() {
+    log info "Configuring Touch ID for sudo..."
+
+    [ -f /etc/pam.d/sudo_local ] &&
+        grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+        log success "Touch ID already enabled"
+        return 0
+    }
+
+    [ ! -f /etc/pam.d/sudo_local.template ] && {
+        log error "Missing template: /etc/pam.d/sudo_local.template"
+        return 1
+    }
+
+    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template"
+
+    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration"
+
+    grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+        log success "Touch ID enabled"
+        return 0
+    }
+
+    log error "Failed to enable Touch ID - configuration not found"
+    return 1
+}
+
 create_dev_directories() {
     log info "Creating development directories..."
 
     dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
 
     for dir in $dirs; do
-        run_or_fail "ensure_directory \"$dir\"" "Failed to create directory $dir"
+        run_or_fail "mkdir -p \"$dir\"" "Failed to create directory $dir"
     done
 
     log success "Development directories created"
@@ -104,12 +131,12 @@ setup_colors() {
 
     log info "Installing colorschemes..."
 
-    run_or_fail "ensure_directory \"$HOME/.vim/colors\"" "Failed to create Vim colors directory"
+    run_or_fail "mkdir -p \"$HOME/.vim/colors\"" "Failed to create Vim colors directory"
 
     if [ "$IS_MAC" = true ]; then
         xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-        run_or_fail "ensure_directory \"$xcode_dir\"" "Failed to create Xcode colors directory"
+        run_or_fail "mkdir -p \"$xcode_dir\"" "Failed to create Xcode colors directory"
     fi
 
     # Count and check scheme directories
@@ -230,7 +257,7 @@ setup_maintenance() {
     if [ "$IS_MAC" = true ]; then
         # Install LaunchAgent for macOS
         launch_agents_dir="$HOME/Library/LaunchAgents"
-        run_or_fail "ensure_directory \"$launch_agents_dir\"" "Failed to create LaunchAgents directory"
+        run_or_fail "mkdir -p \"$launch_agents_dir\"" "Failed to create LaunchAgents directory"
 
         run_or_fail "cp \"$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist\" \"$launch_agents_dir/com.maintenance.cleanup.plist\"" "Failed to install LaunchAgent"
 
@@ -255,33 +282,6 @@ setup_maintenance() {
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
-setup_touch_id() {
-    log info "Configuring Touch ID for sudo..."
-
-    [ -f /etc/pam.d/sudo_local ] &&
-        grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
-        log success "Touch ID already enabled"
-        return 0
-    }
-
-    [ ! -f /etc/pam.d/sudo_local.template ] && {
-        log error "Missing template: /etc/pam.d/sudo_local.template"
-        return 1
-    }
-
-    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template"
-
-    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration"
-
-    grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
-        log success "Touch ID enabled"
-        return 0
-    }
-
-    log error "Failed to enable Touch ID - configuration not found"
-    return 1
-}
-
 run_step() {
     step_name="$1"
     step_function="$2"
@@ -298,6 +298,7 @@ main() {
 
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
+        run_step "Configuring Touch ID" setup_touch_id
     }
 
     run_step "Creating development directories" create_dev_directories
@@ -306,10 +307,6 @@ main() {
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
     run_step "Setting up system maintenance" setup_maintenance
-
-    [ "$IS_MAC" = true ] && {
-        run_step "Configuring Touch ID" setup_touch_id
-    }
 
     log success "Setup complete!"
 

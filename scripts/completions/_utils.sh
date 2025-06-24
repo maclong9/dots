@@ -56,11 +56,6 @@ _count_files_completion() {
         '1:pattern:_files'
 }
 
-# Completion for ensure_directory function
-_ensure_directory_completion() {
-    _arguments \
-        '1:directory path:_directories'
-}
 
 # Register completions with zsh
 if [ -n "$ZSH_VERSION" ]; then
@@ -77,7 +72,6 @@ if [ -n "$ZSH_VERSION" ]; then
     compdef _spinner_completion spinner
     compdef _prompt_user_completion prompt_user
     compdef _count_files_completion count_files
-    compdef _ensure_directory_completion ensure_directory
 
     # Log functions
     compdef _log_completion log_info

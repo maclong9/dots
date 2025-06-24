@@ -24,6 +24,7 @@ export BRIGHT_CYAN='\033[1;36m'
 export BRIGHT_WHITE='\033[1;37m'
 export NC='\033[0m'
 
+# Quickly access whether on macOS or not
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
 # MARK: - Functions
@@ -166,7 +167,6 @@ spinner() {
 # - Usage:
 #   ```sh
 #   run_or_fail "mkdir /tmp/test" "Failed to create test directory"
-#   run_or_fail "git clone repo.git" "Failed to clone repository" || return 1
 #   ```
 run_or_fail() {
     command="$1"
@@ -204,7 +204,8 @@ backup_file() {
 
 # Counts files matching a pattern.
 #
-# Returns the number of files that match the given pattern.
+# Returns the number of files that match the given pattern. Most useful for bebug statements
+# by counting the files that will be affected and printing using `log debug`
 #
 # - Parameters:
 #   - pattern: File pattern/glob to match.
@@ -300,32 +301,17 @@ safe_symlink() {
     return 0
 }
 
-# Creates directory and parent directories if they don't exist.
-#
-# Equivalent to `mkdir -p`, creates the full directory path.
-#
-# - Parameters:
-#   - dir: Directory path to create.
-# - Usage:
-#   ```sh
-#   ensure_directory "$HOME/.config/colors"
-#   ```
-ensure_directory() {
-    dir="$1"
-    log debug "Creating directory: $dir"
-    mkdir -p "$dir"
-}
 
 # Downloads a file from a URL with progress indication.
 #
-# Uses `curl` or `wget` to download files with fallback support.
+# Uses `curl` to download files with fallback support.
 #
 # - Parameters:
 #   - url: URL to download from.
 #   - dest: destination path.
 # - Returns:
 #   - 0 on success.
-#   - 1 if neither `curl` nor `wget` is available.
+#   - 1 if `curl` is not available.
 # - Usage:
 #   ```sh
 #   download_file "https://example.com/file" "/tmp/file"
@@ -339,69 +325,8 @@ download_file() {
 
     if command -v curl >/dev/null 2>&1; then
         curl -fsSL "$url" -o "$dest"
-    elif command -v wget >/dev/null 2>&1; then
-        wget -q "$url" -O "$dest"
     else
-        log error "Neither curl nor wget available"
+        log error "Neither curl unavailable"
         return 1
     fi
-}
-
-# Verifies file integrity using SHA-256 checksum.
-#
-# Compares a file's checksum against an expected value.
-#
-# - Parameters:
-#   - file: File path to verify.
-#   - expected: Expected SHA-256 checksum.
-# - Returns:
-#   - 0 if checksum matches or no checksum tool is available.
-#   - 1 if checksum does not match.
-# - Usage:
-#   ```sh
-#   verify_checksum "/tmp/file" "abc123def456..."
-#   ```
-verify_checksum() {
-    file="$1"
-    expected="$2"
-    actual
-
-    if command -v shasum >/dev/null 2>&1; then
-        actual=$(shasum -a 256 "$file" | cut -d' ' -f1)
-    elif command -v sha256sum >/dev/null 2>&1; then
-        actual=$(sha256sum "$file" | cut -d' ' -f1)
-    else
-        log warning "No checksum tool available, skipping verification"
-        return 0
-    fi
-
-    if [ "$actual" = "$expected" ]; then
-        log success "Checksum verified for $(basename "$file")"
-        return 0
-    else
-        log error "Checksum mismatch for $(basename "$file")"
-        log error "Expected: $expected"
-        log error "Actual:   $actual"
-        return 1
-    fi
-}
-
-# Creates standard development directory structure.
-#
-# Sets up organized project directories under `~/Developer`.
-#
-# - Parameters:
-#   - None
-# - Usage:
-#   ```sh
-#   create_dev_directories
-#   ```
-create_dev_directories() {
-    base_dir="$HOME/Developer"
-    dirs="personal clients study work"
-
-    for dir in $dirs; do
-        ensure_directory "$base_dir/$dir"
-        log success "Created directory: $base_dir/$dir"
-    done
 }
