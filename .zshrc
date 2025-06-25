@@ -60,3 +60,5 @@ alias sl="swift format lint --recursive"
 alias vg='vim ~/.gitconfig'
 alias vv='vim ~/.vimrc'
 alias vz='vim ~/.zshrc'
+
+. "$HOME/.local/bin/env"
