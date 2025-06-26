@@ -9,7 +9,8 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 # Source custom functions and completions dynamically
-find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \( -name "*.sh" -o -name "*.zsh" \) | while read -r script; do
+find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \
+    \( -name "*.sh" -o -name "*.zsh" \) | while read -r script; do
     [ -r "$script" ] && . "$script"
 done
 
@@ -60,5 +61,3 @@ alias sl="swift format lint --recursive"
 alias vg='vim ~/.gitconfig'
 alias vv='vim ~/.vimrc'
 alias vz='vim ~/.zshrc'
-
-. "$HOME/.local/bin/env"
