@@ -20,8 +20,7 @@ tags
 # === Other ===
 # Local environment files
 .env
-.env.local
-.env.*.local
+.env.*
 
 # GitHub
 gh/
