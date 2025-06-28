@@ -11,8 +11,11 @@ export HISTSIZE=50000 SAVEHIST=50000 HISTFILE="$HOME/.zsh_history"
 command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
 
 # Source custom scripts
-find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \
-   \( -name "*.sh" -o -name "*.zsh" \) -exec [ -r {} ] \; -exec . {} \;
+if [ -d "$HOME/.config/scripts" ]; then
+    for script in "$HOME/.config/scripts"/**/*.{sh,zsh}(N); do
+        [[ "$script" != *"/maintenance/"* ]] && [[ -r "$script" ]] && . "$script"
+    done
+fi
 
 # Compile .zshrc for performance
 [[ ! -f "$HOME/.zshrc.zwc" || "$HOME/.zshrc" -nt "$HOME/.zshrc.zwc" ]] && zcompile "$HOME/.zshrc"
