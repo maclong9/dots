@@ -314,7 +314,7 @@ main() {
         "- Restart your shell" \
         "- Setup gh cli" \
         "- Apply your themes" \
-        "- System maintenance runs weekly (Mondays at 11:00 AM)"
+        "- System maintenance runs weekly (Tuesday at 11:00 AM)"
 }
 
 main "$@"
