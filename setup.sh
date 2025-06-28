@@ -264,7 +264,7 @@ setup_maintenance() {
         launchctl load "$launch_agents_dir/com.maintenance.cleanup.plist" 2>/dev/null ||
             log warning "Failed to load LaunchAgent (may already be loaded)"
 
-        log success "Scheduled maintenance via LaunchAgent (Sundays at 2:00 AM)"
+        log success "Scheduled maintenance via LaunchAgent (Tuesdays at 11:00 AM)"
     else
         # Install cron job for Linux
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
@@ -275,7 +275,7 @@ setup_maintenance() {
         }
         rm -f /tmp/current_cron
 
-        log success "Scheduled maintenance via cron (Sundays at 2:00 AM)"
+        log success "Scheduled maintenance via cron (Tuesdays at 11:00 AM)"
     fi
 
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
