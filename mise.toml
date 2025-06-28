@@ -1,10 +1,6 @@
 [tools]
+"deno" = { version = "latest", postinstall = "deno install -gArf --name claude-code npm:@anthropic-ai/claude-code"}
 "github-cli" = "latest"
-"node" = "lts"
-"npm:@anthropic-ai/claude-code" = "latest"
-"npm:wrangler" = "latest"
-"npm:typescript-language-server" = "latest"
-"npm:vscode-langservers-extracted" = "latest"
 "shellcheck" = "latest"
 "shfmt" = "latest"
 "helix" = "latest"
