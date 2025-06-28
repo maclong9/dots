@@ -281,6 +281,15 @@ setup_maintenance() {
     log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
+setup_ssh() {
+    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519"
+    if [ "$IS_MAC" = true ]; then
+        pbcopy < "$HOME/.ssh/id_ed25519.pub"
+    else
+        cat "$HOME/.ssh/id_ed25519.pub"
+    fi
+}
+
 run_step() {
     step_name="$1"
     step_function="$2"
@@ -305,6 +314,7 @@ main() {
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
     run_step "Setting up system maintenance" setup_maintenance
+    run_step "Generating SSH key" setup_ssh
 
     log success "Setup complete!"
 
@@ -314,6 +324,7 @@ main() {
         "- Restart your shell" \
         "- Setup gh cli" \
         "- Apply your themes" \
+        "- Set up signing key on GitHub" \
         "- System maintenance runs weekly (Tuesday at 11:00 AM)"
 }
 
