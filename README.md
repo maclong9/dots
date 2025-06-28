@@ -1,6 +1,6 @@
 # UNIX Development Environment
 
-A comprehensive, POSIX-compliant dotfiles configuration for productive development on macOS and Linux.
+A comprehensive, POSIX-compliant dotfiles configuration for productive development on UNIX Operating Systems.
 
 ## ✨ Features
 
@@ -9,7 +9,7 @@ A comprehensive, POSIX-compliant dotfiles configuration for productive developme
 - **Git**: Comprehensive Git configuration with useful aliases and SSH signing
 - **Colors**: Consistent color schemes across Vim, Terminal, and Xcode
 - **Scripts**: Utility functions for development workflow automation
-- **Tools**: Uses `mise` to install my most used development tooling
+- **Tools**: Installs frequently used developer tooling with `mise`
 
 ## 🚀 Quick Installation
 
