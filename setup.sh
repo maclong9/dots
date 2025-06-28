@@ -284,7 +284,7 @@ setup_maintenance() {
 setup_ssh() {
     run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519"
     if [ "$IS_MAC" = true ]; then
-        pbcopy < "$HOME/.ssh/id_ed25519.pub"
+        pbcopy <"$HOME/.ssh/id_ed25519.pub"
     else
         cat "$HOME/.ssh/id_ed25519.pub"
     fi
