@@ -1,5 +1,5 @@
 [tools]
-"deno" = { version = "latest", postinstall = "deno install -gArf --name claude-code npm:@anthropic-ai/claude-code"}
+"deno" = { version = "latest", postinstall = "deno install -gArf --name claude npm:@anthropic-ai/claude-code"}
 "github-cli" = "latest"
 "shellcheck" = "latest"
 "shfmt" = "latest"
