@@ -57,9 +57,11 @@ setup_touch_id() {
         return 1
     }
 
-    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" "Failed to copy Touch ID template"
+    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
+        "Failed to copy Touch ID template"
 
-    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" "Failed to modify Touch ID configuration"
+    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" \
+        "Failed to modify Touch ID configuration"
 
     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
         log success "Touch ID enabled"
@@ -70,29 +72,19 @@ setup_touch_id() {
     return 1
 }
 
-create_dev_directories() {
-    log info "Creating development directories..."
-
-    dirs="$HOME/Developer/personal $HOME/Developer/clients $HOME/Developer/study $HOME/Developer/work"
-
-    for dir in $dirs; do
-        run_or_fail "mkdir -p \"$dir\"" "Failed to create directory $dir"
-    done
-
-    log success "Development directories created"
-}
-
 setup_dotfiles() {
     log info "Installing dotfiles..."
 
     [ -d "$HOME/.config" ] && {
         backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
         log debug "Backing up existing .config directory to $backup_dir"
-        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" "Failed to backup old .config directory"
+        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" \
+            "Failed to backup old .config directory"
         log info "Previous .config backed up to $backup_dir"
     }
 
-    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" "Failed to clone dotfiles repository"
+    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
+        "Failed to clone dotfiles repository"
 
     log success "Dotfiles cloned"
 }
@@ -119,7 +111,8 @@ process_colorscheme_files() {
         [ -f "$file" ] || continue
         filename=$(basename "$file")
         log info "Symlinking $file_type file $filename"
-        run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" "Failed to symlink $filename"
+        run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" \
+            "Failed to symlink $filename"
     done
 }
 
@@ -210,7 +203,8 @@ link_dotfiles() {
         esac
 
         log info "Symlinking $filename"
-        run_or_fail "safe_symlink \"$file\" \"$HOME/$filename\"" "Failed to symlink $filename"
+        run_or_fail "safe_symlink \"$file\" \"$HOME/$filename\"" \
+            "Failed to symlink $filename"
     done
 
     log success "Dotfiles linked"
@@ -252,14 +246,18 @@ setup_maintenance() {
     log info "Setting up system maintenance..."
 
     # Ensure maintenance script is executable
-    run_or_fail "chmod +x \"$HOME/.config/scripts/maintenance/maintenance.sh\"" "Failed to make maintenance script executable"
+    run_or_fail "chmod +x \"$HOME/.config/scripts/maintenance/maintenance.sh\"" \
+        "Failed to make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
         # Install LaunchAgent for macOS
         launch_agents_dir="$HOME/Library/LaunchAgents"
-        run_or_fail "mkdir -p \"$launch_agents_dir\"" "Failed to create LaunchAgents directory"
+        run_or_fail "mkdir -p \"$launch_agents_dir\"" \
+            "Failed to create LaunchAgents directory"
 
-        run_or_fail "cp \"$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist\" \"$launch_agents_dir/com.maintenance.cleanup.plist\"" "Failed to install LaunchAgent"
+        run_or_fail "cp \"$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist\" \
+        \"$launch_agents_dir/com.maintenance.cleanup.plist\"" \
+            "Failed to install LaunchAgent"
 
         # Load the LaunchAgent
         launchctl load "$launch_agents_dir/com.maintenance.cleanup.plist" 2>/dev/null ||
@@ -301,7 +299,6 @@ main() {
         run_step "Configuring Touch ID" setup_touch_id
     }
 
-    run_step "Creating development directories" create_dev_directories
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles

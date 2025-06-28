@@ -15,9 +15,8 @@ find "$HOME/.config/scripts" -not -path "$HOME/.config/scripts/maintenance/*" \
 done
 
 # Configure ZSH options for behavior and history.
-setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS
-setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_VERIFY
-setopt HIST_REDUCE_BLANKS HIST_SAVE_NO_DUPS EXTENDED_HISTORY
+setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY HIST_IGNORE_DUPS \
+    HIST_IGNORE_SPACE HIST_VERIFY HIST_REDUCE_BLANKS HIST_SAVE_NO_DUPS EXTENDED_HISTORY
 
 # Configure history settings.
 export HISTSIZE=50000
@@ -58,6 +57,3 @@ alias ll='ls -la'
 alias ls='ls --color=auto'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
-alias vg='vim ~/.gitconfig'
-alias vv='vim ~/.vimrc'
-alias vz='vim ~/.zshrc'

@@ -34,7 +34,7 @@ newline = "none"
 [editor.indent-guides]
 render = true
 
-# Normal mode keybindings - window navigation
+# Normal mode keybindings
 [keys.normal]
 "C-h" = "jump_view_left"
 "C-j" = "jump_view_down"

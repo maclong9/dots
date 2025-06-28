@@ -7,7 +7,7 @@ HOME="${HOME:-$(eval echo ~$(whoami))}"
 export HOME
 
 # Add timestamp to all output - append to log files like debug script
-echo "=== Maintenance run started at $(date) ===" >> /tmp/maintenance.log
+echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log
 
 # shellcheck disable=SC1091
 . "$HOME/.config/scripts/utils.sh"
@@ -208,8 +208,8 @@ main() {
         killall Dock 2>/dev/null || true
         log success "Restarted Finder and Dock"
     fi
-    
-    echo "=== Maintenance run completed at $(date) ===" >> /tmp/maintenance.log
+
+    echo "=== Maintenance run completed at $(date) ===" >>/tmp/maintenance.log
 }
 
-main "$@" 2>> /tmp/maintenance.error.log
+main "$@" 2>>/tmp/maintenance.error.log

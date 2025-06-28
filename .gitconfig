@@ -22,17 +22,6 @@
 [push]
     autoSetupRemote = true
 
-[rebase]
-    autoStash = true
-    autoSquash = true
-
-[status]
-    showUntrackedFiles = all
-
-[branch]
-    autosetupmerge = always
-    autosetuprebase = always
-
 [alias]
     # Status and info
     s = status --short --branch
