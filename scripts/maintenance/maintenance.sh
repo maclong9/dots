@@ -3,8 +3,7 @@
 # System maintenance script for cleaning caches and temporary files
 
 # Ensure HOME is set for launchd environment
-HOME="${HOME:-$(eval echo ~$(whoami))}"
-export HOME
+HOME="${HOME:-$(cd && pwd)}"
 
 # Add timestamp to all output - append to log files like debug script
 echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log

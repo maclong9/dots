@@ -15,6 +15,7 @@ curl -fsSL "$url" -o /tmp/utils.sh || {
     exit 1
 }
 
+# shellcheck disable=SC1091
 . /tmp/utils.sh || {
     printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
     exit 1
