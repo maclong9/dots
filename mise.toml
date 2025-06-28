@@ -1,7 +1,7 @@
 [tools]
 "deno" = { version = "latest", postinstall = """
   deno install -gArf --name claude npm:@anthropic-ai/claude-code
-  deno install -gArf typescript-language-server
+  deno install -gArf npm:typescript-language-server
 """ }
 "github-cli" = "latest"
 "shellcheck" = "latest"
