@@ -1,9 +1,15 @@
 [tools]
-"deno" = { version = "latest", postinstall = """
-  deno install -gArf --name claude npm:@anthropic-ai/claude-code
-  deno install -gArf npm:typescript-language-server
-""" }
+"deno" = "latest"
 "github-cli" = "latest"
+"marksman" = "latest"
+"node" = "latest"
 "shellcheck" = "latest"
 "shfmt" = "latest"
-"helix" = "latest"
+# npm installs
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@tailwindcss/language-server" = "latest"
+"npm:eslint" = "latest"
+"npm:prettier" = "latest"
+"npm:vscode-langservers-extracted" = "latest"
+"npm:wrangler" = "latest"
+"npm:yaml-language-server" = "latest"
