@@ -110,7 +110,7 @@ let lspServers = [
     \ {
     \     'name': 'tailwindcss-language-server',
     \     'filetype': ['html', 'css', 'scss', 'sass', 'less', 'vue', 'svelte', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact'],
-    \     'path': '@tailwindcss/language-server',
+    \     'path': 'tailwindcss-language-server',
     \     'args': ['--stdio'],
     \     'rootSearch': ['tailwind.config.js', 'tailwind.config.ts', 'tailwind.config.cjs', 'tailwind.config.mjs']
     \ },

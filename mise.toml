@@ -10,6 +10,7 @@
 "npm:@tailwindcss/language-server" = "latest"
 "npm:eslint" = "latest"
 "npm:prettier" = "latest"
+"npm:typescript-language-server" = "latest"
 "npm:vscode-langservers-extracted" = "latest"
 "npm:wrangler" = "latest"
 "npm:yaml-language-server" = "latest"
