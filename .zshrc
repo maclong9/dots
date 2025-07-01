@@ -18,14 +18,13 @@ if [ -d "$HOME/.config/scripts" ]; then
 fi
 
 # Compile .zshrc for performance
-[[ ! -f "$HOME/.zshrc.zwc" || "$HOME/.zshrc" -nt "$HOME/.zshrc.zwc" ]] && zcompile "$HOME/.zshrc"
+[[ ! -f "$HOME/.zshrc.zwc" || "$HOME/.zshrc" -nt "$HOME/.zshrc.zwc" ]] &&
+    zcompile "$HOME/.zshrc"
 
 # Configure git prompt
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats ' %B%F{10}(%b)%f'
-zstyle ':vcs_info:git:*' actionformats ' %B%F{10}⎇ %b|%a%f'
-
 precmd() { vcs_info; PROMPT="%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 %F{%(?.10.9)}%Bλ%b%f "; }
 
