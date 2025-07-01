@@ -125,8 +125,6 @@ setup_colors() {
 
     log info "Installing colorschemes..."
 
-    run_or_fail "mkdir -p \"$HOME/.vim/colors\"" "Failed to create Vim colors directory"
-
     if [ "$IS_MAC" = true ]; then
         xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
@@ -151,12 +149,6 @@ setup_colors() {
         [ "$DEBUG" = true ] && {
             log debug "Files in $scheme_name:"
             ls -la "$scheme_dir" >&2
-        }
-
-        process_colorscheme_files "$scheme_dir" "*.vim" \
-            "$HOME/.vim/colors" "vim" || {
-            log error "Failed to process vim colorscheme files for $scheme_name"
-            return 1
         }
 
         [ "$IS_MAC" = true ] && {

@@ -1,22 +1,6 @@
 # === macOS ===
 .DS_Store
 
-# === Vim ===
-# Swap files
-*.swp
-*.swo
-*~
-
-# Session files
-Session.vim
-Sessionx.vim
-
-# Temporary files
-.netrwhist
-
-# Auto-generated tag files
-tags
-
 # === Other ===
 # Local environment files
 .env
