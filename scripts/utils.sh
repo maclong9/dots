@@ -188,8 +188,8 @@ run_or_fail() {
 #   - The path to the backup file, if created.
 # - Usage:
 #   ```sh
-#   backup_file ~/.vimrc
-#   # Creates ~/.vimrc.backup.20241215_143022
+#   backup_file ~/.zshrc
+#   # Creates ~/.zshrc.backup.20241215_143022
 #   ```
 backup_file() {
     file="$1"
@@ -234,7 +234,7 @@ count_files() {
 #   - target_file: Destination path (where symlink will be created).
 # - Usage:
 #   ```sh
-#   safe_symlink "$PWD/.vimrc" "$HOME/.vimrc"
+#   safe_symlink "$PWD/.zshrc" "$HOME/.zshrc"
 #   ```
 safe_symlink() {
     source_file="$1"
