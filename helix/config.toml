@@ -19,7 +19,6 @@ hidden = false
 
 [editor.statusline]
 left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
-center = []
 right = ["diagnostics", "selections", "register", "position"]
 
 [editor.lsp]
