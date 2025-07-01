@@ -1,6 +1,7 @@
 [tools]
 "deno" = "latest"
 "github-cli" = "latest"
+"helix" = "latest"
 "marksman" = "latest"
 "node" = "latest"
 "shellcheck" = "latest"
