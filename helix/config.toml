@@ -1,0 +1,72 @@
+theme = "vesper"
+
+[editor]
+line-number = "relative"
+cursorline = true
+auto-completion = true
+completion-trigger-len = 1
+bufferline = "multiple"
+true-color = true
+shell = ["zsh", "-c"]
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
+center = []
+right = ["diagnostics", "selections", "register", "position"]
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = false
+
+[editor.whitespace.render]
+space = "none"
+tab = "none"
+newline = "none"
+
+[editor.indent-guides]
+render = true
+
+# Normal mode keybindings - window navigation
+[keys.normal]
+"C-h" = "jump_view_left"
+"C-j" = "jump_view_down"
+"C-k" = "jump_view_up"
+"C-l" = "jump_view_right"
+"C-S-h" = "swap_view_left"
+"C-S-j" = "swap_view_down"
+"C-S-k" = "swap_view_up"
+"C-S-l" = "swap_view_right"
+
+# Insert mode keybindings
+[keys.insert]
+"C-[" = "normal_mode"
+# Line navigation
+"C-a" = "goto_line_start"
+"C-e" = "goto_line_end"
+# Line Navigation
+"C-n" = "move_line_down"
+"C-p" = "move_line_up"
+# Character navigation
+"C-f" = "move_char_right"
+"C-b" = "move_char_left"
+# Word navigation
+"A-f" = "move_next_word_end"
+"A-b" = "move_prev_word_start"
+# Editing
+"C-k" = "kill_to_line_end"
+"C-u" = "kill_to_line_start"
+"C-w" = "delete_word_backward"
+"C-d" = "delete_char_forward"
+"C-h" = "delete_char_backward"
+
+# Select mode keybindings
+[keys.select]
+"C-[" = "normal_mode"
