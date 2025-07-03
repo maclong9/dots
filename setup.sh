@@ -252,7 +252,7 @@ setup_maintenance() {
         run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" "Ensure plist is owned by root"
         run_or_fail "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" "Set correct permissions on plist file"
 
-        run_or_fail "sudo launchctl bootstrap \"$launch_daemon_dir/$plist_name\"" "Load the LaunchDaemon"
+        run_or_fail "sudo launchctl bootstrap system $launch_daemon_dir/$plist_name" "Load the LaunchDaemon"
         log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
     else
