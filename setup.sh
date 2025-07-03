@@ -64,11 +64,11 @@ setup_touch_id() {
     run_or_fail "sudo sed -i '' '/pam_tid\.so/s/^# //' /etc/pam.d/sudo_local" \
         "Failed to modify Touch ID configuration"
 
-    grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+    run_or_fail "grep -q \"^auth.*pam_tid.so\" /etc/pam.d/sudo_local" && {
         log success "Touch ID enabled"
         return 0
     }
-
+ 
     log error "Failed to enable Touch ID - configuration not found"
     return 1
 }
