@@ -281,7 +281,7 @@ jobs:
                   # Check for essential files
                   files="setup.sh scripts/utils.sh scripts/maintenance/maintenance.sh"
                   for file in $files; do
-                      if [ -f "$file" ]; then
+                      if [ -f "$HOME/$file" ]; then
                           echo "✓ $file exists"
                       else
                           echo "✗ $file missing"
