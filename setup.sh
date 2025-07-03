@@ -243,61 +243,18 @@ setup_maintenance() {
         "Failed to make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
-        # Check if we need elevated privileges for LaunchDaemon installation
-        if [ "$(id -u)" -ne 0 ]; then
-            log info "Installing system-wide maintenance daemon requires administrator privileges"
-
-            # Check if we can sudo
-            if ! sudo -n true 2>/dev/null; then
-                log warning "Cannot install LaunchDaemon without sudo access"
-                log info "To install manually, run: sudo ./setup_maintenance_daemon.sh"
-                return 1
-            fi
-        fi
-
         launch_daemon_dir="/Library/LaunchDaemons"
         plist_name="com.mac.maintenance.cleanup.plist"
         source_plist="$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist"
-        tmp_plist="/tmp/$plist_name"
-
-        # Copy plist to /tmp/ first (with sudo if needed)
-        if [ "$(id -u)" -eq 0 ]; then
-            cp "$source_plist" "$tmp_plist"
-        else
-            sudo cp "$source_plist" "$tmp_plist"
-        fi
 
         # Install the LaunchDaemon with proper permissions
-        if [ "$(id -u)" -eq 0 ]; then
-            cp "$tmp_plist" "$launch_daemon_dir/$plist_name"
-            chown root:wheel "$launch_daemon_dir/$plist_name"
-            chmod 644 "$launch_daemon_dir/$plist_name"
-        else
-            run_or_fail "sudo cp \"$tmp_plist\" \"$launch_daemon_dir/$plist_name\"" \
-                "Failed to install LaunchDaemon"
+        run_or_fail "sudo cp \"$source_plist\" \"$launch_daemon_dir/$plist_name\"" "Copy plist to LaunchDaemons"
+        run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" "Ensure plist is owned by root"
+        run_or_fail "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" "Set correct permissions on plist file"
 
-            run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" \
-                "Failed to set LaunchDaemon ownership"
-
-            run_or_fail "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" \
-                "Failed to set LaunchDaemon permissions"
-        fi
-
-        # Clean up temporary file
-        rm -f "$tmp_plist"
-
-        # Load the LaunchDaemon
-        if [ "$(id -u)" -eq 0 ]; then
-            launchctl load "$launch_daemon_dir/$plist_name" 2>/dev/null ||
-                log warning "Failed to load LaunchDaemon (may already be loaded)"
-        else
-            sudo launchctl load "$launch_daemon_dir/$plist_name" 2>/dev/null ||
-                log warning "Failed to load LaunchDaemon (may already be loaded)"
-        fi
-
+        run_or_fail "sudo launchctl bootstrap \"$launch_daemon_dir/$plist_name\"" "Load the LaunchDaemon"
         log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
-
     else
         # Linux cron setup (no sudo needed)
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
