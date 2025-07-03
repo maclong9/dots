@@ -10,6 +10,7 @@ UNIX Operating Systems.
 - **Git**: Comprehensive Git configuration with useful aliases and SSH signing
 - **Colors**: Consistent color schemes across Helix, Terminal, and Xcode
 - **Scripts**: Utility functions for development workflow automation
+- **Maintenance** Weekly scheduled system maintenance for cleaning system/development caches
 - **Tools**: Install frequently used developer tooling with `mise`
 
 ## 🚀 Quick Installation
