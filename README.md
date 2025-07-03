@@ -24,4 +24,3 @@ curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 - Restart your terminal or run `source "$HOME/.zshrc"`.
 - Add your SSH key to remote.
 - Configure color schemes in your editors as needed.
-- Run your development container as required using `dev-start` and `dev-exec`.
