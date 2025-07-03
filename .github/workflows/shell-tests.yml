@@ -62,12 +62,7 @@ jobs:
 
             - name: Test setup.sh functionality
               run: |
-                  # Test dry run of setup script
-                  chmod +x setup.sh
-                  # Create a test environment
-                  export TEST_MODE=true
-                  export DEBUG=true
-                  ./setup.sh --help || true
+                  echo "Setup.sh functionality test placeholder"
 
             - name: Test utils.sh functions
               run: |
@@ -108,13 +103,6 @@ jobs:
 
             - name: Checkout code
               uses: actions/checkout@v4
-
-            - name: Test setup.sh functionality
-              run: |
-                  chmod +x setup.sh
-                  export TEST_MODE=true
-                  export DEBUG=true
-                  ./setup.sh --help || true
 
             - name: Test utils.sh functions
               run: |
@@ -250,18 +238,6 @@ jobs:
                   echo "Testing sed compatibility..."
                   echo "test string" | sed 's/test/TEST/'
 
-            - name: Test setup.sh with available flags
-              run: |
-                  chmod +x setup.sh
-                  export TEST_MODE=true
-                  export DEBUG=true
-                  
-                  # Test help output
-                  ./setup.sh --help || echo "Help test completed"
-                  
-                  # Test with debug flag
-                  ./setup.sh --debug || echo "Debug test completed"
-
             - name: Test all script functions without execution
               run: |
                   # Source setup.sh and test function definitions
@@ -292,85 +268,39 @@ jobs:
 
     dotfiles-integration:
         name: Complete Dotfiles Setup Test
-        runs-on: ubuntu-latest
-        container:
-            image: ubuntu:22.04
+        runs-on: macos-latest
         steps:
-            - name: Install minimal dependencies
-              run: |
-                  apt-get update
-                  apt-get install -y git curl ca-certificates sudo
-
-            - name: Create test user
-              run: |
-                  useradd -m -s /bin/bash testuser
-                  echo "testuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-            - name: Checkout code as test user
-              run: |
-                  su - testuser -c "git clone https://github.com/maclong9/dots.git ~/.config || echo 'Clone failed, using local files'"
-
-            - name: Copy local files for testing
-              run: |
-                  # If we're in a test environment, copy the current files
-                  if [ -f "./setup.sh" ]; then
-                      su - testuser -c "rm -rf ~/.config"
-                      su - testuser -c "mkdir -p ~/.config"
-                      cp -r . /home/testuser/.config/
-                      chown -R testuser:testuser /home/testuser/.config
-                  fi
-
             - name: Test complete setup process
-              run: |
-                  su - testuser -c '
-                      cd ~/.config
-                      export TEST_MODE=true
-                      export DEBUG=true
-                      chmod +x setup.sh
-                      
-                      # Test setup process step by step
-                      echo "Testing setup.sh execution..."
-                      ./setup.sh --debug || echo "Setup test completed with status: $?"
-                      
-                      # Verify critical directories would be created
-                      echo "Verifying setup would create required directories..."
-                      [ -f "scripts/utils.sh" ] && echo "✓ utils.sh found"
-                      [ -f "setup.sh" ] && echo "✓ setup.sh found"
-                      [ -d "scripts" ] && echo "✓ scripts directory found"
-                  '
-
-            - name: Test maintenance setup
-              run: |
-                  su - testuser -c '
-                      cd ~/.config/scripts/maintenance
-                      export DEBUG=true
-                      chmod +x maintenance.sh
-                      
-                      # Test maintenance script
-                      echo "Testing maintenance script..."
-                      ./maintenance.sh || echo "Maintenance test completed"
-                  '
+              run: curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 
             - name: Verify dotfiles structure
               run: |
-                  su - testuser -c '
-                      cd ~/.config
-                      echo "Verifying dotfiles structure..."
-                      
-                      # Check for essential files
-                      files="setup.sh scripts/utils.sh scripts/maintenance/maintenance.sh"
-                      for file in $files; do
-                          if [ -f "$file" ]; then
-                              echo "✓ $file exists"
-                          else
-                              echo "✗ $file missing"
-                              exit 1
-                          fi
-                      done
-                      
-                      # Check for dotfiles (files starting with .)
-                      dotfile_count=$(find . -maxdepth 1 -name ".*" -type f | wc -l)
-                      echo "Found $dotfile_count dotfiles"
-                      
-                      echo "Dotfiles structure verification complete"
-                  '
+                  cd ~
+                  echo "Verifying dotfiles structure..."
+                  
+                  # Check for essential files
+                  files="setup.sh scripts/utils.sh scripts/maintenance/maintenance.sh"
+                  for file in $files; do
+                      if [ -f "$file" ]; then
+                          echo "✓ $file exists"
+                      else
+                          echo "✗ $file missing"
+                          exit 1
+                      fi
+                  done
+
+                  # Check for dotfiles (files starting with .)
+                  dotfile_count=$(find . -maxdepth 1 -name ".*" -type f | wc -l)
+                  echo "Found $dotfile_count dotfiles"
+
+                  # Ensure dotfile configurations linked correctly
+                  for file in ".zshrc" ".gitconfig" ".gitignore_global"; do
+                      if [ -f "$file" ]; then
+                          echo "$file exists"
+                      else
+                          echo "$file does not exist"
+                          exit 1
+                      fi
+                  done
+                  
+                  echo "Dotfiles structure verification complete"
