@@ -15,7 +15,7 @@ UNIX Operating Systems.
 ## 🚀 Quick Installation
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
+curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sudo sh
 ```
 
 ## 🛠 Post-Installation
