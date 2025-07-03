@@ -61,7 +61,7 @@ setup_touch_id() {
     run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
         "Failed to copy Touch ID template"
 
-    run_or_fail "sudo sed -i '' 's/^#//' /etc/pam.d/sudo_local" \
+    run_or_fail "sudo sed -i '' '/pam_tid\.so/s/^# //' /etc/pam.d/sudo_local" \
         "Failed to modify Touch ID configuration"
 
     grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
