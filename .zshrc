@@ -38,3 +38,4 @@ alias ll='ls -la'
 alias ls='ls --color=auto'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
+alias shf="find . -name \"*.sh\" -type f -exec shfmt -w -i 4 -ci {} +"
