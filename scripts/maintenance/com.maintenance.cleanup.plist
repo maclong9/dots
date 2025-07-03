@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.$(whoami).maintenance.cleanup</string>
+    <string>com.mac.maintenance.cleanup</string>
     
     <key>ProgramArguments</key>
     <array>
@@ -19,7 +19,7 @@
         <key>HOME</key>
         <string>$HOME</string>
         <key>USER</key>
-        <string>$(whoami)</string>
+        <string>mac</string>
         <key>LOGNAME</key>
         <string>$(whoami)</string>
     </dict>
