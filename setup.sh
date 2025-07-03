@@ -255,18 +255,25 @@ setup_maintenance() {
             fi
         fi
 
-        # Install LaunchDaemon for system-wide execution with root privileges
         launch_daemon_dir="/Library/LaunchDaemons"
         plist_name="com.$(whoami).maintenance.cleanup.plist"
+        source_plist="$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist"
+        tmp_plist="/tmp/$plist_name"
+
+        # Copy plist to /tmp/ first (with sudo if needed)
+        if [ "$(id -u)" -eq 0 ]; then
+            cp "$source_plist" "$tmp_plist"
+        else
+            sudo cp "$source_plist" "$tmp_plist"
+        fi
+
         # Install the LaunchDaemon with proper permissions
         if [ "$(id -u)" -eq 0 ]; then
-            # Already root
-            cp "$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist" "$launch_daemon_dir/$plist_name"
+            cp "$tmp_plist" "$launch_daemon_dir/$plist_name"
             chown root:wheel "$launch_daemon_dir/$plist_name"
             chmod 644 "$launch_daemon_dir/$plist_name"
         else
-            # Use sudo
-            run_or_fail "sudo cp \"/tmp/$plist_name\" \"$launch_daemon_dir/$plist_name\"" \
+            run_or_fail "sudo cp \"$tmp_plist\" \"$launch_daemon_dir/$plist_name\"" \
                 "Failed to install LaunchDaemon"
 
             run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" \
@@ -277,7 +284,7 @@ setup_maintenance() {
         fi
 
         # Clean up temporary file
-        rm -f "/tmp/$plist_name"
+        rm -f "$tmp_plist"
 
         # Load the LaunchDaemon
         if [ "$(id -u)" -eq 0 ]; then
@@ -292,14 +299,12 @@ setup_maintenance() {
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
 
     else
-        # Install cron job for Linux
+        # Linux cron setup (no sudo needed)
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
 
-        # Check if maintenance.crontab exists, otherwise create inline
         if [ -f "$HOME/.config/scripts/maintenance/maintenance.crontab" ]; then
             cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
         else
-            # Create cron entry inline
             echo "0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh" >>/tmp/current_cron
         fi
 
