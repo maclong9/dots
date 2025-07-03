@@ -93,8 +93,6 @@ jobs:
     debian-testing:
         name: Debian Compatibility Test
         runs-on: ubuntu-latest
-        container:
-            image: debian:bookworm-slim
         steps:
             - name: Install basic tools
               run: |
