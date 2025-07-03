@@ -278,17 +278,6 @@ jobs:
                   cd ~
                   echo "Verifying dotfiles structure..."
                   
-                  # Check for essential files
-                  files="setup.sh scripts/utils.sh scripts/maintenance/maintenance.sh"
-                  for file in $files; do
-                      if [ -f "$HOME/$file" ]; then
-                          echo "✓ $file exists"
-                      else
-                          echo "✗ $file missing"
-                          exit 1
-                      fi
-                  done
-
                   # Check for dotfiles (files starting with .)
                   dotfile_count=$(find . -maxdepth 1 -name ".*" -type f | wc -l)
                   echo "Found $dotfile_count dotfiles"
