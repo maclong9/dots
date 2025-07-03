@@ -256,7 +256,7 @@ setup_maintenance() {
         fi
 
         launch_daemon_dir="/Library/LaunchDaemons"
-        plist_name="com.$(whoami).maintenance.cleanup.plist"
+        plist_name="com.mac.maintenance.cleanup.plist"
         source_plist="$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist"
         tmp_plist="/tmp/$plist_name"
 
