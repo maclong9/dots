@@ -74,7 +74,6 @@ clean_directory() {
 
         rm -rf "${dir:?}"/* "$dir"/.* 2>/dev/null || true
 
-        size_after=$(calculate_size "$dir")
         size_after_bytes=$(calculate_size_bytes "$dir")
         saved_bytes=$((size_before_bytes - size_after_bytes))
         saved_formatted=$(format_bytes "$saved_bytes")
@@ -302,14 +301,14 @@ show_disk_usage() {
     echo "=== Disk Usage Summary ===" >>/tmp/maintenance.log
 
     if command -v df >/dev/null 2>&1; then
-        df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mounted; do
+        df -h / 2>/dev/null | tail -1 | while read -r used avail capacity; do
             log info "Root filesystem: $used used, $avail available ($capacity full)"
             echo "  Root filesystem: $used used, $avail available ($capacity full)" >>/tmp/maintenance.log
         done
     fi
 
     if [ "$IS_MAC" = true ] && command -v df >/dev/null 2>&1; then
-        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mounted; do
+        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r used avail capacity; do
             log info "Data volume: $used used, $avail available ($capacity full)"
             echo "  Data volume: $used used, $avail available ($capacity full)" >>/tmp/maintenance.log
         done
