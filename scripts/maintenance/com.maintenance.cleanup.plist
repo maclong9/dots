@@ -3,29 +3,48 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.maintenance.cleanup</string>
+    <string>com.$(whoami).maintenance.cleanup</string>
+    
     <key>ProgramArguments</key>
     <array>
         <string>/bin/sh</string>
-        <string>-c</string>
         <string>$HOME/.config/scripts/maintenance/maintenance.sh</string>
     </array>
+    
+    <key>UserName</key>
+    <string>root</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>$HOME</string>
+        <key>USER</key>
+        <string>$(whoami)</string>
+        <key>LOGNAME</key>
+        <string>$(whoami)</string>
+    </dict>
+    
     <key>StartCalendarInterval</key>
     <dict>
+        <key>Weekday</key>
+        <integer>2</integer>
         <key>Hour</key>
         <integer>11</integer>
         <key>Minute</key>
         <integer>0</integer>
-        <key>Weekday</key>
-        <integer>2</integer>
     </dict>
+    
     <key>StandardOutPath</key>
-    <string>/tmp/maintenance.log</string>
+    <string>/tmp/maintenance.stdout.log</string>
+    
     <key>StandardErrorPath</key>
-    <string>/tmp/maintenance.error.log</string>
-    <key>RunAtLoad</key>
-    <false/>
+    <string>/tmp/maintenance.stderr.log</string>
+    
     <key>KeepAlive</key>
     <false/>
+    
+    <key>ProcessType</key>
+    <string>Background</string>
 </dict>
 </plist>
+

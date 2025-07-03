@@ -243,24 +243,66 @@ setup_maintenance() {
         "Failed to make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
-        # Install LaunchAgent for macOS
-        launch_agents_dir="$HOME/Library/LaunchAgents"
-        run_or_fail "mkdir -p \"$launch_agents_dir\"" \
-            "Failed to create LaunchAgents directory"
+        # Check if we need elevated privileges for LaunchDaemon installation
+        if [ "$(id -u)" -ne 0 ]; then
+            log info "Installing system-wide maintenance daemon requires administrator privileges"
 
-        run_or_fail "cp \"$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist\" \
-        \"$launch_agents_dir/com.maintenance.cleanup.plist\"" \
-            "Failed to install LaunchAgent"
+            # Check if we can sudo
+            if ! sudo -n true 2>/dev/null; then
+                log warning "Cannot install LaunchDaemon without sudo access"
+                log info "To install manually, run: sudo ./setup_maintenance_daemon.sh"
+                return 1
+            fi
+        fi
 
-        # Load the LaunchAgent
-        launchctl load "$launch_agents_dir/com.maintenance.cleanup.plist" 2>/dev/null ||
-            log warning "Failed to load LaunchAgent (may already be loaded)"
+        # Install LaunchDaemon for system-wide execution with root privileges
+        launch_daemon_dir="/Library/LaunchDaemons"
+        plist_name="com.$(whoami).maintenance.cleanup.plist"
+        # Install the LaunchDaemon with proper permissions
+        if [ "$(id -u)" -eq 0 ]; then
+            # Already root
+            cp "$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist" "$launch_daemon_dir/$plist_name"
+            chown root:wheel "$launch_daemon_dir/$plist_name"
+            chmod 644 "$launch_daemon_dir/$plist_name"
+        else
+            # Use sudo
+            run_or_fail "sudo cp \"/tmp/$plist_name\" \"$launch_daemon_dir/$plist_name\"" \
+                "Failed to install LaunchDaemon"
 
-        log success "Scheduled maintenance via LaunchAgent (Tuesdays at 11:00 AM)"
+            run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" \
+                "Failed to set LaunchDaemon ownership"
+
+            run_or_fail "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" \
+                "Failed to set LaunchDaemon permissions"
+        fi
+
+        # Clean up temporary file
+        rm -f "/tmp/$plist_name"
+
+        # Load the LaunchDaemon
+        if [ "$(id -u)" -eq 0 ]; then
+            launchctl load "$launch_daemon_dir/$plist_name" 2>/dev/null ||
+                log warning "Failed to load LaunchDaemon (may already be loaded)"
+        else
+            sudo launchctl load "$launch_daemon_dir/$plist_name" 2>/dev/null ||
+                log warning "Failed to load LaunchDaemon (may already be loaded)"
+        fi
+
+        log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
+        log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
+
     else
         # Install cron job for Linux
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
-        cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
+
+        # Check if maintenance.crontab exists, otherwise create inline
+        if [ -f "$HOME/.config/scripts/maintenance/maintenance.crontab" ]; then
+            cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
+        else
+            # Create cron entry inline
+            echo "0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh" >>/tmp/current_cron
+        fi
+
         run_or_fail "crontab /tmp/current_cron" "Failed to install cron job" || {
             rm -f /tmp/current_cron
             return 1
@@ -270,7 +312,7 @@ setup_maintenance() {
         log success "Scheduled maintenance via cron (Tuesdays at 11:00 AM)"
     fi
 
-    log info "Run 'scripts/maintenance/maintenance.sh' manually anytime to clean system"
+    log info "Run '$HOME/.config/scripts/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
 setup_ssh() {
