@@ -8,7 +8,7 @@ UNIX Operating Systems.
 - **Shell**: Modern ZSH configuration with git integration and smart completions
 - **Editor**: Helix setup with syntax highlighting, lsp and productivity enhancements
 - **Git**: Comprehensive Git configuration with useful aliases and SSH signing
-- **Colors**: Consistent color schemes across Vim, Terminal, and Xcode
+- **Colors**: Consistent color schemes across Helix, Terminal, and Xcode
 - **Scripts**: Utility functions for development workflow automation
 - **Tools**: Install frequently used developer tooling with `mise`
 
