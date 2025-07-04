@@ -96,8 +96,8 @@ jobs:
         steps:
             - name: Install basic tools
               run: |
-                  apt-get update
-                  apt-get install -y git curl ca-certificates
+                  sudo apt-get update
+                  sudo apt-get install -y git curl ca-certificates
 
             - name: Checkout code
               uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
             - name: Test with minimal POSIX shell
               run: |
                   # Install dash for strict POSIX testing
-                  apt-get install -y dash
+                  sudo apt-get install -y dash
                   for script in $(find . -name "*.sh" -type f); do
                       echo "Testing $script with dash"
                       dash "$script" --help 2>/dev/null || echo "Script $script tested"
