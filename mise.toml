@@ -1,17 +1,21 @@
+[settings]
+experimental = true
 [tools]
-"github-cli" = "latest"
-"helix" = "latest"
-"marksman" = "latest"
-"node" = "latest"
-"shellcheck" = "latest"
-"shfmt" = "latest"
-# npm installs
-"npm:@anthropic-ai/claude-code" = "latest"
-"npm:@tailwindcss/language-server" = "latest"
-"npm:eslint" = "latest"
-"npm:prettier" = "latest"
-"npm:typescript" = "latest"
-"npm:typescript-language-server" = "latest"
-"npm:vscode-langservers-extracted" = "latest"
-"npm:wrangler" = "latest"
-"npm:yaml-language-server" = "latest"
+github-cli = 'latest'
+helix = 'latest'
+marksman = 'latest'
+node = 'latest'
+shellcheck = 'latest'
+shfmt = 'latest'
+# Swift Package Manager Tools
+'spm:maclong9/list' = 'latest'
+# Global Node Modules
+'npm:eslint' = 'latest'
+'npm:prettier' = 'latest'
+'npm:typescript' = 'latest'
+'npm:typescript-language-server' = 'latest'
+'npm:vscode-langservers-extracted' = 'latest'
+'npm:wrangler' = 'latest'
+'npm:yaml-language-server' = 'latest'
+'npm:@anthropic-ai/claude-code' = 'latest'
+'npm:@tailwindcss/language-server' = 'latest'
