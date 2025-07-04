@@ -32,10 +32,8 @@ precmd() { vcs_info; PROMPT="%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 alias clc='fc -ln -1 > /tmp/last_cmd.log && CMD=$(< /tmp/last_cmd.log) && eval "$CMD" \
 > /tmp/last_out.log 2>&1 && { echo "λ $CMD"; echo "⇣"; cat /tmp/last_out.log; } | pbcopy'
 alias g='git'
-alias l='ls -CF'
-alias la='ls -A'
-alias ll='ls -la'
-alias ls='ls --color=auto'
+alias l='sls -cli'
+alias la='sls -clia'
 alias sf="swift format --recursive --in-place"
 alias sl="swift format lint --recursive"
 alias shf="find . -name \"*.sh\" -type f -exec shfmt -w -i 4 -ci {} +"
