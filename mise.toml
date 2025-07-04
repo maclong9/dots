@@ -7,7 +7,7 @@ marksman = 'latest'
 node = 'latest'
 shellcheck = 'latest'
 shfmt = 'latest'
-# Swift Package Manager Tools
+# Swift Package Manager Packages
 'spm:maclong9/list' = 'latest'
 # Global Node Modules
 'npm:eslint' = 'latest'
