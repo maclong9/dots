@@ -9,6 +9,7 @@ shellcheck = 'latest'
 shfmt = 'latest'
 # Swift Package Manager Packages
 'spm:maclong9/list' = 'latest'
+'spm:apple/container' = 'latest'
 # Global Node Modules
 'npm:eslint' = 'latest'
 'npm:prettier' = 'latest'
