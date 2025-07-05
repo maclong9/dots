@@ -1,5 +1,3 @@
-# Author: IwantHappiness <IwantHappiness95@gmail.com>
-
 tag = { fg = "beige" }
 type = { fg = "beige" }
 
@@ -105,6 +103,8 @@ warning = { fg = "beige" }
 "ui.cursorline.secondary" = { bg = "dark-gray" }
 "ui.cursor.primary" = { bg = "cursor", fg = "black" }
 "ui.cursor" = { fg = "white", modifiers = ["reversed"] }
+
+"ui.virtual.jump-label" = { fg ="bright-green" }
 
 [palette]
 red = "#ff8080"
