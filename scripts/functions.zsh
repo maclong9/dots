@@ -26,3 +26,39 @@ kp() {
         echo "No process found on port $1"
     fi
 }
+
+# Re-runs the last command and copies its output to the clipboard.
+#
+# This function captures the last command from your shell history, executes it,
+# and then copies a formatted string containing the command and its full output
+# (both stdout and stderr) to the system clipboard.
+#
+# - Returns:
+#   - The exit code of the executed command.
+# - Usage:
+#   ```sh
+#   clc
+#   ```
+clc() {
+    # Get the last command from history.
+    local last_cmd
+    last_cmd=$(fc -ln -1)
+
+    # Check if there is a command to run.
+    if [[ -z "$last_cmd" ]]; then
+        echo "No previous command to run."
+        return 1
+    fi
+
+    # Execute the command, capturing stdout and stderr.
+    local output
+    output=$(eval "$last_cmd" 2>&1)
+    local exit_code=$?
+
+    # Format the output and copy it to the clipboard.
+    printf "λ %s\n⇣\n%s" "$last_cmd" "$output" | pbcopy
+
+    echo "${BRIGHT_GREEN}✓${NC} Copied last command's output to clipboard."
+
+    return $exit_code
+}

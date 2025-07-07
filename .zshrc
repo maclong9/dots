@@ -54,8 +54,6 @@ precmd() {
 }
 
 # Define aliases for common commands
-alias clc='fc -ln -1 > /tmp/last_cmd.log && CMD=$(< /tmp/last_cmd.log) && eval "$CMD" \
-> /tmp/last_out.log 2>&1 && { echo "λ $CMD"; echo "⇣"; cat /tmp/last_out.log; } | pbcopy'
 alias g='git'
 alias ls='sls -cli --human-readable'
 alias la='sls -clia --human-readable'
