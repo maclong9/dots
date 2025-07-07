@@ -6,6 +6,7 @@ UNIX Operating Systems.
 ## ✨ Features
 
 - **Shell**: Modern ZSH configuration with git integration and smart completions
+- **Terminal**: Ghostty setup for a fast, GPU-accelerated terminal experience
 - **Editor**: Helix setup with syntax highlighting, lsp and productivity enhancements
 - **Git**: Comprehensive Git configuration with useful aliases and SSH signing
 - **Colors**: Consistent color schemes across Helix, Terminal, and Xcode
