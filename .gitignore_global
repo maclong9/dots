@@ -6,8 +6,12 @@
 .env
 .env.*
 
+# Backup files
+*.bak
+
 # GitHub
 gh/
 
 # Claude AI
 .claude/
+configstore/
