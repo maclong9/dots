@@ -98,6 +98,7 @@ alias sl='swift format lint --recursive'
 alias shf='find . -name "*.{sh,zsh}" -type f -exec shfmt -w -i 4 -ci {} +'
 alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
 alias perf='ZSH_PERF_MONITOR=1 zsh'
+alias notarised='spctl -a -vvv -t install'
 
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof

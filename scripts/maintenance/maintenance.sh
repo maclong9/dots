@@ -322,11 +322,13 @@ main() {
     # Run platform-specific cleanup
     if [ "$IS_MAC" = true ]; then
         cleanup_macos
+        /Users/mac/.local/bin/mise upgrade
     else
         cleanup_linux
+        /home/mac/.local/bin/mise upgrade
     fi
 
-    # Run universal cleanup
+    # Run universal maintenance
     cleanup_universal
 
     log success "System maintenance completed!"
