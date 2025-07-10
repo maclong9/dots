@@ -43,12 +43,36 @@ fi
 [[ ! -f "$ZSH_RC_COMPILED" || "$ZSH_RC" -nt "$ZSH_RC_COMPILED" ]] && zcompile "$ZSH_RC"
 zcompile "$ZSH_COMPDUMP"
 
-# Configure git prompt
+# Configure git prompt with status-based colors
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' %B%F{10}(%b)%f'
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' unstagedstr '*'
+zstyle ':vcs_info:git:*' stagedstr '+'
+zstyle ':vcs_info:git:*' formats ' %B%F{%1v}(%b%u%c)%f'
+zstyle ':vcs_info:git:*' actionformats ' %B%F{%1v}(%b|%a%u%c)%f'
+
 precmd() {
     vcs_info
+    
+    # Determine git status color
+    if [[ -n ${vcs_info_msg_0_} ]]; then
+        # Check if we're in a git repository
+        if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+            # Check if working directory is clean
+            if git diff-index --quiet HEAD -- 2>/dev/null; then
+                # Clean repository - bright green
+                zstyle ':vcs_info:git:*' formats ' %B%F{10}(%b)%f'
+                zstyle ':vcs_info:git:*' actionformats ' %B%F{10}(%b|%a)%f'
+            else
+                # Dirty repository - yellow/orange
+                zstyle ':vcs_info:git:*' formats ' %B%F{11}(%b)%f'
+                zstyle ':vcs_info:git:*' actionformats ' %B%F{11}(%b|%a)%f'
+            fi
+        fi
+        vcs_info
+    fi
+    
     PROMPT="%F{7}%n %B%F{15}%~%b${vcs_info_msg_0_}
 %F{%(?.10.9)}%Bλ%b%f "
 }
