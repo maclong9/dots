@@ -1,11 +1,11 @@
 # Define common paths
-ZSH_HOME="$HOME"
-ZSH_LOCAL_BIN="$ZSH_HOME/.local/bin"
-ZSH_MISE_SHIMS="$ZSH_HOME/.local/share/mise/shims"
-ZSH_HISTORY_FILE="$ZSH_HOME/.zsh_history"
-ZSH_SCRIPTS_DIR="$ZSH_HOME/.config/scripts"
-ZSH_COMPDUMP="${ZSH_COMPDUMP:-$ZSH_HOME/.zcompdump}"
-ZSH_RC="$ZSH_HOME/.zshrc"
+ZSH_LOCAL_BIN="$HOME/.local/bin"
+ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"
+ZSH_HISTORY_FILE="$HOME/.zsh_history"
+ZSH_SCRIPTS_DIR="$HOME/.config/scripts"
+ZSH_PLUGINS_DIR="$HOME/.zsh/plugins"
+ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"
+ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
 
 # Load performance monitoring conditionally
@@ -36,6 +36,13 @@ add-zsh-hook precmd lazy_mise_init
 if [ -d "$ZSH_SCRIPTS_DIR" ]; then
     for script in "$ZSH_SCRIPTS_DIR"/**/*.{sh,zsh}(N); do
         [[ "$script" != *"/maintenance/"* ]] && [[ -r "$script" ]] && . "$script"
+    done
+fi
+
+# Source plugins
+if [ -d "$ZSH_PLUGINS_DIR" ]; then
+    for plugin in "$ZSH_PLUGINS_DIR"/**/*.plugin.zsh; do
+        source "$plugin"
     done
 fi
 
@@ -81,9 +88,10 @@ precmd() {
 alias g='git'
 alias ls='sls -cli --human-readable'
 alias la='sls -clia --human-readable'
-alias sf="swift format --recursive --in-place"
-alias sl="swift format lint --recursive"
-alias shf="find . -name \"*.sh\" -type f -exec shfmt -w -i 4 -ci {} +"
+alias sf='swift format --recursive --in-place'
+alias sl='swift format lint --recursive'
+alias shf='find . -name "*.sh" -type f -exec shfmt -w -i 4 -ci {} +'
+alias perf='ZSH_PERF_MONITOR=1 zsh'
 
 # Conditional performance monitoring
 if [[ -n "$ZSH_PERF_MONITOR" ]]; then
