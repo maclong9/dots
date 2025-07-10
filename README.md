@@ -13,6 +13,7 @@ UNIX Operating Systems.
 - **Scripts**: Utility functions for development workflow automation
 - **Maintenance**: Weekly scheduled system and tooling maintenance
 - **Tools**: Install frequently used developer tooling with `mise`
+- **Mappings**: Hyperkey setup, app switcher shortcuts, and caps lock remapping done with Karabiner
 
 ## 🚀 Quick Installation
 
