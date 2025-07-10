@@ -87,6 +87,11 @@ setup_dotfiles() {
     run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
         "Failed to clone dotfiles repository"
 
+    run_or_fail "mkdir -p $HOME/.zsh/plugins" "Failed to create ZSH plugins directory"
+
+    run_or_fail "git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \
+    $HOME/.zsh/plugins/fsh" "Failed to clone fast syntax highlighting"
+
     log success "Dotfiles cloned"
 }
 
