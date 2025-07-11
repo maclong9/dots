@@ -119,55 +119,11 @@
                                         "value": true
                                     }
                                 ],
-                                "from": { "key_code": "f" },
-                                "to": [{ "shell_command": "open -a 'Finder.app'" }],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "modifier_down_flag",
-                                        "type": "variable_if",
-                                        "value": true
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "s",
                                     "modifiers": { "mandatory": ["shift"] }
                                 },
                                 "to": [{ "shell_command": "open -a 'Safari.app'" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Hyper Key: Right Option → left shift + left option + left command (⌃⇧⌥⌘)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "right_option",
-                                    "modifiers": { "optional": ["any"] }
-                                },
-                                "to": [
-                                    {
-                                        "set_variable": {
-                                            "name": "hyper_right_option",
-                                            "value": 1
-                                        }
-                                    },
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": ["left_shift", "left_option", "left_command"]
-                                    }
-                                ],
-                                "to_after_key_up": [
-                                    {
-                                        "set_variable": {
-                                            "name": "hyper_right_option",
-                                            "value": 0
-                                        }
-                                    }
-                                ],
                                 "type": "basic"
                             }
                         ]
