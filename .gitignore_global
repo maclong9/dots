@@ -12,6 +12,8 @@
 # GitHub
 gh/
 
+# Binary 
+caps-lock-daemon/caps_lock_daemon
+
 # Claude AI
 .claude/
-configstore/
