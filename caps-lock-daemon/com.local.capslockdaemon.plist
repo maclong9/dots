@@ -6,7 +6,7 @@
     <string>com.local.capslockdaemon</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/bin/caps_lock_daemon</string>
+        <string>/Users/mac/.local/bin/caps_lock_daemon</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -15,14 +15,10 @@
     <key>ProcessType</key>
     <string>Background</string>
     <key>StandardErrorPath</key>
-    <string>/var/log/caps_lock_daemon.log</string>
+    <string>/Users/mac/Library/Logs/caps_lock_daemon.log</string>
     <key>StandardOutPath</key>
-    <string>/var/log/caps_lock_daemon.log</string>
+    <string>/Users/mac/Library/Logs/caps_lock_daemon.log</string>
     <key>WorkingDirectory</key>
-    <string>/usr/local/bin</string>
-    <key>UserName</key>
-    <string>root</string>
-    <key>GroupName</key>
-    <string>wheel</string>
+    <string>/Users/mac/.local/bin</string>
 </dict>
 </plist>

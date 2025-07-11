@@ -4,19 +4,14 @@ set -e
 
 DAEMON_NAME="caps_lock_daemon"
 PLIST_NAME="com.local.capslockdaemon.plist"
-INSTALL_DIR="/usr/local/bin"
-PLIST_DIR="/Library/LaunchDaemons"
+INSTALL_DIR="$HOME/.local/bin"
+PLIST_DIR="$HOME/Library/LaunchAgents"
 
 echo "Caps Lock Daemon Installer"
 echo "=========================="
 echo
 
-# Check if running as root for installation
-if [[ $EUID -eq 0 ]]; then
-    echo "Please do not run this script as root."
-    echo "The script will ask for sudo permissions when needed."
-    exit 1
-fi
+# This script installs the daemon as a LaunchAgent (user-level service)
 
 # Check if Xcode command line tools are installed
 if ! command -v clang &> /dev/null; then
@@ -39,34 +34,37 @@ echo "Build successful."
 echo
 
 # Check if daemon is already running and stop it
-if sudo launchctl list | grep -q capslockdaemon; then
+if launchctl list | grep -q capslockdaemon; then
     echo "Stopping existing daemon..."
-    sudo launchctl unload "$PLIST_DIR/$PLIST_NAME" 2>/dev/null || true
+    launchctl unload "$PLIST_DIR/$PLIST_NAME" 2>/dev/null || true
     sleep 1
 fi
 
+# Create directories if they don't exist
+mkdir -p "$INSTALL_DIR"
+mkdir -p "$PLIST_DIR"
+mkdir -p "$HOME/Library/Logs"
+
 # Install the daemon
 echo "Installing daemon..."
-sudo cp "$DAEMON_NAME" "$INSTALL_DIR/"
-sudo chmod 755 "$INSTALL_DIR/$DAEMON_NAME"
-sudo cp "$PLIST_NAME" "$PLIST_DIR/"
-sudo chmod 644 "$PLIST_DIR/$PLIST_NAME"
-sudo chown root:wheel "$PLIST_DIR/$PLIST_NAME"
+cp "$DAEMON_NAME" "$INSTALL_DIR/"
+chmod 755 "$INSTALL_DIR/$DAEMON_NAME"
+cp "$PLIST_NAME" "$PLIST_DIR/"
 
 echo "Installation complete."
 echo
 
 # Load the daemon
 echo "Starting daemon..."
-sudo launchctl load "$PLIST_DIR/$PLIST_NAME"
+launchctl load "$PLIST_DIR/$PLIST_NAME"
 
 # Check if daemon started successfully
 sleep 2
-if sudo launchctl list | grep -q capslockdaemon; then
+if launchctl list | grep -q capslockdaemon; then
     echo "Daemon started successfully!"
 else
     echo "Warning: Daemon may not have started properly."
-    echo "Check logs with: tail -f /var/log/caps_lock_daemon.log"
+    echo "Check logs with: tail -f $HOME/Library/Logs/caps_lock_daemon.log"
 fi
 
 echo
@@ -85,8 +83,8 @@ echo "   $INSTALL_DIR/$DAEMON_NAME"
 echo "6. Add the daemon to the list and ensure it's checked"
 echo
 echo "After granting permissions, restart the daemon:"
-echo "   sudo launchctl unload $PLIST_DIR/$PLIST_NAME"
-echo "   sudo launchctl load $PLIST_DIR/$PLIST_NAME"
+echo "   launchctl unload $PLIST_DIR/$PLIST_NAME"
+echo "   launchctl load $PLIST_DIR/$PLIST_NAME"
 echo
 echo "Usage:"
 echo "------"
