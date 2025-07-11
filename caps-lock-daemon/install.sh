@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -14,7 +14,7 @@ echo
 # This script installs the daemon as a LaunchAgent (user-level service)
 
 # Check if Xcode command line tools are installed
-if ! command -v clang &> /dev/null; then
+if ! command -v clang >/dev/null 2>&1; then
     echo "Error: Xcode command line tools not found."
     echo "Please install them by running: xcode-select --install"
     exit 1
@@ -25,7 +25,7 @@ echo "Building the daemon..."
 make clean
 make
 
-if [[ ! -f "$DAEMON_NAME" ]]; then
+if [ ! -f "$DAEMON_NAME" ]; then
     echo "Error: Failed to build the daemon."
     exit 1
 fi
