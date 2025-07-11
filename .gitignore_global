@@ -15,3 +15,7 @@ gh/
 # Claude AI
 .claude/
 configstore/
+
+# Karibiner Elements
+karibiner/assets
+karibiner/automatic_backups
