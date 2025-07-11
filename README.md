@@ -2,7 +2,7 @@
 
 A comprehensive, POSIX-compliant dotfiles configuration for productive development on UNIX Operating Systems.
 
-https://github.com/user-attachments/assets/080a296c-dffe-44b7-a1af-c0d61105c8ac
+https://github.com/user-attachments/assets/f78e2a2c-d9ce-4e43-a028-e6b4d74e378e
 
 ## ✨ Features
 
