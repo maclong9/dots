@@ -16,12 +16,12 @@ A lightweight C daemon that remaps Caps Lock behavior on macOS:
 ## Installation
 
 1. Navigate to this directory:
-   ```bash
+   ```sh
    cd caps-lock-daemon
    ```
 
 2. Run the installation script (no sudo required):
-   ```bash
+   ```sh
    ./install.sh
    ```
 
@@ -31,13 +31,13 @@ A lightweight C daemon that remaps Caps Lock behavior on macOS:
    - Add `~/.local/bin/caps_lock_daemon` to the list
 
 4. Restart the daemon:
-   ```bash
+   ```sh
    make restart
    ```
 
 ## Usage Commands
 
-```bash
+```sh
 make install    # Build and install daemon
 make start      # Start the daemon
 make stop       # Stop the daemon  
