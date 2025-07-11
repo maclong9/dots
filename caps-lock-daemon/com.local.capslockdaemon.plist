@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.local.capslockdaemon</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/caps_lock_daemon</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ProcessType</key>
+    <string>Background</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/caps_lock_daemon.log</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/caps_lock_daemon.log</string>
+    <key>WorkingDirectory</key>
+    <string>/usr/local/bin</string>
+    <key>UserName</key>
+    <string>root</string>
+    <key>GroupName</key>
+    <string>wheel</string>
+</dict>
+</plist>
