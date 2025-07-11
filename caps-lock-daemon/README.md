@@ -10,7 +10,7 @@ A lightweight C daemon that remaps Caps Lock behavior on macOS:
 - Low-level IOKit HID integration for reliable key interception
 - Precise timing detection using mach kernel timing
 - Virtual key injection via Core Graphics Events
-- Runs as system daemon with proper permissions
+- Runs as user LaunchAgent (no root privileges required)
 - Comprehensive logging and error handling
 
 ## Installation
@@ -20,7 +20,7 @@ A lightweight C daemon that remaps Caps Lock behavior on macOS:
    cd caps-lock-daemon
    ```
 
-2. Run the installation script:
+2. Run the installation script (no sudo required):
    ```bash
    ./install.sh
    ```
@@ -28,7 +28,7 @@ A lightweight C daemon that remaps Caps Lock behavior on macOS:
 3. Grant Input Monitoring permissions:
    - Open System Preferences > Security & Privacy > Privacy
    - Select "Input Monitoring" 
-   - Add `/usr/local/bin/caps_lock_daemon` to the list
+   - Add `~/.local/bin/caps_lock_daemon` to the list
 
 4. Restart the daemon:
    ```bash
@@ -50,7 +50,7 @@ make uninstall  # Remove daemon completely
 ## Files
 
 - `caps_lock_daemon.c` - Main daemon source code
-- `com.local.capslockdaemon.plist` - LaunchDaemon configuration
+- `com.local.capslockdaemon.plist` - LaunchAgent configuration
 - `Makefile` - Build and management commands
 - `install.sh` - Automated installation script
 
@@ -59,8 +59,8 @@ make uninstall  # Remove daemon completely
 - Uses IOKit HID Manager for keyboard event interception
 - Implements mach_absolute_time() for precise timing measurements
 - CGEventCreateKeyboardEvent() for virtual key injection
-- Runs as root daemon for system-wide keyboard access
-- Logs to `/var/log/caps_lock_daemon.log` and syslog
+- Runs as user LaunchAgent for system-wide keyboard access
+- Logs to `~/Library/Logs/caps_lock_daemon.log` and syslog
 
 ## Troubleshooting
 

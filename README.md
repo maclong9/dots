@@ -37,4 +37,4 @@ A custom C daemon that provides dual functionality for the Caps Lock key:
 - **Hold** (≥500ms): Acts as Control key
 - **Combo** (Caps + other key): Acts as Control key
 
-Located in [`caps-lock-daemon/`](caps-lock-daemon/) with full installation instructions.
+Runs as a user LaunchAgent (no root privileges required). Located in [`caps-lock-daemon/`](caps-lock-daemon/) with full installation instructions.
