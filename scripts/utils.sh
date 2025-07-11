@@ -173,7 +173,13 @@ run_or_fail() {
     error_msg="$2"
 
     eval "$command" || {
-        log error "$error_msg"
+        # Auto-prepend "Failed to" if not already present
+        case "$error_msg" in
+            "Failed to"*|"") 
+                log error "$error_msg" ;;
+            *) 
+                log error "Failed to $error_msg" ;;
+        esac
         return 1
     }
 }

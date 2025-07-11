@@ -33,7 +33,7 @@ setup_xcode_tools() {
     fi
 
     # Install command line tools
-    run_or_fail "xcode-select --install" "Failed to install Xcode command line tools"
+    run_or_fail "xcode-select --install" "install Xcode command line tools"
 
     # Wait for installation to complete
     log info "Waiting for Xcode command line tools installation to complete..."
@@ -59,17 +59,17 @@ setup_touch_id() {
     }
 
     run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
-        "Failed to copy Touch ID template"
+        "copy Touch ID template"
 
     run_or_fail "sudo sed -i '' '/pam_tid\.so/s/^[[:space:]]*#//' /etc/pam.d/sudo_local" \
-        "Failed to modify Touch ID configuration"
+        "modify Touch ID configuration"
 
     run_or_fail "grep -q \"^auth.*pam_tid.so\" /etc/pam.d/sudo_local" && {
         log success "Touch ID enabled"
         return 0
     }
 
-    log error "Failed to enable Touch ID - configuration not found"
+    log error "enable Touch ID - configuration not found"
     return 1
 }
 
@@ -80,17 +80,17 @@ setup_dotfiles() {
         backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
         log debug "Backing up existing .config directory to $backup_dir"
         run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" \
-            "Failed to backup old .config directory"
+            "backup old .config directory"
         log info "Previous .config backed up to $backup_dir"
     }
 
     run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
-        "Failed to clone dotfiles repository"
+        "clone dotfiles repository"
 
-    run_or_fail "mkdir -p $HOME/.zsh/plugins" "Failed to create ZSH plugins directory"
+    run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory"
 
     run_or_fail "git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \
-    $HOME/.zsh/plugins/fsh" "Failed to clone fast syntax highlighting"
+    $HOME/.zsh/plugins/fsh" "clone fast syntax highlighting"
 
     log success "Dotfiles cloned"
 }
@@ -104,7 +104,7 @@ process_colorscheme_files() {
     [ ! -d "$scheme_dir" ] && return 0
 
     count=$(count_files "$scheme_dir/$pattern") || {
-        log error "Failed to count files in $scheme_dir"
+        log error "count files in $scheme_dir"
         return 1
     }
 
@@ -118,7 +118,7 @@ process_colorscheme_files() {
         filename=$(basename "$file")
         log info "Symlinking $file_type file $filename"
         run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" \
-            "Failed to symlink $filename"
+            "symlink $filename"
     done
 }
 
@@ -133,7 +133,7 @@ setup_colors() {
     if [ "$IS_MAC" = true ]; then
         xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-        run_or_fail "mkdir -p \"$xcode_dir\"" "Failed to create Xcode colors directory"
+        run_or_fail "mkdir -p \"$xcode_dir\"" "create Xcode colors directory"
     fi
 
     # Count and check scheme directories
@@ -161,7 +161,7 @@ setup_colors() {
 
             process_colorscheme_files "$scheme_dir" "*.xccolortheme" \
                 "$xcode_themes" "Xcode" || {
-                log error "Failed to process Xcode colorscheme files for $scheme_name"
+                log error "process Xcode colorscheme files for $scheme_name"
                 return 1
             }
         }
@@ -202,7 +202,7 @@ link_dotfiles() {
 
         log info "Symlinking $filename"
         run_or_fail "safe_symlink \"$file\" \"$HOME/$filename\"" \
-            "Failed to symlink $filename"
+            "symlink $filename"
     done
 
     log success "Dotfiles linked"
@@ -214,7 +214,7 @@ setup_mise() {
     if command -v mise >/dev/null 2>&1; then
         log success "mise already installed"
     else
-        run_or_fail "curl https://mise.run | sh" "Failed to install mise"
+        run_or_fail "curl https://mise.run | sh" "install mise"
     fi
 
     # Add mise to PATH for this session
@@ -224,12 +224,12 @@ setup_mise() {
     if [ -f "$HOME/.config/mise.toml" ]; then
         # Change to the .config directory to trust the mise.toml file
         cd "$HOME/.config" || {
-            log error "Failed to change to .config directory"
+            log error "change to .config directory"
             return 1
         }
 
-        run_or_fail "mise trust -a" "Failed to trust mise.toml"
-        run_or_fail "mise install" "Failed to install mise tools"
+        run_or_fail "mise trust -a" "trust mise.toml"
+        run_or_fail "mise install" "install mise tools"
 
         # Return to original directory (optional, but good practice)
         cd - >/dev/null || true
@@ -240,12 +240,39 @@ setup_mise() {
     log success "Development tools installed via mise"
 }
 
+setup_caps_lock_daemon() {
+    [ ! -d "$HOME/.config/caps-lock-daemon" ] && {
+        log warning "Caps Lock daemon directory not found, skipping"
+        return 0
+    }
+
+    log info "Installing Caps Lock daemon..."
+
+    # Navigate to daemon directory
+    cd "$HOME/.config/caps-lock-daemon" || {
+        log error "change to caps-lock-daemon directory"
+        return 1
+    }
+
+    # Build and install using Makefile
+    run_or_fail "make clean" "clean caps lock daemon"
+    run_or_fail "make" "build caps lock daemon"
+    run_or_fail "make install" "install caps lock daemon"
+    run_or_fail "make start" "start caps lock daemon"
+
+    # Return to original directory
+    cd - >/dev/null || true
+
+    log success "Caps Lock daemon installed and started"
+    log info "Remember to grant Input Monitoring permissions in System Settings > Privacy & Security"
+}
+
 setup_maintenance() {
     log info "Setting up system maintenance..."
 
     # Ensure maintenance script is executable
     run_or_fail "chmod +x \"$HOME/.config/scripts/maintenance/maintenance.sh\"" \
-        "Failed to make maintenance script executable"
+        "make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
         launch_daemon_dir="/Library/LaunchDaemons"
@@ -270,7 +297,7 @@ setup_maintenance() {
             echo "0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh" >>/tmp/current_cron
         fi
 
-        run_or_fail "crontab /tmp/current_cron" "Failed to install cron job" || {
+        run_or_fail "crontab /tmp/current_cron" "install cron job" || {
             rm -f /tmp/current_cron
             return 1
         }
@@ -308,6 +335,7 @@ main() {
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
+        run_step "Installing Caps Lock daemon" setup_caps_lock_daemon
     }
 
     run_step "Setting up dotfiles" setup_dotfiles
