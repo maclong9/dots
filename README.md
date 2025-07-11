@@ -1,7 +1,8 @@
 # UNIX Development Environment
 
-A comprehensive, POSIX-compliant dotfiles configuration for productive development on
-UNIX Operating Systems.
+A comprehensive, POSIX-compliant dotfiles configuration for productive development on UNIX Operating Systems.
+
+![Installation Example](https://github.com/user-attachments/assets/245a55e5-bb50-467c-a194-063f58b4d669)
 
 ## ✨ Features
 
