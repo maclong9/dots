@@ -74,7 +74,7 @@ warning = { fg = "beige" }
 
 "ui.help" = { bg = "dark-gray", fg = "beige" }
 
-"ui.background" = { bg = "black", fg = "white" }
+"ui.background" = { bg = "none", fg = "white" }
 
 "ui.picker.header.column.active" = { bg = "gray" }
 
