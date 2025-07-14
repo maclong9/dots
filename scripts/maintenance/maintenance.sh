@@ -315,6 +315,16 @@ show_disk_usage() {
     fi
 }
 
+# Run mise maintenance
+cleanup_mise() {
+    log info "Running mise cleanup..."
+    echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
+    [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac/" || HOME_PATH="/home/mac"
+    "$HOME_PATH/".local/bin/mise self-update -y
+    "$HOME_PATH/".local/bin/mise upgrade
+    "$HOME_PATH/".local/bin/mise prune
+}
+
 main() {
     log info "Starting system maintenance..."
     show_disk_usage
@@ -322,14 +332,13 @@ main() {
     # Run platform-specific cleanup
     if [ "$IS_MAC" = true ]; then
         cleanup_macos
-        /Users/mac/.local/bin/mise upgrade
     else
         cleanup_linux
-        /home/mac/.local/bin/mise upgrade
     fi
 
     # Run universal maintenance
     cleanup_universal
+    cleanup_mise
 
     log success "System maintenance completed!"
     show_disk_usage

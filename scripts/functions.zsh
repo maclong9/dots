@@ -62,3 +62,41 @@ clc() {
 
     return $exit_code
 }
+
+# Navigate backward in directory history.
+#
+# Moves to the previous directory in the navigation history stack,
+# similar to a browser's back button.
+#
+# - Returns:
+#   - 0 if navigation was successful.
+#   - Prints message if no previous directory exists.
+--() {
+    if (( _dir_history_index > 1 )); then
+        _navigating_history=1
+        (( _dir_history_index-- ))
+        builtin cd "${_dir_history[$_dir_history_index]}"
+        unset _navigating_history
+    else
+        echo "No previous directory"
+    fi
+}
+
+# Navigate forward in directory history.
+#
+# Moves to the next directory in the navigation history stack,
+# similar to a browser's forward button.
+#
+# - Returns:
+#   - 0 if navigation was successful.
+#   - Prints message if no forward directory exists.
+++() {
+    if (( _dir_history_index < ${#_dir_history} )); then
+        _navigating_history=1
+        (( _dir_history_index++ ))
+        builtin cd "${_dir_history[$_dir_history_index]}"
+        unset _navigating_history
+    else
+        echo "No forward directory"
+    fi
+}

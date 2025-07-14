@@ -1,3 +1,15 @@
+#!/usr/bin/env zsh
+
+# • Performance monitoring
+
+# Load performance monitoring conditionally
+[[ -n "$ZSH_PERF_MONITOR" ]] && {
+    echo "⚡ ZSH performance monitoring enabled..."
+    zmodload zsh/zprof
+}
+
+# • Paths & environment
+
 # Define common paths
 ZSH_LOCAL_BIN="$HOME/.local/bin"
 ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"
@@ -9,37 +21,55 @@ ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"
 ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
 
-# Load performance monitoring conditionally
-[[ -n "$ZSH_PERF_MONITOR" ]] && {
-    echo "⚡ ZSH performance monitoring enabled..."
-    zmodload zsh/zprof
+# Directory history tracking
+typeset -g -a _dir_history
+typeset -g _dir_history_index=0
+
+autoload -Uz add-zsh-hook
+
+_track_directory_change() {
+    # Don't track if we're navigating via -- or ++
+    [[ -n "$_navigating_history" ]] && return
+    
+    # Add current directory to history
+    _dir_history+=("$PWD")
+    _dir_history_index=${#_dir_history}
 }
 
-# Load ZSH completions and configure options
-autoload -Uz compinit
-compinit -d "$ZSH_COMPDUMP" -C
-setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY HIST_IGNORE_DUPS \
-   HIST_IGNORE_SPACE HIST_VERIFY HIST_REDUCE_BLANKS HIST_SAVE_NO_DUPS EXTENDED_HISTORY
+add-zsh-hook chpwd _track_directory_change
 
 # Configure PATH and history
 PATH="$ZSH_LOCAL_BIN:$ZSH_MISE_SHIMS:$PATH"
 export HISTSIZE=50000 SAVEHIST=50000 HISTFILE="$ZSH_HISTORY_FILE"
+
+# • ZSH configuration
+
+# Core options
+setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY HIST_IGNORE_DUPS \
+   HIST_IGNORE_SPACE HIST_VERIFY HIST_REDUCE_BLANKS HIST_SAVE_NO_DUPS EXTENDED_HISTORY \
+   AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
+
+# Load ZSH completions
+autoload -Uz compinit
+compinit -d "$ZSH_COMPDUMP" -C
+
+# • Lazy loading
 
 # Initialize mise lazily only when needed
 lazy_mise_init() {
     unset -f lazy_mise_init
     eval "$(mise activate zsh)"
 }
-# Hook to first directory change instead of every prompt
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd lazy_mise_init
 
-# Source custom scripts (excluding maintenance) - cache script list
+# • Scripts & plugins
+
+# Source custom scripts (excluding maintenance and daily-workspace)
 [[ -d "$ZSH_SCRIPTS_DIR" ]] && {
-    # Use a more efficient glob pattern
     local scripts=("$ZSH_SCRIPTS_DIR"/**/*.(sh|zsh)(N))
     for script in "${scripts[@]}"; do
-        [[ "$script" != *"/maintenance/"* && -r "$script" ]] && source "$script"
+        [[ "$script" != *"/maintenance/"* && "$script" != *"/daily-workspace.sh" && -r "$script" ]] && source "$script"
     done
 }
 
@@ -52,9 +82,7 @@ add-zsh-hook chpwd lazy_mise_init
     (( ${#plugins} )) && for plugin in "${plugins[@]}"; do source "$plugin"; done
 }
 
-# Compile .zshrc and completions for performance
-[[ ! -f "$ZSH_RC_COMPILED" || "$ZSH_RC" -nt "$ZSH_RC_COMPILED" ]] && zcompile "$ZSH_RC"
-[[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP"
+# • Prompt configuration
 
 # Configure git prompt with dynamic colors - cache git operations
 autoload -Uz vcs_info
@@ -89,16 +117,32 @@ precmd() {
 %F{%(?.10.9)}%Bλ%b%f "
 }
 
-# Define aliases for common commands
+# • Aliases
+
+# Git
 alias g='git'
+
+# File listing
 alias ls='sls -cli --human-readable'
 alias la='sls -clia --human-readable'
+
+# Swift tooling
 alias sf='swift format --recursive --in-place'
 alias sl='swift format lint --recursive'
+
+# Shell tooling
 alias shf='find . -name "*.{sh,zsh}" -type f -exec shfmt -w -i 4 -ci {} +'
 alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
+
+# Utilities
 alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
+
+# • Compilation & cleanup
+
+# Compile .zshrc and completions for performance
+[[ ! -f "$ZSH_RC_COMPILED" || "$ZSH_RC" -nt "$ZSH_RC_COMPILED" ]] && zcompile "$ZSH_RC"
+[[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP"
 
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
