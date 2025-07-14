@@ -1,5 +1,7 @@
+# • Theme configuration
 theme = "vesper"
 
+# • Editor settings
 [editor]
 line-number = "relative"
 cursorline = true
@@ -32,7 +34,8 @@ newline = "none"
 [editor.indent-guides]
 render = true
 
-# Normal mode keybindings - window navigation
+# • Keybindings
+# Normal mode - window navigation
 [keys.normal]
 "C-h" = "jump_view_left"
 "C-j" = "jump_view_down"

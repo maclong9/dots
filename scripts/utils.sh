@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# MARK: - Constants
+# • Constants
 
 # Defines ANSI color codes and system detection variables.
 #
@@ -27,7 +27,7 @@ export NC='\033[0m'
 # Quickly access whether on macOS or not
 IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
-# MARK: - Functions
+# • Basic utilities
 
 # Logs a message with a specified level.
 #
@@ -186,6 +186,8 @@ run_or_fail() {
     }
 }
 
+# • File management
+ 
 # Creates a timestamped backup of an existing file.
 #
 # Copies a file to a backup with a timestamp suffix before modification.
