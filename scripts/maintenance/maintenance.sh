@@ -9,7 +9,7 @@ HOME="/Users/mac"
 echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log
 
 # shellcheck disable=SC1091
-. "$HOME/.config/scripts/utils.sh"
+. "$HOME/.config/scripts/core/utils.sh"
 
 # Calculate sizes before and after cleanup
 calculate_size() {
