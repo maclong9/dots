@@ -1,19 +1,7 @@
-# === macOS ===
 .DS_Store
-
-# === Other ===
-# Local environment files
 .env
 .env.*
-
-# Backup files
 *.bak
-
-# GitHub
 gh/
-
-# Binary 
 caps-lock-daemon/caps_lock_daemon
-
-# Claude AI
 .claude/
