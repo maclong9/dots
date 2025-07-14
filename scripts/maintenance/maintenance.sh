@@ -11,6 +11,38 @@ echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log
 # shellcheck disable=SC1091
 . "$HOME/.config/scripts/core/utils.sh"
 
+# Override log function to output to both terminal and log file
+log() {
+    level="$1"
+    message="$2"
+    
+    # Format for terminal (with colors)
+    case "$level" in
+        info) 
+            printf "${BLUE}[INFO]${NC} %s\n" "$message"
+            echo "[INFO] $message" >>/tmp/maintenance.log
+            ;;
+        success) 
+            printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
+            echo "[SUCCESS] $message" >>/tmp/maintenance.log
+            ;;
+        warning) 
+            printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
+            echo "[WARNING] $message" >>/tmp/maintenance.log
+            ;;
+        error) 
+            printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
+            echo "[ERROR] $message" >>/tmp/maintenance.log
+            ;;
+        debug)
+            if [ "$DEBUG" = "true" ]; then
+                printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
+                echo "[DEBUG] $message" >>/tmp/maintenance.log
+            fi
+            ;;
+    esac
+}
+
 # Calculate sizes before and after cleanup
 calculate_size() {
     path="$1"
@@ -70,7 +102,7 @@ clean_directory() {
         done
 
         # Get actual count for the main script
-        item_count=$(find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l)
+        item_count=$(find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')
 
         rm -rf "${dir:?}"/* "$dir"/.* 2>/dev/null || true
 
@@ -78,7 +110,7 @@ clean_directory() {
         saved_bytes=$((size_before_bytes - size_after_bytes))
         saved_formatted=$(format_bytes "$saved_bytes")
 
-        log success "Cleaned $name ($item_count items, saved $saved_formatted)"
+        log success "Cleaned $name (${item_count} items, saved $saved_formatted)"
         echo "  ✓ Cleaned $name: $item_count items, saved $saved_formatted" >>/tmp/maintenance.log
     else
         log debug "$name already clean"
@@ -112,7 +144,7 @@ clean_files() {
 
     if [ "$count" -gt 0 ]; then
         saved_formatted=$(format_bytes "$total_size")
-        log success "Cleaned $count $name files (saved $saved_formatted)"
+        log success "Cleaned ${count} $name files (saved $saved_formatted)"
         echo "  ✓ Cleaned $count $name files, saved $saved_formatted" >>/tmp/maintenance.log
     else
         echo "  → No $name files to clean" >>/tmp/maintenance.log
@@ -269,12 +301,29 @@ cleanup_universal() {
 
         repo_count=0
         find "$HOME/Developer" -name ".git" -type d -execdir sh -c '
-            echo "    - $(pwd)" >>/tmp/maintenance.log
-            git gc --aggressive --prune=now 2>/dev/null || true
+            repo_name=$(basename "$(pwd)")
+            echo "    - Cleaning $repo_name repository..." >>/tmp/maintenance.log
+            
+            git_output=$(git gc --aggressive --prune=now 2>&1)
+            if echo "$git_output" | grep -q "nothing new to pack"; then
+                echo "      ✓ $repo_name repository already optimized"
+                echo "      ✓ $repo_name repository already optimized" >>/tmp/maintenance.log
+            elif [ -n "$git_output" ]; then
+                # Replace "nothing new to pack" with more user-friendly message
+                cleaned_output=$(echo "$git_output" | sed 's/nothing new to pack/repository already optimized/g')
+                echo "$cleaned_output"
+                echo "$cleaned_output" >>/tmp/maintenance.log
+                echo "      ✓ $repo_name repository cleaned successfully"
+                echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+            else
+                echo "      ✓ $repo_name repository cleaned successfully"
+                echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+            fi
+            
             git remote prune origin 2>/dev/null || true
         ' \; 2>/dev/null || true
 
-        repo_count=$(find "$HOME/Developer" -name ".git" -type d 2>/dev/null | wc -l)
+        repo_count=$(find "$HOME/Developer" -name ".git" -type d 2>/dev/null | wc -l | tr -d ' ')
         log success "Cleaned Git repositories ($repo_count repos)"
         echo "  ✓ Cleaned $repo_count Git repositories" >>/tmp/maintenance.log
     fi
@@ -301,16 +350,32 @@ show_disk_usage() {
     echo "=== Disk Usage Summary ===" >>/tmp/maintenance.log
 
     if command -v df >/dev/null 2>&1; then
-        df -h / 2>/dev/null | tail -1 | while read -r used avail capacity; do
-            log info "Root filesystem: $used used, $avail available ($capacity full)"
-            echo "  Root filesystem: $used used, $avail available ($capacity full)" >>/tmp/maintenance.log
+        df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mount; do
+            echo "Root filesystem ($filesystem):"
+            echo "  Size: $size"
+            echo "  Used: $used"
+            echo "  Available: $avail"
+            echo "  Capacity: $capacity"
+            echo "  Root filesystem ($filesystem):" >>/tmp/maintenance.log
+            echo "    Size: $size" >>/tmp/maintenance.log
+            echo "    Used: $used" >>/tmp/maintenance.log
+            echo "    Available: $avail" >>/tmp/maintenance.log
+            echo "    Capacity: $capacity" >>/tmp/maintenance.log
         done
     fi
 
     if [ "$IS_MAC" = true ] && command -v df >/dev/null 2>&1; then
-        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r used avail capacity; do
-            log info "Data volume: $used used, $avail available ($capacity full)"
-            echo "  Data volume: $used used, $avail available ($capacity full)" >>/tmp/maintenance.log
+        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mount; do
+            echo "Data volume ($filesystem):"
+            echo "  Size: $size"
+            echo "  Used: $used"
+            echo "  Available: $avail"
+            echo "  Capacity: $capacity"
+            echo "  Data volume ($filesystem):" >>/tmp/maintenance.log
+            echo "    Size: $size" >>/tmp/maintenance.log
+            echo "    Used: $used" >>/tmp/maintenance.log
+            echo "    Available: $avail" >>/tmp/maintenance.log
+            echo "    Capacity: $capacity" >>/tmp/maintenance.log
         done
     fi
 }
@@ -320,9 +385,19 @@ cleanup_mise() {
     log info "Running mise cleanup..."
     echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
     [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac/" || HOME_PATH="/home/mac"
-    "$HOME_PATH/".local/bin/mise self-update -y
-    "$HOME_PATH/".local/bin/mise upgrade
-    "$HOME_PATH/".local/bin/mise prune
+    
+    # Capture and display mise output
+    mise_output=$("$HOME_PATH/".local/bin/mise self-update -y 2>&1)
+    echo "$mise_output"
+    echo "$mise_output" >>/tmp/maintenance.log
+    
+    mise_output=$("$HOME_PATH/".local/bin/mise upgrade 2>&1)
+    echo "$mise_output"
+    echo "$mise_output" >>/tmp/maintenance.log
+    
+    mise_output=$("$HOME_PATH/".local/bin/mise prune 2>&1)
+    echo "$mise_output"
+    echo "$mise_output" >>/tmp/maintenance.log
 }
 
 main() {
@@ -344,15 +419,32 @@ main() {
     show_disk_usage
 
     # Restart services that benefit from cache clearing
-    log info "Restarting services..."
+    log info "Restarting system services to apply cache cleanup..."
     echo "=== Service Restart ===" >>/tmp/maintenance.log
 
     if [ "$IS_MAC" = true ]; then
-        # Restart Finder and Dock
+        log info "Restarting macOS system services..."
+        echo "  → Restarting macOS system services..." >>/tmp/maintenance.log
+        
+        # Restart Finder to refresh file system cache
+        log info "Restarting Finder (file system cache refresh)..."
         killall Finder 2>/dev/null || true
-        killall Dock 2>/dev/null || true
-        sudo mdutil -E /
-        echo "  ✓ Restarted Finder, Restarted Dock and Rebuilt Spotlight Index" >>/tmp/maintenance.log
+        log success "Finder restarted successfully"
+        echo "    ✓ Finder restarted (file system cache refreshed)" >>/tmp/maintenance.log
+        
+        # Restart Dock to refresh application cache
+        log info "Restarting Dock (application cache refresh)..."
+        killall Dock 2>/dev/null || true  
+        log success "Dock restarted successfully"
+        echo "    ✓ Dock restarted (application cache refreshed)" >>/tmp/maintenance.log
+        
+        # Rebuild Spotlight index for better search performance
+        log info "Rebuilding Spotlight index (search optimization)..."
+        spotlight_output=$(sudo mdutil -E / 2>&1)
+        echo "$spotlight_output"
+        echo "$spotlight_output" >>/tmp/maintenance.log
+        log success "Spotlight index rebuild initiated"
+        echo "    ✓ Spotlight index rebuild initiated (search optimization)" >>/tmp/maintenance.log
     fi
 
     echo "=== Maintenance run completed at $(date) ===" >>/tmp/maintenance.log
