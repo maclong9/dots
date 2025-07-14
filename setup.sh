@@ -240,30 +240,27 @@ setup_mise() {
     log success "Development tools installed via mise"
 }
 
-setup_caps_lock_daemon() {
-    [ ! -d "$HOME/.config/caps-lock-daemon" ] && {
-        log warning "Caps Lock daemon directory not found, skipping"
+setup_keyboard_daemon() {
+    [ ! -d "$HOME/.config/keyboard-daemon" ] && {
+        log warning "keyboard daemon directory not found, skipping"
         return 0
     }
 
-    log info "Installing Caps Lock daemon..."
+    log info "Installing keyboard daemon..."
 
     # Navigate to daemon directory
-    cd "$HOME/.config/caps-lock-daemon" || {
-        log error "change to caps-lock-daemon directory"
+    cd "$HOME/.config/keyboard-daemon" || {
+        log error "change to keyboard-daemon directory"
         return 1
     }
 
     # Build and install using Makefile
-    run_or_fail "make clean" "clean caps lock daemon"
-    run_or_fail "make" "build caps lock daemon"
-    run_or_fail "make install" "install caps lock daemon"
-    run_or_fail "make start" "start caps lock daemon"
+    run_or_fail "$HOME/.config/keyboard-daemon/install.sh" "Failed to setup keyboard daemon"
 
     # Return to original directory
     cd - >/dev/null || true
 
-    log success "Caps Lock daemon installed and started"
+    log success "keyboard daemon installed and started"
     log info "Remember to grant Input Monitoring permissions in System Settings > Privacy & Security"
 }
 
@@ -335,7 +332,7 @@ main() {
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
-        run_step "Installing Caps Lock daemon" setup_caps_lock_daemon
+        run_step "Installing keyboard daemon" setup_keyboard_daemon
     }
 
     run_step "Setting up dotfiles" setup_dotfiles
