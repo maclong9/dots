@@ -1,0 +1,53 @@
+Script started on Mon Jul 14 10:46:49 2025
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[1m[31ms[0m[39m[1m[31ms[1m[31mc[0m[39m[1m[31ms[1m[31mc[1m[31mr[0m[39m[1m[31mr[1m[31mi[0m[39m[1m[31mi[1m[31mp[0m[39m[0m[32ms[0m[32mc[0m[32mr[0m[32mi[0m[32mp[32mt[39m[4m[35ms[4m[35mc[4m[35mr[4m[35mi[4m[35mp[4m[35mt[4m[35ms[24m[39m[24m[39ms[24m[39mc[24m[39mr[24m[39mi[24m[39mp[24m[39mt[24m[39ms[1m=[0m[?2004l
+[1m[7m%[27m[1m[0m                                                                                                   ^H[0m[27m[24m[J[37mmac [1m[37m[97m~/.config[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[32m.[39m[4m[35m.[4m[35m/[24m[39m[24m[1m[31m.[24m[1m[31m/[1m[31ms[0m[39m[1m[31ms[1m[31mc[0m[39m[0m[4m[35m.[0m[4m[35m/[0m[4m[35ms[0m[4m[35mc[4m[35mripts[1m[4m[35m/[0m[24m[39m[4m[35ms[24m[39m[0m[24m[39m [?2004l
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[32m.[39m[4m[35m.[4m[35m/[24m[39m[24m[1m[31m.[24m[1m[31m/[1m[31mm[0m[39m[1m[31mm[1m[31ma[0m[39m[1m[31ma[1m[31mi[0m[39m[0m[4m[35m.[0m[4m[35m/[0m[4m[35mm[0m[4m[35ma[0m[4m[35mi[4m[35mntenance[1m[4m[35m/[0m[24m[39m[4m[35me[24m[39m[0m[24m[39m [?2004l
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[32m-[39m[32m-[32m-[39m[?2004l
+~/.config/scripts
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[32m-[39m[32m-[32m-[39m[?2004l
+~/.config/scripts/maintenance
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[1m[31m+[0m[39m[0m[32m+[32m+[39m[?2004l
+zsh: command not found: cd +1
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[1m[31mp[0m[39m[1m[31mp[1m[31mu[0m[39m[1m[31mp[1m[31mu[1m[31ms[0m[39m[1m[31ms[1m[31mh[0m[39m[0m[32mp[0m[32mu[0m[32ms[0m[32mh[32md[39m +1[?2004l
+pushd: no such entry in dir stack
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[32m-[39m[32m-[32m-[39m[?2004l
+~/.config/scripts
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[1m[31mp[0m[39m[1m[31mp[1m[31mu[0m[39m[1m[31mp[1m[31mu[1m[31ms[0m[39m[1m[31ms[1m[31mh[0m[39m[0m[32mp[0m[32mu[0m[32ms[0m[32mh[32md[39m +1[?2004l
+pushd: no such entry in dir stack
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[1m[31me[0m[39m[1m[31me[1m[31mc[0m[39m[1m[31me[1m[31mc[1m[31mh[0m[39m[0m[32me[0m[32mc[0m[32mh[32mo[39m [38;5;113m$[39m[38;5;113m$[38;5;113mO[39m[38;5;113mO[38;5;113mD[39m[38;5;113mO[39m[39m [38;5;113mO[38;5;113mL[39m[38;5;113mL[38;5;113mD[39m[38;5;113mD[38;5;113mP[39m[38;5;113mP[38;5;113mW[39m[38;5;113mW[38;5;113mD[39m[?2004l
+/Users/mac/.config/scripts/maintenance
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[H[2J[0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[1m[31mc[0m[39m[0m[32mc[32md[39m [36m-[39m[?2004l
+~/.config/scripts/maintenance
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[1m[31mc[0m[39m[0m[32mc[32md[39m [36m-[39m[?2004l
+~/.config/scripts
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[1m[31mp[0m[39m[1m[31mp[1m[31mo[0m[39m[1m[31mp[1m[31mo[1m[31mp[0m[39m[0m[32mp[0m[32mo[0m[32mp[32md[39m[?2004l
+popd: directory stack empty
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[1m[31mc[0m[39m[0m[32mc[32md[39m ma[4m[35mm[4m[35ma[4m[35mintenance[1m[4m[35m/[0m[24m[39m[4m[35me[24m[39m[0m[24m[39m [?2004l
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[1m[31mp[0m[39m[1m[31mp[1m[31mo[0m[39m[1m[31mp[1m[31mo[1m[31mp[0m[39m[0m[32mp[0m[32mo[0m[32mp[32md[39m[?2004l
+popd: directory stack empty
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~/.config/scripts/maintenance[0m[97m [1m[97m[93m(main)[39m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[1m[31mp[0m[39m[1m[31mp[1m[31mu[0m[39m[1m[31mp[1m[31mu[1m[31ms[0m[39m[1m[31ms[1m[31mh[0m[39m[0m[32mp[0m[32mu[0m[32ms[0m[32mh[32md[39m[?2004l
+~ ~/.config/scripts/maintenance
+[1m[7m%[27m[1m[0m                                                                                                   [0m[27m[24m[J[37mmac [1m[37m[97m~[0m[97m
+[92m[1m[92mλ[0m[92m[39m [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                   ^L[0m[27m[24m[J[37mmac [1m[37m[97m~[0m[97m
+[91m[1m[91mλ[0m[91m[39m [K[?2004h[H[2J[0m[27m[24m[J[37mmac [1m[37m[97m~[0m[97m
+[91m[1m[91mλ[0m[91m[39m [K
