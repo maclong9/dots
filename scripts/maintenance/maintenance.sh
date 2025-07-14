@@ -15,22 +15,22 @@ echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log
 log() {
     level="$1"
     message="$2"
-    
+
     # Format for terminal (with colors)
     case "$level" in
-        info) 
+        info)
             printf "${BLUE}[INFO]${NC} %s\n" "$message"
             echo "[INFO] $message" >>/tmp/maintenance.log
             ;;
-        success) 
+        success)
             printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
             echo "[SUCCESS] $message" >>/tmp/maintenance.log
             ;;
-        warning) 
+        warning)
             printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
             echo "[WARNING] $message" >>/tmp/maintenance.log
             ;;
-        error) 
+        error)
             printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
             echo "[ERROR] $message" >>/tmp/maintenance.log
             ;;
@@ -389,16 +389,16 @@ cleanup_mise() {
     log info "Running mise cleanup..."
     echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
     [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac/" || HOME_PATH="/home/mac"
-    
+
     # Capture and display mise output
     mise_output=$("$HOME_PATH/".local/bin/mise self-update -y 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
-    
+
     mise_output=$("$HOME_PATH/".local/bin/mise upgrade 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
-    
+
     mise_output=$("$HOME_PATH/".local/bin/mise prune 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
@@ -429,19 +429,19 @@ main() {
     if [ "$IS_MAC" = true ]; then
         log info "Restarting macOS system services..."
         echo "  → Restarting macOS system services..." >>/tmp/maintenance.log
-        
+
         # Restart Finder to refresh file system cache
         log info "Restarting Finder (file system cache refresh)..."
         killall Finder 2>/dev/null || true
         log success "Finder restarted successfully"
         echo "    ✓ Finder restarted (file system cache refreshed)" >>/tmp/maintenance.log
-        
+
         # Restart Dock to refresh application cache
         log info "Restarting Dock (application cache refresh)..."
-        killall Dock 2>/dev/null || true  
+        killall Dock 2>/dev/null || true
         log success "Dock restarted successfully"
         echo "    ✓ Dock restarted (application cache refreshed)" >>/tmp/maintenance.log
-        
+
         # Rebuild Spotlight index for better search performance
         log info "Rebuilding Spotlight index (search optimization)..."
         spotlight_output=$(sudo mdutil -E / 2>&1)

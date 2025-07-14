@@ -187,7 +187,7 @@ run_or_fail() {
 }
 
 # • File management
- 
+
 # Creates a timestamped backup of an existing file.
 #
 # Copies a file to a backup with a timestamp suffix before modification.
@@ -246,12 +246,12 @@ count_files() {
 #   - 1 if source file doesn't exist.
 validate_symlink_source() {
     source_file="$1"
-    
+
     if [ ! -f "$source_file" ]; then
         log error "Source file does not exist: $source_file"
         return 1
     fi
-    
+
     # Get absolute path of source file
     absolute_path=$(cd "$(dirname "$source_file")" && pwd)/$(basename "$source_file")
     echo "$absolute_path"
@@ -270,7 +270,7 @@ validate_symlink_source() {
 ensure_target_directory() {
     target_file="$1"
     target_dir=$(dirname "$target_file")
-    
+
     if [ ! -d "$target_dir" ]; then
         log debug "Creating target directory: $target_dir"
         if ! mkdir -p "$target_dir"; then
@@ -291,7 +291,7 @@ ensure_target_directory() {
 #   - 0 always (backup is optional).
 backup_existing_file() {
     target_file="$1"
-    
+
     if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
         backup_file "$target_file" >/dev/null
         log debug "Backed up existing file: $target_file"
@@ -310,7 +310,7 @@ backup_existing_file() {
 #   - 1 if removal fails.
 remove_existing_target() {
     target_file="$1"
-    
+
     if [ -e "$target_file" ] || [ -L "$target_file" ]; then
         log debug "Removing existing file/symlink: $target_file"
         if ! rm "$target_file"; then
@@ -334,26 +334,26 @@ remove_existing_target() {
 create_and_verify_symlink() {
     source_file="$1"
     target_file="$2"
-    
+
     # Create the symlink
     log debug "Creating symlink: $source_file -> $target_file"
     if ! ln -s "$source_file" "$target_file"; then
         log error "Failed to create symlink from $source_file to $target_file"
         return 1
     fi
-    
+
     # Verify the symlink was created successfully
     if [ ! -L "$target_file" ]; then
         log error "Symlink was not created: $target_file"
         return 1
     fi
-    
+
     # Verify the symlink points to the correct target
     if [ "$(readlink "$target_file")" != "$source_file" ]; then
         log error "Symlink points to wrong target. Expected: $source_file, Got: $(readlink "$target_file")"
         return 1
     fi
-    
+
     return 0
 }
 
@@ -376,24 +376,24 @@ safe_symlink() {
     source_file="$1"
     target_file="$2"
     filename=$(basename "$source_file")
-    
+
     log debug "Processing file: $source_file -> $target_file"
-    
+
     # Validate source file and get absolute path
     source_file=$(validate_symlink_source "$source_file") || return 1
-    
+
     # Ensure target directory exists
     ensure_target_directory "$target_file" || return 1
-    
+
     # Backup existing file if needed
     backup_existing_file "$target_file" || return 1
-    
+
     # Remove existing target
     remove_existing_target "$target_file" || return 1
-    
+
     # Create and verify symlink
     create_and_verify_symlink "$source_file" "$target_file" || return 1
-    
+
     log success "Symlinked $filename"
     log debug "Successfully created symlink: $source_file -> $target_file"
     return 0
