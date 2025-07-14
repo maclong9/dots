@@ -1,5 +1,6 @@
 [settings]
 experimental = true
+
 [tools]
 github-cli = 'latest'
 helix = 'latest'
@@ -7,10 +8,12 @@ marksman = 'latest'
 node = 'lts'
 shellcheck = 'latest'
 shfmt = 'latest'
-# Swift Package Manager Packages
+
+# Swift Package Manager packages
 'spm:maclong9/list' = 'latest'
 #'spm:apple/container' = 'latest'
-# Global Node Modules
+
+# Node.js packages
 'npm:typescript' = 'latest'
 'npm:typescript-language-server' = 'latest'
 'npm:vscode-langservers-extracted' = 'latest'

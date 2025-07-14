@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+# • Process management
+
 # Kills a process running on a specified port.
 #
 # Terminates the process listening on the given TCP port.
@@ -26,6 +28,8 @@ kp() {
         echo "No process found on port $1"
     fi
 }
+
+# • Clipboard utilities
 
 # Re-runs the last command and copies its output to the clipboard.
 #
@@ -62,6 +66,8 @@ clc() {
 
     return $exit_code
 }
+
+# • Directory navigation
 
 # Navigate backward in directory history.
 #
