@@ -22,7 +22,7 @@ jobs:
 
             - name: Download and source utilities
               run: |
-                  url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+                  url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh"
                   curl -fsSL "$url" -o /tmp/utils.sh || {
                       printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
                       exit 1
@@ -66,9 +66,9 @@ jobs:
 
             - name: Test utils.sh functions
               run: |
-                  chmod +x scripts/utils.sh
+                  chmod +x scripts/core/utils.sh
                   # Source and test key functions
-                  . scripts/utils.sh
+                  . scripts/core/utils.sh
                   # Test logging functions
                   log info "Testing macOS compatibility"
                   log success "macOS test successful"
@@ -104,8 +104,8 @@ jobs:
 
             - name: Test utils.sh functions
               run: |
-                  chmod +x scripts/utils.sh
-                  . scripts/utils.sh
+                  chmod +x scripts/core/utils.sh
+                  . scripts/core/utils.sh
                   log info "Testing Debian compatibility"
                   log success "Debian test successful"
 
@@ -200,7 +200,7 @@ jobs:
 
             - name: Test utility functions
               run: |
-                  . scripts/utils.sh
+                  . scripts/core/utils.sh
 
                   # Test logging functions
                   log info "Testing info log"
@@ -239,7 +239,7 @@ jobs:
             - name: Test all script functions without execution
               run: |
                   # Source setup.sh and test function definitions
-                  . scripts/utils.sh
+                  . scripts/core/utils.sh
                   
                   # Check if all required functions are defined
                   functions="log parse_args"
