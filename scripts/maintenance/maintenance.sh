@@ -302,26 +302,26 @@ cleanup_universal() {
         repo_count=0
         find "$HOME/Developer" -name ".git" -type d -execdir sh -c '
             repo_name=$(basename "$(pwd)")
+            printf "    - Cleaning %s repository...\n" "$repo_name"
             echo "    - Cleaning $repo_name repository..." >>/tmp/maintenance.log
             
             git_output=$(git gc --aggressive --prune=now 2>&1)
             if echo "$git_output" | grep -q "nothing new to pack"; then
-                echo "      ✓ $repo_name repository already optimized"
+                printf "      ✓ %s repository already optimized\n" "$repo_name"
                 echo "      ✓ $repo_name repository already optimized" >>/tmp/maintenance.log
             elif [ -n "$git_output" ]; then
                 # Replace "nothing new to pack" with more user-friendly message
                 cleaned_output=$(echo "$git_output" | sed 's/nothing new to pack/repository already optimized/g')
-                echo "$cleaned_output"
+                printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
                 echo "$cleaned_output" >>/tmp/maintenance.log
-                echo "      ✓ $repo_name repository cleaned successfully"
                 echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
             else
-                echo "      ✓ $repo_name repository cleaned successfully"
+                printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
                 echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
             fi
             
             git remote prune origin 2>/dev/null || true
-        ' \; 2>/dev/null || true
+        ' \;
 
         repo_count=$(find "$HOME/Developer" -name ".git" -type d 2>/dev/null | wc -l | tr -d ' ')
         log success "Cleaned Git repositories ($repo_count repos)"
@@ -350,32 +350,36 @@ show_disk_usage() {
     echo "=== Disk Usage Summary ===" >>/tmp/maintenance.log
 
     if command -v df >/dev/null 2>&1; then
-        df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mount; do
+        df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
             echo "Root filesystem ($filesystem):"
             echo "  Size: $size"
             echo "  Used: $used"
             echo "  Available: $avail"
             echo "  Capacity: $capacity"
-            echo "  Root filesystem ($filesystem):" >>/tmp/maintenance.log
-            echo "    Size: $size" >>/tmp/maintenance.log
-            echo "    Used: $used" >>/tmp/maintenance.log
-            echo "    Available: $avail" >>/tmp/maintenance.log
-            echo "    Capacity: $capacity" >>/tmp/maintenance.log
+            {
+                echo "  Root filesystem ($filesystem):"
+                echo "    Size: $size"
+                echo "    Used: $used"
+                echo "    Available: $avail"
+                echo "    Capacity: $capacity"
+            } >>/tmp/maintenance.log
         done
     fi
 
     if [ "$IS_MAC" = true ] && command -v df >/dev/null 2>&1; then
-        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity mount; do
+        df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
             echo "Data volume ($filesystem):"
             echo "  Size: $size"
             echo "  Used: $used"
             echo "  Available: $avail"
             echo "  Capacity: $capacity"
-            echo "  Data volume ($filesystem):" >>/tmp/maintenance.log
-            echo "    Size: $size" >>/tmp/maintenance.log
-            echo "    Used: $used" >>/tmp/maintenance.log
-            echo "    Available: $avail" >>/tmp/maintenance.log
-            echo "    Capacity: $capacity" >>/tmp/maintenance.log
+            {
+                echo "  Data volume ($filesystem):"
+                echo "    Size: $size"
+                echo "    Used: $used"
+                echo "    Available: $avail"
+                echo "    Capacity: $capacity"
+            } >>/tmp/maintenance.log
         done
     fi
 }
