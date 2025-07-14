@@ -69,6 +69,9 @@ make uninstall  # Remove daemon completely
 - **Permission denied**: Ensure daemon has Input Monitoring permissions
 - **Build errors**: Install Xcode command line tools: `xcode-select --install`
 
+> [!NOTE]
+> If everything seems in order and it's still not working try running `make uninstall` and then `make install && make start` this should reset everything correctly.
+
 ## Compatibility
 
 - macOS 10.12+ (Sierra and later)
