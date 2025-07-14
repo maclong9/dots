@@ -4,7 +4,7 @@
  * A macOS daemon that provides enhanced keyboard functionality:
  * - Caps Lock timeout behavior: Quick press (<500ms) = Escape, Hold = Control
  * - Right-Option app launching: Right-Option + {s,n,r,m,x,t} launches apps
- * - Right-Option scrolling: Right-Option + {h,j,k,l} for directional scrolling
+ * - Right-Option arrow keys: Right-Option + {h,j,k,l} sends arrow key events
  *
  * Requires Input Monitoring permissions to function properly.
  */
@@ -38,6 +38,10 @@
 // Virtual key codes for macOS key events
 #define ESCAPE_KEYCODE 0x35
 #define CONTROL_KEYCODE 0x3B
+#define LEFT_ARROW_KEYCODE 0x7B
+#define DOWN_ARROW_KEYCODE 0x7D
+#define UP_ARROW_KEYCODE 0x7E
+#define RIGHT_ARROW_KEYCODE 0x7C
 
 // Threshold in milliseconds to distinguish tap vs hold
 #define HOLD_THRESHOLD_MS 500
@@ -62,22 +66,21 @@ typedef struct {
 } RightOptionState;
 
 /**
- * Structure to track the current state of scroll keys
+ * Structure to track the current state of arrow keys
  */
 typedef struct {
   bool h_pressed;      // Whether h key is currently held down
   bool j_pressed;      // Whether j key is currently held down
   bool k_pressed;      // Whether k key is currently held down
   bool l_pressed;      // Whether l key is currently held down
-  CFRunLoopTimerRef scroll_timer; // Timer for continuous scrolling
-} ScrollState;
+} ArrowState;
 
 // Global state for caps lock key tracking
 static CapsLockState caps_state = {0, false, false};
 // Global state for right-option key tracking
 static RightOptionState right_option_state = {false};
-// Global state for scroll key tracking
-static ScrollState scroll_state = {false, false, false, false, NULL};
+// Global state for arrow key tracking
+static ArrowState arrow_state = {false, false, false, false};
 // System timebase information for time conversion
 static mach_timebase_info_data_t timebase_info;
 
@@ -167,17 +170,12 @@ void handle_other_key_press() {
 }
 
 /**
- * Sends a scroll wheel event
- * @param delta_x Horizontal scroll amount (positive = right, negative = left)
- * @param delta_y Vertical scroll amount (positive = up, negative = down)
+ * Sends an arrow key press event
+ * @param keycode The arrow key code to send
  */
-void send_scroll_event(int32_t delta_x, int32_t delta_y) {
-  CGEventRef event = CGEventCreateScrollWheelEvent(
-      NULL, kCGScrollEventUnitLine, 2, delta_y, delta_x);
-  if (event) {
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-  }
+void send_arrow_key(CGKeyCode keycode) {
+  send_virtual_key(keycode, true);
+  send_virtual_key(keycode, false);
 }
 
 /**
@@ -199,96 +197,7 @@ void launch_app(const char *app_name) {
   }
 }
 
-/**
- * Focuses the frontmost window and moves cursor to its center for scrolling
- * This ensures scroll events are sent to the active window, not the old cursor position
- */
-void focus_window_for_scrolling() {
-  CFArrayRef window_list = CGWindowListCopyWindowInfo(
-      kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
-      kCGNullWindowID);
-  
-  if (window_list && CFArrayGetCount(window_list) > 0) {
-    CFDictionaryRef window = CFArrayGetValueAtIndex(window_list, 0);
-    CFDictionaryRef bounds = CFDictionaryGetValue(window, kCGWindowBounds);
-    
-    if (bounds) {
-      CGRect window_rect;
-      if (CGRectMakeWithDictionaryRepresentation(bounds, &window_rect)) {
-        CGPoint center = {
-          window_rect.origin.x + window_rect.size.width / 2,
-          window_rect.origin.y + window_rect.size.height / 2
-        };
-        
-        CGWarpMouseCursorPosition(center);
-        log_message("Moved cursor to focused window center");
-      }
-    }
-  }
-  
-  if (window_list) CFRelease(window_list);
-}
 
-/**
- * Timer callback for continuous scrolling
- * Called repeatedly while scroll keys are held down
- */
-void scroll_timer_callback(CFRunLoopTimerRef timer __attribute__((unused)), void *info __attribute__((unused))) {
-  if (scroll_state.h_pressed) {
-    send_scroll_event(-SCROLL_UNITS, 0);
-  }
-  if (scroll_state.j_pressed) {
-    send_scroll_event(0, -SCROLL_UNITS);
-  }
-  if (scroll_state.k_pressed) {
-    send_scroll_event(0, SCROLL_UNITS);
-  }
-  if (scroll_state.l_pressed) {
-    send_scroll_event(SCROLL_UNITS, 0);
-  }
-}
-
-/**
- * Starts continuous scrolling timer
- * Called when first scroll key is pressed
- */
-void start_continuous_scrolling() {
-  if (!scroll_state.scroll_timer) {
-    CFRunLoopTimerContext context = {0, NULL, NULL, NULL, NULL};
-    scroll_state.scroll_timer = CFRunLoopTimerCreate(
-        kCFAllocatorDefault,
-        CFAbsoluteTimeGetCurrent() + 0.1, // Start after 100ms
-        0.05, // Repeat every 50ms
-        0, 0, scroll_timer_callback, &context);
-    
-    if (scroll_state.scroll_timer) {
-      CFRunLoopAddTimer(CFRunLoopGetCurrent(), scroll_state.scroll_timer, kCFRunLoopDefaultMode);
-      log_message("Started continuous scrolling timer");
-    }
-  }
-}
-
-/**
- * Stops continuous scrolling timer
- * Called when all scroll keys are released
- */
-void stop_continuous_scrolling() {
-  if (scroll_state.scroll_timer) {
-    CFRunLoopTimerInvalidate(scroll_state.scroll_timer);
-    CFRelease(scroll_state.scroll_timer);
-    scroll_state.scroll_timer = NULL;
-    log_message("Stopped continuous scrolling timer");
-  }
-}
-
-/**
- * Checks if any scroll keys are currently pressed
- * @return true if any scroll key is pressed, false otherwise
- */
-bool any_scroll_key_pressed() {
-  return scroll_state.h_pressed || scroll_state.j_pressed || 
-         scroll_state.k_pressed || scroll_state.l_pressed;
-}
 
 /**
  * Handles Right-Option key press
@@ -304,15 +213,11 @@ void handle_right_option_press() {
 void handle_right_option_release() {
   right_option_state.is_pressed = false;
   
-  // Stop continuous scrolling and reset scroll state when Right-Option is released
-  if (any_scroll_key_pressed()) {
-    scroll_state.h_pressed = false;
-    scroll_state.j_pressed = false;
-    scroll_state.k_pressed = false;
-    scroll_state.l_pressed = false;
-    stop_continuous_scrolling();
-    log_message("Reset scroll state on Right-Option release");
-  }
+  // Reset arrow key state when Right-Option is released
+  arrow_state.h_pressed = false;
+  arrow_state.j_pressed = false;
+  arrow_state.k_pressed = false;
+  arrow_state.l_pressed = false;
   
   log_message("Right-Option released");
 }
@@ -330,73 +235,50 @@ void handle_right_option_combo_press(uint32_t usage) {
     // App launching shortcuts
     case KEY_S_USAGE:
       launch_app("Safari");
-      // Focus window for potential scrolling after app switch
-      focus_window_for_scrolling();
       break;
     case KEY_N_USAGE:
       launch_app("Notes");
-      focus_window_for_scrolling();
       break;
     case KEY_R_USAGE:
       launch_app("Reminders");
-      focus_window_for_scrolling();
       break;
     case KEY_M_USAGE:
       launch_app("Music");
-      focus_window_for_scrolling();
       break;
     case KEY_T_USAGE:
       launch_app("Terminal");
-      focus_window_for_scrolling();
       break;
     case KEY_X_USAGE:
       launch_app("Xcode");
-      focus_window_for_scrolling();
       break;
     
-    // Scrolling shortcuts - start continuous scrolling
+    // Arrow key shortcuts - send single arrow key press
     case KEY_H_USAGE:
-      if (!scroll_state.h_pressed) {
-        scroll_state.h_pressed = true;
-        focus_window_for_scrolling();
-        send_scroll_event(-SCROLL_UNITS, 0);
-        if (scroll_state.scroll_timer == NULL) {
-          start_continuous_scrolling();
-        }
-        log_message("Started scrolling left");
+      if (!arrow_state.h_pressed) {
+        arrow_state.h_pressed = true;
+        send_arrow_key(LEFT_ARROW_KEYCODE);
+        log_message("Sent left arrow key");
       }
       break;
     case KEY_J_USAGE:
-      if (!scroll_state.j_pressed) {
-        scroll_state.j_pressed = true;
-        focus_window_for_scrolling();
-        send_scroll_event(0, -SCROLL_UNITS);
-        if (scroll_state.scroll_timer == NULL) {
-          start_continuous_scrolling();
-        }
-        log_message("Started scrolling down");
+      if (!arrow_state.j_pressed) {
+        arrow_state.j_pressed = true;
+        send_arrow_key(DOWN_ARROW_KEYCODE);
+        log_message("Sent down arrow key");
       }
       break;
     case KEY_K_USAGE:
-      if (!scroll_state.k_pressed) {
-        scroll_state.k_pressed = true;
-        focus_window_for_scrolling();
-        send_scroll_event(0, SCROLL_UNITS);
-        if (scroll_state.scroll_timer == NULL) {
-          start_continuous_scrolling();
-        }
-        log_message("Started scrolling up");
+      if (!arrow_state.k_pressed) {
+        arrow_state.k_pressed = true;
+        send_arrow_key(UP_ARROW_KEYCODE);
+        log_message("Sent up arrow key");
       }
       break;
     case KEY_L_USAGE:
-      if (!scroll_state.l_pressed) {
-        scroll_state.l_pressed = true;
-        focus_window_for_scrolling();
-        send_scroll_event(SCROLL_UNITS, 0);
-        if (scroll_state.scroll_timer == NULL) {
-          start_continuous_scrolling();
-        }
-        log_message("Started scrolling right");
+      if (!arrow_state.l_pressed) {
+        arrow_state.l_pressed = true;
+        send_arrow_key(RIGHT_ARROW_KEYCODE);
+        log_message("Sent right arrow key");
       }
       break;
       
@@ -411,31 +293,26 @@ void handle_right_option_combo_press(uint32_t usage) {
  */
 void handle_right_option_combo_release(uint32_t usage) {
   switch (usage) {
-    // Scrolling shortcuts - stop continuous scrolling
+    // Arrow key shortcuts - reset pressed state
     case KEY_H_USAGE:
-      scroll_state.h_pressed = false;
-      log_message("Stopped scrolling left");
+      arrow_state.h_pressed = false;
+      log_message("Released h key");
       break;
     case KEY_J_USAGE:
-      scroll_state.j_pressed = false;
-      log_message("Stopped scrolling down");
+      arrow_state.j_pressed = false;
+      log_message("Released j key");
       break;
     case KEY_K_USAGE:
-      scroll_state.k_pressed = false;
-      log_message("Stopped scrolling up");
+      arrow_state.k_pressed = false;
+      log_message("Released k key");
       break;
     case KEY_L_USAGE:
-      scroll_state.l_pressed = false;
-      log_message("Stopped scrolling right");
+      arrow_state.l_pressed = false;
+      log_message("Released l key");
       break;
       
     default:
       break;
-  }
-  
-  // Stop continuous scrolling if no scroll keys are pressed
-  if (!any_scroll_key_pressed()) {
-    stop_continuous_scrolling();
   }
 }
 
@@ -576,14 +453,6 @@ void setup_hid_manager() {
  */
 void signal_handler(int signum __attribute__((unused))) {
   log_message("Received signal, shutting down");
-  
-  // Clean up scroll timer before exit
-  if (scroll_state.scroll_timer) {
-    CFRunLoopTimerInvalidate(scroll_state.scroll_timer);
-    CFRelease(scroll_state.scroll_timer);
-    scroll_state.scroll_timer = NULL;
-  }
-  
   exit(0);
 }
 
