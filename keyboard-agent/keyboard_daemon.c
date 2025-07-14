@@ -61,10 +61,23 @@ typedef struct {
   bool is_pressed;     // Whether the key is currently held down
 } RightOptionState;
 
+/**
+ * Structure to track the current state of scroll keys
+ */
+typedef struct {
+  bool h_pressed;      // Whether h key is currently held down
+  bool j_pressed;      // Whether j key is currently held down
+  bool k_pressed;      // Whether k key is currently held down
+  bool l_pressed;      // Whether l key is currently held down
+  CFRunLoopTimerRef scroll_timer; // Timer for continuous scrolling
+} ScrollState;
+
 // Global state for caps lock key tracking
 static CapsLockState caps_state = {0, false, false};
 // Global state for right-option key tracking
 static RightOptionState right_option_state = {false};
+// Global state for scroll key tracking
+static ScrollState scroll_state = {false, false, false, false, NULL};
 // System timebase information for time conversion
 static mach_timebase_info_data_t timebase_info;
 
@@ -187,6 +200,97 @@ void launch_app(const char *app_name) {
 }
 
 /**
+ * Focuses the frontmost window and moves cursor to its center for scrolling
+ * This ensures scroll events are sent to the active window, not the old cursor position
+ */
+void focus_window_for_scrolling() {
+  CFArrayRef window_list = CGWindowListCopyWindowInfo(
+      kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
+      kCGNullWindowID);
+  
+  if (window_list && CFArrayGetCount(window_list) > 0) {
+    CFDictionaryRef window = CFArrayGetValueAtIndex(window_list, 0);
+    CFDictionaryRef bounds = CFDictionaryGetValue(window, kCGWindowBounds);
+    
+    if (bounds) {
+      CGRect window_rect;
+      if (CGRectMakeWithDictionaryRepresentation(bounds, &window_rect)) {
+        CGPoint center = {
+          window_rect.origin.x + window_rect.size.width / 2,
+          window_rect.origin.y + window_rect.size.height / 2
+        };
+        
+        CGWarpMouseCursorPosition(center);
+        log_message("Moved cursor to focused window center");
+      }
+    }
+  }
+  
+  if (window_list) CFRelease(window_list);
+}
+
+/**
+ * Timer callback for continuous scrolling
+ * Called repeatedly while scroll keys are held down
+ */
+void scroll_timer_callback(CFRunLoopTimerRef timer __attribute__((unused)), void *info __attribute__((unused))) {
+  if (scroll_state.h_pressed) {
+    send_scroll_event(-SCROLL_UNITS, 0);
+  }
+  if (scroll_state.j_pressed) {
+    send_scroll_event(0, -SCROLL_UNITS);
+  }
+  if (scroll_state.k_pressed) {
+    send_scroll_event(0, SCROLL_UNITS);
+  }
+  if (scroll_state.l_pressed) {
+    send_scroll_event(SCROLL_UNITS, 0);
+  }
+}
+
+/**
+ * Starts continuous scrolling timer
+ * Called when first scroll key is pressed
+ */
+void start_continuous_scrolling() {
+  if (!scroll_state.scroll_timer) {
+    CFRunLoopTimerContext context = {0, NULL, NULL, NULL, NULL};
+    scroll_state.scroll_timer = CFRunLoopTimerCreate(
+        kCFAllocatorDefault,
+        CFAbsoluteTimeGetCurrent() + 0.1, // Start after 100ms
+        0.05, // Repeat every 50ms
+        0, 0, scroll_timer_callback, &context);
+    
+    if (scroll_state.scroll_timer) {
+      CFRunLoopAddTimer(CFRunLoopGetCurrent(), scroll_state.scroll_timer, kCFRunLoopDefaultMode);
+      log_message("Started continuous scrolling timer");
+    }
+  }
+}
+
+/**
+ * Stops continuous scrolling timer
+ * Called when all scroll keys are released
+ */
+void stop_continuous_scrolling() {
+  if (scroll_state.scroll_timer) {
+    CFRunLoopTimerInvalidate(scroll_state.scroll_timer);
+    CFRelease(scroll_state.scroll_timer);
+    scroll_state.scroll_timer = NULL;
+    log_message("Stopped continuous scrolling timer");
+  }
+}
+
+/**
+ * Checks if any scroll keys are currently pressed
+ * @return true if any scroll key is pressed, false otherwise
+ */
+bool any_scroll_key_pressed() {
+  return scroll_state.h_pressed || scroll_state.j_pressed || 
+         scroll_state.k_pressed || scroll_state.l_pressed;
+}
+
+/**
  * Handles Right-Option key press
  */
 void handle_right_option_press() {
@@ -199,14 +303,25 @@ void handle_right_option_press() {
  */
 void handle_right_option_release() {
   right_option_state.is_pressed = false;
+  
+  // Stop continuous scrolling and reset scroll state when Right-Option is released
+  if (any_scroll_key_pressed()) {
+    scroll_state.h_pressed = false;
+    scroll_state.j_pressed = false;
+    scroll_state.k_pressed = false;
+    scroll_state.l_pressed = false;
+    stop_continuous_scrolling();
+    log_message("Reset scroll state on Right-Option release");
+  }
+  
   log_message("Right-Option released");
 }
 
 /**
- * Handles Right-Option + letter key combinations
+ * Handles Right-Option + letter key combinations (key press)
  * @param usage The HID usage code of the letter key
  */
-void handle_right_option_combo(uint32_t usage) {
+void handle_right_option_combo_press(uint32_t usage) {
   if (!right_option_state.is_pressed) {
     return;
   }
@@ -215,43 +330,112 @@ void handle_right_option_combo(uint32_t usage) {
     // App launching shortcuts
     case KEY_S_USAGE:
       launch_app("Safari");
+      // Focus window for potential scrolling after app switch
+      focus_window_for_scrolling();
       break;
     case KEY_N_USAGE:
       launch_app("Notes");
+      focus_window_for_scrolling();
       break;
     case KEY_R_USAGE:
       launch_app("Reminders");
+      focus_window_for_scrolling();
       break;
     case KEY_M_USAGE:
       launch_app("Music");
+      focus_window_for_scrolling();
       break;
     case KEY_T_USAGE:
       launch_app("Terminal");
+      focus_window_for_scrolling();
       break;
     case KEY_X_USAGE:
       launch_app("Xcode");
+      focus_window_for_scrolling();
       break;
     
-    // Scrolling shortcuts
+    // Scrolling shortcuts - start continuous scrolling
     case KEY_H_USAGE:
-      send_scroll_event(-SCROLL_UNITS, 0);
-      log_message("Scrolling left");
+      if (!scroll_state.h_pressed) {
+        scroll_state.h_pressed = true;
+        focus_window_for_scrolling();
+        send_scroll_event(-SCROLL_UNITS, 0);
+        if (scroll_state.scroll_timer == NULL) {
+          start_continuous_scrolling();
+        }
+        log_message("Started scrolling left");
+      }
       break;
     case KEY_J_USAGE:
-      send_scroll_event(0, -SCROLL_UNITS);
-      log_message("Scrolling down");
+      if (!scroll_state.j_pressed) {
+        scroll_state.j_pressed = true;
+        focus_window_for_scrolling();
+        send_scroll_event(0, -SCROLL_UNITS);
+        if (scroll_state.scroll_timer == NULL) {
+          start_continuous_scrolling();
+        }
+        log_message("Started scrolling down");
+      }
       break;
     case KEY_K_USAGE:
-      send_scroll_event(0, SCROLL_UNITS);
-      log_message("Scrolling up");
+      if (!scroll_state.k_pressed) {
+        scroll_state.k_pressed = true;
+        focus_window_for_scrolling();
+        send_scroll_event(0, SCROLL_UNITS);
+        if (scroll_state.scroll_timer == NULL) {
+          start_continuous_scrolling();
+        }
+        log_message("Started scrolling up");
+      }
       break;
     case KEY_L_USAGE:
-      send_scroll_event(SCROLL_UNITS, 0);
-      log_message("Scrolling right");
+      if (!scroll_state.l_pressed) {
+        scroll_state.l_pressed = true;
+        focus_window_for_scrolling();
+        send_scroll_event(SCROLL_UNITS, 0);
+        if (scroll_state.scroll_timer == NULL) {
+          start_continuous_scrolling();
+        }
+        log_message("Started scrolling right");
+      }
       break;
       
     default:
       break;
+  }
+}
+
+/**
+ * Handles Right-Option + letter key combinations (key release)
+ * @param usage The HID usage code of the letter key
+ */
+void handle_right_option_combo_release(uint32_t usage) {
+  switch (usage) {
+    // Scrolling shortcuts - stop continuous scrolling
+    case KEY_H_USAGE:
+      scroll_state.h_pressed = false;
+      log_message("Stopped scrolling left");
+      break;
+    case KEY_J_USAGE:
+      scroll_state.j_pressed = false;
+      log_message("Stopped scrolling down");
+      break;
+    case KEY_K_USAGE:
+      scroll_state.k_pressed = false;
+      log_message("Stopped scrolling up");
+      break;
+    case KEY_L_USAGE:
+      scroll_state.l_pressed = false;
+      log_message("Stopped scrolling right");
+      break;
+      
+    default:
+      break;
+  }
+  
+  // Stop continuous scrolling if no scroll keys are pressed
+  if (!any_scroll_key_pressed()) {
+    stop_continuous_scrolling();
   }
 }
 
@@ -292,18 +476,23 @@ void hid_input_callback(void *context __attribute__((unused)),
     } else {
       handle_right_option_release();
     }
-  } else if (pressed) {
+  } else {
     // Handle Right-Option + letter key combinations
     if (usage == KEY_S_USAGE || usage == KEY_N_USAGE ||
         usage == KEY_R_USAGE || usage == KEY_M_USAGE || usage == KEY_T_USAGE ||
         usage == KEY_X_USAGE || usage == KEY_H_USAGE || usage == KEY_J_USAGE ||
         usage == KEY_K_USAGE || usage == KEY_L_USAGE) {
-      handle_right_option_combo(usage);
+      
+      if (pressed) {
+        handle_right_option_combo_press(usage);
+      } else {
+        handle_right_option_combo_release(usage);
+      }
     }
     
     // Handle other key presses for Caps Lock combos (USB HID keyboard usage range)
     // This range covers A-Z, 0-9, modifiers, and special keys
-    if (usage >= 0x04 && usage <= 0xE7) {
+    if (pressed && usage >= 0x04 && usage <= 0xE7) {
       handle_other_key_press();
     }
   }
@@ -387,6 +576,14 @@ void setup_hid_manager() {
  */
 void signal_handler(int signum __attribute__((unused))) {
   log_message("Received signal, shutting down");
+  
+  // Clean up scroll timer before exit
+  if (scroll_state.scroll_timer) {
+    CFRunLoopTimerInvalidate(scroll_state.scroll_timer);
+    CFRelease(scroll_state.scroll_timer);
+    scroll_state.scroll_timer = NULL;
+  }
+  
   exit(0);
 }
 
