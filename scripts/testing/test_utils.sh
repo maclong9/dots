@@ -105,6 +105,7 @@ assert_symlink_target() {
 }
 
 # Load the functions to test
+# shellcheck disable=SC1091
 . "$(dirname "$0")/../core/utils.sh"
 
 # Test log function
@@ -169,6 +170,7 @@ test_parse_args() {
     # Test mixed parsing
     parse_args --verbose --output=file.txt
     assert_equals "true" "$VERBOSE" "parse_args mixed flags"
+    # shellcheck disable=SC2153
     assert_equals "file.txt" "$OUTPUT" "parse_args mixed key=value"
 }
 
