@@ -25,10 +25,6 @@ variable = { fg = "white" }
 "variable.builtin" = { fg = "gray" }
 "variable.parameter" = { modifiers = ["italic"] }
 
-"murkup.raw" = { bg = "white" }
-"murkup.normal" = { bg = "white" }
-"murkup.heading" = { bg = "white" }
-
 "diff.delta" = { fg = "beige" }
 "diff.minus" = { fg = "#FF808015" }
 "diff.plus" = { fg = "bright-green" }
