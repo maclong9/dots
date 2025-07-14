@@ -65,11 +65,12 @@ add-zsh-hook chpwd lazy_mise_init
 
 # • Scripts & plugins
 
-# Source custom scripts (excluding maintenance and daily-workspace)
+# Source custom scripts (core utilities and completions only)
 [[ -d "$ZSH_SCRIPTS_DIR" ]] && {
     local scripts=("$ZSH_SCRIPTS_DIR"/**/*.(sh|zsh)(N))
     for script in "${scripts[@]}"; do
-        [[ "$script" != *"/maintenance/"* && "$script" != *"/daily-workspace.sh" && -r "$script" ]] && source "$script"
+        # Only source core utilities and completions, exclude maintenance, dev, and test files
+        [[ "$script" == *"/core/"* || "$script" == *"/completions/"* ]] && [[ -r "$script" ]] && source "$script"
     done
 }
 
