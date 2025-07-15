@@ -48,7 +48,7 @@
     aac = "!f() { git add --all && git commit -m \"$1\"; }; f"
     ap = add --patch
     c = commit
-    ca = commit --amend
+    ca = commit --amend -m 
     can = commit --amend --no-edit
     cm = commit -m
 
