@@ -10,11 +10,10 @@ PLIST_DEST = /Library/LaunchDaemons/com.local.keyboard_daemon.plist
 all: $(TARGET)
 
 $(TARGET): $(SOURCE)
-	@sudo mkdir -p $(INSTALL_PATH)
 	$(CC) $(CFLAGS) $(FRAMEWORKS) -o $(TARGET) $(SOURCE)
 
 clean:
-	sudo rm -f $(INSTALL_PATH)/$(TARGET)
+	rm -f $(TARGET)
 
 install: $(TARGET)
 	@echo "Installing Keyboard daemon..."

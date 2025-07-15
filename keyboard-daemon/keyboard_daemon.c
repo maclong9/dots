@@ -365,6 +365,11 @@ void hid_input_callback(void *context __attribute__((unused)),
       } else {
         handle_right_option_combo_release(usage);
       }
+      
+      // If Right-Option is pressed, suppress the original key event
+      if (right_option_state.is_pressed) {
+        return;
+      }
     }
     
     // Handle other key presses for Caps Lock combos (USB HID keyboard usage range)

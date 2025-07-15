@@ -7,7 +7,7 @@ PLIST_NAME="com.local.keyboard_agent.plist"
 DAEMON_PLIST_NAME="com.local.keyboard_daemon.plist"
 INSTALL_DIR="$HOME/.local/bin"
 DAEMON_INSTALL_DIR="/usr/local/bin"
-PLIST_DIR="/Library/LaunchAgents"
+PLIST_DIR="$HOME/Library/LaunchAgents"
 DAEMON_PLIST_DIR="/Library/LaunchDaemons"
 
 echo "Keyboard Agent Installer"
@@ -60,21 +60,19 @@ echo "Building the agent..."
 make clean
 make
 
-if [ ! -f "$INSTALL_DIR/$AGENT_NAME" ]; then
+if [ ! -f "$AGENT_NAME" ]; then
     echo "Error: Failed to build the agent."
     exit 1
 fi
 
-# Copy to daemon location if needed
-if [ "$USE_DAEMON" = true ]; then
-    echo "Copying binary to daemon location..."
-    if [ "$REQUIRES_SUDO" = true ]; then
-        sudo cp "$INSTALL_DIR/$AGENT_NAME" "$CURRENT_INSTALL_DIR/"
-        sudo chmod 755 "$CURRENT_INSTALL_DIR/$AGENT_NAME"
-    else
-        cp "$INSTALL_DIR/$AGENT_NAME" "$CURRENT_INSTALL_DIR/"
-        chmod 755 "$CURRENT_INSTALL_DIR/$AGENT_NAME"
-    fi
+# Move binary to install location
+echo "Moving binary to install location..."
+if [ "$REQUIRES_SUDO" = true ]; then
+    sudo cp "$AGENT_NAME" "$CURRENT_INSTALL_DIR/"
+    sudo chmod 755 "$CURRENT_INSTALL_DIR/$AGENT_NAME"
+else
+    cp "$AGENT_NAME" "$CURRENT_INSTALL_DIR/"
+    chmod 755 "$CURRENT_INSTALL_DIR/$AGENT_NAME"
 fi
 
 echo "Build successful."
