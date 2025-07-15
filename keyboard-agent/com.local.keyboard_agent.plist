@@ -6,19 +6,15 @@
     <string>com.local.keyboard_agent</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/mac/.local/bin/keyboard_daemon</string>
+        <string>INSTALL_DIR_PLACEHOLDER/keyboard_agent</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <true/>
-    <key>ProcessType</key>
-    <string>Background</string>
     <key>StandardErrorPath</key>
-    <string>/Users/mac/Library/Logs/keyboard_daemon.log</string>
+    <string>/tmp/keyboard_agent.log</string>
     <key>StandardOutPath</key>
-    <string>/Users/mac/Library/Logs/keyboard_daemon.log</string>
-    <key>WorkingDirectory</key>
-    <string>/Users/mac/.local/bin</string>
+    <string>/tmp/keyboard_agent.log</string>
 </dict>
 </plist>
