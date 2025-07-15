@@ -143,15 +143,21 @@
 	cqIWGFhOU09iamVjdAgRGiQpMjdJTFFTV11kand+qKqssbzFzdAAAAAAAAABAQAAAAAA
 	AAAZAAAAAAAAAAAAAAAAAAAA2Q==
 	</data>
+	<key>BackgroundBlur</key>
+	<real>0.45000000000000001</real>
 	<key>BackgroundColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
 	AAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGjCwwTVSRudWxs0w0ODxARElVO
-	U1JHQlxOU0NvbG9yU3BhY2VWJGNsYXNzTxAkMC4wNjI3NDUwOTggMC4wNjI3NDUwOTgg
-	MC4wNjI3NDUwOTgAEAGAAtIUFRYXWiRjbGFzc25hbWVYJGNsYXNzZXNXTlNDb2xvcqIW
-	GFhOU09iamVjdAgRGiQpMjdJTFFTV11kand+paeprrnCys0AAAAAAAABAQAAAAAAAAAZ
-	AAAAAAAAAAAAAAAAAAAA1g==
+	U1JHQlxOU0NvbG9yU3BhY2VWJGNsYXNzTxAoMC4wNjI3NDUwOTggMC4wNjI3NDUwOTgg
+	MC4wNjI3NDUwOTggMC45ABABgALSFBUWF1okY2xhc3NuYW1lWCRjbGFzc2VzV05TQ29s
+	b3KiFhhYTlNPYmplY3QIERokKTI3SUxRU1ddZGp3fqmrrbK9xs7RAAAAAAAAAQEAAAAA
+	AAAAGQAAAAAAAAAAAAAAAAAAANo=
 	</data>
+	<key>BackgroundSettingsForInactiveWindows</key>
+	<false/>
+	<key>Bell</key>
+	<false/>
 	<key>CursorColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
@@ -173,6 +179,8 @@
 	</data>
 	<key>FontAntialias</key>
 	<true/>
+	<key>FontHeightSpacing</key>
+	<integer>1</integer>
 	<key>ProfileCurrentVersion</key>
 	<real>2.0800000000000001</real>
 	<key>SelectionColor</key>
