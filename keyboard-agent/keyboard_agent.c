@@ -1,7 +1,7 @@
 /**
- * Keyboard Daemon
+ * Keyboard Agent
  *
- * A macOS daemon that provides enhanced keyboard functionality:
+ * A macOS agent that provides enhanced keyboard functionality:
  * - Caps Lock timeout behavior: Quick press (<500ms) = Escape, Hold = Control
  * - Right-Option app launching: Right-Option + {s,n,r,m,x,t} launches apps
  * - Right-Option arrow keys: Right-Option + {h,j,k,l} sends arrow key events
@@ -85,11 +85,11 @@ static ArrowState arrow_state = {false, false, false, false};
 static mach_timebase_info_data_t timebase_info;
 
 /**
- * Logs a message to the system log with daemon prefix
+ * Logs a message to the system log with agent prefix
  * @param message The message to log
  */
 void log_message(const char *message) {
-  syslog(LOG_INFO, "KeyboardDaemon: %s", message);
+  syslog(LOG_INFO, "KeyboardAgent: %s", message);
 }
 
 /**
@@ -170,7 +170,16 @@ void handle_other_key_press() {
 }
 
 /**
- * Sends an arrow key press event
+ * Sends an arrow key press or release event
+ * @param keycode The arrow key code to send
+ * @param key_down true for key press, false for key release
+ */
+void send_arrow_key_event(CGKeyCode keycode, bool key_down) {
+  send_virtual_key(keycode, key_down);
+}
+
+/**
+ * Sends an arrow key press event (press and release)
  * @param keycode The arrow key code to send
  */
 void send_arrow_key(CGKeyCode keycode) {
@@ -213,11 +222,27 @@ void handle_right_option_press() {
 void handle_right_option_release() {
   right_option_state.is_pressed = false;
   
-  // Reset arrow key state when Right-Option is released
-  arrow_state.h_pressed = false;
-  arrow_state.j_pressed = false;
-  arrow_state.k_pressed = false;
-  arrow_state.l_pressed = false;
+  // Release any currently pressed arrow keys when Right-Option is released
+  if (arrow_state.h_pressed) {
+    arrow_state.h_pressed = false;
+    send_arrow_key_event(LEFT_ARROW_KEYCODE, false);
+    log_message("Released left arrow key (Right-Option up)");
+  }
+  if (arrow_state.j_pressed) {
+    arrow_state.j_pressed = false;
+    send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
+    log_message("Released down arrow key (Right-Option up)");
+  }
+  if (arrow_state.k_pressed) {
+    arrow_state.k_pressed = false;
+    send_arrow_key_event(UP_ARROW_KEYCODE, false);
+    log_message("Released up arrow key (Right-Option up)");
+  }
+  if (arrow_state.l_pressed) {
+    arrow_state.l_pressed = false;
+    send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
+    log_message("Released right arrow key (Right-Option up)");
+  }
   
   log_message("Right-Option released");
 }
@@ -252,33 +277,33 @@ void handle_right_option_combo_press(uint32_t usage) {
       launch_app("Xcode");
       break;
     
-    // Arrow key shortcuts - send single arrow key press
+    // Arrow key shortcuts - send arrow key down events
     case KEY_H_USAGE:
       if (!arrow_state.h_pressed) {
         arrow_state.h_pressed = true;
-        send_arrow_key(LEFT_ARROW_KEYCODE);
-        log_message("Sent left arrow key");
+        send_arrow_key_event(LEFT_ARROW_KEYCODE, true);
+        log_message("Sent left arrow key down");
       }
       break;
     case KEY_J_USAGE:
       if (!arrow_state.j_pressed) {
         arrow_state.j_pressed = true;
-        send_arrow_key(DOWN_ARROW_KEYCODE);
-        log_message("Sent down arrow key");
+        send_arrow_key_event(DOWN_ARROW_KEYCODE, true);
+        log_message("Sent down arrow key down");
       }
       break;
     case KEY_K_USAGE:
       if (!arrow_state.k_pressed) {
         arrow_state.k_pressed = true;
-        send_arrow_key(UP_ARROW_KEYCODE);
-        log_message("Sent up arrow key");
+        send_arrow_key_event(UP_ARROW_KEYCODE, true);
+        log_message("Sent up arrow key down");
       }
       break;
     case KEY_L_USAGE:
       if (!arrow_state.l_pressed) {
         arrow_state.l_pressed = true;
-        send_arrow_key(RIGHT_ARROW_KEYCODE);
-        log_message("Sent right arrow key");
+        send_arrow_key_event(RIGHT_ARROW_KEYCODE, true);
+        log_message("Sent right arrow key down");
       }
       break;
       
@@ -293,22 +318,34 @@ void handle_right_option_combo_press(uint32_t usage) {
  */
 void handle_right_option_combo_release(uint32_t usage) {
   switch (usage) {
-    // Arrow key shortcuts - reset pressed state
+    // Arrow key shortcuts - send arrow key up events
     case KEY_H_USAGE:
-      arrow_state.h_pressed = false;
-      log_message("Released h key");
+      if (arrow_state.h_pressed) {
+        arrow_state.h_pressed = false;
+        send_arrow_key_event(LEFT_ARROW_KEYCODE, false);
+        log_message("Sent left arrow key up");
+      }
       break;
     case KEY_J_USAGE:
-      arrow_state.j_pressed = false;
-      log_message("Released j key");
+      if (arrow_state.j_pressed) {
+        arrow_state.j_pressed = false;
+        send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
+        log_message("Sent down arrow key up");
+      }
       break;
     case KEY_K_USAGE:
-      arrow_state.k_pressed = false;
-      log_message("Released k key");
+      if (arrow_state.k_pressed) {
+        arrow_state.k_pressed = false;
+        send_arrow_key_event(UP_ARROW_KEYCODE, false);
+        log_message("Sent up arrow key up");
+      }
       break;
     case KEY_L_USAGE:
-      arrow_state.l_pressed = false;
-      log_message("Released l key");
+      if (arrow_state.l_pressed) {
+        arrow_state.l_pressed = false;
+        send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
+        log_message("Sent right arrow key up");
+      }
       break;
       
     default:
@@ -360,15 +397,19 @@ void hid_input_callback(void *context __attribute__((unused)),
         usage == KEY_X_USAGE || usage == KEY_H_USAGE || usage == KEY_J_USAGE ||
         usage == KEY_K_USAGE || usage == KEY_L_USAGE) {
       
-      if (pressed) {
-        handle_right_option_combo_press(usage);
-      } else {
-        handle_right_option_combo_release(usage);
-      }
-      
-      // If Right-Option is pressed, suppress the original key event
+      // Only handle arrow key mappings when Right-Option is held
       if (right_option_state.is_pressed) {
-        return;
+        if (pressed) {
+          handle_right_option_combo_press(usage);
+        } else {
+          handle_right_option_combo_release(usage);
+        }
+        
+        // For arrow keys, suppress the original key event
+        if (usage == KEY_H_USAGE || usage == KEY_J_USAGE || 
+            usage == KEY_K_USAGE || usage == KEY_L_USAGE) {
+          return;
+        }
       }
     }
     
@@ -462,15 +503,15 @@ void signal_handler(int signum __attribute__((unused))) {
 }
 
 /**
- * Main entry point for the Keyboard daemon
+ * Main entry point for the Keyboard agent
  * Initializes logging, time conversion, signal handling, and the HID manager
  *
  * @return 0 on success, 1 on failure
  */
 int main() {
   // Initialize system logging
-  openlog("KeyboardDaemon", LOG_PID, LOG_DAEMON);
-  log_message("Starting Keyboard daemon");
+  openlog("KeyboardAgent", LOG_PID, LOG_DAEMON);
+  log_message("Starting Keyboard agent");
 
   // Get system timebase information for time conversions
   if (mach_timebase_info(&timebase_info) != KERN_SUCCESS) {
