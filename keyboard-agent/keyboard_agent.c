@@ -20,6 +20,9 @@
 #include <string.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <spawn.h>
+#include <sys/wait.h>
+#include <ctype.h>
 
 // HID usage codes (USB HID specification)
 #define CAPS_LOCK_USAGE 0x39
@@ -100,6 +103,8 @@ static ArrowState arrow_state = {false, false, false, false};
 static ScrollModeState scroll_state = {false};
 // System timebase information for time conversion
 static mach_timebase_info_data_t timebase_info;
+// Global HID manager reference for cleanup
+static IOHIDManagerRef global_hid_manager = NULL;
 
 /**
  * Logs a message to the system log with agent prefix
@@ -205,20 +210,62 @@ void send_arrow_key(CGKeyCode keycode) {
 }
 
 /**
- * Launches an application using the open command
+ * Validates that an app name contains only safe characters
+ * @param app_name The application name to validate
+ * @return true if app name is safe, false otherwise
+ */
+bool validate_app_name(const char *app_name) {
+  if (!app_name || strlen(app_name) == 0 || strlen(app_name) > 64) {
+    return false;
+  }
+  
+  // Check for safe characters: alphanumeric, spaces, hyphens, periods, underscores
+  for (const char *p = app_name; *p; p++) {
+    if (!isalnum(*p) && *p != ' ' && *p != '-' && *p != '.' && *p != '_') {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
+ * Launches an application using posix_spawn for security
  * @param app_name The name of the application to launch
  */
 void launch_app(const char *app_name) {
-  char command[256];
-  snprintf(command, sizeof(command), "open -a '%s'", app_name);
-  
-  if (system(command) == 0) {
+  if (!validate_app_name(app_name)) {
     char log_msg[256];
-    snprintf(log_msg, sizeof(log_msg), "Launched %s", app_name);
+    snprintf(log_msg, sizeof(log_msg), "Invalid app name rejected: %s", app_name);
     log_message(log_msg);
+    return;
+  }
+  
+  pid_t pid;
+  char *argv[] = {"open", "-a", (char *)app_name, NULL};
+  extern char **environ;
+  
+  int status = posix_spawn(&pid, "/usr/bin/open", NULL, NULL, argv, environ);
+  
+  if (status == 0) {
+    // Wait for child process to avoid zombies
+    int child_status;
+    waitpid(pid, &child_status, 0);
+    
+    if (WIFEXITED(child_status) && WEXITSTATUS(child_status) == 0) {
+      char log_msg[256];
+      snprintf(log_msg, sizeof(log_msg), "Launched %s", app_name);
+      log_message(log_msg);
+    } else {
+      char log_msg[256];
+      snprintf(log_msg, sizeof(log_msg), "Failed to launch %s (exit status: %d)", 
+               app_name, WEXITSTATUS(child_status));
+      log_message(log_msg);
+    }
   } else {
     char log_msg[256];
-    snprintf(log_msg, sizeof(log_msg), "Failed to launch %s", app_name);
+    snprintf(log_msg, sizeof(log_msg), "Failed to spawn process for %s (error: %d)", 
+             app_name, status);
     log_message(log_msg);
   }
 }
@@ -635,9 +682,8 @@ CFMutableDictionaryRef create_keyboard_matching_dictionary() {
  */
 void setup_hid_manager() {
   // Create the HID manager
-  IOHIDManagerRef manager =
-      IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
-  if (!manager) {
+  global_hid_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+  if (!global_hid_manager) {
     log_message("Failed to create HID manager");
     return;
   }
@@ -645,22 +691,23 @@ void setup_hid_manager() {
   // Set up device matching to only monitor keyboards
   CFMutableDictionaryRef keyboard_dict = create_keyboard_matching_dictionary();
   if (keyboard_dict) {
-    IOHIDManagerSetDeviceMatching(manager, keyboard_dict);
+    IOHIDManagerSetDeviceMatching(global_hid_manager, keyboard_dict);
     CFRelease(keyboard_dict);
   }
 
   // Register our input callback function
-  IOHIDManagerRegisterInputValueCallback(manager, hid_input_callback, NULL);
+  IOHIDManagerRegisterInputValueCallback(global_hid_manager, hid_input_callback, NULL);
 
   // Schedule the HID manager with the current run loop
-  IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetCurrent(),
+  IOHIDManagerScheduleWithRunLoop(global_hid_manager, CFRunLoopGetCurrent(),
                                   kCFRunLoopDefaultMode);
 
   // Open the HID manager to begin receiving input events
-  IOReturn ret = IOHIDManagerOpen(manager, kIOHIDOptionsTypeNone);
+  IOReturn ret = IOHIDManagerOpen(global_hid_manager, kIOHIDOptionsTypeNone);
   if (ret != kIOReturnSuccess) {
     log_message("Failed to open HID manager");
-    CFRelease(manager);
+    CFRelease(global_hid_manager);
+    global_hid_manager = NULL;
     return;
   }
 
@@ -675,6 +722,19 @@ void setup_hid_manager() {
  */
 void signal_handler(int signum __attribute__((unused))) {
   log_message("Received signal, shutting down");
+  
+  // Clean up HID manager resources
+  if (global_hid_manager) {
+    IOHIDManagerClose(global_hid_manager, kIOHIDOptionsTypeNone);
+    IOHIDManagerUnscheduleFromRunLoop(global_hid_manager, CFRunLoopGetCurrent(),
+                                      kCFRunLoopDefaultMode);
+    CFRelease(global_hid_manager);
+    global_hid_manager = NULL;
+  }
+  
+  // Clean up logging
+  closelog();
+  
   exit(0);
 }
 
