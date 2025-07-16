@@ -2,13 +2,19 @@
 theme = "vesper"
 
 # • Editor settings
+ 
 [editor]
-line-number = "relative"
-cursorline = true
 auto-completion = true
-completion-trigger-len = 1
+auto-format = true
 bufferline = "multiple"
+completion-trigger-len = 1
+cursorline = true
+line-number = "relative"
 true-color = true
+
+[editor.auto-save]
+after-delay.enable = true
+after-delay.timeout = 5000
 
 [editor.cursor-shape]
 insert = "bar"
@@ -17,6 +23,9 @@ select = "underline"
 
 [editor.file-picker]
 hidden = false
+
+[editor.indent-guides]
+render = true
 
 [editor.statusline]
 left = ["mode", "spacer", "version-control", "file-name", "file-modification-indicator"]
@@ -27,22 +36,11 @@ display-messages = true
 display-inlay-hints = false
 
 [editor.whitespace.render]
+newline = "none"
 space = "none"
 tab = "none"
-newline = "none"
-
-[editor.indent-guides]
-render = true
 
 # • Keybindings
-# Normal mode - window navigation
-[keys.normal]
-"C-h" = "jump_view_left"
-"C-j" = "jump_view_down"
-"C-k" = "jump_view_up"
-"C-l" = "jump_view_right"
-
-# Insert mode keybindings
 [keys.insert]
 "C-[" = "normal_mode"
 # Line commands
@@ -63,6 +61,12 @@ render = true
 "A-d" = "delete_word_forward"
 "C-w" = "delete_word_backward"
 
-# Select mode keybindings
+[keys.normal]
+# Window navigation
+"C-h" = "jump_view_left"
+"C-j" = "jump_view_down"
+"C-k" = "jump_view_up"
+"C-l" = "jump_view_right"
+
 [keys.select]
 "C-[" = "normal_mode"
