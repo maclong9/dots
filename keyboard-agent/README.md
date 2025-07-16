@@ -1,59 +1,59 @@
-# macOS Keyboard agent
+# ⌨️ macOS Keyboard Agent
 
-A lightweight C agent that provides enhanced keyboard functionality on macOS:
+A lightweight C agent that enhances keyboard functionality on macOS with precise timing and low-level system integration.
 
-## Caps Lock Behavior
+## ✨ Features
+
+### Caps Lock Enhancement
 - **Quick press** (<500ms): Sends Escape key
 - **Hold** (≥500ms): Acts as Control key  
 - **Combo** (Caps + other key): Acts as Control key
 
-## Right-Option App Launching
-- **Right-Option + G**: Launch Ghosty.app
-- **Right-Option + S**: Launch Safari.app
-- **Right-Option + N**: Launch Notes.app
-- **Right-Option + R**: Launch Reminders.app
-- **Right-Option + M**: Launch Music.app
-- **Right-Option + T**: Launch Terminal.app
-- **Right-Option + X**: Launch Xcode.app
+### App Launching (Right-Option + Key)
+- **S**: Launch Safari.app
+- **N**: Launch Notes.app
+- **R**: Launch Reminders.app
+- **M**: Launch Music.app
+- **T**: Launch Terminal.app
+- **X**: Launch Xcode.app
 
-## Right-Option Scrolling
-- **Right-Option + H**: Scroll left
-- **Right-Option + J**: Scroll down
-- **Right-Option + K**: Scroll up
-- **Right-Option + L**: Scroll right
+### Vim-Style Scrolling (Right-Option + Key)
+- **H**: Scroll left
+- **J**: Scroll down
+- **K**: Scroll up
+- **L**: Scroll right
 
-## Features
+## 🔧 Technical Implementation
 
-- Low-level IOKit HID integration for reliable key interception
-- Precise timing detection using mach kernel timing
-- Virtual key injection and scroll event generation via Core Graphics Events
-- App launching via system commands
-- Runs as system Launchagent with user privileges
-- Comprehensive logging and error handling
+- **IOKit HID integration** for reliable key interception
+- **Mach kernel timing** for precise timing detection
+- **Core Graphics Events** for virtual key injection and scroll generation
+- **LaunchAgent architecture** runs with user privileges
+- **Comprehensive logging** to `/var/log/keyboard_agent.log` and syslog
 
-## Installation
+## 🚀 Installation
 
-1. Navigate to this directory:
+1. **Navigate to directory**:
    ```sh
    cd keyboard_agent
    ```
 
-2. Build and install the agent:
+2. **Build and install**:
    ```sh
    make install
    ```
 
-3. Grant Input Monitoring permissions:
+3. **Grant permissions**:
    - Open System Preferences > Security & Privacy > Privacy
    - Select "Input Monitoring" 
    - Add `~/.local/bin/keyboard_agent` to the list
 
-4. Start the agent:
+4. **Start the agent**:
    ```sh
    make start
    ```
 
-## Usage Commands
+## 🛠️ Management Commands
 
 ```sh
 make install    # Build and install agent
@@ -65,36 +65,26 @@ make logs       # View agent logs
 make uninstall  # Remove agent completely
 ```
 
-## Files
+## 📁 Project Files
 
-- `keyboard_agent.c` - Main agent source code
-- `com.local.keyboard_agent.plist` - Launchagent configuration
-- `Makefile` - Build and management commands
+- `keyboard_agent.c` - Main agent source code with IOKit integration
+- `com.local.keyboard_agent.plist` - LaunchAgent configuration for system integration
+- `Makefile` - Build automation and management commands
 
-## Technical Details
+## 🔍 Troubleshooting
 
-- Uses IOKit HID Manager for keyboard event interception
-- Implements mach_absolute_time() for precise timing measurements
-- CGEventCreateKeyboardEvent() for virtual key injection
-- CGEventCreateScrollWheelEvent() for scroll event generation
-- Uses system() calls for app launching
-- Runs as system Launchagent for system-wide keyboard access
-- Logs to `/var/log/keyboard_agent.log` and syslog
+| Issue | Solution |
+|-------|----------|
+| Agent not starting | Check Input Monitoring permissions |
+| Keys not working | Verify agent is running: `make status` |
+| Apps not launching | Ensure applications are installed |
+| Scrolling issues | Check System Preferences for conflicts |
+| Build errors | Install Xcode tools: `xcode-select --install` |
 
-## Troubleshooting
+> **Reset everything**: `make uninstall && ./install.sh`
 
-- **agent not starting**: Check permissions and Input Monitoring access
-- **Keys not working**: Verify agent is running with `make status`
-- **App launching not working**: Ensure applications are installed and accessible
-- **Scrolling not working**: Check for conflicting scroll settings in System Preferences
-- **Permission denied**: Ensure agent has Input Monitoring permissions
-- **Build errors**: Install Xcode command line tools: `xcode-select --install`
+## 💻 Compatibility
 
-> [!NOTE]
-> If everything seems in order and it's still not working try running `make uninstall` and then `make install && make start` this should reset everything correctly.
-
-## Compatibility
-
-- macOS 10.12+ (Sierra and later)
-- Requires Input Monitoring permissions (macOS 10.15+)
-- Compatible with external and built-in keyboards
+- **macOS**: 10.12+ (Sierra and later)
+- **Permissions**: Input Monitoring required (macOS 10.15+)
+- **Hardware**: Compatible with external and built-in keyboards
