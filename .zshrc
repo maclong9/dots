@@ -67,10 +67,8 @@ add-zsh-hook chpwd lazy_mise_init
 
 # Source custom scripts (core utilities and completions only)
 [[ -d "$ZSH_SCRIPTS_DIR" ]] && {
-    local scripts=("$ZSH_SCRIPTS_DIR"/**/*.(sh|zsh)(N))
-    for script in "${scripts[@]}"; do
-        # Only source core utilities and completions, exclude maintenance, dev, and test files
-        [[ "$script" == *"/core/"* || "$script" == *"/completions/"* ]] && [[ -r "$script" ]] && source "$script"
+    for script in "$ZSH_SCRIPTS_DIR"/{core,completions}/**/*.(sh|zsh)(N); do
+        [[ -r "$script" ]] && source "$script"
     done
 }
 
@@ -85,7 +83,7 @@ add-zsh-hook chpwd lazy_mise_init
 
 # • Prompt configuration
 
-# Configure git prompt with dynamic colors - cache git operations
+# Configure git prompt with dynamic colors
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' check-for-changes true
@@ -126,6 +124,8 @@ alias g='git'
 # File listing
 alias ls='sls -cli --human-readable'
 alias la='sls -clia --human-readable'
+alias lr='sls -clir --human-readable'
+alias lar='sls -clira --human-readable'
 
 # Swift tooling
 alias sf='swift format --recursive --in-place'
