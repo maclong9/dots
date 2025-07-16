@@ -2,9 +2,7 @@
 
 # • Constants
 
-# Defines ANSI color codes and system detection variables.
-#
-# Sets up color codes for logging and determines if the system is macOS.
+# Define ANSI color codes
 export BLACK='\033[0;30m'
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
@@ -281,82 +279,6 @@ ensure_target_directory() {
     return 0
 }
 
-# Backs up existing regular file if it's not a symlink.
-#
-# Creates a timestamped backup of the existing file before symlinking.
-#
-# - Parameters:
-#   - target_file: Path to potentially backup.
-# - Returns:
-#   - 0 always (backup is optional).
-backup_existing_file() {
-    target_file="$1"
-
-    if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
-        backup_file "$target_file" >/dev/null
-        log debug "Backed up existing file: $target_file"
-    fi
-    return 0
-}
-
-# Removes existing file or symlink at target location.
-#
-# Cleans up the target location before creating new symlink.
-#
-# - Parameters:
-#   - target_file: Path to clean up.
-# - Returns:
-#   - 0 on success.
-#   - 1 if removal fails.
-remove_existing_target() {
-    target_file="$1"
-
-    if [ -e "$target_file" ] || [ -L "$target_file" ]; then
-        log debug "Removing existing file/symlink: $target_file"
-        if ! rm "$target_file"; then
-            log error "Failed to remove existing file: $target_file"
-            return 1
-        fi
-    fi
-    return 0
-}
-
-# Creates symlink and verifies it was created correctly.
-#
-# Creates the symbolic link and validates it points to the correct target.
-#
-# - Parameters:
-#   - source_file: Absolute path to source file.
-#   - target_file: Path where symlink will be created.
-# - Returns:
-#   - 0 on success.
-#   - 1 if creation or verification fails.
-create_and_verify_symlink() {
-    source_file="$1"
-    target_file="$2"
-
-    # Create the symlink
-    log debug "Creating symlink: $source_file -> $target_file"
-    if ! ln -s "$source_file" "$target_file"; then
-        log error "Failed to create symlink from $source_file to $target_file"
-        return 1
-    fi
-
-    # Verify the symlink was created successfully
-    if [ ! -L "$target_file" ]; then
-        log error "Symlink was not created: $target_file"
-        return 1
-    fi
-
-    # Verify the symlink points to the correct target
-    if [ "$(readlink "$target_file")" != "$source_file" ]; then
-        log error "Symlink points to wrong target. Expected: $source_file, Got: $(readlink "$target_file")"
-        return 1
-    fi
-
-    return 0
-}
-
 # Creates symbolic links safely with backup and cleanup.
 #
 # Backs up existing files, removes old symlinks, and creates new symbolic links.
@@ -399,9 +321,9 @@ safe_symlink() {
     return 0
 }
 
-# Downloads a file from a URL with progress indication.
+# Downloads a file from a URL with progress indication
 #
-# Uses `curl` to download files with fallback support.
+# Uses `curl` to download files
 #
 # - Parameters:
 #   - url: URL to download from.
