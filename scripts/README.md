@@ -1,8 +1,8 @@
-# Scripts Directory Structure
+# 📜 Scripts Collection
 
-A collection of shell utilities and development tools.
+Shell utilities and development tools organized for maintainability and performance.
 
-## 📁 Directory Organization
+## 📁 Directory Structure
 
 ```
 scripts/
@@ -21,32 +21,30 @@ scripts/
     └── test_utils.sh                   # Unit tests for utils.sh
 ```
 
-## 🎯 Core Utilities
+## 🎯 Core Functions
 
-### `core/functions.zsh`
-Interactive shell functions for daily use:
+### Interactive Shell Functions (`core/functions.zsh`)
 - `kp <port>` - Kill process by port number
 - `clc` - Copy last command output to clipboard
 - `--` - Navigate backward in directory history
 - `++` - Navigate forward in directory history
 
-### `core/utils.sh`
-POSIX-compliant utility functions:
-- `log <level> <message>` - Structured logging
+### Utility Functions (`core/utils.sh`)
+POSIX-compliant helpers for scripts and automation:
+- `log <level> <message>` - Structured logging with timestamps
 - `parse_args "$@"` - Command-line argument parsing
-- `safe_symlink <source> <target>` - Safe symbolic link creation
-- `backup_file <file>` - Create timestamped backups
-- `spinner <message> <command>` - Animated command execution
-- `run_or_fail <command> <error_msg>` - Command execution with error handling
+- `safe_symlink <source> <target>` - Safe symbolic link creation with validation
+- `backup_file <file>` - Create timestamped backups before modifications
+- `spinner <message> <command>` - Animated command execution with status
+- `run_or_fail <command> <error_msg>` - Command execution with proper error handling
 
-## 🧪 Development Tools
+## 🧪 Testing
 
-### Running Tests
 ```bash
 # Test core utilities
 cd scripts/dev && ./test_utils.sh
 
-# Test shell functions
+# Test shell functions  
 cd scripts/dev && zsh ./test_functions.zsh
 
 # Run all tests
@@ -65,37 +63,21 @@ cd scripts/maintenance && DEBUG=true ./maintenance.sh
 ```
 
 ### Automated Execution
-- **Cron job**: Weekly execution via `maintenance.crontab`
-- **LaunchAgent**: macOS-specific automation via `com.maintenance.cleanup.plist`
+Weekly automation configured via:
+- **Cron job**: `maintenance.crontab` for cross-platform scheduling
+- **LaunchAgent**: `com.maintenance.cleanup.plist` for macOS integration
 
-## 📊 Quality Assurance
+## 🏗️ Architecture
 
-### CI/CD Integration
-- **POSIX compliance** testing with shellcheck
-- **Cross-platform** compatibility (macOS, Linux)
-- **Security scanning** for vulnerabilities
-- **Performance monitoring** and resource usage
-
-### Code Standards
-- **KISS principle**: Functions under 50 lines
+### Design Principles
+- **Clean separation**: Production code isolated from development tools
+- **Selective sourcing**: Only production utilities loaded in shell startup
+- **POSIX compliance**: Cross-platform compatibility (macOS, Linux)
 - **Single responsibility**: Each function has one clear purpose
-- **Comprehensive documentation**: Swift-style docstrings
-- **Error handling**: Proper validation and failure modes
 
-## 🎨 Architecture Benefits
-
-### Clean Separation
-- **Production code** isolated from development tools
-- **No accidental sourcing** of test or maintenance scripts
-- **Clear dependencies** between components
-
-### Maintainability
-- **Modular design** enables easy testing and debugging
-- **Logical organization** improves discoverability
-- **Consistent patterns** across all components
-
-### Performance
-- **Selective sourcing** reduces shell startup time
-- **Compiled completions** for faster tab completion
-- **Lazy loading** of heavy operations
+### Quality Standards  
+- Functions under 50 lines following KISS principle
+- Comprehensive error handling and validation
+- Swift-style documentation for all functions
+- Shellcheck compliance for security and best practices
 
