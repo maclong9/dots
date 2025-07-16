@@ -17,4 +17,3 @@ curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 - **Scripts**: Utility functions for development workflow automation
 - **Maintenance**: Weekly scheduled system and tooling maintenance
 - **Tools**: Developer tooling managed with `mise`
-- **Keyboard Agent**: Custom C agent for enhanced macOS keyboard functionality

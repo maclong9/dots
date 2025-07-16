@@ -252,28 +252,6 @@ setup_mise() {
     log success "Development tools installed via mise"
 }
 
-setup_keyboard_agent() {
-    [ ! -d "$HOME/.config/keyboard-agent" ] && {
-        log warning "keyboard agent directory not found, skipping"
-        return 0
-    }
-
-    log info "Installing keyboard agent..."
-
-    # Check prerequisites
-    if ! command -v clang >/dev/null 2>&1; then
-        log error "clang compiler not found - please ensure Xcode command line tools are installed"
-        return 1
-    fi
-
-    # Build and install using install script
-    run_or_fail "$HOME/.config/keyboard-agent/install.sh" "setup keyboard agent (check Xcode CLI tools and build dependencies)"
-
-    log success "keyboard agent installed and started"
-    log info "IMPORTANT: Grant Input Monitoring and Accessibility permissions in System Settings > Privacy & Security > Input Monitoring"
-    log info "Add: $HOME/.local/bin/keyboard_agent to the allowed applications list"
-}
-
 setup_maintenance() {
     log info "Setting up system maintenance..."
 
@@ -343,7 +321,6 @@ main() {
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
-        run_step "Installing keyboard agent" setup_keyboard_agent
     }
 
     run_step "Setting up dotfiles" setup_dotfiles
@@ -362,7 +339,6 @@ main() {
         "- Setup gh cli" \
         "- Apply your themes" \
         "- Set up signing key on GitHub" \
-        "- Grant permissions for Input Monitoring and Accessibility to \`keyboard_agent\` and reload the LaunchAgent" \
         "- System maintenance runs weekly (Tuesday at 11:00 AM)"
 }
 
