@@ -266,20 +266,11 @@ setup_keyboard_agent() {
         return 1
     fi
 
-    # Navigate to agent directory
-    cd "$HOME/.config/keyboard-agent" || {
-        log error "change to keyboard-agent directory (check permissions)"
-        return 1
-    }
-
     # Build and install using install script
     run_or_fail "$HOME/.config/keyboard-agent/install.sh" "setup keyboard agent (check Xcode CLI tools and build dependencies)"
 
-    # Return to original directory
-    cd - >/dev/null || true
-
     log success "keyboard agent installed and started"
-    log info "IMPORTANT: Grant Input Monitoring permissions in System Settings > Privacy & Security > Input Monitoring"
+    log info "IMPORTANT: Grant Input Monitoring and Accessibility permissions in System Settings > Privacy & Security > Input Monitoring"
     log info "Add: $HOME/.local/bin/keyboard_agent to the allowed applications list"
 }
 
