@@ -3,5 +3,4 @@
 .env.*
 *.bak
 gh/
-caps-lock-daemon/caps_lock_daemon
 .claude/
