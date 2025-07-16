@@ -9,7 +9,7 @@ for cmd in git curl ln mkdir; do
 done
 
 # Download and source utilities
-url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/utils.sh"
+url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh"
 curl -fsSL "$url" -o /tmp/utils.sh || {
     printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
     exit 1
