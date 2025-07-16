@@ -1,6 +1,6 @@
-# macOS Keyboard Daemon
+# macOS Keyboard agent
 
-A lightweight C daemon that provides enhanced keyboard functionality on macOS:
+A lightweight C agent that provides enhanced keyboard functionality on macOS:
 
 ## Caps Lock Behavior
 - **Quick press** (<500ms): Sends Escape key
@@ -28,7 +28,7 @@ A lightweight C daemon that provides enhanced keyboard functionality on macOS:
 - Precise timing detection using mach kernel timing
 - Virtual key injection and scroll event generation via Core Graphics Events
 - App launching via system commands
-- Runs as system LaunchDaemon with user privileges
+- Runs as system Launchagent with user privileges
 - Comprehensive logging and error handling
 
 ## Installation
@@ -46,9 +46,9 @@ A lightweight C daemon that provides enhanced keyboard functionality on macOS:
 3. Grant Input Monitoring permissions:
    - Open System Preferences > Security & Privacy > Privacy
    - Select "Input Monitoring" 
-   - Add `~/.local/bin/keyboard_daemon` to the list
+   - Add `~/.local/bin/keyboard_agent` to the list
 
-4. Start the daemon:
+4. Start the agent:
    ```sh
    make start
    ```
@@ -56,19 +56,19 @@ A lightweight C daemon that provides enhanced keyboard functionality on macOS:
 ## Usage Commands
 
 ```sh
-make install    # Build and install daemon
-make start      # Start the daemon
-make stop       # Stop the daemon  
-make restart    # Restart the daemon
-make status     # Check daemon status
-make logs       # View daemon logs
-make uninstall  # Remove daemon completely
+make install    # Build and install agent
+make start      # Start the agent
+make stop       # Stop the agent  
+make restart    # Restart the agent
+make status     # Check agent status
+make logs       # View agent logs
+make uninstall  # Remove agent completely
 ```
 
 ## Files
 
-- `keyboard_daemon.c` - Main daemon source code
-- `com.local.keyboard_daemon.plist` - LaunchDaemon configuration
+- `keyboard_agent.c` - Main agent source code
+- `com.local.keyboard_agent.plist` - Launchagent configuration
 - `Makefile` - Build and management commands
 
 ## Technical Details
@@ -78,16 +78,16 @@ make uninstall  # Remove daemon completely
 - CGEventCreateKeyboardEvent() for virtual key injection
 - CGEventCreateScrollWheelEvent() for scroll event generation
 - Uses system() calls for app launching
-- Runs as system LaunchDaemon for system-wide keyboard access
-- Logs to `/var/log/keyboard_daemon.log` and syslog
+- Runs as system Launchagent for system-wide keyboard access
+- Logs to `/var/log/keyboard_agent.log` and syslog
 
 ## Troubleshooting
 
-- **Daemon not starting**: Check permissions and Input Monitoring access
-- **Keys not working**: Verify daemon is running with `make status`
+- **agent not starting**: Check permissions and Input Monitoring access
+- **Keys not working**: Verify agent is running with `make status`
 - **App launching not working**: Ensure applications are installed and accessible
 - **Scrolling not working**: Check for conflicting scroll settings in System Preferences
-- **Permission denied**: Ensure daemon has Input Monitoring permissions
+- **Permission denied**: Ensure agent has Input Monitoring permissions
 - **Build errors**: Install Xcode command line tools: `xcode-select --install`
 
 > [!NOTE]
