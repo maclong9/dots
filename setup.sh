@@ -101,8 +101,8 @@ setup_dotfiles() {
 
     run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory (check home directory permissions)"
 
-    run_or_fail "git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \
-    $HOME/.zsh/plugins/fsh" "clone fast syntax highlighting (check network connection)"
+    run_or_fail "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+    $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone fast syntax highlighting (check network connection)"
 
     log success "Dotfiles cloned"
 }
