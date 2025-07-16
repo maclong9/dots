@@ -35,6 +35,9 @@
 #define KEY_S_USAGE 0x16
 #define KEY_T_USAGE 0x17
 #define KEY_X_USAGE 0x1B
+#define KEY_G_USAGE 0x0A
+#define KEY_D_USAGE 0x07
+#define KEY_U_USAGE 0x18
 
 // Virtual key codes for macOS key events
 #define ESCAPE_KEYCODE 0x35
@@ -43,6 +46,10 @@
 #define DOWN_ARROW_KEYCODE 0x7D
 #define UP_ARROW_KEYCODE 0x7E
 #define RIGHT_ARROW_KEYCODE 0x7C
+#define HOME_KEYCODE 0x73
+#define END_KEYCODE 0x77
+#define PAGE_UP_KEYCODE 0x74
+#define PAGE_DOWN_KEYCODE 0x79
 
 // Threshold in milliseconds to distinguish tap vs hold
 #define HOLD_THRESHOLD_MS 500
@@ -460,9 +467,11 @@ void hid_input_callback(void *context __attribute__((unused)),
       handle_right_option_release();
     }
   } else {
-    // Handle scroll mode arrow keys (h/j/k/l without Right-Option)
+    // Handle scroll mode keys (h/j/k/l/g/d/u without Right-Option)
     if (scroll_state.enabled && (usage == KEY_H_USAGE || usage == KEY_J_USAGE || 
-                                 usage == KEY_K_USAGE || usage == KEY_L_USAGE)) {
+                                 usage == KEY_K_USAGE || usage == KEY_L_USAGE ||
+                                 usage == KEY_G_USAGE || usage == KEY_D_USAGE || 
+                                 usage == KEY_U_USAGE)) {
       if (pressed) {
         // Handle key press in scroll mode
         switch (usage) {
@@ -493,6 +502,28 @@ void hid_input_callback(void *context __attribute__((unused)),
               send_arrow_key_event(RIGHT_ARROW_KEYCODE, true);
               log_message("Scroll mode: right arrow key down");
             }
+            break;
+          case KEY_G_USAGE:
+            // Check if shift is pressed for G (scroll to bottom)
+            if (CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState) & kCGEventFlagMaskShift) {
+              send_arrow_key_event(END_KEYCODE, true);
+              send_arrow_key_event(END_KEYCODE, false);
+              log_message("Scroll mode: scroll to bottom (G)");
+            } else {
+              send_arrow_key_event(HOME_KEYCODE, true);
+              send_arrow_key_event(HOME_KEYCODE, false);
+              log_message("Scroll mode: scroll to top (g)");
+            }
+            break;
+          case KEY_D_USAGE:
+            send_arrow_key_event(PAGE_DOWN_KEYCODE, true);
+            send_arrow_key_event(PAGE_DOWN_KEYCODE, false);
+            log_message("Scroll mode: page down (d)");
+            break;
+          case KEY_U_USAGE:
+            send_arrow_key_event(PAGE_UP_KEYCODE, true);
+            send_arrow_key_event(PAGE_UP_KEYCODE, false);
+            log_message("Scroll mode: page up (u)");
             break;
         }
       } else {
@@ -525,6 +556,11 @@ void hid_input_callback(void *context __attribute__((unused)),
               send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
               log_message("Scroll mode: right arrow key up");
             }
+            break;
+          case KEY_G_USAGE:
+          case KEY_D_USAGE:
+          case KEY_U_USAGE:
+            // These keys send immediate press/release pairs, no state tracking needed
             break;
         }
       }
