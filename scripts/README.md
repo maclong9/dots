@@ -1,46 +1,25 @@
 # Scripts Directory Structure
 
-A clean, organized collection of shell utilities and development tools.
+A collection of shell utilities and development tools.
 
 ## 📁 Directory Organization
 
 ```
 scripts/
-├── core/                    # Production utilities (sourced by .zshrc)
-│   ├── functions.zsh       # Interactive shell functions
-│   └── utils.sh           # Core utility functions
-├── completions/            # Shell completions (sourced by .zshrc)
-│   ├── _functions.zsh     # Completions for custom functions
-│   └── _utils.sh          # Completions for utility functions
-├── maintenance/            # System maintenance scripts (not sourced)
-│   ├── maintenance.sh     # System cleanup and maintenance
-│   ├── maintenance.crontab # Cron job configuration
-│   └── com.maintenance.cleanup.plist # LaunchAgent plist
-└── dev/                    # Development and testing tools (not sourced)
-    ├── test_functions.zsh  # Unit tests for functions.zsh
-    ├── test_utils.sh      # Unit tests for utils.sh
-    └── README_TESTING.md  # Testing documentation
+├── core/                             # Production utilities (sourced by .zshrc)
+│   ├── functions.zsh                   # Interactive shell functions
+│   └── utils.sh                        # Core utility functions
+├── completions/                      # Shell completions (sourced by .zshrc)
+│   ├── _functions.zsh                  # Completions for custom functions
+│   └── _utils.sh                       # Completions for utility functions
+├── maintenance/                      # System maintenance scripts (not sourced)
+│   ├── maintenance.sh                  # System cleanup and maintenance
+│   ├── maintenance.crontab             # Cron job configuration
+│   └── com.maintenance.cleanup.plist   # LaunchAgent plist
+└── dev/                              # Development and testing tools (not sourced)
+    ├── test_functions.zsh              # Unit tests for functions.zsh
+    └── test_utils.sh                   # Unit tests for utils.sh
 ```
-
-## 🔄 Sourcing Strategy
-
-The `.zshrc` configuration follows a **selective sourcing** approach:
-
-```zsh
-# Only source core utilities and completions
-for script in "$ZSH_SCRIPTS_DIR"/**/*.(sh|zsh); do
-    [[ "$script" == *"/core/"* || "$script" == *"/completions/"* ]] && \
-    [[ -r "$script" ]] && source "$script"
-done
-```
-
-### ✅ Sourced Directories
-- `core/` - Production utilities available in all shell sessions
-- `completions/` - Tab completions for custom functions
-
-### ❌ Excluded Directories
-- `maintenance/` - System maintenance scripts (run manually or via cron)
-- `dev/` - Development and testing tools (not needed in shell sessions)
 
 ## 🎯 Core Utilities
 
@@ -73,11 +52,6 @@ cd scripts/dev && zsh ./test_functions.zsh
 # Run all tests
 cd scripts/dev && ./test_utils.sh && zsh ./test_functions.zsh
 ```
-
-### Test Coverage
-- **30 unit tests** covering all core functionality
-- **100% pass rate** with comprehensive error handling
-- **Isolated test environments** prevent interference
 
 ## 🔧 Maintenance
 
@@ -125,6 +99,3 @@ cd scripts/maintenance && DEBUG=true ./maintenance.sh
 - **Compiled completions** for faster tab completion
 - **Lazy loading** of heavy operations
 
----
-
-*This directory structure embodies clean architecture principles, ensuring maintainable, testable, and performant shell utilities.*

@@ -76,21 +76,33 @@ setup_touch_id() {
 setup_dotfiles() {
     log info "Installing dotfiles..."
 
+    # Check git availability
+    if ! command -v git >/dev/null 2>&1; then
+        log error "git not found - please install git first"
+        return 1
+    fi
+
+    # Test basic connectivity to GitHub
+    if ! curl -s --connect-timeout 5 "https://api.github.com" >/dev/null; then
+        log warning "Cannot reach GitHub - check network connection and proxy settings"
+        log info "Proceeding anyway, git clone will provide specific error if needed"
+    fi
+
     [ -d "$HOME/.config" ] && {
         backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
         log debug "Backing up existing .config directory to $backup_dir"
         run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" \
-            "backup old .config directory"
+            "backup old .config directory (check permissions)"
         log info "Previous .config backed up to $backup_dir"
     }
 
     run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
-        "clone dotfiles repository"
+        "clone dotfiles repository (check network connection and GitHub access)"
 
-    run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory"
+    run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory (check home directory permissions)"
 
     run_or_fail "git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \
-    $HOME/.zsh/plugins/fsh" "clone fast syntax highlighting"
+    $HOME/.zsh/plugins/fsh" "clone fast syntax highlighting (check network connection)"
 
     log success "Dotfiles cloned"
 }
@@ -214,7 +226,7 @@ setup_mise() {
     if command -v mise >/dev/null 2>&1; then
         log success "mise already installed"
     else
-        run_or_fail "curl https://mise.run | sh" "install mise"
+        run_or_fail "curl https://mise.run | sh" "install mise (check network connection and curl availability)"
     fi
 
     # Add mise to PATH for this session
@@ -228,8 +240,8 @@ setup_mise() {
             return 1
         }
 
-        run_or_fail "mise trust -a" "trust mise.toml"
-        run_or_fail "mise install" "install mise tools"
+        run_or_fail "mise trust -a" "trust mise.toml configuration file"
+        run_or_fail "mise install" "install mise tools (check network and tool availability)"
 
         # Return to original directory (optional, but good practice)
         cd - >/dev/null || true
@@ -240,28 +252,35 @@ setup_mise() {
     log success "Development tools installed via mise"
 }
 
-setup_keyboard_daemon() {
-    [ ! -d "$HOME/.config/keyboard-daemon" ] && {
-        log warning "keyboard daemon directory not found, skipping"
+setup_keyboard_agent() {
+    [ ! -d "$HOME/.config/keyboard-agent" ] && {
+        log warning "keyboard agent directory not found, skipping"
         return 0
     }
 
-    log info "Installing keyboard daemon..."
+    log info "Installing keyboard agent..."
 
-    # Navigate to daemon directory
-    cd "$HOME/.config/keyboard-daemon" || {
-        log error "change to keyboard-daemon directory"
+    # Check prerequisites
+    if ! command -v clang >/dev/null 2>&1; then
+        log error "clang compiler not found - please ensure Xcode command line tools are installed"
+        return 1
+    fi
+
+    # Navigate to agent directory
+    cd "$HOME/.config/keyboard-agent" || {
+        log error "change to keyboard-agent directory (check permissions)"
         return 1
     }
 
-    # Build and install using Makefile
-    run_or_fail "$HOME/.config/keyboard-daemon/install.sh" "Failed to setup keyboard daemon"
+    # Build and install using install script
+    run_or_fail "$HOME/.config/keyboard-agent/install.sh" "setup keyboard agent (check Xcode CLI tools and build dependencies)"
 
     # Return to original directory
     cd - >/dev/null || true
 
-    log success "keyboard daemon installed and started"
-    log info "Remember to grant Input Monitoring permissions in System Settings > Privacy & Security"
+    log success "keyboard agent installed and started"
+    log info "IMPORTANT: Grant Input Monitoring permissions in System Settings > Privacy & Security > Input Monitoring"
+    log info "Add: $HOME/.local/bin/keyboard_agent to the allowed applications list"
 }
 
 setup_maintenance() {
@@ -294,7 +313,7 @@ setup_maintenance() {
             echo "0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh" >>/tmp/current_cron
         fi
 
-        run_or_fail "crontab /tmp/current_cron" "install cron job" || {
+        run_or_fail "crontab /tmp/current_cron" "install cron job (check crontab permissions)" || {
             rm -f /tmp/current_cron
             return 1
         }
@@ -307,7 +326,8 @@ setup_maintenance() {
 }
 
 setup_ssh() {
-    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519"
+    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519" \
+        "generate SSH key (check ~/.ssh directory permissions)"
     if [ "$IS_MAC" = true ]; then
         pbcopy <"$HOME/.ssh/id_ed25519.pub"
     else
@@ -332,7 +352,7 @@ main() {
     [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
-        run_step "Installing keyboard daemon" setup_keyboard_daemon
+        run_step "Installing keyboard agent" setup_keyboard_agent
     }
 
     run_step "Setting up dotfiles" setup_dotfiles
@@ -351,6 +371,7 @@ main() {
         "- Setup gh cli" \
         "- Apply your themes" \
         "- Set up signing key on GitHub" \
+        "- Grant permissions for Input Monitoring and Accessibility to \`keyboard_agent\` and reload the LaunchAgent" \
         "- System maintenance runs weekly (Tuesday at 11:00 AM)"
 }
 
