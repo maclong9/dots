@@ -22,7 +22,7 @@ install: $(TARGET)
 	@mkdir -p /tmp
 	cp $(TARGET) $(INSTALL_PATH)/
 	chmod 755 $(INSTALL_PATH)/$(TARGET)
-	cp $(PLIST_SOURCE) $(PLIST_DEST)
+	sed 's|INSTALL_DIR_PLACEHOLDER|$(INSTALL_PATH)|g' $(PLIST_SOURCE) > $(PLIST_DEST)
 	@echo "Installation complete."
 	@echo "To start the agent, run: launchctl load $(PLIST_DEST)"
 	@echo "The agent will start automatically on login."
