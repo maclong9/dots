@@ -24,6 +24,7 @@
 // HID usage codes (USB HID specification)
 #define CAPS_LOCK_USAGE 0x39
 #define RIGHT_OPTION_USAGE 0xE6
+#define ESCAPE_USAGE 0x29
 #define KEY_H_USAGE 0x0B
 #define KEY_J_USAGE 0x0D
 #define KEY_K_USAGE 0x0E
@@ -75,12 +76,21 @@ typedef struct {
   bool l_pressed;      // Whether l key is currently held down
 } ArrowState;
 
+/**
+ * Structure to track scroll mode state
+ */
+typedef struct {
+  bool enabled;        // Whether scroll mode is currently enabled
+} ScrollModeState;
+
 // Global state for caps lock key tracking
 static CapsLockState caps_state = {0, false, false};
 // Global state for right-option key tracking
 static RightOptionState right_option_state = {false};
 // Global state for arrow key tracking
 static ArrowState arrow_state = {false, false, false, false};
+// Global state for scroll mode tracking
+static ScrollModeState scroll_state = {false};
 // System timebase information for time conversion
 static mach_timebase_info_data_t timebase_info;
 
@@ -206,6 +216,65 @@ void launch_app(const char *app_name) {
   }
 }
 
+/**
+ * Toggles scroll mode on/off
+ */
+void toggle_scroll_mode() {
+  scroll_state.enabled = !scroll_state.enabled;
+  
+  if (scroll_state.enabled) {
+    log_message("Scroll mode enabled");
+  } else {
+    log_message("Scroll mode disabled");
+    
+    // Release any currently pressed arrow keys when disabling scroll mode
+    if (arrow_state.h_pressed) {
+      arrow_state.h_pressed = false;
+      send_arrow_key_event(LEFT_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.j_pressed) {
+      arrow_state.j_pressed = false;
+      send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.k_pressed) {
+      arrow_state.k_pressed = false;
+      send_arrow_key_event(UP_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.l_pressed) {
+      arrow_state.l_pressed = false;
+      send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
+    }
+  }
+}
+
+/**
+ * Disables scroll mode
+ */
+void disable_scroll_mode() {
+  if (scroll_state.enabled) {
+    scroll_state.enabled = false;
+    log_message("Scroll mode disabled");
+    
+    // Release any currently pressed arrow keys when disabling scroll mode
+    if (arrow_state.h_pressed) {
+      arrow_state.h_pressed = false;
+      send_arrow_key_event(LEFT_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.j_pressed) {
+      arrow_state.j_pressed = false;
+      send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.k_pressed) {
+      arrow_state.k_pressed = false;
+      send_arrow_key_event(UP_ARROW_KEYCODE, false);
+    }
+    if (arrow_state.l_pressed) {
+      arrow_state.l_pressed = false;
+      send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
+    }
+  }
+}
+
 
 
 /**
@@ -286,11 +355,8 @@ void handle_right_option_combo_press(uint32_t usage) {
       }
       break;
     case KEY_J_USAGE:
-      if (!arrow_state.j_pressed) {
-        arrow_state.j_pressed = true;
-        send_arrow_key_event(DOWN_ARROW_KEYCODE, true);
-        log_message("Sent down arrow key down");
-      }
+      // Right-Option + j toggles scroll mode
+      toggle_scroll_mode();
       break;
     case KEY_K_USAGE:
       if (!arrow_state.k_pressed) {
@@ -327,11 +393,7 @@ void handle_right_option_combo_release(uint32_t usage) {
       }
       break;
     case KEY_J_USAGE:
-      if (arrow_state.j_pressed) {
-        arrow_state.j_pressed = false;
-        send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
-        log_message("Sent down arrow key up");
-      }
+      // j key is used for scroll mode toggle - no release action needed
       break;
     case KEY_K_USAGE:
       if (arrow_state.k_pressed) {
@@ -380,8 +442,15 @@ void hid_input_callback(void *context __attribute__((unused)),
     // Handle Caps Lock press/release
     if (pressed) {
       handle_caps_lock_press();
+      // Exit scroll mode when Caps Lock is pressed
+      disable_scroll_mode();
     } else {
       handle_caps_lock_release();
+    }
+  } else if (usage == ESCAPE_USAGE) {
+    // Handle Escape key - exit scroll mode
+    if (pressed) {
+      disable_scroll_mode();
     }
   } else if (usage == RIGHT_OPTION_USAGE) {
     // Handle Right-Option press/release
@@ -391,6 +460,77 @@ void hid_input_callback(void *context __attribute__((unused)),
       handle_right_option_release();
     }
   } else {
+    // Handle scroll mode arrow keys (h/j/k/l without Right-Option)
+    if (scroll_state.enabled && (usage == KEY_H_USAGE || usage == KEY_J_USAGE || 
+                                 usage == KEY_K_USAGE || usage == KEY_L_USAGE)) {
+      if (pressed) {
+        // Handle key press in scroll mode
+        switch (usage) {
+          case KEY_H_USAGE:
+            if (!arrow_state.h_pressed) {
+              arrow_state.h_pressed = true;
+              send_arrow_key_event(LEFT_ARROW_KEYCODE, true);
+              log_message("Scroll mode: left arrow key down");
+            }
+            break;
+          case KEY_J_USAGE:
+            if (!arrow_state.j_pressed) {
+              arrow_state.j_pressed = true;
+              send_arrow_key_event(DOWN_ARROW_KEYCODE, true);
+              log_message("Scroll mode: down arrow key down");
+            }
+            break;
+          case KEY_K_USAGE:
+            if (!arrow_state.k_pressed) {
+              arrow_state.k_pressed = true;
+              send_arrow_key_event(UP_ARROW_KEYCODE, true);
+              log_message("Scroll mode: up arrow key down");
+            }
+            break;
+          case KEY_L_USAGE:
+            if (!arrow_state.l_pressed) {
+              arrow_state.l_pressed = true;
+              send_arrow_key_event(RIGHT_ARROW_KEYCODE, true);
+              log_message("Scroll mode: right arrow key down");
+            }
+            break;
+        }
+      } else {
+        // Handle key release in scroll mode
+        switch (usage) {
+          case KEY_H_USAGE:
+            if (arrow_state.h_pressed) {
+              arrow_state.h_pressed = false;
+              send_arrow_key_event(LEFT_ARROW_KEYCODE, false);
+              log_message("Scroll mode: left arrow key up");
+            }
+            break;
+          case KEY_J_USAGE:
+            if (arrow_state.j_pressed) {
+              arrow_state.j_pressed = false;
+              send_arrow_key_event(DOWN_ARROW_KEYCODE, false);
+              log_message("Scroll mode: down arrow key up");
+            }
+            break;
+          case KEY_K_USAGE:
+            if (arrow_state.k_pressed) {
+              arrow_state.k_pressed = false;
+              send_arrow_key_event(UP_ARROW_KEYCODE, false);
+              log_message("Scroll mode: up arrow key up");
+            }
+            break;
+          case KEY_L_USAGE:
+            if (arrow_state.l_pressed) {
+              arrow_state.l_pressed = false;
+              send_arrow_key_event(RIGHT_ARROW_KEYCODE, false);
+              log_message("Scroll mode: right arrow key up");
+            }
+            break;
+        }
+      }
+      return; // Don't process further - we've handled this key
+    }
+    
     // Handle Right-Option + letter key combinations
     if (usage == KEY_S_USAGE || usage == KEY_N_USAGE ||
         usage == KEY_R_USAGE || usage == KEY_M_USAGE || usage == KEY_T_USAGE ||
