@@ -281,7 +281,7 @@ jobs:
                   echo "Found $dotfile_count dotfiles"
 
                   # Ensure dotfile configurations linked correctly
-                  for file in ".zshrc" ".gitconfig" ".gitignore_global"; do
+                  for file in ".zshrc" ".gitconfig" ".gitignore"; do
                       if [ -f "$file" ]; then
                           echo "$file exists"
                       else
