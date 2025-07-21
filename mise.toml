@@ -7,15 +7,6 @@ helix = 'latest'
 node = 'lts'
 shellcheck = 'latest'
 shfmt = 'latest'
-
-# Swift Package Manager packages
 'spm:maclong9/list' = 'latest'
-
-# Node.js packages
-'npm:typescript' = 'latest'
-'npm:typescript-language-server' = 'latest'
 'npm:vscode-langservers-extracted' = 'latest'
-'npm:wrangler' = 'latest'
-'npm:yaml-language-server' = 'latest'
 'npm:@anthropic-ai/claude-code' = 'latest'
-'npm:@tailwindcss/language-server' = 'latest'
