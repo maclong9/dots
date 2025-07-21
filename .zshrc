@@ -11,6 +11,7 @@
 # • Paths & environment
 
 # Define common paths
+EDITOR="hx"
 ZSH_LOCAL_BIN="$HOME/.local/bin"
 ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"
 ZSH_HISTORY_FILE="$HOME/.zsh_history"
@@ -45,12 +46,11 @@ export HISTSIZE=50000 SAVEHIST=50000 HISTFILE="$ZSH_HISTORY_FILE"
 # • ZSH configuration
 
 # Core options
-setopt AUTO_CD CORRECT INTERACTIVE_COMMENTS SHARE_HISTORY HIST_IGNORE_DUPS \
-   HIST_IGNORE_SPACE HIST_VERIFY HIST_REDUCE_BLANKS HIST_SAVE_NO_DUPS EXTENDED_HISTORY \
-   AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_SILENT
+setopt AUTO_CD AUTO_PUSHD CORRECT EXTENDED_HISTORY  HIST_IGNORE_DUPS  HIST_IGNORE_SPACE \
+  HIST_REDUCE_BLANKS INTERACTIVE_COMMENTS PUSHD_IGNORE_DUPS PUSHD_SILENT SHARE_HISTORY
 
 # Load ZSH completions
-autoload -Uz compinit
+autoload -Uz compinit bashcompinit
 compinit -d "$ZSH_COMPDUMP" -C
 
 # • Lazy loading
@@ -80,6 +80,7 @@ add-zsh-hook chpwd lazy_mise_init
     plugins=("$ZSH_PLUGINS_DIR"/**/*.plugin.zsh(N))
     (( ${#plugins} )) && for plugin in "${plugins[@]}"; do source "$plugin"; done
 }
+fpath=("$ZSH_PLUGINS_DIR/plugin/zsh-completions/src" $fpath)
 
 # • Prompt configuration
 
