@@ -99,10 +99,14 @@ setup_dotfiles() {
     run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
         "clone dotfiles repository (check network connection and GitHub access)"
 
+    # ZSH Plugins
     run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory (check home directory permissions)"
-
+    # Syntax Highlighting
     run_or_fail "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
     $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone fast syntax highlighting (check network connection)"
+    # Completions
+    run_or_fail "git clone https://github.com/zsh-users/zsh-completions.git \
+    $HOME/.zsh/plugins/zsh-completions"
 
     log success "Dotfiles cloned"
 }
@@ -249,6 +253,9 @@ setup_mise() {
         log warning "mise.toml not found, skipping mise tool installation"
     fi
 
+    "$HOME/.local/share/mise/shims/gh" auth login
+    "$HOME/.local/share/mise/shims/gh" extension install github/gh-copilot
+    
     log success "Development tools installed via mise"
 }
 
