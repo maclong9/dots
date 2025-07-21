@@ -27,9 +27,10 @@ IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 
 # • Basic utilities
 
-# Logs a message with a specified level.
+# Logs a message with a specified level to both console and file.
 #
-# Outputs a formatted message to stdout or stderr based on the log level, with appropriate color coding.
+# Outputs a formatted message to stdout or stderr with color coding, and also logs
+# to a file in /tmp derived from the calling script name (e.g., maintenance.sh -> /tmp/maintenance.log).
 #
 # - Parameters:
 #   - level: Log level (info, success, warning, error, debug).
@@ -42,17 +43,39 @@ IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 log() {
     level="$1"
     message="$2"
+    
+    # Determine log file from calling script name
+    if [ -z "$LOG_FILE" ]; then
+        # Get the name of the calling script (remove path and extension)
+        script_name=$(basename "${0%.*}" 2>/dev/null || echo "utils")
+        LOG_FILE="/tmp/${script_name}.log"
+    fi
+    
+    # Output to console with colors
     case "$level" in
-        info) printf "${BLUE}[INFO]${NC} %s\n" "$message" ;;
-        success) printf "${GREEN}[SUCCESS]${NC} %s\n" "$message" ;;
-        warning) printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2 ;;
-        error) printf "${RED}[ERROR]${NC} %s\n" "$message" >&2 ;;
+        info) 
+            printf "${BLUE}[INFO]${NC} %s\n" "$message"
+            ;;
+        success) 
+            printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
+            ;;
+        warning) 
+            printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
+            ;;
+        error) 
+            printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
+            ;;
         debug)
             if [ "$DEBUG" = "true" ]; then
                 printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
             fi
             ;;
     esac
+    
+    # Also log to file (without colors, but only if not debug or debug is enabled)
+    if [ "$level" != "debug" ] || [ "$DEBUG" = "true" ]; then
+        echo "[$level] $message" >> "$LOG_FILE"
+    fi
 }
 
 # Parses command line arguments and sets environment variables.
@@ -276,6 +299,82 @@ ensure_target_directory() {
             return 1
         fi
     fi
+    return 0
+}
+
+# Backs up existing regular file if it's not a symlink.
+#
+# Creates a timestamped backup of the existing file before symlinking.
+#
+# - Parameters:
+#   - target_file: Path to potentially backup.
+# - Returns:
+#   - 0 always (backup is optional).
+backup_existing_file() {
+    target_file="$1"
+
+    if [ -f "$target_file" ] && [ ! -L "$target_file" ]; then
+        backup_file "$target_file" >/dev/null
+        log debug "Backed up existing file: $target_file"
+    fi
+    return 0
+}
+
+# Removes existing file or symlink at target location.
+#
+# Cleans up the target location before creating new symlink.
+#
+# - Parameters:
+#   - target_file: Path to clean up.
+# - Returns:
+#   - 0 on success.
+#   - 1 if removal fails.
+remove_existing_target() {
+    target_file="$1"
+
+    if [ -e "$target_file" ] || [ -L "$target_file" ]; then
+        log debug "Removing existing file/symlink: $target_file"
+        if ! rm "$target_file"; then
+            log error "Failed to remove existing file: $target_file"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+# Creates symlink and verifies it was created correctly.
+#
+# Creates the symbolic link and validates it points to the correct target.
+#
+# - Parameters:
+#   - source_file: Absolute path to source file.
+#   - target_file: Path where symlink will be created.
+# - Returns:
+#   - 0 on success.
+#   - 1 if creation or verification fails.
+create_and_verify_symlink() {
+    source_file="$1"
+    target_file="$2"
+
+    # Create the symlink
+    log debug "Creating symlink: $source_file -> $target_file"
+    if ! ln -s "$source_file" "$target_file"; then
+        log error "Failed to create symlink from $source_file to $target_file"
+        return 1
+    fi
+
+    # Verify the symlink was created successfully
+    if [ ! -L "$target_file" ]; then
+        log error "Symlink was not created: $target_file"
+        return 1
+    fi
+
+    # Verify the symlink points to the correct target
+    if [ "$(readlink "$target_file")" != "$source_file" ]; then
+        log error "Symlink points to wrong target. Expected: $source_file, Got: $(readlink "$target_file")"
+        return 1
+    fi
+
     return 0
 }
 

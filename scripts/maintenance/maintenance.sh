@@ -5,43 +5,11 @@
 # Ensure HOME is set for launchd environment
 HOME="/Users/mac"
 
-# Add timestamp to all output - append to log files like debug script
-echo "=== Maintenance run started at $(date) ===" >>/tmp/maintenance.log
-
 # shellcheck disable=SC1091
 . "$HOME/.config/scripts/core/utils.sh"
 
-# Override log function to output to both terminal and log file
-log() {
-    level="$1"
-    message="$2"
-
-    # Format for terminal (with colors)
-    case "$level" in
-        info)
-            printf "${BLUE}[INFO]${NC} %s\n" "$message"
-            echo "[INFO] $message" >>/tmp/maintenance.log
-            ;;
-        success)
-            printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
-            echo "[SUCCESS] $message" >>/tmp/maintenance.log
-            ;;
-        warning)
-            printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
-            echo "[WARNING] $message" >>/tmp/maintenance.log
-            ;;
-        error)
-            printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
-            echo "[ERROR] $message" >>/tmp/maintenance.log
-            ;;
-        debug)
-            if [ "$DEBUG" = "true" ]; then
-                printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
-                echo "[DEBUG] $message" >>/tmp/maintenance.log
-            fi
-            ;;
-    esac
-}
+# Add timestamp to start of maintenance log
+echo "=== Maintenance run started at $(date) ===" >> "$LOG_FILE"
 
 # Calculate sizes before and after cleanup
 calculate_size() {
@@ -89,14 +57,14 @@ clean_directory() {
 
     if [ -n "$(ls -A "$dir" 2>/dev/null)" ]; then
         log info "Cleaning $name ($size_before)"
-        echo "  → Cleaning $name: $size_before" >>/tmp/maintenance.log
+        echo "  → Cleaning $name: $size_before" >> "$LOG_FILE"
 
         # List items being cleaned
         item_count=0
         # Use find instead of glob expansion to handle special characters
         find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null | while read -r item; do
             [ -e "$item" ] && {
-                echo "    - $(basename "$item")" >>/tmp/maintenance.log
+                echo "    - $(basename "$item")" >> "$LOG_FILE"
                 item_count=$((item_count + 1))
             }
         done
@@ -111,10 +79,10 @@ clean_directory() {
         saved_formatted=$(format_bytes "$saved_bytes")
 
         log success "Cleaned $name (${item_count} items, saved $saved_formatted)"
-        echo "  ✓ Cleaned $name: $item_count items, saved $saved_formatted" >>/tmp/maintenance.log
+        echo "  ✓ Cleaned $name: $item_count items, saved $saved_formatted" >> "$LOG_FILE"
     else
         log debug "$name already clean"
-        echo "  → $name already clean" >>/tmp/maintenance.log
+        echo "  → $name already clean" >> "$LOG_FILE"
     fi
 }
 
@@ -125,7 +93,7 @@ clean_files() {
 
     count=0
     total_size=0
-    echo "  → Cleaning $name files..." >>/tmp/maintenance.log
+    echo "  → Cleaning $name files..." >> "$LOG_FILE"
 
     for file in $pattern; do
         [ -f "$file" ] && {
