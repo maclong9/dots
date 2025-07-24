@@ -1,0 +1,69 @@
+[language-server.harper-ls]
+command = "harper-ls"
+args = ["--stdio"]
+
+[language-server.tailwindcss-ls]
+command = "tailwindcss-language-server"
+args = ["--stdio"]
+
+[[language]]
+name = "bash"
+formatter = { command = "shfmt", args = ["-i", "4", "-ci"] }
+
+[[language]]
+name = "html"
+file-types = ["html", "mustache"]
+language-servers = [ "vscode-html-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "mustache"
+scope = "text.html.mustache"
+injection-regex = "mustache"
+file-types = ["mustache", "hbs", "handlebars"]
+block-comment-tokens = { start = "{{!--", end = "--}}" }
+language-servers = ["html-languageserver"]
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server", "tailwindcss-ls" ]
+
+[[language]]
+name = "markdown"
+language-servers = [ "marksman", "harper-ls" ]
+soft-wrap.enable = true
+
+[[language]]
+name = "javascript"
+scope = "source.js"
+file-types = ["js"]
+language-servers = [
+  "typescript-language-server", 
+  "vscode-eslint-language-server",
+]
+[[language]]
+name = "jsx"
+scope = "source.jsx"
+file-types = ["jsx"]
+language-servers = [
+  "typescript-language-server",
+  "vscode-eslint-language-server",
+  "tailwindcss-ls",
+]
+
+[[language]]
+name = "typescript"
+scope = "source.ts"
+file-types = ["ts"]
+language-servers = [
+  "typescript-language-server",
+  "vscode-eslint-language-server",
+]
+[[language]]
+name = "tsx"
+scope = "source.tsx"
+file-types = ["tsx"]
+language-servers = [
+  "typescript-language-server",
+  "vscode-eslint-language-server",
+  "tailwindcss-ls",
+]
