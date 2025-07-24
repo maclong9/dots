@@ -133,6 +133,7 @@ alias lar='sls -clira --human-readable'
 
 # Multiplexer
 alias z='zellij'
+alias zi='zellij -n ide -s $(basename "$PWD")'
 alias zw='zellij -l welcome'
 
 # Swift tooling
