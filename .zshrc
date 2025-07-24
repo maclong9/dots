@@ -63,6 +63,9 @@ lazy_mise_init() {
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd lazy_mise_init
 
+# Loading zellij
+eval "$(zellij setup --generate-auto-start zsh)"
+
 # • Scripts & plugins
 
 # Source custom scripts (core utilities and completions only)
@@ -128,6 +131,10 @@ alias la='sls -clia --human-readable'
 alias lr='sls -clir --human-readable'
 alias lar='sls -clira --human-readable'
 
+# Multiplexer
+alias z='zellij'
+alias zw='zellij -l welcome'
+
 # Swift tooling
 alias sf='swift format --recursive --in-place'
 alias sl='swift format lint --recursive'
@@ -149,5 +156,3 @@ alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
-
-zellij -l welcome
