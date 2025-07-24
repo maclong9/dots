@@ -63,9 +63,6 @@ lazy_mise_init() {
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd lazy_mise_init
 
-# Loading zellij
-eval "$(zellij setup --generate-auto-start zsh)"
-
 # • Scripts & plugins
 
 # Source custom scripts (core utilities and completions only)
