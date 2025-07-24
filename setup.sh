@@ -255,7 +255,7 @@ setup_mise() {
 
     "$HOME/.local/share/mise/shims/gh" auth login
     "$HOME/.local/share/mise/shims/gh" extension install github/gh-copilot
-    
+
     log success "Development tools installed via mise"
 }
 
