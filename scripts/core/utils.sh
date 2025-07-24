@@ -43,26 +43,26 @@ IS_MAC=${IS_MAC:-$([ "$(uname)" = "Darwin" ] && echo true || echo false)}
 log() {
     level="$1"
     message="$2"
-    
+
     # Determine log file from calling script name
     if [ -z "$LOG_FILE" ]; then
         # Get the name of the calling script (remove path and extension)
         script_name=$(basename "${0%.*}" 2>/dev/null || echo "utils")
         LOG_FILE="/tmp/${script_name}.log"
     fi
-    
+
     # Output to console with colors
     case "$level" in
-        info) 
+        info)
             printf "${BLUE}[INFO]${NC} %s\n" "$message"
             ;;
-        success) 
+        success)
             printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
             ;;
-        warning) 
+        warning)
             printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
             ;;
-        error) 
+        error)
             printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
             ;;
         debug)
@@ -71,10 +71,10 @@ log() {
             fi
             ;;
     esac
-    
+
     # Also log to file (without colors, but only if not debug or debug is enabled)
     if [ "$level" != "debug" ] || [ "$DEBUG" = "true" ]; then
-        echo "[$level] $message" >> "$LOG_FILE"
+        echo "[$level] $message" >>"$LOG_FILE"
     fi
 }
 
