@@ -311,6 +311,11 @@ setup_ssh() {
     fi
 }
 
+restore_defaults() {
+    run_or_fail "$HOME/.config/scripts/defaults/restore-defaults.sh" \
+        "Restore defaults from system settings plist files"
+}
+
 run_step() {
     step_name="$1"
     step_function="$2"
@@ -326,6 +331,7 @@ main() {
     log info "Initialising developer environment..."
 
     [ "$IS_MAC" = true ] && {
+        run_step "Restoring system settings defaults" restore_defaults
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
     }
