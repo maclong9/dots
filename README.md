@@ -1,4 +1,10 @@
-# 🖥️ UNIX Development Environment
+# 🖥️ Development Environment
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Platform: UNIX](https://img.shields.io/badge/platform-UNIX-lightgrey.svg)
+![Shell: POSIX-compliant](https://img.shields.io/badge/shell-POSIX--compliant-blue.svg)
+![Last Commit](https://img.shields.io/github/last-commit/maclong9/dots)
+[![Shell Script Testing](https://github.com/maclong9/dots/actions/workflows/shell-tests.yml/badge.svg)](https://github.com/maclong9/dots/actions/workflows/shell-tests.yml)
 
 A comprehensive, POSIX-compliant dotfiles configuration for productive development on UNIX systems.
 
