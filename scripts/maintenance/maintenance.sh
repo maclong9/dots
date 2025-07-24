@@ -395,6 +395,11 @@ main() {
     echo "=== Service Restart ===" >>/tmp/maintenance.log
 
     if [ "$IS_MAC" = true ]; then
+        log info "Dumping current macOS defaults..."
+        echo "=== macOS Defaults Backup ===" >>/tmp/maintenance.log
+        "$HOME/.config/scripts/defaults/dump-defaults.sh" >>/tmp/maintenance.log 2>&1
+        log success "macOS defaults dumped successfully"
+
         log info "Restarting macOS system services..."
         echo "  → Restarting macOS system services..." >>/tmp/maintenance.log
 
