@@ -20,10 +20,9 @@ com.apple.preference.security
 "
 
 for domain in $DOMAINS; do
-  file="$(echo "$domain" | tr '.' '-')".plist
-  echo "Dumping $domain..."
-  defaults export "$domain" "$OUT_DIR/$file" 2>/dev/null
+    file="$(echo "$domain" | tr '.' '-')".plist
+    echo "Dumping $domain..."
+    defaults export "$domain" "$OUT_DIR/$file" 2>/dev/null
 done
 
 echo "Done. Files saved to: $OUT_DIR"
-
