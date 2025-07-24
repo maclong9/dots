@@ -53,7 +53,7 @@ setopt AUTO_CD AUTO_PUSHD CORRECT EXTENDED_HISTORY  HIST_IGNORE_DUPS  HIST_IGNOR
 autoload -Uz compinit bashcompinit
 compinit -d "$ZSH_COMPDUMP" -C
 
-# • Lazy loading
+# • Loading tools
 
 # Initialize mise lazily only when needed
 lazy_mise_init() {
@@ -149,3 +149,5 @@ alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
+
+zellij -l welcome
