@@ -3,10 +3,17 @@ experimental = true
 
 [tools]
 github-cli = 'latest'
+harper-ls = 'latest'
 helix = 'latest'
+marksman = 'latest'
 node = 'lts'
 shellcheck = 'latest'
 shfmt = 'latest'
+zellij = 'latest'
 'spm:maclong9/list' = 'latest'
-'npm:vscode-langservers-extracted' = 'latest'
 'npm:@anthropic-ai/claude-code' = 'latest'
+'npm:@tailwindcss/language-server' = 'latest'
+'npm:bash-language-server' = 'latest'
+'npm:typescript' = 'latest'        
+'npm:typescript-language-server' = 'latest'
+'npm:vscode-langservers-extracted' = 'latest'
