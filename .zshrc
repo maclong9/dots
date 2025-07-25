@@ -10,6 +10,11 @@
 
 # • Paths & environment
 
+# Git status cache configuration
+readonly GIT_CACHE_TIMEOUT=2
+readonly GIT_COLOR_CLEAN=10
+readonly GIT_COLOR_DIRTY=11
+
 # Define common paths
 EDITOR="hx"
 ZSH_LOCAL_BIN="$HOME/.local/bin"
@@ -23,11 +28,15 @@ ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
 
 # Directory history tracking
+# Maintains a history of visited directories for quick navigation
+# Use -- and ++ aliases to navigate backward/forward through history
 typeset -g -a _dir_history
 typeset -g _dir_history_index=0
 
 autoload -Uz add-zsh-hook
 
+# Track directory changes for navigation history
+# Skips tracking when navigating via history commands
 _track_directory_change() {
     # Don't track if we're navigating via -- or ++
     [[ -n "$_navigating_history" ]] && return
@@ -46,8 +55,8 @@ export HISTSIZE=50000 SAVEHIST=50000 HISTFILE="$ZSH_HISTORY_FILE"
 # • ZSH configuration
 
 # Core options
-setopt AUTO_CD AUTO_PUSHD CORRECT EXTENDED_HISTORY  HIST_IGNORE_DUPS  HIST_IGNORE_SPACE \
-  HIST_REDUCE_BLANKS INTERACTIVE_COMMENTS PUSHD_IGNORE_DUPS PUSHD_SILENT SHARE_HISTORY
+setopt AUTO_CD AUTO_PUSHD CORRECT EXTENDED_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS INTERACTIVE_COMMENTS PUSHD_IGNORE_DUPS PUSHD_SILENT SHARE_HISTORY
 
 # Load ZSH completions
 autoload -Uz compinit bashcompinit
@@ -58,7 +67,9 @@ compinit -d "$ZSH_COMPDUMP" -C
 # Initialize mise lazily only when needed
 lazy_mise_init() {
     unset -f lazy_mise_init
-    eval "$(mise activate zsh)"
+    if command -v mise >/dev/null; then
+        eval "$(mise activate zsh)" || echo "Warning: mise activation failed" >&2
+    fi
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd lazy_mise_init
@@ -73,7 +84,7 @@ add-zsh-hook chpwd lazy_mise_init
 }
 
 # Source completions
-[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR")
+[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR" "$HOME/.zsh/completions")
 
 # Source plugins
 [[ -d "$ZSH_PLUGINS_DIR" ]] && {
@@ -96,13 +107,13 @@ _git_status_cache_time=0
 precmd() {
     local current_time=$(date +%s)
     
-    # Only check git status every 2 seconds
-    if (( current_time - _git_status_cache_time > 2 )); then
+    # Only check git status every GIT_CACHE_TIMEOUT seconds
+    if (( current_time - _git_status_cache_time > GIT_CACHE_TIMEOUT )); then
         vcs_info
         
         # Set git status color based on repository state
         if [[ -n ${vcs_info_msg_0_} ]] && git rev-parse --is-inside-work-tree &>/dev/null; then
-            local color=$(git diff-index --quiet HEAD -- 2>/dev/null && echo "10" || echo "11")
+            local color=$(git diff-index --quiet HEAD -- 2>/dev/null && echo "$GIT_COLOR_CLEAN" || echo "$GIT_COLOR_DIRTY")
             zstyle ':vcs_info:git:*' formats " %B%F{$color}(%b)%f"
             zstyle ':vcs_info:git:*' actionformats " %B%F{$color}(%b|%a)%f"
             vcs_info
@@ -130,7 +141,9 @@ alias lar='sls -clira --human-readable'
 
 # Multiplexer
 alias z='zellij'
-alias zi='zellij -n ide -s $(basename "$PWD")'
+alias zi='zellij -n ide -s $(basename "$PWD" | sed "s/^\.//")'
+alias zda='zellij da'
+alias zka='zellij ka'
 alias zw='zellij -l welcome'
 
 # Swift tooling
