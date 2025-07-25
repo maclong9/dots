@@ -88,8 +88,8 @@ warning = { fg = "beige" }
 "ui.menu.selected" = { bg = "dim-gray" }
 "ui.menu" = { fg = "white", bg = "dark-gray" }
 
-"ui.statusline" = { bg = "dark-gray" }
-"ui.statusline.inactive" = { bg = "dark-gray" }
+"ui.statusline" = { fg = "gray" }
+"ui.statusline.inactive" = { fg = "gray" }
 "ui.statusline.select" = { bg = "red", fg = "black" }
 "ui.statusline.normal" = { bg = "beige", fg = "black" }
 "ui.statusline.insert" = { bg = "bright-green", fg = "black" }
