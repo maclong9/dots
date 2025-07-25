@@ -3,9 +3,8 @@ theme "vesper"
 default_mode "locked"
 pane_frames false
 copy_command "pbcopy"
-session_serialization false
 show_startup_tips false
- 
+
 keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
@@ -229,7 +228,7 @@ plugins {
     compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
     filepicker location="zellij:strider" {
-        cwd "$HOME/"
+        cwd "/"
     }
     plugin-manager location="zellij:plugin-manager"
     session-manager location="zellij:session-manager"
@@ -238,5 +237,23 @@ plugins {
     tab-bar location="zellij:tab-bar"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
+    }
+    zjstatus location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+        format_left  "{mode}#[fg=#ffc799,bg=#1C1C1C,bold] {session}#[bg=#1C1C1C] {tabs}"
+        format_right "{datetime}"
+        format_space "#[bg=#1C1C1C]"
+
+        mode_normal "#[bg=#99FFE4] "
+        mode_tmux   "#[bg=#ffc799] "
+
+        tab_normal "#[fg=#A0A0A0,bg=#1C1C1C] {index} {name} {fullscreen_indicator}{sync_indicator}{floating_indicator}"
+        tab_active "#[fg=#ffc799,bg=#1C1C1C,bold,italic] {index} {name} {fullscreen_indicator}{sync_indicator}{floating_indicator}"
+        tab_fullscreen_indicator "□ "
+        tab_sync_indicator " "
+        tab_floating_indicator "󰉈 "
+
+        datetime "#[fg=#ffffff,bg=#1C1C1C] {format} "
+        datetime_format "%A, %d %b %Y %H:%M"
+        datetime_timezone "Europe/Berlin"
     }
 }
