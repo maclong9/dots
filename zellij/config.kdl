@@ -239,7 +239,7 @@ plugins {
         welcome_screen true
     }
     zjstatus location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-        format_left  "{mode}#[fg=#ffc799,bold] {session}#[] {tabs}"
+        format_left  "{mode}#[fg=#99FFE4,bold] {session}#[] {tabs}"
         format_right "{datetime}"
         format_space "#[]"
 
