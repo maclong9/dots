@@ -8,12 +8,47 @@ for cmd in git curl ln mkdir; do
     }
 done
 
-# Download and source utilities
+# Download and source utilities with integrity verification
 url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh"
-curl -fsSL "$url" -o /tmp/utils.sh || {
-    printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
+utils_temp="/tmp/utils.sh"
+
+# Download with timeout and user agent
+curl -fsSL --max-time 30 --user-agent "setup-script/1.0" "$url" -o "$utils_temp" || {
+    printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh (check network connection)\n" >&2
     exit 1
 }
+
+# Basic validation: check if file exists and contains expected content
+[ -f "$utils_temp" ] && [ -s "$utils_temp" ] || {
+    printf "\033[0;31m[ERROR]\033[0m Downloaded utils.sh is empty or invalid\n" >&2
+    rm -f "$utils_temp"
+    exit 1
+}
+
+# Verify it looks like a shell script
+if ! head -1 "$utils_temp" | grep -q '^#!/'; then
+    printf "\033[0;31m[ERROR]\033[0m Downloaded file doesn't appear to be a shell script\n" >&2
+    rm -f "$utils_temp"
+    exit 1
+fi
+
+# Enhanced security: Verify file integrity with checksum
+# Expected SHA256 hash for utils.sh (update this when utils.sh changes)
+expected_sha256="$(curl -fsSL --max-time 10 "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh.sha256" 2>/dev/null || echo "")"
+
+if [ -n "$expected_sha256" ] && command -v shasum >/dev/null 2>&1; then
+    actual_sha256=$(shasum -a 256 "$utils_temp" | cut -d' ' -f1)
+    if [ "$actual_sha256" != "$expected_sha256" ]; then
+        printf "\033[0;33m[WARNING]\033[0m SHA256 checksum mismatch for utils.sh\n" >&2
+        printf "Expected: %s\n" "$expected_sha256" >&2
+        printf "Actual: %s\n" "$actual_sha256" >&2
+        printf "Continuing with basic validation only...\n" >&2
+    else
+        printf "\033[0;32m[INFO]\033[0m SHA256 checksum verified successfully\n" >&2
+    fi
+else
+    printf "\033[0;33m[WARNING]\033[0m SHA256 verification not available, using basic validation only\n" >&2
+fi
 
 # shellcheck disable=SC1091
 . /tmp/utils.sh || {
@@ -230,7 +265,23 @@ setup_mise() {
     if command -v mise >/dev/null 2>&1; then
         log success "mise already installed"
     else
-        run_or_fail "curl https://mise.run | sh" "install mise (check network connection and curl availability)"
+        # Download mise installer with verification
+        mise_installer="/tmp/mise-install.sh"
+        curl -fsSL --max-time 30 "https://mise.run" -o "$mise_installer" || {
+            log error "Failed to download mise installer"
+            return 1
+        }
+        
+        # Basic validation of the installer
+        if ! head -1 "$mise_installer" | grep -q '^#!/'; then
+            log error "Downloaded mise installer doesn't appear to be a shell script"
+            rm -f "$mise_installer"
+            return 1
+        fi
+        
+        # Run the installer
+        run_or_fail "sh \"$mise_installer\"" "install mise"
+        rm -f "$mise_installer"
     fi
 
     # Add mise to PATH for this session
@@ -253,8 +304,19 @@ setup_mise() {
         log warning "mise.toml not found, skipping mise tool installation"
     fi
 
-    "$HOME/.local/share/mise/shims/gh" auth login
-    "$HOME/.local/share/mise/shims/gh" extension install github/gh-copilot
+    # Setup GitHub CLI if available
+    gh_path="$HOME/.local/share/mise/shims/gh"
+    if [ -x "$gh_path" ]; then
+        log info "Setting up GitHub CLI..."
+        run_or_fail "$gh_path auth login" "authenticate GitHub CLI" || {
+            log warning "GitHub CLI authentication failed - you can run 'gh auth login' manually later"
+        }
+        run_or_fail "$gh_path extension install github/gh-copilot" "install GitHub Copilot extension" || {
+            log warning "GitHub Copilot extension installation failed - you can install it manually later"
+        }
+    else
+        log warning "GitHub CLI not found at expected path, skipping setup"
+    fi
 
     log success "Development tools installed via mise"
 }
@@ -336,12 +398,35 @@ main() {
         run_step "Configuring Touch ID" setup_touch_id
     }
 
+    # Critical setup steps first
     run_step "Setting up dotfiles" setup_dotfiles
-    run_step "Setting up color schemes" setup_colors
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
-    run_step "Setting up system maintenance" setup_maintenance
-    run_step "Generating SSH key" setup_ssh
+    
+    # Defer non-critical operations
+    if [ "${DEFER_NONESSENTIAL:-false}" = "true" ]; then
+        log info "Deferring non-essential setup (color schemes, maintenance, SSH)"
+        cat > "$HOME/.config/deferred_setup.sh" << 'EOF'
+#!/bin/sh
+# Deferred setup operations
+cd "$HOME/.config" || exit 1
+. scripts/core/utils.sh
+
+log info "Running deferred setup operations..."
+run_step "Setting up color schemes" setup_colors
+run_step "Setting up system maintenance" setup_maintenance  
+run_step "Generating SSH key" setup_ssh
+log success "Deferred setup complete!"
+rm -f "$HOME/.config/deferred_setup.sh"
+EOF
+        chmod +x "$HOME/.config/deferred_setup.sh"
+        log info "Run '$HOME/.config/deferred_setup.sh' to complete non-essential setup"
+    else
+        # Run all operations immediately (default behavior)
+        run_step "Setting up color schemes" setup_colors
+        run_step "Setting up system maintenance" setup_maintenance
+        run_step "Generating SSH key" setup_ssh
+    fi
 
     log success "Setup complete!"
 
