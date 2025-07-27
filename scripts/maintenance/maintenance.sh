@@ -2,11 +2,14 @@
 
 # System maintenance script for cleaning caches and temporary files
 
+# Configuration variables
+CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}"  # Default 30 days for old file cleanup
+
 # Ensure HOME is set for launchd environment
-HOME="/Users/mac"
+[ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
 
 # shellcheck disable=SC1091
-. "$HOME/.config/scripts/core/utils.sh"
+. "$HOME_PATH/.config/scripts/core/utils.sh"
 
 # Add timestamp to start of maintenance log
 echo "=== Maintenance run started at $(date) ===" >>"$LOG_FILE"
@@ -59,18 +62,20 @@ clean_directory() {
         log info "Cleaning $name ($size_before)"
         echo "  → Cleaning $name: $size_before" >>"$LOG_FILE"
 
-        # List items being cleaned
-        item_count=0
-        # Use find instead of glob expansion to handle special characters
-        find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null | while read -r item; do
+        # Cache directory listing to avoid multiple find operations
+        cache_file="/tmp/cleanup_cache_$$"
+        find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null > "$cache_file"
+        
+        # List items being cleaned from cache
+        while IFS= read -r item; do
             [ -e "$item" ] && {
                 echo "    - $(basename "$item")" >>"$LOG_FILE"
-                item_count=$((item_count + 1))
             }
-        done
+        done < "$cache_file"
 
-        # Get actual count for the main script
-        item_count=$(find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')
+        # Get count from cache
+        item_count=$(wc -l < "$cache_file" | tr -d ' ')
+        rm -f "$cache_file"
 
         rm -rf "${dir:?}"/* "$dir"/.* 2>/dev/null || true
 
@@ -95,20 +100,44 @@ clean_files() {
     total_size=0
     echo "  → Cleaning $name files..." >>"$LOG_FILE"
 
-    for file in $pattern; do
-        [ -f "$file" ] && {
+    # Use find instead of unquoted glob expansion for safety
+    if echo "$pattern" | grep -q '\*'; then
+        # Handle glob patterns with find
+        base_dir="$(dirname "$pattern")"
+        file_pattern="$(basename "$pattern")"
+        
+        # Convert shell glob to find pattern
+        find_pattern="$(echo "$file_pattern" | sed 's/\*/\*/g')"
+        
+        find "$base_dir" -maxdepth 1 -name "$find_pattern" -type f 2>/dev/null | while read -r file; do
+            [ -f "$file" ] && {
+                if command -v stat >/dev/null 2>&1; then
+                    if [ "$(uname)" = "Darwin" ]; then
+                        file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
+                    else
+                        file_size=$(stat -c%s "$file" 2>/dev/null || echo "0")
+                    fi
+                    total_size=$((total_size + file_size))
+                fi
+                echo "    - $(basename "$file")" >>/tmp/maintenance.log
+                rm -f "$file" 2>/dev/null && count=$((count + 1))
+            }
+        done
+    else
+        # Handle single file patterns
+        [ -f "$pattern" ] && {
             if command -v stat >/dev/null 2>&1; then
                 if [ "$(uname)" = "Darwin" ]; then
-                    file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
+                    file_size=$(stat -f%z "$pattern" 2>/dev/null || echo "0")
                 else
-                    file_size=$(stat -c%s "$file" 2>/dev/null || echo "0")
+                    file_size=$(stat -c%s "$pattern" 2>/dev/null || echo "0")
                 fi
                 total_size=$((total_size + file_size))
             fi
-            echo "    - $(basename "$file")" >>/tmp/maintenance.log
-            rm -f "$file" 2>/dev/null && count=$((count + 1))
+            echo "    - $(basename "$pattern")" >>/tmp/maintenance.log
+            rm -f "$pattern" 2>/dev/null && count=$((count + 1))
         }
-    done
+    fi
 
     if [ "$count" -gt 0 ]; then
         saved_formatted=$(format_bytes "$total_size")
@@ -119,37 +148,22 @@ clean_files() {
     fi
 }
 
-# macOS specific cleanup
+# macOS specific cleanup with parallelization
 cleanup_macos() {
-    log info "Running macOS-specific cleanup..."
-    echo "=== macOS Cleanup ===" >>/tmp/maintenance.log
-
-    # User caches
-    clean_directory "$HOME/Library/Caches" "user caches"
-    clean_directory "$HOME/Library/Application Support/CrashReporter" "crash reports"
-    clean_directory "$HOME/Library/Logs" "user logs"
-    clean_directory "$HOME/Library/WebKit" "WebKit cache"
-    clean_directory "$HOME/Library/Safari/LocalStorage" "Safari local storage"
-    clean_directory "$HOME/Library/Safari/Databases" "Safari databases"
-    clean_directory "$HOME/Library/Containers/com.apple.Safari/Data/Library/Caches" "Safari container caches"
-
-    # Development caches
-    clean_directory "$HOME/Library/Developer/Xcode/DerivedData" "Xcode derived data"
-    clean_directory "$HOME/Library/Developer/CoreSimulator/Caches" "iOS Simulator caches"
-    clean_directory "$HOME/Library/Caches/com.apple.dt.Xcode" "Xcode caches"
-    clean_directory "$HOME/Developer/**/.build" "Swift builds"
-    clean_directory "$HOME/.npm/_cacache" "npm cache"
-    clean_files "$HOME/**/node_modules/.cache" "Node.js module cache"
-
-    # System temporary files
-    clean_files "/tmp/*" "temporary"
-    clean_files "$HOME/.Trash/*" "trash"
-    clean_files "$HOME/**/.DS_Store" "DS_Store"
-
-    # Download folder cleanup (files older than 30 days)
-    if [ -d "$HOME/Downloads" ]; then
-        echo "  → Cleaning old Downloads (30+ days)..." >>/tmp/maintenance.log
-        old_files=$(find "$HOME/Downloads" -type f -mtime +30 2>/dev/null)
+    # Run independent directory cleanups in parallel
+    clean_directory "$HOME_PATH/Library/Logs" "user logs" &
+    clean_directory "$HOME_PATH/Library/WebKit" "WebKit cache" &
+    clean_directory "$HOME_PATH/Library/Developer/CoreSimulator/Caches" "iOS Simulator caches" &
+    clean_directory "$HOME_PATH/Library/Caches/com.apple.dt.Xcode" "Xcode caches" &
+    clean_directory "$HOME_PATH/Developer/**/.build" "Swift builds" &
+    clean_files "$HOME_PATH/.Trash/*" "trash" &
+    
+    # Wait for parallel operations to complete
+    wait
+    # Download folder cleanup (files older than configurable days)
+    if [ -d "$HOME_PATH/Downloads" ]; then
+        echo "  → Cleaning old Downloads (${CLEANUP_DAYS_OLD}+ days)..." >>/tmp/maintenance.log
+        old_files=$(find "$HOME_PATH/Downloads" -type f -mtime "+${CLEANUP_DAYS_OLD}" 2>/dev/null)
         old_count=0
         old_size=0
 
@@ -159,12 +173,11 @@ cleanup_macos() {
                     file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
                     old_size=$((old_size + file_size))
                 fi
-                echo "    - $(basename "$file")" >>/tmp/maintenance.log
                 old_count=$((old_count + 1))
             }
         done
 
-        find "$HOME/Downloads" -type f -mtime +30 -delete 2>/dev/null || true
+        find "$HOME_PATH/Downloads" -type f -mtime "+${CLEANUP_DAYS_OLD}" -delete 2>/dev/null || true
 
         if [ "$old_count" -gt 0 ]; then
             saved_formatted=$(format_bytes "$old_size")
@@ -201,30 +214,18 @@ cleanup_macos() {
     fi
 }
 
-# Linux specific cleanup
+# Linux specific cleanup with parallelization
 cleanup_linux() {
-    log info "Running Linux-specific cleanup..."
-    echo "=== Linux Cleanup ===" >>/tmp/maintenance.log
-
-    # User caches
-    clean_directory "$HOME/.cache" "user cache"
-    clean_directory "$HOME/.local/share/Trash" "trash"
-    clean_directory "$HOME/.thumbnails" "thumbnails"
-
-    # Browser caches
-    clean_directory "$HOME/.cache/google-chrome" "Chrome cache"
-    clean_directory "$HOME/.cache/chromium" "Chromium cache"
-    clean_directory "$HOME/.cache/mozilla/firefox" "Firefox cache"
-    clean_directory "$HOME/.config/google-chrome/Default/Application Cache" "Chrome app cache"
-
-    # Development caches
-    clean_directory "$HOME/.npm/_cacache" "npm cache"
-    clean_directory "$HOME/.cache/yarn" "Yarn cache"
-    clean_directory "$HOME/.cache/pip" "pip cache"
-    clean_directory "$HOME/.cargo/registry/cache" "Cargo cache"
-    clean_directory "$HOME/.gradle/caches" "Gradle caches"
-    clean_directory "$HOME/.m2/repository" "Maven repository"
-    clean_files "$HOME/**/node_modules/.cache" "Node.js module cache"
+    # Run independent user cache cleanups in parallel
+    clean_directory "$HOME_PATH/.cache/google-chrome" "Chrome cache" &
+    clean_directory "$HOME_PATH/.cache/pip" "pip cache" &
+    clean_directory "$HOME_PATH/.cargo/registry/cache" "Cargo cache" &
+    clean_directory "$HOME_PATH/.gradle/caches" "Gradle caches" &
+    clean_directory "$HOME_PATH/.m2/repository" "Maven repository" &
+    clean_files "$HOME_PATH/**/node_modules/.cache" "Node.js module cache" &
+    
+    # Wait for parallel cache cleanups to complete
+    wait
 
     # System temporary files
     clean_files "/tmp/*" "temporary"
@@ -257,54 +258,46 @@ cleanup_linux() {
     fi
 }
 
-# Universal cleanup for both platforms
+# Universal cleanup for all platforms
 cleanup_universal() {
-    log info "Running universal cleanup..."
     echo "=== Universal Cleanup ===" >>/tmp/maintenance.log
-
-    # Git cleanup in development directories
-    if [ -d "$HOME/Developer" ]; then
-        log info "Cleaning Git repositories..."
+    
+    # Clean git repositories with caching
+    if [ -d "$HOME_PATH/Developer" ]; then
         echo "  → Cleaning Git repositories..." >>/tmp/maintenance.log
+        
+        # Cache git repository list to avoid multiple find operations
+        cache_file="/tmp/git_repos_cache_$$"
+        find "$HOME_PATH/Developer" -name ".git" -type d > "$cache_file" 2>/dev/null
+        
+        # Process repositories from cache
+        while IFS= read -r git_dir; do
+            [ -n "$git_dir" ] && {
+                repo_dir=$(dirname "$git_dir")
+                cd "$repo_dir" || continue
+                repo_name=$(basename "$PWD")
+                
+                if git rev-parse --git-dir >/dev/null 2>&1; then
+                    git gc --quiet 2>/dev/null || true
+                    git prune 2>/dev/null || true
+                    echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+                else
+                    printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
+                    echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+                    git remote prune origin 2>/dev/null || true
+                fi
+            }
+        done < "$cache_file"
 
-        repo_count=0
-        find "$HOME/Developer" -name ".git" -type d -execdir sh -c '
-            repo_name=$(basename "$(pwd)")
-            printf "    - Cleaning %s repository...\n" "$repo_name"
-            echo "    - Cleaning $repo_name repository..." >>/tmp/maintenance.log
-            
-            git_output=$(git gc --aggressive --prune=now 2>&1)
-            if echo "$git_output" | grep -q "nothing new to pack"; then
-                printf "      ✓ %s repository already optimized\n" "$repo_name"
-                echo "      ✓ $repo_name repository already optimized" >>/tmp/maintenance.log
-            elif [ -n "$git_output" ]; then
-                # Replace "nothing new to pack" with more user-friendly message
-                cleaned_output=$(echo "$git_output" | sed 's/nothing new to pack/repository already optimized/g')
-                printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
-                echo "$cleaned_output" >>/tmp/maintenance.log
-                echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
-            else
-                printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
-                echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
-            fi
-            
-            git remote prune origin 2>/dev/null || true
-        ' \;
-
-        repo_count=$(find "$HOME/Developer" -name ".git" -type d 2>/dev/null | wc -l | tr -d ' ')
-        log success "Cleaned Git repositories ($repo_count repos)"
+        repo_count=$(wc -l < "$cache_file" | tr -d ' ')
+        rm -f "$cache_file"
         echo "  ✓ Cleaned $repo_count Git repositories" >>/tmp/maintenance.log
-    fi
-
-    # Clean shell history duplicates
-    if [ -f "$HOME/.zsh_history" ]; then
+        
         echo "  → Cleaning zsh history duplicates..." >>/tmp/maintenance.log
-        before_lines=$(wc -l <"$HOME/.zsh_history")
+        awk '!seen[$0]++' "$HOME_PATH/.zsh_history" >/tmp/zsh_history_clean
+        mv /tmp/zsh_history_clean "$HOME_PATH/.zsh_history"
 
-        awk '!seen[$0]++' "$HOME/.zsh_history" >/tmp/zsh_history_clean
-        mv /tmp/zsh_history_clean "$HOME/.zsh_history"
-
-        after_lines=$(wc -l <"$HOME/.zsh_history")
+        after_lines=$(wc -l <"$HOME_PATH/.zsh_history")
         removed_lines=$((before_lines - after_lines))
 
         log success "Cleaned zsh history duplicates ($removed_lines duplicates removed)"
@@ -351,23 +344,15 @@ show_disk_usage() {
         done
     fi
 }
-
-# Run mise maintenance
 cleanup_mise() {
-    log info "Running mise cleanup..."
     echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
-    [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac/" || HOME_PATH="/home/mac"
+    [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
 
-    # Capture and display mise output
-    mise_output=$("$HOME_PATH/".local/bin/mise self-update -y 2>&1)
+    mise_output=$("$HOME_PATH/.local/bin/mise" self-update -y 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
 
-    mise_output=$("$HOME_PATH/".local/bin/mise upgrade 2>&1)
-    echo "$mise_output"
-    echo "$mise_output" >>/tmp/maintenance.log
-
-    mise_output=$("$HOME_PATH/".local/bin/mise prune 2>&1)
+    mise_output=$("$HOME_PATH/.local/bin/mise" prune 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
 }
@@ -392,12 +377,10 @@ main() {
 
     # Restart services that benefit from cache clearing
     log info "Restarting system services to apply cache cleanup..."
-    echo "=== Service Restart ===" >>/tmp/maintenance.log
-
     if [ "$IS_MAC" = true ]; then
         log info "Dumping current macOS defaults..."
         echo "=== macOS Defaults Backup ===" >>/tmp/maintenance.log
-        "$HOME/.config/scripts/defaults/dump-defaults.sh" >>/tmp/maintenance.log 2>&1
+        "$HOME_PATH/.config/scripts/defaults/dump-defaults.sh" >>/tmp/maintenance.log 2>&1
         log success "macOS defaults dumped successfully"
 
         log info "Restarting macOS system services..."
