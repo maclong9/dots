@@ -392,41 +392,23 @@ main() {
     log debug "Arguments: $*"
     log info "Initialising developer environment..."
 
-    [ "$IS_MAC" = true ] && {
-        run_step "Restoring system settings defaults" restore_defaults
-        run_step "Installing Xcode command line tools" setup_xcode_tools
-        run_step "Configuring Touch ID" setup_touch_id
-    }
+    # Ensure Developer Tooling are installed ahead of time 
+    [ "$IS_MAC" = true ] &&  run_step "Restoring system settings defaults" restore_defaults
 
     # Critical setup steps first
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
 
-    # Defer non-critical operations
-    if [ "${DEFER_NONESSENTIAL:-false}" = "true" ]; then
-        log info "Deferring non-essential setup (color schemes, maintenance, SSH)"
-        cat >"$HOME/.config/deferred_setup.sh" <<'EOF'
-#!/bin/sh
-# Deferred setup operations
-cd "$HOME/.config" || exit 1
-. scripts/core/utils.sh
+    [ "$IS_MAC" = true ] && {
+        run_step "Installing Xcode command line tools" setup_xcode_tools
+        run_step "Configuring Touch ID" setup_touch_id
+    }
 
-log info "Running deferred setup operations..."
-run_step "Setting up color schemes" setup_colors
-run_step "Setting up system maintenance" setup_maintenance  
-run_step "Generating SSH key" setup_ssh
-log success "Deferred setup complete!"
-rm -f "$HOME/.config/deferred_setup.sh"
-EOF
-        chmod +x "$HOME/.config/deferred_setup.sh"
-        log info "Run '$HOME/.config/deferred_setup.sh' to complete non-essential setup"
-    else
-        # Run all operations immediately (default behavior)
-        run_step "Setting up color schemes" setup_colors
-        run_step "Setting up system maintenance" setup_maintenance
-        run_step "Generating SSH key" setup_ssh
-    fi
+   # Run all operations immediately (default behavior)
+    run_step "Setting up color schemes" setup_colors
+    run_step "Setting up system maintenance" setup_maintenance
+    run_step "Generating SSH key" setup_ssh
 
     log success "Setup complete!"
 
