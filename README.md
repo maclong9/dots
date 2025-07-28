@@ -16,7 +16,7 @@ curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 
 ## ✨ Features
 
-- **Shell**: Modern ZSH configuration with git integration and smart completions
+- **Shell**: Modern ZSH configuration with git integration, multiplexer, and smart completions
 - **Editor**: Helix setup with syntax highlighting, LSP, and productivity enhancements
 - **Git**: Comprehensive configuration with useful aliases and SSH signing
 - **Colors**: Consistent color schemes across Helix, Terminal, and Xcode

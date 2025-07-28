@@ -18,21 +18,20 @@ curl -fsSL --max-time 30 --user-agent "setup-script/1.0" "$url" -o "$utils_temp"
     exit 1
 }
 
-# Basic validation: check if file exists and contains expected content
+# Check if file exists and contains expected content
 [ -f "$utils_temp" ] && [ -s "$utils_temp" ] || {
     printf "\033[0;31m[ERROR]\033[0m Downloaded utils.sh is empty or invalid\n" >&2
     rm -f "$utils_temp"
     exit 1
 }
 
-# Verify it looks like a shell script
+# Verify it is a shell script
 if ! head -1 "$utils_temp" | grep -q '^#!/'; then
     printf "\033[0;31m[ERROR]\033[0m Downloaded file doesn't appear to be a shell script\n" >&2
     rm -f "$utils_temp"
     exit 1
 fi
 
-# Enhanced security: Verify file integrity with checksum
 # Expected SHA256 hash for utils.sh (update this when utils.sh changes)
 expected_sha256="$(curl -fsSL --max-time 10 "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh.sha256" 2>/dev/null || echo "")"
 
