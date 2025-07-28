@@ -271,14 +271,14 @@ setup_mise() {
             log error "Failed to download mise installer"
             return 1
         }
-        
+
         # Basic validation of the installer
         if ! head -1 "$mise_installer" | grep -q '^#!/'; then
             log error "Downloaded mise installer doesn't appear to be a shell script"
             rm -f "$mise_installer"
             return 1
         fi
-        
+
         # Run the installer
         run_or_fail "sh \"$mise_installer\"" "install mise"
         rm -f "$mise_installer"
@@ -402,11 +402,11 @@ main() {
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
-    
+
     # Defer non-critical operations
     if [ "${DEFER_NONESSENTIAL:-false}" = "true" ]; then
         log info "Deferring non-essential setup (color schemes, maintenance, SSH)"
-        cat > "$HOME/.config/deferred_setup.sh" << 'EOF'
+        cat >"$HOME/.config/deferred_setup.sh" <<'EOF'
 #!/bin/sh
 # Deferred setup operations
 cd "$HOME/.config" || exit 1
