@@ -3,7 +3,7 @@
 # System maintenance script for cleaning caches and temporary files
 
 # Configuration variables
-CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}"  # Default 30 days for old file cleanup
+CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}" # Default 30 days for old file cleanup
 
 # Ensure HOME is set for launchd environment
 [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
@@ -64,17 +64,17 @@ clean_directory() {
 
         # Cache directory listing to avoid multiple find operations
         cache_file="/tmp/cleanup_cache_$$"
-        find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null > "$cache_file"
-        
+        find "$dir" -mindepth 1 -maxdepth 1 2>/dev/null >"$cache_file"
+
         # List items being cleaned from cache
         while IFS= read -r item; do
             [ -e "$item" ] && {
                 echo "    - $(basename "$item")" >>"$LOG_FILE"
             }
-        done < "$cache_file"
+        done <"$cache_file"
 
         # Get count from cache
-        item_count=$(wc -l < "$cache_file" | tr -d ' ')
+        item_count=$(wc -l <"$cache_file" | tr -d ' ')
         rm -f "$cache_file"
 
         rm -rf "${dir:?}"/* "$dir"/.* 2>/dev/null || true
@@ -105,10 +105,10 @@ clean_files() {
         # Handle glob patterns with find
         base_dir="$(dirname "$pattern")"
         file_pattern="$(basename "$pattern")"
-        
+
         # Convert shell glob to find pattern
         find_pattern="$(echo "$file_pattern" | sed 's/\*/\*/g')"
-        
+
         find "$base_dir" -maxdepth 1 -name "$find_pattern" -type f 2>/dev/null | while read -r file; do
             [ -f "$file" ] && {
                 if command -v stat >/dev/null 2>&1; then
@@ -157,7 +157,7 @@ cleanup_macos() {
     clean_directory "$HOME_PATH/Library/Caches/com.apple.dt.Xcode" "Xcode caches" &
     clean_directory "$HOME_PATH/Developer/**/.build" "Swift builds" &
     clean_files "$HOME_PATH/.Trash/*" "trash" &
-    
+
     # Wait for parallel operations to complete
     wait
     # Download folder cleanup (files older than configurable days)
@@ -223,7 +223,7 @@ cleanup_linux() {
     clean_directory "$HOME_PATH/.gradle/caches" "Gradle caches" &
     clean_directory "$HOME_PATH/.m2/repository" "Maven repository" &
     clean_files "$HOME_PATH/**/node_modules/.cache" "Node.js module cache" &
-    
+
     # Wait for parallel cache cleanups to complete
     wait
 
@@ -261,22 +261,22 @@ cleanup_linux() {
 # Universal cleanup for all platforms
 cleanup_universal() {
     echo "=== Universal Cleanup ===" >>/tmp/maintenance.log
-    
+
     # Clean git repositories with caching
     if [ -d "$HOME_PATH/Developer" ]; then
         echo "  → Cleaning Git repositories..." >>/tmp/maintenance.log
-        
+
         # Cache git repository list to avoid multiple find operations
         cache_file="/tmp/git_repos_cache_$$"
-        find "$HOME_PATH/Developer" -name ".git" -type d > "$cache_file" 2>/dev/null
-        
+        find "$HOME_PATH/Developer" -name ".git" -type d >"$cache_file" 2>/dev/null
+
         # Process repositories from cache
         while IFS= read -r git_dir; do
             [ -n "$git_dir" ] && {
                 repo_dir=$(dirname "$git_dir")
                 cd "$repo_dir" || continue
                 repo_name=$(basename "$PWD")
-                
+
                 if git rev-parse --git-dir >/dev/null 2>&1; then
                     git gc --quiet 2>/dev/null || true
                     git prune 2>/dev/null || true
@@ -287,12 +287,12 @@ cleanup_universal() {
                     git remote prune origin 2>/dev/null || true
                 fi
             }
-        done < "$cache_file"
+        done <"$cache_file"
 
-        repo_count=$(wc -l < "$cache_file" | tr -d ' ')
+        repo_count=$(wc -l <"$cache_file" | tr -d ' ')
         rm -f "$cache_file"
         echo "  ✓ Cleaned $repo_count Git repositories" >>/tmp/maintenance.log
-        
+
         echo "  → Cleaning zsh history duplicates..." >>/tmp/maintenance.log
         awk '!seen[$0]++' "$HOME_PATH/.zsh_history" >/tmp/zsh_history_clean
         mv /tmp/zsh_history_clean "$HOME_PATH/.zsh_history"
