@@ -11,9 +11,11 @@
 # • Paths & environment
 
 # Git status cache configuration
-readonly GIT_CACHE_TIMEOUT=2
-readonly GIT_COLOR_CLEAN=10
-readonly GIT_COLOR_DIRTY=11
+[[ "$IS_MAC" = true ]]  && {
+    readonly GIT_CACHE_TIMEOUT=2
+    readonly GIT_COLOR_CLEAN=10
+    readonly GIT_COLOR_DIRTY=11
+}
 
 # Define common paths
 EDITOR="hx"
@@ -140,10 +142,12 @@ precmd() {
 alias g='git'
 
 # File listing
-alias ls='sls -cli --human-readable'
-alias la='sls -clia --human-readable'
-alias lr='sls -clir --human-readable'
-alias lar='sls -clira --human-readable'
+[[ "$IS_MAC" = true ]] && {
+    alias ls='sls -cli --human-readable'
+    alias la='sls -clia --human-readable'
+    alias lr='sls -clir --human-readable'
+    alias lar='sls -clira --human-readable'
+}
 
 # Multiplexer
 alias z='zellij'

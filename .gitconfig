@@ -77,3 +77,9 @@
 
 [color]
     ui = auto
+[credential "https://github.com"]
+	helper = 
+	helper = !/nfs/ssl/mac/.local/share/mise/installs/github-cli/2.76.1/gh_2.76.1_linux_amd64/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/nfs/ssl/mac/.local/share/mise/installs/github-cli/2.76.1/gh_2.76.1_linux_amd64/bin/gh auth git-credential
