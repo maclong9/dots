@@ -261,3 +261,4 @@ plugins {
         command_simple_cards_interval "5"
     }
 }
+

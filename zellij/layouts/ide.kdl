@@ -11,10 +11,11 @@ layout {
     tab name="Console" hide_floating_panes=true {
         pane split_direction="horizontal" {
             pane command="claude" cwd="." size="50%" 
-            pane cwd="." size="50%"
+            pane cwd="." command="zsh" size="50%"
         }
         pane size=1 borderless=true {
             plugin location="zjstatus"
         }
     }
 }
+

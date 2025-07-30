@@ -7,6 +7,11 @@ command = "tailwindcss-language-server"
 args = ["--stdio"]
 
 [[language]]
+name = "python"
+scope = "source.py"
+file-types = ["i", "py"]
+
+[[language]]
 name = "bash"
 formatter = { command = "shfmt", args = ["-i", "4", "-ci"] }
 
@@ -26,6 +31,7 @@ language-servers = ["html-languageserver"]
 [[language]]
 name = "css"
 language-servers = [ "vscode-css-language-server", "tailwindcss-ls" ]
+indent = { tab-width = 4, unit = "    "}
 
 [[language]]
 name = "markdown"
