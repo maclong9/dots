@@ -155,6 +155,7 @@ alias g='git'
 
 # File listing
 [[ "$IS_MAC" = true ]] && {
+    [[ command -v sls ]] && mise use -g spm:maclong9/list@latest
     alias ls='sls -cli --human-readable'
     alias la='sls -clia --human-readable'
     alias lr='sls -clir --human-readable'
