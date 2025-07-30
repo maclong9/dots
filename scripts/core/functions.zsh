@@ -67,6 +67,32 @@ clc() {
     return $exit_code
 }
 
+# • Command execution utilities
+
+# Execute command with prefixed output.
+#
+# Runs a command and prefixes its output with a visual separator
+# to clearly distinguish between the prompt and command output.
+#
+# - Parameters:
+#   - ...: Command and arguments to execute.
+# - Returns:
+#   - The exit code of the executed command.
+# - Usage:
+#   ```sh
+#   run ls -la
+#   run git status
+#   ```
+run() {
+    [[ $# -eq 0 ]] && {
+        echo "Usage: run <command> [args...]"
+        return 1
+    }
+    
+    echo "%F{8}->%f"
+    eval "$@"
+}
+
 # • Directory navigation
 
 # Navigate backward in directory history.

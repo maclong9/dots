@@ -11,10 +11,11 @@ font-size = 11
 # • Keybindings
 keybind = alt+3=text:#
 keybind = alt+equal=equalize_splits
-keybind = alt+h=goto_split:left
-keybind = alt+j=goto_split:down
-keybind = alt+k=goto_split:up
-keybind = alt+l=goto_split:right
+# Removed to allow Zellij Alt+{h,j,k,l} bindings to work
+# keybind = alt+h=goto_split:left
+# keybind = alt+j=goto_split:down
+# keybind = alt+k=goto_split:up
+# keybind = alt+l=goto_split:right
 keybind = global:super+§=toggle_quick_terminal
 keybind = shift+enter=text:\n
 macos-option-as-alt = true
