@@ -239,8 +239,8 @@ plugins {
         welcome_screen true
     }
     zjstatus location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-        format_left  "{mode}#[fg=#99FFE4,bold] {session}#[] {tabs}"
-        format_right "{command_cpu_monitor} {command_simple_cards}"
+        format_left  "{mode}#[fg=#99FFE4,bold] {session}#[]"
+        format_right "{tabs}"
         format_space "#[]"
 
         mode_normal "#[bg=#99FFE4] "
