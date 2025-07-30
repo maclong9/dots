@@ -1,6 +1,6 @@
 layout {
     pane split_direction="vertical" {
-        pane
+        pane command="zsh"
     }
 
     pane size=1 borderless=true {
