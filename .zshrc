@@ -110,6 +110,8 @@ zstyle ':vcs_info:git:*' check-for-changes true
 _git_status_cache=""
 _git_status_cache_time=0
 
+
+
 precmd() {
     local current_time=$(date +%s)
     
@@ -138,6 +140,13 @@ precmd() {
     
     PROMPT="%F{8}╭%f ${user_host}${separator}${directory}${git_info}
 %F{8}╰%f %F{%(?.10.9)}λ%f "
+}
+
+# Print connecting line before command execution  
+preexec() {
+    # Move cursor up to replace ╰ with ├ (curved version)
+    print -n "\e[1A\e[K"  # Move up one line and clear it
+    print -P "%F{8}├%f %F{%(?.10.9)}λ%f $1"  # Show ├ with command
 }
 
 # • Aliases
