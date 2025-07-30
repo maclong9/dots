@@ -142,12 +142,6 @@ precmd() {
 %F{8}╰%f %F{%(?.10.9)}λ%f "
 }
 
-# Print connecting line before command execution  
-preexec() {
-    print -n "\e[1A\e[K"  
-    print -P "%F{8}├%f %F{%(?.10.9)}λ%f $1"  
-}
-
 # • Aliases
 
 # Git
@@ -155,7 +149,9 @@ alias g='git'
 
 # File listing
 [[ "$IS_MAC" = true ]] && {
-    [[ command -v sls ]] && mise use -g spm:maclong9/list@latest
+    if command -v sls >/dev/null 2>&1; then
+      mise use -g spm:maclong9/list@latest
+    fi
     alias ls='sls -cli --human-readable'
     alias la='sls -clia --human-readable'
     alias lr='sls -clir --human-readable'
