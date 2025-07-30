@@ -1,0 +1,26 @@
+# • Appearance
+background-opacity = .9
+background-blur = 45
+theme = "vesper"
+
+# • Typography
+font-family = "Liga SFMono Nerd Font"
+font-feature = +calt, +liga, +dlig
+font-size = 11
+
+# • Keybindings
+keybind = alt+3=text:#
+keybind = alt+equal=equalize_splits
+keybind = alt+h=goto_split:left
+keybind = alt+j=goto_split:down
+keybind = alt+k=goto_split:up
+keybind = alt+l=goto_split:right
+keybind = global:super+§=toggle_quick_terminal
+keybind = shift+enter=text:\n
+macos-option-as-alt = true
+
+# • Window settings
+window-height = 64
+window-padding-x = 12
+window-padding-y = 8
+window-theme = dark
