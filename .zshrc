@@ -11,11 +11,9 @@
 # • Paths & environment
 
 # Git status cache configuration
-[[ "$IS_MAC" = true ]]  && {
-    readonly GIT_CACHE_TIMEOUT=2
-    readonly GIT_COLOR_CLEAN=10
-    readonly GIT_COLOR_DIRTY=11
-}
+readonly GIT_CACHE_TIMEOUT=2
+readonly GIT_COLOR_CLEAN=10
+readonly GIT_COLOR_DIRTY=11
 
 # Define common paths
 EDITOR="hx"
