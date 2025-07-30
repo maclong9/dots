@@ -65,21 +65,6 @@ setopt HIST_REDUCE_BLANKS INTERACTIVE_COMMENTS PUSHD_IGNORE_DUPS PUSHD_SILENT SH
 autoload -Uz compinit bashcompinit
 compinit -d "$ZSH_COMPDUMP" -C
 
-# • Loading tools
-
-# Initialize mise lazily only when needed
-lazy_mise_init() {
-    unset -f lazy_mise_init
-    if command -v mise >/dev/null; then
-        eval "$(mise activate zsh)" || echo "Warning: mise activation failed" >&2
-    fi
-}
-autoload -Uz add-zsh-hook
-add-zsh-hook chpwd lazy_mise_init
-
-# Initialize zoxide
-eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
-
 # • Scripts & plugins
 
 # Source custom scripts (core utilities and completions only)
@@ -187,5 +172,14 @@ alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 [[ ! -f "$ZSH_RC_COMPILED" || "$ZSH_RC" -nt "$ZSH_RC_COMPILED" ]] && zcompile "$ZSH_RC"
 [[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP"
 
+# • Loading tools
+
+# Initialize mise
+eval "$(mise activate zsh)"
+
+# Initialize zoxide
+eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
+
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
+
