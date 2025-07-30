@@ -28,7 +28,7 @@ ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
 
 # Source local zshrc
-. "$HOME/.zshrc.local"
+[[ -f ~/.zshrc.local ]] && . "$HOME/.zshrc.local"
 
 # Directory history tracking
 # Maintains a history of visited directories for quick navigation
@@ -144,9 +144,8 @@ precmd() {
 
 # Print connecting line before command execution  
 preexec() {
-    # Move cursor up to replace ╰ with ├ (curved version)
-    print -n "\e[1A\e[K"  # Move up one line and clear it
-    print -P "%F{8}├%f %F{%(?.10.9)}λ%f $1"  # Show ├ with command
+    print -n "\e[1A\e[K"  
+    print -P "%F{8}├%f %F{%(?.10.9)}λ%f $1"  
 }
 
 # • Aliases
