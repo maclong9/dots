@@ -29,6 +29,9 @@ ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"
 ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
 
+# Source local zshrc
+. "$HOME/.zshrc.local"
+
 # Directory history tracking
 # Maintains a history of visited directories for quick navigation
 # Use -- and ++ aliases to navigate backward/forward through history
