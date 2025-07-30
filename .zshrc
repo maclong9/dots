@@ -79,6 +79,9 @@ lazy_mise_init() {
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd lazy_mise_init
 
+# Initialize zoxide
+eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
+
 # • Scripts & plugins
 
 # Source custom scripts (core utilities and completions only)
@@ -153,11 +156,14 @@ alias g='git'
 }
 
 # Multiplexer
-alias z='zellij'
-alias zi='zellij -n ide -s $(basename "$PWD" | sed "s/^\.//")'
-alias zda='zellij da'
-alias zka='zellij ka'
-alias zw='zellij -l welcome'
+alias zj='zellij'
+alias zji='zellij -n ide -s $(basename "$PWD" | sed "s/^\.//")'
+alias zjda='zellij da'
+alias zjka='zellij ka'
+alias zjw='zellij -l welcome'
+
+# Directory navigation
+alias cd="z"
 
 # Swift tooling
 alias sf='swift format --recursive --in-place'
