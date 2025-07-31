@@ -109,7 +109,8 @@ clean_files() {
         # Convert shell glob to find pattern
         find_pattern="$(echo "$file_pattern" | sed 's/\*/\*/g')"
 
-        find "$base_dir" -maxdepth 1 -name "$find_pattern" -type f 2>/dev/null | while read -r file; do
+        # Process files without pipeline to preserve variable scope
+        while IFS= read -r file; do
             [ -f "$file" ] && {
                 if command -v stat >/dev/null 2>&1; then
                     if [ "$(uname)" = "Darwin" ]; then
@@ -122,7 +123,9 @@ clean_files() {
                 echo "    - $(basename "$file")" >>/tmp/maintenance.log
                 rm -f "$file" 2>/dev/null && count=$((count + 1))
             }
-        done
+        done <<EOF
+$(find "$base_dir" -maxdepth 1 -name "$find_pattern" -type f 2>/dev/null)
+EOF
     else
         # Handle single file patterns
         [ -f "$pattern" ] && {
@@ -294,6 +297,7 @@ cleanup_universal() {
         echo "  ✓ Cleaned $repo_count Git repositories" >>/tmp/maintenance.log
 
         echo "  → Cleaning zsh history duplicates..." >>/tmp/maintenance.log
+        before_lines=$(wc -l <"$HOME_PATH/.zsh_history")
         awk '!seen[$0]++' "$HOME_PATH/.zsh_history" >/tmp/zsh_history_clean
         mv /tmp/zsh_history_clean "$HOME_PATH/.zsh_history"
 
