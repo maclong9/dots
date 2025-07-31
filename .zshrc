@@ -165,7 +165,7 @@ alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
 alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
 alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
-
+alias clx='circumflex'
 # • Compilation & cleanup
 
 # Compile .zshrc and completions for performance
