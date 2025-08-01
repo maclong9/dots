@@ -150,9 +150,6 @@ alias zjda='zellij da'
 alias zjka='zellij ka'
 alias zjw='zellij -l welcome'
 
-# Directory navigation
-alias cd="z"
-
 # Swift tooling
 alias sf='swift format --recursive --in-place'
 alias sl='swift format lint --recursive'
