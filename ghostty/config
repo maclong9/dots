@@ -15,6 +15,10 @@ keybind = alt+h=goto_split:left
 keybind = alt+j=goto_split:down
 keybind = alt+k=goto_split:up
 keybind = alt+l=goto_split:right
+keybind = alt+ctrl+h=new_split:left
+keybind = alt+ctrl+j=new_split:down
+keybind = alt+ctrl+k=new_split:up
+keybind = alt+ctrl+l=new_split:right
 keybind = alt+shift+h=resize_split:left,10
 keybind = alt+shift+j=resize_split:down,10
 keybind = alt+shift+k=resize_split:up,10
