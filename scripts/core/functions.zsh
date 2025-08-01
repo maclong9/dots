@@ -132,3 +132,55 @@ run() {
         echo "No forward directory"
     fi
 }
+
+# Copy file from ssh server to local
+#
+# Creates a copy of a file located on a remote server,
+# locally on the system.
+#
+# - Parameters:
+#   - addr: the address of the remote host
+#   - path: the path of the file on the remote server
+#   - output: the output path on your local machine, defaults to .$path
+#   - -i: specify custom SSH key (optional, defaults to ~/.ssh/id_ed25519)
+# - Returns:
+#   - 0 if successful.
+#   - Prints message if error
+remote_copy() {
+    local ssh_key="$HOME/.ssh/id_ed25519"
+    local addr=""
+    local remote_path=""
+    local output_path=""
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -i)
+                ssh_key="$2"
+                shift 2
+                ;;
+            *)
+                if [[ -z "$addr" ]]; then
+                    addr="$1"
+                elif [[ -z "$remote_path" ]]; then
+                    remote_path="$1"
+                elif [[ -z "$output_path" ]]; then
+                    output_path="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+    
+    [[ -z "$addr" || -z "$remote_path" ]] && {
+        echo "Usage: remote_copy [-i key_file] <addr> <path> [output]"
+        return 1
+    }
+    
+    # If no output path provided, use basename of remote path in current directory
+    if [[ -z "$output_path" ]]; then
+        output_path="./$(basename "$remote_path")"
+    fi
+    
+    scp -i "$ssh_key" "$addr:$remote_path" "$output_path"
+}
