@@ -1,6 +1,6 @@
 # • Appearance
-background-opacity = .9
-background-blur = 45
+#background-opacity = .95
+#background-blur = 45
 theme = "vesper"
 
 # • Typography
