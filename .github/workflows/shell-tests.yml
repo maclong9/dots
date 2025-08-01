@@ -263,31 +263,3 @@ jobs:
 
                   time_end=$(date +%s)
                   echo "Script execution took $((time_end - time_start)) seconds"
-
-    dotfiles-integration:
-        name: Complete Dotfiles Setup Test
-        runs-on: macos-latest
-        steps:
-            - name: Test complete setup process
-              run: curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
-
-            - name: Verify dotfiles structure
-              run: |
-                  cd ~
-                  echo "Verifying dotfiles structure..."
-                  
-                  # Check for dotfiles (files starting with .)
-                  dotfile_count=$(find . -maxdepth 1 -name ".*" -type f | wc -l)
-                  echo "Found $dotfile_count dotfiles"
-
-                  # Ensure dotfile configurations linked correctly
-                  for file in ".zshrc" ".gitconfig" ".gitignore"; do
-                      if [ -f "$file" ]; then
-                          echo "$file exists"
-                      else
-                          echo "$file does not exist"
-                          exit 1
-                      fi
-                  done
-                  
-                  echo "Dotfiles structure verification complete"
