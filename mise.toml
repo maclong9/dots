@@ -1,5 +1,6 @@
 [settings]
 experimental = true
+idiomatic_version_file_enable_tools = ["swift"]
 
 [tools]
 github-cli = 'latest'
@@ -10,7 +11,7 @@ node = 'lts'
 shellcheck = 'latest'
 shfmt = 'latest'
 zoxide = 'latest'
-'ubi:bensadeh/circumflex' = { version = 'latest', matching = 'darwin_arm64' }
+'ubi:bensadeh/circumflex' = 'latest' 
 'spm:maclong9/list' = 'latest'
 'npm:@anthropic-ai/claude-code' = 'latest'
 'npm:@tailwindcss/language-server' = 'latest'
