@@ -31,15 +31,12 @@ ZSH_RC_COMPILED="$ZSH_RC.zwc"
 [[ -f ~/.zshrc.local ]] && . "$HOME/.zshrc.local"
 
 # Directory history tracking
-# Maintains a history of visited directories for quick navigation
-# Use -- and ++ aliases to navigate backward/forward through history
 typeset -g -a _dir_history
 typeset -g _dir_history_index=0
 
 autoload -Uz add-zsh-hook
 
 # Track directory changes for navigation history
-# Skips tracking when navigating via history commands
 _track_directory_change() {
     # Don't track if we're navigating via -- or ++
     [[ -n "$_navigating_history" ]] && return
@@ -117,7 +114,6 @@ precmd() {
         _git_status_cache_time=$current_time
     fi
     
-    # Simplified prompt: username on hostname — directory — git_branch
     local user_host="%F{7}%n %F{8}on %F{7}%m"
     local separator=" %F{8}—%f "
     local directory="%B%F{15}%~%b"
@@ -155,7 +151,7 @@ alias sf='swift format --recursive --in-place'
 alias sl='swift format lint --recursive'
 
 # Shell tooling
-alias shf='find . -name "*.{sh,zsh}" -type f -exec shfmt -w -i 4 -ci {} +'
+alias shf='find . -name "*.sh" -type f -exec shfmt -d -i 4 -ci {} +'
 alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
 
 # Utilities
