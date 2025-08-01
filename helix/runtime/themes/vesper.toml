@@ -62,7 +62,7 @@ warning = { fg = "beige" }
 # tabstop = { bg = "white" }
 
 # UI
-# "ui.window" = { bg = "white" }
+"ui.window" = { fg = "dim-gray" }
 
 "ui.popup" = { bg = "dark-gray" }
 
