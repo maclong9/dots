@@ -391,8 +391,8 @@ main() {
     log debug "Arguments: $*"
     log info "Initialising developer environment..."
 
-    # Ensure Developer Tooling are installed ahead of time 
-    [ "$IS_MAC" = true ] &&  run_step "Restoring system settings defaults" restore_defaults
+    # Ensure Developer Tooling are installed ahead of time
+    [ "$IS_MAC" = true ] && run_step "Restoring system settings defaults" restore_defaults
 
     # Critical setup steps first
     run_step "Setting up dotfiles" setup_dotfiles
@@ -404,7 +404,7 @@ main() {
         run_step "Configuring Touch ID" setup_touch_id
     }
 
-   # Run all operations immediately (default behavior)
+    # Run all operations immediately (default behavior)
     run_step "Setting up color schemes" setup_colors
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
