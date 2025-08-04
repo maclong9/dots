@@ -139,13 +139,6 @@ alias g='git'
     alias lar='sls -clira --human-readable'
 }
 
-# Multiplexer
-alias zj='zellij'
-alias zji='zellij -n ide -s $(basename "$PWD" | sed "s/^\.//")'
-alias zjda='zellij da'
-alias zjka='zellij ka'
-alias zjw='zellij -l welcome'
-
 # Swift tooling
 alias sf='swift format --recursive --in-place'
 alias sl='swift format lint --recursive'
@@ -159,6 +152,7 @@ alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
 alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 alias clx='circumflex'
+
 # • Compilation & cleanup
 
 # Compile .zshrc and completions for performance
