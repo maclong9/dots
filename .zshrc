@@ -129,15 +129,10 @@ precmd() {
 alias g='git'
 
 # File listing
-[[ "$IS_MAC" = true ]] && {
-    if command -v sls >/dev/null 2>&1; then
-      mise use -g --silent spm:maclong9/list@latest > /dev/null 2>&1;
-    fi
-    alias ls='sls -cli --human-readable'
-    alias la='sls -clia --human-readable'
-    alias lr='sls -clir --human-readable'
-    alias lar='sls -clira --human-readable'
-}
+alias ls='sls -cli --human-readable'
+alias la='sls -clia --human-readable'
+alias lr='sls -clir --human-readable'
+alias lar='sls -clira --human-readable'
 
 # Swift tooling
 alias sf='swift format --recursive --in-place'
