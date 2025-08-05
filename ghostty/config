@@ -23,6 +23,7 @@ keybind = alt+shift+h=resize_split:left,10
 keybind = alt+shift+j=resize_split:down,10
 keybind = alt+shift+k=resize_split:up,10
 keybind = alt+shift+l=resize_split:right,10
+keybind = super+shift+f=toggle_split_zoom
 keybind = global:super+§=toggle_quick_terminal
 keybind = shift+enter=text:\n
 macos-option-as-alt = true
