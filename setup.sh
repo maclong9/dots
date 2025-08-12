@@ -25,30 +25,6 @@ if ! [ -f "$utils_temp" ] || ! [ -s "$utils_temp" ]; then
     exit 1
 fi
 
-# Verify it is a shell script
-if ! head -1 "$utils_temp" | grep -q '^#!/'; then
-    printf "\033[0;31m[ERROR]\033[0m Downloaded file doesn't appear to be a shell script\n" >&2
-    rm -f "$utils_temp"
-    exit 1
-fi
-
-# Expected SHA256 hash for utils.sh (update this when utils.sh changes)
-expected_sha256="$(curl -fsSL --max-time 10 "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh.sha256" 2>/dev/null || echo "")"
-
-if [ -n "$expected_sha256" ] && command -v shasum >/dev/null 2>&1; then
-    actual_sha256=$(shasum -a 256 "$utils_temp" | cut -d' ' -f1)
-    if [ "$actual_sha256" != "$expected_sha256" ]; then
-        printf "\033[0;33m[WARNING]\033[0m SHA256 checksum mismatch for utils.sh\n" >&2
-        printf "Expected: %s\n" "$expected_sha256" >&2
-        printf "Actual: %s\n" "$actual_sha256" >&2
-        printf "Continuing with basic validation only...\n" >&2
-    else
-        printf "\033[0;32m[INFO]\033[0m SHA256 checksum verified successfully\n" >&2
-    fi
-else
-    printf "\033[0;33m[WARNING]\033[0m SHA256 verification not available, using basic validation only\n" >&2
-fi
-
 # shellcheck disable=SC1091
 . /tmp/utils.sh || {
     printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2

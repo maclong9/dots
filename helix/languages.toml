@@ -41,7 +41,7 @@ soft-wrap.enable = true
 [[language]]
 name = "javascript"
 scope = "source.js"
-file-types = ["js"]
+file-types = ["js", "mjs"]
 language-servers = [
   "typescript-language-server", 
   "vscode-eslint-language-server",
