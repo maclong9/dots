@@ -8,7 +8,7 @@ for cmd in git curl ln mkdir; do
     }
 done
 
-# Download and source utilities with integrity verification
+# Download and source utilities
 url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh"
 utils_temp="/tmp/utils.sh"
 
@@ -353,12 +353,13 @@ restore_defaults() {
         "Restore defaults from system settings plist files"
 }
 
+# shellcheck disable=SC1091
 install_swift() {
-    curl -O "https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz" && \
-    tar zxf "swiftly-$(uname -m).tar.gz" && \
-    ./swiftly init --quiet-shell-followup && \
-    . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && \
-    hash -r
+    curl -O "https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz" &&
+        tar zxf "swiftly-$(uname -m).tar.gz" &&
+        ./swiftly init --quiet-shell-followup &&
+        . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" &&
+        hash -r
     rm -rf swiftly-*.tar.gz
 }
 
@@ -386,7 +387,7 @@ main() {
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
 
-    [ "$IS_MAC" = true ] && { 
+    [ "$IS_MAC" = true ] && {
         run_step "Installing Xcode command line tools" setup_xcode_tools
         run_step "Configuring Touch ID" setup_touch_id
     }
