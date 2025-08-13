@@ -2,14 +2,15 @@
 
 # System maintenance script for cleaning caches and temporary files
 
+# shellcheck disable=SC1091
+. "$HOME/.config/scripts/core/utils.sh"
+
 # Configuration variables
 CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}" # Default 30 days for old file cleanup
+LOG_FILE="/tmp/maintenance.log"
 
 # Ensure HOME is set for launchd environment
 [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
-
-# shellcheck disable=SC1091
-. "$HOME_PATH/.config/scripts/core/utils.sh"
 
 # Add timestamp to start of maintenance log
 echo "=== Maintenance run started at $(date) ===" >>"$LOG_FILE"
