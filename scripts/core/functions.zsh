@@ -93,6 +93,25 @@ run() {
     eval "$@"
 }
 
+# Search shell command history (full saved history).
+#
+# Greps through the persistent history file ($HISTFILE) for a search term,
+# rather than the limited in-memory history list.
+#
+# - Parameters:
+#   - ...: Search pattern(s) to pass to grep.
+# - Returns:
+#   - 0 if matches are found.
+#   - Non-zero if no matches.
+# - Usage:
+#   ```sh
+#   hg npm
+#   hg ssh user@
+#   ```
+hg() {
+    grep --color=auto -i "$@" "$HISTFILE"
+}
+
 # • Directory navigation
 
 # Navigate backward in directory history.
@@ -184,3 +203,4 @@ remote_copy() {
     
     scp -i "$ssh_key" "$addr:$remote_path" "$output_path"
 }
+

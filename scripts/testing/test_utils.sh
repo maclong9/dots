@@ -13,7 +13,7 @@ FAIL_COUNT=0
 
 # Test utilities
 setup_test() {
-    mkdir -p "$TEST_DIR"
+    ensure_dir "$TEST_DIR"
     cd "$TEST_DIR"
     TEST_COUNT=$((TEST_COUNT + 1))
 }
