@@ -74,6 +74,3 @@
     # Reset operations
     unstage = reset HEAD --
     uncommit = reset --soft HEAD~1
-
-[color]
-    ui = auto

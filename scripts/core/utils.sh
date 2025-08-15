@@ -174,37 +174,41 @@ spinner() {
     return "$exit_code"
 }
 
-# Executes a command with automatic error logging and failure handling.
+# Executes a command with automatic logging and error handling.
 #
-# Evaluates a command string and logs an error message if the command fails.
-# Returns 1 on command failure to allow for proper error propagation.
+# Logs the command being executed, runs it, and logs an error if it fails.
+# Provides comprehensive command execution with full logging support.
 #
 # - Parameters:
 #   - command: Command string to execute.
-#   - error_msg: Error message to log if command fails.
+#   - error_msg: Error message to log if command fails (optional).
 # - Returns:
 #   - 0 if command succeeds.
 #   - 1 if command fails.
 # - Usage:
 #   ```sh
-#   run_or_fail "mkdir /tmp/test" "Failed to create test directory"
+#   run_or_fail "mkdir /tmp/test" "create test directory"
+#   run_or_fail "ls -la"  # Auto-generates error message
 #   ```
 run_or_fail() {
-    command="$1"
-    error_msg="$2"
+    _command="$1"
+    _error_msg="${2:-execute command: $_command}"
 
-    eval "$command" || {
+    log info "Executing: $_command"
+
+    if ! eval "$_command"; then
         # Auto-prepend "Failed to" if not already present
-        case "$error_msg" in
+        case "$_error_msg" in
             "Failed to"* | "")
-                log error "$error_msg"
+                log error "$_error_msg"
                 ;;
             *)
-                log error "Failed to $error_msg"
+                log error "Failed to $_error_msg"
                 ;;
         esac
         return 1
-    }
+    fi
+    return 0
 }
 
 # • File management
@@ -446,5 +450,150 @@ download_file() {
     else
         log error "Neither curl unavailable"
         return 1
+    fi
+}
+
+# • Process management
+
+# Logs an error message and exits the script with the specified exit code.
+#
+# Provides a standardized way to handle fatal errors across scripts.
+#
+# - Parameters:
+#   - exit_code: Exit code to use (default: 1).
+#   - message: Error message to log.
+# - Returns:
+#   - Never returns (exits script).
+# - Usage:
+#   ```sh
+#   die 3 "Database connection failed"
+#   die "Configuration file not found"  # Uses exit code 1
+#   ```
+die() {
+    _exit_code=1
+    if [ "$#" -gt 1 ]; then
+        _exit_code="$1"
+        shift
+    fi
+    log error "$*"
+    exit "$_exit_code"
+}
+
+# Checks if a command or program exists in the system PATH.
+#
+# Uses command -v to check for command availability in a POSIX-compliant way.
+#
+# - Parameters:
+#   - command_name: Name of the command to check for.
+# - Returns:
+#   - 0 if command exists.
+#   - 1 if command not found.
+# - Usage:
+#   ```sh
+#   if command_exists git; then
+#       echo "Git is available"
+#   fi
+#   ```
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Safely changes to a directory with error handling.
+#
+# Changes to the specified directory and exits with error message if the change fails.
+#
+# - Parameters:
+#   - directory: Path to change to.
+# - Returns:
+#   - 0 on success.
+#   - Exits script with code 1 if directory change fails.
+# - Usage:
+#   ```sh
+#   safe_cd "/path/to/directory"
+#   ```
+safe_cd() {
+    if ! cd "$1"; then
+        log error "Failed to change directory to: $1"
+        exit 1
+    fi
+}
+
+# Creates a directory if it doesn't already exist.
+#
+# Uses mkdir -p to create the directory and any necessary parent directories.
+#
+# - Parameters:
+#   - directory: Path to create.
+# - Returns:
+#   - 0 on success.
+#   - 1 if directory creation fails.
+# - Usage:
+#   ```sh
+#   ensure_dir "/path/to/new/directory"
+#   ```
+ensure_dir() {
+    if [ ! -d "$1" ]; then
+        if ! mkdir -p "$1"; then
+            log error "Failed to create directory: $1"
+            return 1
+        fi
+        log debug "Created directory: $1"
+    fi
+    return 0
+}
+
+# Acquires a lock file to prevent concurrent script execution.
+#
+# Creates a lock file at the specified path. If the lock file already exists,
+# the function exits with an error message.
+#
+# - Parameters:
+#   - lock_file: Path to the lock file.
+#   - script_name: Name of the script (for error messages).
+# - Returns:
+#   - 0 on success.
+#   - Exits script with code 5 if lock already exists.
+# - Usage:
+#   ```sh
+#   acquire_lock "/tmp/myscript.lock" "myscript.sh"
+#   ```
+acquire_lock() {
+    _lock_file="$1"
+    _script_name="${2:-script}"
+
+    if [ -f "$_lock_file" ]; then
+        log error "Previous $_script_name still running. Lock file exists: $_lock_file"
+        exit 5
+    fi
+
+    if ! touch "$_lock_file"; then
+        log error "Failed to create lock file: $_lock_file"
+        exit 1
+    fi
+    log debug "Acquired lock file: $_lock_file"
+}
+
+# Releases a lock file created by acquire_lock.
+#
+# Removes the lock file if it exists. Logs a warning if removal fails
+# but does not exit the script.
+#
+# - Parameters:
+#   - lock_file: Path to the lock file to remove.
+# - Returns:
+#   - 0 always (non-fatal operation).
+# - Usage:
+#   ```sh
+#   release_lock "/tmp/myscript.lock"
+#   ```
+release_lock() {
+    _lock_file="$1"
+
+    if [ -f "$_lock_file" ]; then
+        if ! rm -f "$_lock_file"; then
+            log warning "Failed to remove lock file: $_lock_file"
+        else
+            log debug "Released lock file: $_lock_file"
+        fi
     fi
 }

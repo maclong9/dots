@@ -25,6 +25,29 @@ if ! [ -f "$utils_temp" ] || ! [ -s "$utils_temp" ]; then
     exit 1
 fi
 
+# Verify it is a shell script
+if ! head -1 "$utils_temp" | grep -q '^#!/'; then
+    printf "\033[0;31m[ERROR]\033[0m Downloaded file doesn't appear to be a shell script\n" >&2
+    rm -f "$utils_temp"
+    exit 1
+fi
+
+# Expected SHA256 hash for utils.sh (update this when utils.sh changes)
+expected_sha256="$(curl -fsSL --max-time 10 "https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh.sha256" 2>/dev/null || echo "")"
+
+if [ -n "$expected_sha256" ] && command -v shasum >/dev/null 2>&1; then
+    actual_sha256=$(shasum -a 256 "$utils_temp" | cut -d' ' -f1)
+    if [ "$actual_sha256" != "$expected_sha256" ]; then
+        printf "\033[0;33m[WARNING]\033[0m SHA256 checksum mismatch for utils.sh\n" >&2
+        printf "Expected: %s\n" "$expected_sha256" >&2
+        printf "Actual: %s\n" "$actual_sha256" >&2
+        printf "Continuing with basic validation only...\n" >&2
+    else
+        printf "\033[0;32m[INFO]\033[0m SHA256 checksum verified successfully\n" >&2
+    fi
+else
+    printf "\033[0;33m[WARNING]\033[0m SHA256 verification not available, using basic validation only\n" >&2
+fi
 # shellcheck disable=SC1091
 . /tmp/utils.sh || {
     printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
@@ -87,7 +110,7 @@ setup_dotfiles() {
     log info "Installing dotfiles..."
 
     # Check git availability
-    if ! command -v git >/dev/null 2>&1; then
+    if ! command_exists git; then
         log error "git not found - please install git first"
         return 1
     fi
@@ -110,7 +133,7 @@ setup_dotfiles() {
         "clone dotfiles repository (check network connection and GitHub access)"
 
     # ZSH Plugins
-    run_or_fail "mkdir -p $HOME/.zsh/plugins" "create ZSH plugins directory (check home directory permissions)"
+    ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
     # Syntax Highlighting
     run_or_fail "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
     $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone fast syntax highlighting (check network connection)"
@@ -159,7 +182,7 @@ setup_colors() {
     if [ "$IS_MAC" = true ]; then
         xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-        run_or_fail "mkdir -p \"$xcode_dir\"" "create Xcode colors directory"
+        ensure_dir "$xcode_dir" || die 1 "Failed to create Xcode colors directory"
     fi
 
     # Count and check scheme directories
@@ -237,7 +260,7 @@ link_dotfiles() {
 setup_mise() {
     log info "Installing mise and development tools..."
 
-    if command -v mise >/dev/null 2>&1; then
+    if command_exists mise; then
         log success "mise already installed"
     else
         # Download mise installer with verification
@@ -367,10 +390,7 @@ run_step() {
     step_name="$1"
     step_function="$2"
 
-    spinner "$step_name" "$step_function" || {
-        log error "Failed during $step_name"
-        exit 1
-    }
+    spinner "$step_name" "$step_function" || die 1 "Failed during $step_name"
 }
 
 main() {

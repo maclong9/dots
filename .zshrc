@@ -92,8 +92,6 @@ zstyle ':vcs_info:git:*' check-for-changes true
 _git_status_cache=""
 _git_status_cache_time=0
 
-
-
 precmd() {
     local current_time=$(date +%s)
     

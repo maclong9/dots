@@ -7,7 +7,6 @@
 
 # Configuration variables
 CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}" # Default 30 days for old file cleanup
-LOG_FILE="/tmp/maintenance.log"
 
 # Ensure HOME is set for launchd environment
 [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
@@ -20,7 +19,7 @@ calculate_size() {
     path="$1"
     [ -d "$path" ] || return 1
 
-    if command -v du >/dev/null 2>&1; then
+    if command_exists du; then
         du -sh "$path" 2>/dev/null | cut -f1
     else
         echo "0B"
@@ -32,7 +31,7 @@ calculate_size_bytes() {
     path="$1"
     [ -d "$path" ] || return 1
 
-    if command -v du >/dev/null 2>&1; then
+    if command_exists du; then
         du -sb "$path" 2>/dev/null | cut -f1
     else
         echo "0"
@@ -42,7 +41,7 @@ calculate_size_bytes() {
 # Format bytes to human readable
 format_bytes() {
     bytes="$1"
-    if command -v numfmt >/dev/null 2>&1; then
+    if command_exists numfmt; then
         numfmt --to=iec-i --suffix=B "$bytes" 2>/dev/null || echo "${bytes}B"
     else
         echo "${bytes}B"
@@ -113,7 +112,7 @@ clean_files() {
         # Process files without pipeline to preserve variable scope
         while IFS= read -r file; do
             [ -f "$file" ] && {
-                if command -v stat >/dev/null 2>&1; then
+                if command_exists stat; then
                     if [ "$(uname)" = "Darwin" ]; then
                         file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
                     else
@@ -130,7 +129,7 @@ EOF
     else
         # Handle single file patterns
         [ -f "$pattern" ] && {
-            if command -v stat >/dev/null 2>&1; then
+            if command_exists stat; then
                 if [ "$(uname)" = "Darwin" ]; then
                     file_size=$(stat -f%z "$pattern" 2>/dev/null || echo "0")
                 else
@@ -173,7 +172,7 @@ cleanup_macos() {
 
         for file in $old_files; do
             [ -f "$file" ] && {
-                if command -v stat >/dev/null 2>&1; then
+                if command_exists stat; then
                     file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
                     old_size=$((old_size + file_size))
                 fi
@@ -251,7 +250,7 @@ cleanup_linux() {
     fi
 
     # Package manager caches
-    if command -v apt >/dev/null 2>&1; then
+    if command_exists apt; then
         if sudo -n true 2>/dev/null; then
             echo "  → Cleaning apt cache..." >>/tmp/maintenance.log
             sudo apt clean 2>/dev/null && {
@@ -315,7 +314,7 @@ show_disk_usage() {
     log info "Disk usage summary:"
     echo "=== Disk Usage Summary ===" >>/tmp/maintenance.log
 
-    if command -v df >/dev/null 2>&1; then
+    if command_exists df; then
         df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
             echo "Root filesystem ($filesystem):"
             echo "  Size: $size"
@@ -332,7 +331,7 @@ show_disk_usage() {
         done
     fi
 
-    if [ "$IS_MAC" = true ] && command -v df >/dev/null 2>&1; then
+    if [ "$IS_MAC" = true ] && command_exists df; then
         df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
             echo "Data volume ($filesystem):"
             echo "  Size: $size"
