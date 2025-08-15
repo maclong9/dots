@@ -74,3 +74,9 @@
     # Reset operations
     unstage = reset HEAD --
     uncommit = reset --soft HEAD~1
+[credential "https://github.com"]
+	helper = 
+	helper = !/nfs/ssl/mac/.local/share/mise/installs/github-cli/2.76.2/gh_2.76.2_linux_amd64/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/nfs/ssl/mac/.local/share/mise/installs/github-cli/2.76.2/gh_2.76.2_linux_amd64/bin/gh auth git-credential
