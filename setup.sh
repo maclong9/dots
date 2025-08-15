@@ -398,7 +398,8 @@ main() {
     log info "Initialising developer environment..."
 
     if [ "$IS_MAC" = true ]; then
-        run_step "Restoring system settings defaults" restore_defaults
+        run_step "Installing Xcode command line tools" setup_xcode_tools
+        run_step "Configuring Touch ID" setup_touch_id
     else
         run_step "Installing swift via swiftly" install_swift
     fi
@@ -406,15 +407,13 @@ main() {
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
     run_step "Installing mise and development tools" setup_mise
-
-    [ "$IS_MAC" = true ] && {
-        run_step "Installing Xcode command line tools" setup_xcode_tools
-        run_step "Configuring Touch ID" setup_touch_id
-    }
-
-    run_step "Setting up color schemes" setup_colors
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
+
+    if [ "$IS_MAC" = true ]; then
+        run_step "Restoring system settings defaults" restore_defaults
+        run_step "Setting up color schemes" setup_colors
+    fi
 
     log success "Setup complete!"
 
