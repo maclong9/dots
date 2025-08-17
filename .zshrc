@@ -145,6 +145,7 @@ alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
 alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 alias clx='circumflex'
+alias mufmt='python3 -m djlint Sources/App/Resources/templates/*.mustache --reformat --profile=mustache --indent=4 --max-line-length=100 --format-css --format-js'
 
 # • Compilation & cleanup
 

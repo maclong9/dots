@@ -1,3 +1,7 @@
+[[grammar]]
+name = "mustache"
+source = { git = "https://github.com/TheLeoP/tree-sitter-mustache" }
+
 [language-server.harper-ls]
 command = "harper-ls"
 args = ["--stdio"]
@@ -17,16 +21,14 @@ formatter = { command = "shfmt", args = ["-i", "4", "-ci"] }
 
 [[language]]
 name = "html"
-file-types = ["html", "mustache"]
+file-types = ["html"]
 language-servers = [ "vscode-html-language-server", "tailwindcss-ls" ]
 
 [[language]]
 name = "mustache"
-scope = "text.html.mustache"
+scope = "text.mustache"
+file-types = ["mustache"]
 injection-regex = "mustache"
-file-types = ["mustache", "hbs", "handlebars"]
-block-comment-tokens = { start = "{{!--", end = "--}}" }
-language-servers = ["html-languageserver"]
 
 [[language]]
 name = "css"
