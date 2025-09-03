@@ -10,6 +10,10 @@ args = ["--stdio"]
 command = "tailwindcss-language-server"
 args = ["--stdio"]
 
+[language-server.pkl-lsp]
+command = "pkl-lsp"
+args = []
+
 [[language]]
 name = "python"
 scope = "source.py"
@@ -75,3 +79,10 @@ language-servers = [
   "vscode-eslint-language-server",
   "tailwindcss-ls",
 ]
+
+[[language]]
+name = "pkl"
+scope = "source.pkl"
+file-types = ["pkl"]
+comment-token = "//"
+language-servers = ["pkl-lsp"]
