@@ -132,14 +132,6 @@ alias la='sls -clia --human-readable'
 alias lr='sls -clir --human-readable'
 alias lar='sls -clira --human-readable'
 
-# Swift tooling
-alias sf='swift format --recursive --in-place'
-alias sl='swift format lint --recursive'
-
-# Shell tooling
-alias shf='find . -name "*.sh" -type f -exec shfmt -w -i 4 -ci {} +'
-alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
-
 # Utilities
 alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
