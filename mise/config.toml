@@ -19,3 +19,4 @@ zoxide = 'latest'
 'npm:vscode-langservers-extracted' = 'latest'
 "npm:wrangler" = "latest"
 "spm:maclong9/list" = "v1.3.0"
+pkl = "latest"
