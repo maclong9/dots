@@ -4,5 +4,6 @@
 .env.*
 *.bak
 gh-copilot/
+github-copilot/
 gh/
 procps

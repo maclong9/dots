@@ -9,6 +9,7 @@ helix = "latest"
 marksman = 'latest'
 node = 'lts'
 pkl = "latest"
+"ubi:apple/pkl" = { version = "latest", matching = "pkldoc-macos-aarch64", exe = "pkldoc" }
 shellcheck = 'latest'
 shfmt = 'latest'
 zoxide = 'latest'

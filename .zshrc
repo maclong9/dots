@@ -22,7 +22,7 @@ ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"
 ZSH_HISTORY_FILE="$HOME/.zsh_history"
 ZSH_SCRIPTS_DIR="$HOME/.config/scripts"
 ZSH_PLUGINS_DIR="$HOME/.zsh/plugins"
-ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
+ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions/:/usr/local/share/zsh/site-functions/"
 ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"
 ZSH_RC="$HOME/.zshrc"
 ZSH_RC_COMPILED="$ZSH_RC.zwc"
@@ -58,6 +58,10 @@ export HISTSIZE=50000 SAVEHIST=50000 HISTFILE="$ZSH_HISTORY_FILE"
 setopt AUTO_CD AUTO_PUSHD CORRECT EXTENDED_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS INTERACTIVE_COMMENTS PUSHD_IGNORE_DUPS PUSHD_SILENT SHARE_HISTORY
 
+# Setup completion paths before compinit
+[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR" "$HOME/.zsh/completions")
+fpath=("$ZSH_PLUGINS_DIR/plugin/zsh-completions/src" $fpath)
+
 # Load ZSH completions
 autoload -Uz compinit bashcompinit
 compinit -d "$ZSH_COMPDUMP" -C
@@ -71,15 +75,11 @@ compinit -d "$ZSH_COMPDUMP" -C
     done
 }
 
-# Source completions
-[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR" "$HOME/.zsh/completions")
-
 # Source plugins
 [[ -d "$ZSH_PLUGINS_DIR" ]] && {
     plugins=("$ZSH_PLUGINS_DIR"/**/*.plugin.zsh(N))
     (( ${#plugins} )) && for plugin in "${plugins[@]}"; do source "$plugin"; done
 }
-fpath=("$ZSH_PLUGINS_DIR/plugin/zsh-completions/src" $fpath)
 
 # • Prompt configuration
 

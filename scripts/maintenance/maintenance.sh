@@ -359,6 +359,9 @@ cleanup_mise() {
     mise_output=$("$HOME_PATH/.local/bin/mise" prune 2>&1)
     echo "$mise_output"
     echo "$mise_output" >>/tmp/maintenance.log
+
+    mise self-update
+    mise upgrade
 }
 
 main() {
