@@ -137,6 +137,10 @@ alias perf='ZSH_PERF_MONITOR=1 zsh'
 alias notarised='spctl -a -vvv -t install'
 alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs'
 
+# Shell tooling
+alias shf='find . -name "*.sh" -type f -exec shfmt -w -i 4 -ci {} +'
+alias shl='find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +'
+
 # • Compilation & cleanup
 
 # Compile .zshrc and completions for performance
@@ -155,4 +159,4 @@ eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
 
 
-. ./.zshrc.local
+[[ -f "$HOME/.zshrc.local" ]] && . ./.zshrc.local
