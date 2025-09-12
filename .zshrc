@@ -154,3 +154,5 @@ eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
 # Performance monitoring output
 [[ -n "$ZSH_PERF_MONITOR" ]] && zprof
 
+
+. ./.zshrc.local

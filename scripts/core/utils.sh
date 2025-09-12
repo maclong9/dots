@@ -44,39 +44,48 @@ log() {
     level="$1"
     message="$2"
 
-    # Determine log file from calling script name
     if [ -z "$LOG_FILE" ]; then
-        # Get the name of the calling script (remove path and extension)
         script_name=$(basename "${0%.*}" 2>/dev/null || echo "utils")
         LOG_FILE="/tmp/${script_name}.log"
     fi
 
-    # Output to console with colors
+    # Choose color + uppercase label for console
     case "$level" in
         info)
-            printf "${BLUE}[INFO]${NC} %s\n" "$message"
-            ;;
+            color="$BLUE";  label="INFO" ;;
         success)
-            printf "${GREEN}[SUCCESS]${NC} %s\n" "$message"
-            ;;
+            color="$GREEN"; label="SUCCESS" ;;
         warning)
-            printf "${YELLOW}[WARNING]${NC} %s\n" "$message" >&2
-            ;;
+            color="$YELLOW"; label="WARNING" ;;
         error)
-            printf "${RED}[ERROR]${NC} %s\n" "$message" >&2
-            ;;
+            color="$RED";   label="ERROR" ;;
         debug)
-            if [ "$DEBUG" = "true" ]; then
-                printf "${CYAN}[DEBUG]${NC} %s\n" "$message" >&2
-            fi
-            ;;
+            color="$CYAN";  label="DEBUG" ;;
+        plain)
+            color=""; label="" ;;
+        *)
+            color="$WHITE"; label="$(printf '%s' "$level" | tr '[:lower:]' '[:upper:]')" ;;
     esac
 
-    # Also log to file (without colors, but only if not debug or debug is enabled)
+    # Console output (with color + brackets)
+    if [ "$level" = "warning" ] || [ "$level" = "error" ] || [ "$level" = "debug" ]; then
+        printf "${color}[%s]${NC} %s\n" "$label" "$message" >&2
+    elif [ "$level" = "plain" ]; then
+        printf "%s\n" "$message"
+    else
+        printf "${color}[%s]${NC} %s\n" "$label" "$message"
+    fi
+
+    # File output (plain uppercase, no ANSI codes, no square brackets)
     if [ "$level" != "debug" ] || [ "$DEBUG" = "true" ]; then
-        echo "[$level] $message" >>"$LOG_FILE"
+        if [ "$level" = "plain" ]; then
+            printf "%s\n" "$message" >>"$LOG_FILE"
+        else
+            printf "[%s] %s\n" "$label" "$message" >>"$LOG_FILE"
+        fi
     fi
 }
+
 
 # Parses command line arguments and sets environment variables.
 #
@@ -187,10 +196,10 @@ spinner() {
 #   - 1 if command fails.
 # - Usage:
 #   ```sh
-#   run_or_fail "mkdir /tmp/test" "create test directory"
-#   run_or_fail "ls -la"  # Auto-generates error message
+#   try_run "mkdir /tmp/test" "create test directory"
+#   try_run "ls -la"  # Auto-generates error message
 #   ```
-run_or_fail() {
+try_run() {
     _command="$1"
     _error_msg="${2:-execute command: $_command}"
 
