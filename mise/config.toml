@@ -13,7 +13,6 @@ pkl = "latest"
 shellcheck = 'latest'
 shfmt = 'latest'
 zoxide = 'latest'
-'npm:@anthropic-ai/claude-code' = 'latest'
 'npm:@tailwindcss/language-server' = 'latest'
 'npm:bash-language-server' = 'latest'
 'npm:typescript' = 'latest'        

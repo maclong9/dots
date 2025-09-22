@@ -2,7 +2,6 @@
 theme = "vesper"
 
 # • Editor settings
- 
 [editor]
 auto-completion = true
 bufferline = "multiple"

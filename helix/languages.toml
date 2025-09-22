@@ -1,7 +1,3 @@
-[[grammar]]
-name = "mustache"
-source = { git = "https://github.com/TheLeoP/tree-sitter-mustache" }
-
 [language-server.harper-ls]
 command = "harper-ls"
 args = ["--stdio"]
@@ -9,10 +5,6 @@ args = ["--stdio"]
 [language-server.tailwindcss-ls]
 command = "tailwindcss-language-server"
 args = ["--stdio"]
-
-[language-server.pkl-lsp]
-command = "java -jar ~/.local/bin/pkl-lsp-0.4.0.jar"
-args = []
 
 [[language]]
 name = "python"
@@ -27,12 +19,6 @@ formatter = { command = "shfmt", args = ["-i", "4", "-ci"] }
 name = "html"
 file-types = ["html"]
 language-servers = [ "vscode-html-language-server", "tailwindcss-ls" ]
-
-[[language]]
-name = "mustache"
-scope = "text.mustache"
-file-types = ["mustache"]
-injection-regex = "mustache"
 
 [[language]]
 name = "css"
@@ -79,10 +65,3 @@ language-servers = [
   "vscode-eslint-language-server",
   "tailwindcss-ls",
 ]
-
-[[language]]
-name = "pkl"
-scope = "source.pkl"
-file-types = ["pkl"]
-comment-token = "//"
-language-servers = ["pkl-lsp"]
