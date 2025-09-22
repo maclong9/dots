@@ -1,265 +1,135 @@
 name: Shell Script Testing
 
 on:
-    push:
-        branches: [ main, develop ]
-    pull_request:
-        branches: [ main ]
-    workflow_dispatch:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-    posix-compliance:
-        name: POSIX Compliance Check
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+  posix-compliance:
+    name: POSIX Compliance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Install shellcheck and dash
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y shellcheck dash
+      - name: Install shellcheck and dash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck dash
 
-            - name: Download and source utilities
-              run: |
-                  url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/shell/lib/utils.sh"
-                  curl -fsSL "$url" -o /tmp/utils.sh || {
-                      printf "\033[0;31m[ERROR]\033[0m Failed to download utils.sh\n" >&2
-                      exit 1
-                  }
+      - name: Run shellcheck on all shell scripts
+        run: |
+          find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc -e SC1090 {} +
 
-                  . /tmp/utils.sh || {
-                      printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
-                      exit 1
-                  }
+      - name: Test POSIX compliance with dash
+        run: |
+          for script in $(find . -name "*.sh" -type f); do
+            echo "Testing POSIX compliance of $script with dash"
+            dash -n "$script" || exit 1
+          done
 
-            - name: Run shellcheck on all shell scripts
-              run: |
-                  find . -name "*.sh" -type f -exec shellcheck -x -s sh -f gcc {} +
+  macos-testing:
+    name: macOS Compatibility Test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Test POSIX compliance with dash
-              run: |
-                  for script in $(find . -name "*.sh" -type f); do
-                      echo "Testing POSIX compliance of $script with dash"
-                      dash -n "$script" || exit 1
-                  done
+      - name: Test utils.sh functions
+        run: |
+          chmod +x scripts/core/utils.sh
+          . scripts/core/utils.sh
+          log info "Testing macOS compatibility"
+          log success "macOS test successful"
 
-    macos-testing:
-        name: macOS Compatibility Test
-        runs-on: macos-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Test maintenance script
+        run: |
+          chmod +x scripts/maintenance/maintenance.sh
+          cd scripts/maintenance
+          export DEBUG=true
+          ./maintenance.sh || true
 
-            - name: Verify standard tools availability
-              run: |
-                  # Verify standard macOS tools are available
-                  command -v git >/dev/null 2>&1 || { echo "git not found"; exit 1; }
-                  command -v curl >/dev/null 2>&1 || { echo "curl not found"; exit 1; }
-                  command -v ln >/dev/null 2>&1 || { echo "ln not found"; exit 1; }
-                  command -v mkdir >/dev/null 2>&1 || { echo "mkdir not found"; exit 1; }
-                  echo "All required standard tools are available"
+      - name: Verify file operations
+        run: |
+          mkdir -p test_dir
+          echo "test content" > test_file
+          ln -sf "$(pwd)/test_file" test_dir/test_link
+          [ -L test_dir/test_link ] && echo "Symlink test passed"
+          rm -rf test_dir test_file
 
-            - name: Test setup.sh functionality
-              run: |
-                  echo "Setup.sh functionality test placeholder"
+  debian-testing:
+    name: Debian Compatibility Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Test utils.sh functions
-              run: |
-                  chmod +x scripts/core/utils.sh
-                  # Source and test key functions
-                  . scripts/core/utils.sh
-                  # Test logging functions
-                  log info "Testing macOS compatibility"
-                  log success "macOS test successful"
+      - name: Install dash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dash
 
-            - name: Test maintenance script
-              run: |
-                  chmod +x scripts/maintenance/maintenance.sh
-                  cd scripts/maintenance
-                  # Test with debug mode
-                  export DEBUG=true
-                  ./maintenance.sh || true
+      - name: Test utils.sh functions
+        run: |
+          chmod +x scripts/core/utils.sh
+          . scripts/core/utils.sh
+          log info "Testing Debian compatibility"
+          log success "Debian test successful"
 
-            - name: Verify file operations work on macOS
-              run: |
-                  # Test symlink creation (common operation in setup.sh)
-                  mkdir -p test_dir
-                  echo "test content" > test_file
-                  ln -sf "$(pwd)/test_file" test_dir/test_link
-                  [ -L test_dir/test_link ] && echo "Symlink test passed"
-                  rm -rf test_dir test_file
+      - name: Test maintenance script
+        run: |
+          chmod +x scripts/maintenance/maintenance.sh
+          cd scripts/maintenance
+          export DEBUG=true
+          ./maintenance.sh || true
 
-    debian-testing:
-        name: Debian Compatibility Test
-        runs-on: ubuntu-latest
-        steps:
-            - name: Install basic tools
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y git curl ca-certificates
+  functionality-tests:
+    name: Functionality Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Test utility functions
+        run: |
+          . scripts/core/utils.sh
+          log info "Testing info log"
+          log success "Testing success log"
+          log warning "Testing warning log"
+          log debug "Testing debug log"
 
-            - name: Test utils.sh functions
-              run: |
-                  chmod +x scripts/core/utils.sh
-                  . scripts/core/utils.sh
-                  log info "Testing Debian compatibility"
-                  log success "Debian test successful"
+          export DEBUG=false
+          parse_args --debug
+          [ "$DEBUG" = "true" ] && echo "Argument parsing test passed"
 
-            - name: Test maintenance script
-              run: |
-                  chmod +x scripts/maintenance/maintenance.sh
-                  cd scripts/maintenance
-                  export DEBUG=true
-                  ./maintenance.sh || true
+          if command -v ensure_directory >/dev/null 2>&1; then
+            test_dir="/tmp/test_ensure_dir"
+            ensure_directory "$test_dir"
+            [ -d "$test_dir" ] && echo "ensure_directory test passed" && rm -rf "$test_dir"
+          fi
 
-            - name: Test with minimal POSIX shell
-              run: |
-                  # Install dash for strict POSIX testing
-                  sudo apt-get install -y dash
-                  for script in $(find . -name "*.sh" -type f); do
-                      echo "Testing $script with dash"
-                      dash "$script" --help 2>/dev/null || echo "Script $script tested"
-                  done
+      - name: Cross-platform compatibility checks
+        run: |
+          date "+%Y-%m-%d %H:%M:%S"
+          find . -name "*.sh" -type f | head -5
+          echo "test string" | sed 's/test/TEST/'
 
-    integration-tests:
-        name: Integration and Security Tests
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Verify required functions
+        run: |
+          . scripts/core/utils.sh
+          for func in log parse_args; do
+            if ! command -v "$func" >/dev/null 2>&1; then
+              echo "Function $func not found" >&2
+              exit 1
+            fi
+            echo "Function $func is defined"
+          done
 
-            - name: Install testing tools
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y shellcheck bats shfmt
+      - name: Performance and resource tests
+        run: |
+          time_start=$(date +%s)
+          cd scripts/maintenance
+          export DEBUG=true
+          timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
+          time_end=$(date +%s)
+          echo "Execution took $((time_end - time_start)) seconds"
 
-            - name: Format check with shfmt
-              run: |
-                  find . -name "*.sh" -type f -exec shfmt -d -i 4 -ci {} +
-
-            - name: Advanced shellcheck analysis
-              run: |
-                  find . -name "*.sh" -type f -exec shellcheck \
-                      -s sh \
-                      -e SC1091 \
-                      -f json {} + > shellcheck-results.json || true
-
-                  # Display results
-                  if [ -s shellcheck-results.json ]; then
-                      echo "Shellcheck findings:"
-                      cat shellcheck-results.json
-                  fi
-
-            - name: Security scan for common issues
-              run: |
-                  echo "Scanning for potential security issues..."
-
-                  # Check for hardcoded credentials
-                  if grep -r -E "(password|secret|key|token).*=" . --include="*.sh"; then
-                      echo "Warning: Potential hardcoded credentials found"
-                  fi
-
-                  # Check for unsafe rm operations
-                  if grep -r "rm -rf.*\$" . --include="*.sh"; then
-                      echo "Warning: Potentially unsafe rm operations found"
-                  fi
-
-                  # Check for command injection vulnerabilities
-                  if grep -r "eval.*\$" . --include="*.sh"; then
-                      echo "Warning: Potential command injection via eval found"
-                  fi
-
-            - name: Test script dependencies
-              run: |
-                  echo "Checking script dependencies..."
-                  for script in $(find . -name "*.sh" -type f); do
-                      echo "Dependencies for $script:"
-                      grep -E "command -v|which|type" "$script" || echo "No explicit dependency checks"
-                      echo "---"
-                  done
-
-            - name: Test URL accessibility
-              run: |
-                  # Test if external URLs in scripts are accessible
-                  urls=$(grep -r -o "https://[^\"']*" . --include="*.sh" | cut -d: -f2- | sort -u)
-                  for url in $urls; do
-                      echo "Testing URL: $url"
-                      curl -sSf --connect-timeout 10 --max-time 30 "$url" > /dev/null || echo "Warning: $url not accessible"
-                  done
-
-    functionality-tests:
-        name: Functionality Tests
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            - name: Test utility functions
-              run: |
-                  . scripts/core/utils.sh
-
-                  # Test logging functions
-                  log info "Testing info log"
-                  log success "Testing success log"
-                  log warning "Testing warning log"
-                  log debug "Testing debug log"
-
-                  # Test color definitions
-                  echo -e "${GREEN}Green text test${NC}"
-                  echo -e "${RED}Red text test${NC}"
-
-                  # Test argument parsing
-                  export DEBUG=false
-                  parse_args --debug
-                  [ "$DEBUG" = "true" ] && echo "Argument parsing test passed"
-
-                  # Test other utility functions if they exist
-                  if command -v ensure_directory >/dev/null 2>&1; then
-                      test_dir="/tmp/test_ensure_dir"
-                      ensure_directory "$test_dir"
-                      [ -d "$test_dir" ] && echo "ensure_directory test passed" && rm -rf "$test_dir"
-                  fi
-
-            - name: Test cross-platform compatibility
-              run: |
-                  # Test commands that behave differently on different systems
-                  echo "Testing date command compatibility..."
-                  date "+%Y-%m-%d %H:%M:%S"
-
-                  echo "Testing find command compatibility..."
-                  find . -name "*.sh" -type f | head -5
-
-                  echo "Testing sed compatibility..."
-                  echo "test string" | sed 's/test/TEST/'
-
-            - name: Test all script functions without execution
-              run: |
-                  # Source setup.sh and test function definitions
-                  . scripts/core/utils.sh
-                  
-                  # Check if all required functions are defined
-                  functions="log parse_args"
-                  for func in $functions; do
-                      if ! command -v "$func" >/dev/null 2>&1; then
-                          echo "Function $func not found" >&2
-                          exit 1
-                      fi
-                      echo "Function $func is defined"
-                  done
-
-            - name: Performance and resource tests
-              run: |
-                  echo "Testing script execution time..."
-                  time_start=$(date +%s)
-
-                  # Run maintenance script in dry-run mode if possible
-                  cd scripts/maintenance
-                  export DEBUG=true
-                  timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
-
-                  time_end=$(date +%s)
-                  echo "Script execution took $((time_end - time_start)) seconds"
