@@ -33,7 +33,7 @@ if ! head -1 "$utils_temp" | grep -q '^#!/'; then
 fi
 
 # shellcheck disable=SC1091
-. /tmp/utils.sh || {
+. "$utils_temp" || {
     printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
     exit 1
 }
