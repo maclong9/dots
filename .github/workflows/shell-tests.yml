@@ -45,8 +45,8 @@ jobs:
 
       - name: Test maintenance script
         run: |
-          chmod +x scripts/maintenance/maintenance.sh
-          cd scripts/maintenance
+          chmod +x shell/maintenance/maintenance.sh
+          cd shell/maintenance
           export DEBUG=true
           ./maintenance.sh || true
 
@@ -78,8 +78,8 @@ jobs:
 
       - name: Test maintenance script
         run: |
-          chmod +x scripts/maintenance/maintenance.sh
-          cd scripts/maintenance
+          chmod +x shell/maintenance/maintenance.sh
+          cd shell/maintenance
           export DEBUG=true
           ./maintenance.sh || true
 
@@ -127,7 +127,7 @@ jobs:
       - name: Performance and resource tests
         run: |
           time_start=$(date +%s)
-          cd scripts/maintenance
+          cd shell/maintenance
           export DEBUG=true
           timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
           time_end=$(date +%s)
