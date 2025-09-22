@@ -1,0 +1,3 @@
+# System maintenance cron job
+# Runs every Tuesday at 11:00 AM
+0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh >> /tmp/maintenance.log 2>&1

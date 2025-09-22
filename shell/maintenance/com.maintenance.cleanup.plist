@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.mac.maintenance.cleanup</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>$HOME/.config/scripts/maintenance/maintenance.sh</string>
+    </array>
+    
+    <key>UserName</key>
+    <string>root</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key>
+        <string>$HOME</string>
+        <key>USER</key>
+        <string>mac</string>
+        <key>LOGNAME</key>
+        <string>$(whoami)</string>
+    </dict>
+    
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>2</integer>
+        <key>Hour</key>
+        <integer>11</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/maintenance.stdout.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/maintenance.stderr.log</string>
+    
+    <key>KeepAlive</key>
+    <false/>
+    
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
+
