@@ -360,11 +360,6 @@ setup_ssh() {
     fi
 }
 
-restore_defaults() {
-    try_run "$HOME/.config/shell/defaults/restore-defaults.sh" \
-        "Restore defaults from system settings plist files"
-}
-
 # shellcheck disable=SC1091
 install_swift() {
     curl -O "https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz" &&
@@ -400,7 +395,6 @@ main() {
     run_step "Generating SSH key" setup_ssh
 
     if [ "$IS_MAC" = true ]; then
-        run_step "Restoring system settings defaults" restore_defaults
         run_step "Setting up color schemes" setup_colors
     fi
 
