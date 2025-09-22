@@ -38,8 +38,8 @@ jobs:
 
       - name: Test utils.sh functions
         run: |
-          chmod +x shell/core/utils.sh
-          . shell/core/utils.sh
+          chmod +x shell/lib/utils.sh
+          . shell/lib/utils.sh
           log info "Testing macOS compatibility"
           log success "macOS test successful"
 
@@ -71,8 +71,8 @@ jobs:
 
       - name: Test utils.sh functions
         run: |
-          chmod +x shell/core/utils.sh
-          . shell/core/utils.sh
+          chmod +x shell/lib/utils.sh
+          . shell/lib/utils.sh
           log info "Testing Debian compatibility"
           log success "Debian test successful"
 
@@ -91,7 +91,7 @@ jobs:
 
       - name: Test utility functions
         run: |
-          . shell/core/utils.sh
+          . shell/lib/utils.sh
           log info "Testing info log"
           log success "Testing success log"
           log warning "Testing warning log"
@@ -115,7 +115,7 @@ jobs:
 
       - name: Verify required functions
         run: |
-          . shell/core/utils.sh
+          . shell/lib/utils.sh
           for func in log parse_args; do
             if ! command -v "$func" >/dev/null 2>&1; then
               echo "Function $func not found" >&2
