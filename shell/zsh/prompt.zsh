@@ -31,7 +31,7 @@ precmd() {
     local separator=" %F{8}—%f "
     local directory="%B%F{15}%~%b"
     local git_info="${_git_status_cache}"
-}
-  
-PROMPT="%F{8}╭%f ${user_host}${separator}${directory}${git_info}
+ 
+    PROMPT="%F{8}╭%f ${user_host}${separator}${directory}${git_info}
 %F{8}╰%f %F{%(?.10.9)}λ%f "
+}

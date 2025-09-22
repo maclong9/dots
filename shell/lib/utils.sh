@@ -52,19 +52,33 @@ log() {
     # Choose color + uppercase label for console
     case "$level" in
         info)
-            color="$BLUE";  label="INFO" ;;
+            color="$BLUE"
+            label="INFO"
+            ;;
         success)
-            color="$GREEN"; label="SUCCESS" ;;
+            color="$GREEN"
+            label="SUCCESS"
+            ;;
         warning)
-            color="$YELLOW"; label="WARNING" ;;
+            color="$YELLOW"
+            label="WARNING"
+            ;;
         error)
-            color="$RED";   label="ERROR" ;;
+            color="$RED"
+            label="ERROR"
+            ;;
         debug)
-            color="$CYAN";  label="DEBUG" ;;
+            color="$CYAN"
+            label="DEBUG"
+            ;;
         plain)
-            color=""; label="" ;;
+            color=""
+            label=""
+            ;;
         *)
-            color="$WHITE"; label="$(printf '%s' "$level" | tr '[:lower:]' '[:upper:]')" ;;
+            color="$WHITE"
+            label="$(printf '%s' "$level" | tr '[:lower:]' '[:upper:]')"
+            ;;
     esac
 
     # Console output (with color + brackets)
@@ -85,7 +99,6 @@ log() {
         fi
     fi
 }
-
 
 # Parses command line arguments and sets environment variables.
 #

@@ -6,9 +6,7 @@ readonly GIT_CACHE_TIMEOUT=2
 readonly GIT_COLOR_CLEAN=10  # Green for clean state
 readonly GIT_COLOR_DIRTY=11  # Yellow for dirty state
 
-#
-# Core Environment Setup
-#
+# • Core Environment Setup
 
 # Default editor configuration
 EDITOR="hx"  # Set Helix as the default editor
@@ -26,18 +24,12 @@ ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"  # Completion cache
 ZSH_RC="$HOME/.zshrc"                      # Main ZSH configuration file
 ZSH_RC_COMPILED="$ZSH_RC.zwc"             # Compiled configuration for faster loading
 
-#
-# Path Configuration
-#
+# • Path Configuration
 
 # Add user-specific paths to PATH
-# - Local binaries take precedence over system paths
-# - mise shims are included for version-managed tools
 PATH="$ZSH_LOCAL_BIN:$ZSH_MISE_SHIMS:$PATH"
 
-#
-# History Configuration
-#
+# • History Configuration
 
 # Configure history size and location
 export HISTSIZE=50000        # Number of commands to keep in memory

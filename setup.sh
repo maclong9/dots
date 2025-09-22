@@ -117,8 +117,8 @@ setup_dotfiles() {
         "clone dotfiles repository (check network connection and GitHub access)"
 
     [ -d "$HOME/.config" ] || {
-      log error "Dotfiles clone failed - .config not created"
-      return 1
+        log error "Dotfiles clone failed - .config not created"
+        return 1
     }
 
     # ZSH Plugins
