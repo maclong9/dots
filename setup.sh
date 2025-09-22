@@ -370,6 +370,49 @@ install_swift() {
     rm -rf swiftly-*.tar.gz
 }
 
+install_container() {
+    log info "Installing apple/container .pkg…"
+
+    version="0.4.1"
+    pkg_name="container-${version}-installer-signed.pkg"
+    url="https://github.com/apple/container/releases/download/${version}/${pkg_name}"
+
+    tmpfile="/tmp/${pkg_name}"
+
+    curl -fsSL --max-time 60 --user-agent "setup-script/1.0" "$url" -o "$tmpfile" || {
+        log error "Failed to download ${pkg_name} from $url"
+        rm -f "$tmpfile"
+        return 1
+    }
+
+    # Verify file is non-zero
+    if [ ! -s "$tmpfile" ]; then
+        log error "Downloaded ${pkg_name} is empty"
+        rm -f "$tmpfile"
+        return 1
+    fi
+
+    # Install using macOS installer
+    sudo installer -pkg "$tmpfile" -target / || {
+        log error "Failed to install ${pkg_name}"
+        rm -f "$tmpfile"
+        return 1
+    }
+
+    rm -f "$tmpfile"
+    log success "apple/container ${version} installed"
+
+    # Start system service so container works
+    if command_exists container; then
+        log info "Starting container system service…"
+        container system start || {
+            log warning "container system start failed—check permissions or version"
+        }
+    else
+        log warning "container command not found after install"
+    fi
+}
+
 run_step() {
     step_name="$1"
     step_function="$2"
@@ -396,6 +439,7 @@ main() {
 
     if [ "$IS_MAC" = true ]; then
         run_step "Setting up color schemes" setup_colors
+        run_step "Installing apple/container via .pkg" install_container
     fi
 
     log success "Setup complete!"
