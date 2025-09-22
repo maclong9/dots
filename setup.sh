@@ -116,6 +116,11 @@ setup_dotfiles() {
     run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
         "clone dotfiles repository (check network connection and GitHub access)"
 
+    [ -d "$HOME/.config" ] || {
+      log error "Dotfiles clone failed - .config not created"
+      return 1
+    }
+
     # ZSH Plugins
     ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
     # Syntax Highlighting
