@@ -9,7 +9,7 @@ for cmd in git curl ln mkdir; do
 done
 
 # Download and source utilities
-url="https://raw.githubusercontent.com/maclong9/dots/refs/heads/main/scripts/core/utils.sh"
+url="https://raw.githubusercontent.com/maclong9/dots/main/scripts/core/utils.sh"
 utils_temp="/tmp/utils.sh"
 
 # Download with timeout and user agent
