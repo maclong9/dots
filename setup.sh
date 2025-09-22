@@ -50,7 +50,7 @@ setup_xcode_tools() {
     fi
 
     # Install command line tools
-    run_or_fail "xcode-select --install" "install Xcode command line tools"
+    try_run "xcode-select --install" "install Xcode command line tools"
 
     # Wait for installation to complete
     log info "Waiting for Xcode command line tools installation to complete..."
@@ -75,13 +75,13 @@ setup_touch_id() {
         return 1
     }
 
-    run_or_fail "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
+    try_run "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
         "copy Touch ID template"
 
-    run_or_fail "sudo sed -i '' '/pam_tid\.so/s/^[[:space:]]*#//' /etc/pam.d/sudo_local" \
+    try_run "sudo sed -i '' '/pam_tid\.so/s/^[[:space:]]*#//' /etc/pam.d/sudo_local" \
         "modify Touch ID configuration"
 
-    run_or_fail "grep -q \"^auth.*pam_tid.so\" /etc/pam.d/sudo_local" && {
+    try_run "grep -q \"^auth.*pam_tid.so\" /etc/pam.d/sudo_local" && {
         log success "Touch ID enabled"
         return 0
     }
@@ -108,12 +108,12 @@ setup_dotfiles() {
     [ -d "$HOME/.config" ] && {
         backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
         log debug "Backing up existing .config directory to $backup_dir"
-        run_or_fail "mv \"$HOME/.config\" \"$backup_dir\"" \
+        try_run "mv \"$HOME/.config\" \"$backup_dir\"" \
             "backup old .config directory (check permissions)"
         log info "Previous .config backed up to $backup_dir"
     }
 
-    run_or_fail "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
+    try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
         "clone dotfiles repository (check network connection and GitHub access)"
 
     [ -d "$HOME/.config" ] || {
@@ -124,10 +124,10 @@ setup_dotfiles() {
     # ZSH Plugins
     ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
     # Syntax Highlighting
-    run_or_fail "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+    try_run "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
     $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone fast syntax highlighting (check network connection)"
     # Completions
-    run_or_fail "git clone https://github.com/zsh-users/zsh-completions.git \
+    try_run "git clone https://github.com/zsh-users/zsh-completions.git \
     $HOME/.zsh/plugins/zsh-completions"
 
     log success "Dotfiles cloned"
@@ -155,7 +155,7 @@ process_colorscheme_files() {
         [ -f "$file" ] || continue
         filename=$(basename "$file")
         log info "Symlinking $file_type file $filename"
-        run_or_fail "safe_symlink \"$file\" \"$target_dir/$filename\"" \
+        try_run "safe_symlink \"$file\" \"$target_dir/$filename\"" \
             "symlink $filename"
     done
 }
@@ -239,7 +239,7 @@ link_dotfiles() {
         esac
 
         log info "Symlinking $filename"
-        run_or_fail "safe_symlink \"$file\" \"$HOME/$filename\"" \
+        try_run "safe_symlink \"$file\" \"$HOME/$filename\"" \
             "symlink $filename"
     done
 
@@ -267,7 +267,7 @@ setup_mise() {
         fi
 
         # Run the installer
-        run_or_fail "sh \"$mise_installer\"" "install mise"
+        try_run "sh \"$mise_installer\"" "install mise"
         rm -f "$mise_installer"
     fi
 
@@ -282,8 +282,8 @@ setup_mise() {
             return 1
         }
 
-        run_or_fail "mise trust -a" "trust mise.toml configuration file"
-        run_or_fail "mise install" "install mise tools (check network and tool availability)"
+        try_run "mise trust -a" "trust mise.toml configuration file"
+        try_run "mise install" "install mise tools (check network and tool availability)"
 
         # Return to original directory (optional, but good practice)
         cd - >/dev/null || true
@@ -295,10 +295,10 @@ setup_mise() {
     gh_path="$HOME/.local/share/mise/shims/gh"
     if [ -x "$gh_path" ]; then
         log info "Setting up GitHub CLI..."
-        run_or_fail "$gh_path auth login" "authenticate GitHub CLI" || {
+        try_run "$gh_path auth login" "authenticate GitHub CLI" || {
             log warning "GitHub CLI authentication failed - you can run 'gh auth login' manually later"
         }
-        run_or_fail "$gh_path extension install github/gh-copilot" "install GitHub Copilot extension" || {
+        try_run "$gh_path extension install github/gh-copilot" "install GitHub Copilot extension" || {
             log warning "GitHub Copilot extension installation failed - you can install it manually later"
         }
     else
@@ -312,7 +312,7 @@ setup_maintenance() {
     log info "Setting up system maintenance..."
 
     # Ensure maintenance script is executable
-    run_or_fail "chmod +x \"$HOME/.config/shell/maintenance/maintenance.sh\"" \
+    try_run "chmod +x \"$HOME/.config/shell/maintenance/maintenance.sh\"" \
         "make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
@@ -321,11 +321,11 @@ setup_maintenance() {
         source_plist="$HOME/.config/shell/maintenance/com.maintenance.cleanup.plist"
 
         # Install the LaunchDaemon with proper permissions
-        run_or_fail "sudo cp \"$source_plist\" \"$launch_daemon_dir/$plist_name\"" "Copy plist to LaunchDaemons"
-        run_or_fail "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" "Ensure plist is owned by root"
-        run_or_fail "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" "Set correct permissions on plist file"
+        try_run "sudo cp \"$source_plist\" \"$launch_daemon_dir/$plist_name\"" "Copy plist to LaunchDaemons"
+        try_run "sudo chown root:wheel \"$launch_daemon_dir/$plist_name\"" "Ensure plist is owned by root"
+        try_run "sudo chmod 644 \"$launch_daemon_dir/$plist_name\"" "Set correct permissions on plist file"
 
-        run_or_fail "sudo launchctl bootstrap system $launch_daemon_dir/$plist_name" "Load the LaunchDaemon"
+        try_run "sudo launchctl bootstrap system $launch_daemon_dir/$plist_name" "Load the LaunchDaemon"
         log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
     else
@@ -338,7 +338,7 @@ setup_maintenance() {
             echo "0 11 * * 2 $HOME/.config/shell/maintenance/maintenance.sh" >>/tmp/current_cron
         fi
 
-        run_or_fail "crontab /tmp/current_cron" "install cron job (check crontab permissions)" || {
+        try_run "crontab /tmp/current_cron" "install cron job (check crontab permissions)" || {
             rm -f /tmp/current_cron
             return 1
         }
@@ -351,7 +351,7 @@ setup_maintenance() {
 }
 
 setup_ssh() {
-    run_or_fail "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519" \
+    try_run "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519" \
         "generate SSH key (check ~/.ssh directory permissions)"
     if [ "$IS_MAC" = true ]; then
         pbcopy <"$HOME/.ssh/id_ed25519.pub"
@@ -361,7 +361,7 @@ setup_ssh() {
 }
 
 restore_defaults() {
-    run_or_fail "$HOME/.config/shell/defaults/restore-defaults.sh" \
+    try_run "$HOME/.config/shell/defaults/restore-defaults.sh" \
         "Restore defaults from system settings plist files"
 }
 
