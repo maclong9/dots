@@ -9,7 +9,7 @@ for cmd in git curl ln mkdir; do
 done
 
 # Download and source utilities
-url="https://raw.githubusercontent.com/maclong9/dots/main/scripts/core/utils.sh"
+url="https://raw.githubusercontent.com/maclong9/dots/main/shell/lib/utils.sh"
 utils_temp="/tmp/utils.sh"
 
 # Download with timeout and user agent
@@ -312,13 +312,13 @@ setup_maintenance() {
     log info "Setting up system maintenance..."
 
     # Ensure maintenance script is executable
-    run_or_fail "chmod +x \"$HOME/.config/scripts/maintenance/maintenance.sh\"" \
+    run_or_fail "chmod +x \"$HOME/.config/shell/maintenance/maintenance.sh\"" \
         "make maintenance script executable"
 
     if [ "$IS_MAC" = true ]; then
         launch_daemon_dir="/Library/LaunchDaemons"
         plist_name="com.mac.maintenance.cleanup.plist"
-        source_plist="$HOME/.config/scripts/maintenance/com.maintenance.cleanup.plist"
+        source_plist="$HOME/.config/shell/maintenance/com.maintenance.cleanup.plist"
 
         # Install the LaunchDaemon with proper permissions
         run_or_fail "sudo cp \"$source_plist\" \"$launch_daemon_dir/$plist_name\"" "Copy plist to LaunchDaemons"
@@ -332,10 +332,10 @@ setup_maintenance() {
         # Linux cron setup (no sudo needed)
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
 
-        if [ -f "$HOME/.config/scripts/maintenance/maintenance.crontab" ]; then
-            cat "$HOME/.config/scripts/maintenance/maintenance.crontab" >>/tmp/current_cron
+        if [ -f "$HOME/.config/shell/maintenance/maintenance.crontab" ]; then
+            cat "$HOME/.config/shell/maintenance/maintenance.crontab" >>/tmp/current_cron
         else
-            echo "0 11 * * 2 $HOME/.config/scripts/maintenance/maintenance.sh" >>/tmp/current_cron
+            echo "0 11 * * 2 $HOME/.config/shell/maintenance/maintenance.sh" >>/tmp/current_cron
         fi
 
         run_or_fail "crontab /tmp/current_cron" "install cron job (check crontab permissions)" || {
@@ -347,7 +347,7 @@ setup_maintenance() {
         log success "Scheduled maintenance via cron (Tuesdays at 11:00 AM)"
     fi
 
-    log info "Run '$HOME/.config/scripts/maintenance/maintenance.sh' manually anytime to clean system"
+    log info "Run '$HOME/.config/shell/maintenance/maintenance.sh' manually anytime to clean system"
 }
 
 setup_ssh() {
@@ -361,7 +361,7 @@ setup_ssh() {
 }
 
 restore_defaults() {
-    run_or_fail "$HOME/.config/scripts/defaults/restore-defaults.sh" \
+    run_or_fail "$HOME/.config/shell/defaults/restore-defaults.sh" \
         "Restore defaults from system settings plist files"
 }
 
