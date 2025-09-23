@@ -1,10 +1,10 @@
-#!/usr/bin/env zsh
+#!/bin/zsh
 
 # Add completion functions to fpath
 fpath=($HOME/.config/shell/completions $fpath)
 
 # Source shared libraries and ZSH configuration files in order
-for file in $HOME/.config/shell/lib/*.sh $HOME/.config/shell/zsh/*.zsh; do
+for file in $HOME/.config/shell/lib/* $HOME/.config/shell/zsh/*.zsh; do
     [[ -r "$file" ]] && source "$file"
 done
 
