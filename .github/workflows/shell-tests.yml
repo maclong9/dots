@@ -36,12 +36,51 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test utils.sh functions
+      - name: Test setup script
         run: |
-          chmod +x shell/lib/utils.sh
-          . shell/lib/utils.sh
-          log info "Testing macOS compatibility"
-          log success "macOS test successful"
+          chmod +x setup.sh
+          export DEBUG=true
+          ./setup.sh || true
+
+      - name: Verify setup structure (macOS)
+        run: |
+          set -euo pipefail
+
+          echo "==> Verify $HOME/.config exists and is non-empty"
+          [ -d "$HOME/.config" ] || { echo ".config missing at $HOME/.config"; exit 1; }
+          if [ "$(ls -A "$HOME/.config" 2>/dev/null | wc -l)" -eq 0 ]; then
+            echo ".config exists but is empty"; exit 1
+          fi
+          echo ".config present and non-empty"
+
+          echo "==> Verify maintenance script exists and is executable"
+          maint="$HOME/.config/shell/maintenance/maintenance.sh"
+          [ -f "$maint" ] || { echo "maintenance.sh not found at $maint"; exit 1; }
+          [ -x "$maint" ] || chmod +x "$maint" || true
+          echo "maintenance script present"
+
+          echo "==> Verify zsh plugins directory"
+          [ -d "$HOME/.zsh/plugins" ] || { echo ".zsh/plugins missing"; exit 1; }
+          echo ".zsh/plugins exists"
+
+          echo "==> Verify at least one dotfile symlink in \$HOME that points into \$HOME/.config"
+          symlink_count=0
+          for f in "$HOME"/.*; do
+            [ -L "$f" ] || continue
+            target=$(readlink "$f")
+            case "$target" in
+              "$HOME/.config"/*) symlink_count=$((symlink_count+1)) ;;
+            esac
+          done
+          [ "$symlink_count" -gt 0 ] || { echo "No dotfile symlinks found in $HOME pointing into $HOME/.config"; exit 1; }
+          echo "Found $symlink_count symlinked dotfile(s) in \$HOME"
+
+          echo "==> Verify SSH key pair (optional)"
+          if [ -f "$HOME/.ssh/id_ed25519" ] && [ -f "$HOME/.ssh/id_ed25519.pub" ]; then
+            echo "SSH keypair exists"
+          else
+            echo "Warning: SSH keypair not found at ~/.ssh/id_ed25519 (this may be expected in CI)" >&2
+          fi
 
       - name: Test maintenance script
         run: |
@@ -50,13 +89,30 @@ jobs:
           export DEBUG=true
           ./maintenance.sh || true
 
-      - name: Verify file operations
+      - name: Verify maintenance artifacts (macOS)
         run: |
-          mkdir -p test_dir
-          echo "test content" > test_file
-          ln -sf "$(pwd)/test_file" test_dir/test_link
-          [ -L test_dir/test_link ] && echo "Symlink test passed"
-          rm -rf test_dir test_file
+          set -euo pipefail
+
+          echo "==> Check maintenance logs"
+          if [ -f /tmp/maintenance.log ]; then
+            if grep -q "Maintenance run started" /tmp/maintenance.log 2>/dev/null || grep -q "Maintenance run completed" /tmp/maintenance.log 2>/dev/null; then
+              echo "/tmp/maintenance.log contains maintenance run markers"
+            else
+              echo "/tmp/maintenance.log exists but contains no run markers" && exit 1
+            fi
+          else
+            echo "/tmp/maintenance.log missing" && exit 1
+          fi
+
+          [ -f /tmp/maintenance.error.log ] || { echo "/tmp/maintenance.error.log missing (stderr redirection file)"; exit 1; }
+          echo "Maintenance logs present"
+
+          echo "==> LaunchDaemon (best-effort check)"
+          if [ -f /Library/LaunchDaemons/com.mac.maintenance.cleanup.plist ]; then
+            echo "LaunchDaemon plist found: /Library/LaunchDaemons/com.mac.maintenance.cleanup.plist"
+          else
+            echo "LaunchDaemon plist not found (may require sudo or not be allowed in runner). This is a warning, not a failure." >&2
+          fi
 
   debian-testing:
     name: Debian Compatibility Test
@@ -64,17 +120,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dash
+      - name: Test setup script
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dash
+          chmod +x setup.sh
+          export DEBUG=true
+          ./setup.sh || true
 
-      - name: Test utils.sh functions
+      - name: Verify setup structure (Debian)
         run: |
-          chmod +x shell/lib/utils.sh
-          . shell/lib/utils.sh
-          log info "Testing Debian compatibility"
-          log success "Debian test successful"
+          set -euo pipefail
+
+          echo "==> Verify $HOME/.config exists and is non-empty"
+          [ -d "$HOME/.config" ] || { echo ".config missing at $HOME/.config"; exit 1; }
+          if [ "$(ls -A "$HOME/.config" 2>/dev/null | wc -l)" -eq 0 ]; then
+            echo ".config exists but is empty"; exit 1
+          fi
+          echo ".config present and non-empty"
+
+          echo "==> Verify maintenance script exists and is executable"
+          maint="$HOME/.config/shell/maintenance/maintenance.sh"
+          [ -f "$maint" ] || { echo "maintenance.sh not found at $maint"; exit 1; }
+          [ -x "$maint" ] || chmod +x "$maint" || true
+          echo "maintenance script present"
+
+          echo "==> Verify zsh plugins directory"
+          [ -d "$HOME/.zsh/plugins" ] || { echo ".zsh/plugins missing"; exit 1; }
+          echo ".zsh/plugins exists"
+
+          echo "==> Verify crontab contains maintenance job"
+          cron_content=$(crontab -l 2>/dev/null || true)
+          echo "$cron_content" | grep -q "maintenance.sh" || { echo "crontab does not contain maintenance.sh entry"; exit 1; }
+          echo "Crontab contains maintenance entry"
 
       - name: Test maintenance script
         run: |
@@ -82,6 +158,31 @@ jobs:
           cd shell/maintenance
           export DEBUG=true
           ./maintenance.sh || true
+
+      - name: Verify maintenance artifacts (Debian)
+        run: |
+          set -euo pipefail
+
+          echo "==> Check maintenance logs"
+          if [ -f /tmp/maintenance.log ]; then
+            if grep -q "Maintenance run started" /tmp/maintenance.log 2>/dev/null || grep -q "Maintenance run completed" /tmp/maintenance.log 2>/dev/null; then
+              echo "/tmp/maintenance.log contains maintenance run markers"
+            else
+              echo "/tmp/maintenance.log exists but contains no run markers" && exit 1
+            fi
+          else
+            echo "/tmp/maintenance.log missing" && exit 1
+          fi
+
+          [ -f /tmp/maintenance.error.log ] || { echo "/tmp/maintenance.error.log missing (stderr redirection file)"; exit 1; }
+          echo "Maintenance logs present"
+
+          echo "==> Verify apt cache cleanup (best-effort): presence of apt on system"
+          if command -v apt >/dev/null 2>&1; then
+            echo "apt present (cleaning attempted if sudo available)"
+          else
+            echo "apt not found on runner (this is informational)"
+          fi
 
   functionality-tests:
     name: Functionality Tests
@@ -95,41 +196,67 @@ jobs:
           log info "Testing info log"
           log success "Testing success log"
           log warning "Testing warning log"
+          log error "Testing error log"
           log debug "Testing debug log"
+          log plain "Plain text output"
+          log custom "Custom level"
 
           export DEBUG=false
-          parse_args --debug
-          [ "$DEBUG" = "true" ] && echo "Argument parsing test passed"
+          parse_args --debug --name=test --threads=4
+          [ "$DEBUG" = "true" ] && echo "parse_args --debug passed"
+          [ "$NAME" = "test" ] && echo "parse_args --name passed"
+          [ "$THREADS" = "4" ] && echo "parse_args --threads passed"
 
-          if command -v ensure_directory >/dev/null 2>&1; then
-            test_dir="/tmp/test_ensure_dir"
-            ensure_directory "$test_dir"
-            [ -d "$test_dir" ] && echo "ensure_directory test passed" && rm -rf "$test_dir"
-          fi
-
-      - name: Cross-platform compatibility checks
-        run: |
-          date "+%Y-%m-%d %H:%M:%S"
-          find . -name "*.sh" -type f | head -5
-          echo "test string" | sed 's/test/TEST/'
-
-      - name: Verify required functions
+      - name: Test spinner and try_run
         run: |
           . shell/lib/utils.sh
-          for func in log parse_args; do
-            if ! command -v "$func" >/dev/null 2>&1; then
-              echo "Function $func not found" >&2
-              exit 1
-            fi
-            echo "Function $func is defined"
-          done
+          spinner "Quick spinner test" sleep 1
+          try_run "true" "true command"
+          ! try_run "false" "false command" || echo "try_run failure test passed"
 
-      - name: Performance and resource tests
+      - name: Test file management functions
         run: |
-          time_start=$(date +%s)
-          cd shell/maintenance
-          export DEBUG=true
-          timeout 30s ./maintenance.sh 2>/dev/null || echo "Maintenance script test completed"
-          time_end=$(date +%s)
-          echo "Execution took $((time_end - time_start)) seconds"
+          . shell/lib/utils.sh
+          tmpfile="/tmp/testfile.txt"
+          echo "hello" > "$tmpfile"
+          backup=$(backup_file "$tmpfile")
+          [ -f "$backup" ] && echo "backup_file passed"
+
+          echo "a" > a.txt
+          echo "b" > b.txt
+          count=$(count_files "*.txt")
+          echo "count_files matched $count"
+          [ "$count" -ge 2 ] && echo "count_files passed"
+
+          validate_symlink_source "$tmpfile"
+
+          target="/tmp/testdir/testlink"
+          mkdir -p /tmp/testdir
+          safe_symlink "$tmpfile" "$target"
+          [ -L "$target" ] && echo "safe_symlink passed"
+
+      - name: Test process management helpers
+        run: |
+          . shell/lib/utils.sh
+          command_exists ls && echo "command_exists passed"
+
+          testdir="/tmp/safe_cd_test"
+          mkdir -p "$testdir"
+          safe_cd "$testdir" && [ "$PWD" = "$testdir" ] && echo "safe_cd passed"
+
+          ensure_dir "/tmp/ensure_dir_test"
+          [ -d /tmp/ensure_dir_test ] && echo "ensure_dir passed"
+
+          lockfile="/tmp/test.lock"
+          acquire_lock "$lockfile" "testscript"
+          [ -f "$lockfile" ] && echo "acquire_lock passed"
+          release_lock "$lockfile"
+          [ ! -f "$lockfile" ] && echo "release_lock passed"
+
+      - name: Test download_file
+        run: |
+          . shell/lib/utils.sh
+          dest="/tmp/example.html"
+          download_file "https://example.com" "$dest"
+          [ -s "$dest" ] && echo "download_file passed"
 
