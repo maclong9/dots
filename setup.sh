@@ -125,7 +125,7 @@ setup_dotfiles() {
     ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
     # Syntax Highlighting
     try_run "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-    $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone fast syntax highlighting (check network connection)"
+    $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone syntax highlighting (check network connection)"
     # Completions
     try_run "git clone https://github.com/zsh-users/zsh-completions.git \
     $HOME/.zsh/plugins/zsh-completions"
