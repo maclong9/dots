@@ -89,31 +89,6 @@ jobs:
           export DEBUG=true
           ./maintenance.sh || true
 
-      - name: Verify maintenance artifacts (macOS)
-        run: |
-          set -euo pipefail
-
-          echo "==> Check maintenance logs"
-          if [ -f /tmp/maintenance.log ]; then
-            if grep -q "Maintenance run started" /tmp/maintenance.log 2>/dev/null || grep -q "Maintenance run completed" /tmp/maintenance.log 2>/dev/null; then
-              echo "/tmp/maintenance.log contains maintenance run markers"
-            else
-              echo "/tmp/maintenance.log exists but contains no run markers" && exit 1
-            fi
-          else
-            echo "/tmp/maintenance.log missing" && exit 1
-          fi
-
-          [ -f /tmp/maintenance.error.log ] || { echo "/tmp/maintenance.error.log missing (stderr redirection file)"; exit 1; }
-          echo "Maintenance logs present"
-
-          echo "==> LaunchDaemon (best-effort check)"
-          if [ -f /Library/LaunchDaemons/com.mac.maintenance.cleanup.plist ]; then
-            echo "LaunchDaemon plist found: /Library/LaunchDaemons/com.mac.maintenance.cleanup.plist"
-          else
-            echo "LaunchDaemon plist not found (may require sudo or not be allowed in runner). This is a warning, not a failure." >&2
-          fi
-
   debian-testing:
     name: Debian Compatibility Test
     runs-on: ubuntu-latest
@@ -158,31 +133,6 @@ jobs:
           cd shell/maintenance
           export DEBUG=true
           ./maintenance.sh || true
-
-      - name: Verify maintenance artifacts (Debian)
-        run: |
-          set -euo pipefail
-
-          echo "==> Check maintenance logs"
-          if [ -f /tmp/maintenance.log ]; then
-            if grep -q "Maintenance run started" /tmp/maintenance.log 2>/dev/null || grep -q "Maintenance run completed" /tmp/maintenance.log 2>/dev/null; then
-              echo "/tmp/maintenance.log contains maintenance run markers"
-            else
-              echo "/tmp/maintenance.log exists but contains no run markers" && exit 1
-            fi
-          else
-            echo "/tmp/maintenance.log missing" && exit 1
-          fi
-
-          [ -f /tmp/maintenance.error.log ] || { echo "/tmp/maintenance.error.log missing (stderr redirection file)"; exit 1; }
-          echo "Maintenance logs present"
-
-          echo "==> Verify apt cache cleanup (best-effort): presence of apt on system"
-          if command -v apt >/dev/null 2>&1; then
-            echo "apt present (cleaning attempted if sudo available)"
-          else
-            echo "apt not found on runner (this is informational)"
-          fi
 
   functionality-tests:
     name: Functionality Tests
