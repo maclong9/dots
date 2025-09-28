@@ -128,7 +128,13 @@ setup_dotfiles() {
     $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone syntax highlighting (check network connection)"
     # Completions
     try_run "git clone https://github.com/zsh-users/zsh-completions.git \
-    $HOME/.zsh/plugins/zsh-completions"
+    $HOME/.zsh/plugins/zsh-completions" "clone zsh completions (check network connection)"
+    # Autosuggestions
+    try_run "git clone https://github.com/zsh-users/zsh-autosuggestions.git \
+    $HOME/.zsh/plugins/zsh-autosuggestions" "clone zsh autosuggestions (check network connection)"
+    # Autocomplete
+    try_run "git clone https://github.com/marlonrichert/zsh-autocomplete.git \
+    $HOME/.zsh/plugins/zsh-autocomplete" "clone zsh autocomplete (check network connection)"
 
     log success "Dotfiles cloned"
 }
@@ -252,7 +258,8 @@ setup_homebrew() {
     if command_exists brew; then
         log success "Homebrew already installed"
     else
-        # Install Homebrew
+        # Install Homebrew in non-interactive mode
+        export NONINTERACTIVE=1
         try_run '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' \
             "install Homebrew"
         
@@ -313,7 +320,7 @@ setup_mise() {
 
     # Check if mise config exists before trying to trust it
     if [ -f "$HOME/.config/mise/config.toml" ]; then
-        # Change to the .config directory to trust the mise.file
+        # Change to the .config directory to trust the mise.toml file
         cd "$HOME/.config" || {
             log error "change to .config directory"
             return 1
@@ -432,9 +439,9 @@ main() {
         run_step "Installing Homebrew and applications" setup_homebrew
     fi
     
-    run_step "Installing mise and development tools" setup_mise
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
+    run_step "Installing mise and development tools" setup_mise
 
     if [ "$IS_MAC" = true ]; then
         run_step "Setting up color schemes" setup_colors

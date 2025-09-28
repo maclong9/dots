@@ -2,6 +2,9 @@
 [[ ! -f "$ZSH_RC_COMPILED" || "$ZSH_RC" -nt "$ZSH_RC_COMPILED" ]] && zcompile "$ZSH_RC"
 [[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP"
 
+# Initialize Homebrew (macOS)
+[[ "$IS_MAC" = true ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Initialize mise
 eval "$(mise activate zsh)"
 
