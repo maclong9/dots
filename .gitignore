@@ -1,4 +1,5 @@
 .claude/
+.kiro/
 .DS_Store
 .env
 .env.*

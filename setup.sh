@@ -246,6 +246,43 @@ link_dotfiles() {
     log success "Dotfiles linked"
 }
 
+setup_homebrew() {
+    log info "Installing Homebrew..."
+
+    if command_exists brew; then
+        log success "Homebrew already installed"
+    else
+        # Install Homebrew
+        try_run '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' \
+            "install Homebrew"
+        
+        # Add Homebrew to PATH for this session
+        if [ -f "/opt/homebrew/bin/brew" ]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [ -f "/usr/local/bin/brew" ]; then
+            eval "$(/usr/local/bin/brew shellenv)"
+        fi
+    fi
+
+    # Install applications and tools from Brewfile
+    if [ -f "$HOME/.config/Brewfile" ]; then
+        log info "Installing applications from Brewfile..."
+        cd "$HOME/.config" || {
+            log error "change to .config directory"
+            return 1
+        }
+        
+        try_run "brew bundle --file=Brewfile" "install applications from Brewfile"
+        
+        # Return to original directory
+        cd - >/dev/null || true
+    else
+        log warning "Brewfile not found, skipping brew bundle install"
+    fi
+
+    log success "Homebrew setup complete"
+}
+
 setup_mise() {
     log info "Installing mise and development tools..."
 
@@ -274,21 +311,21 @@ setup_mise() {
     # Add mise to PATH for this session
     export PATH="$HOME/.local/bin:$PATH"
 
-    # Check if mise.toml exists before trying to trust it
-    if [ -f "$HOME/.config/mise.toml" ]; then
-        # Change to the .config directory to trust the mise.toml file
+    # Check if mise config exists before trying to trust it
+    if [ -f "$HOME/.config/mise/config.toml" ]; then
+        # Change to the .config directory to trust the mise.file
         cd "$HOME/.config" || {
             log error "change to .config directory"
             return 1
         }
 
-        try_run "mise trust -a" "trust mise.toml configuration file"
+        try_run "mise trust -a" "trust mise configuration file"
         try_run "mise install" "install mise tools (check network and tool availability)"
 
         # Return to original directory (optional, but good practice)
         cd - >/dev/null || true
     else
-        log warning "mise.toml not found, skipping mise tool installation"
+        log warning "mise config not found, skipping mise tool installation"
     fi
 
     # Setup GitHub CLI if available
@@ -370,49 +407,6 @@ install_swift() {
     rm -rf swiftly-*.tar.gz
 }
 
-install_container() {
-    log info "Installing apple/container .pkg…"
-
-    version="0.4.1"
-    pkg_name="container-${version}-installer-signed.pkg"
-    url="https://github.com/apple/container/releases/download/${version}/${pkg_name}"
-
-    tmpfile="/tmp/${pkg_name}"
-
-    curl -fsSL --max-time 60 --user-agent "setup-script/1.0" "$url" -o "$tmpfile" || {
-        log error "Failed to download ${pkg_name} from $url"
-        rm -f "$tmpfile"
-        return 1
-    }
-
-    # Verify file is non-zero
-    if [ ! -s "$tmpfile" ]; then
-        log error "Downloaded ${pkg_name} is empty"
-        rm -f "$tmpfile"
-        return 1
-    fi
-
-    # Install using macOS installer
-    sudo installer -pkg "$tmpfile" -target / || {
-        log error "Failed to install ${pkg_name}"
-        rm -f "$tmpfile"
-        return 1
-    }
-
-    rm -f "$tmpfile"
-    log success "apple/container ${version} installed"
-
-    # Start system service so container works
-    if command_exists container; then
-        log info "Starting container system service…"
-        container system start || {
-            log warning "container system start failed—check permissions or version"
-        }
-    else
-        log warning "container command not found after install"
-    fi
-}
-
 run_step() {
     step_name="$1"
     step_function="$2"
@@ -433,13 +427,25 @@ main() {
 
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
+    
+    if [ "$IS_MAC" = true ]; then
+        run_step "Installing Homebrew and applications" setup_homebrew
+    fi
+    
     run_step "Installing mise and development tools" setup_mise
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
 
     if [ "$IS_MAC" = true ]; then
         run_step "Setting up color schemes" setup_colors
-        run_step "Installing apple/container via .pkg" install_container
+        
+        # Start container system service if available
+        if command_exists container; then
+            log info "Starting container system service..."
+            container system start || {
+                log warning "container system start failed—check permissions or version"
+            }
+        fi
     fi
 
     log success "Setup complete!"
