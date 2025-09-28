@@ -1,9 +1,5 @@
 # Brewfile for macOS applications and system tools
 
-# Taps
-tap "homebrew/bundle"
-tap "homebrew/cask"
-
 # System tools and utilities
 brew "mas"  # Mac App Store CLI
 
