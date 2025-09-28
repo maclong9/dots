@@ -35,33 +35,5 @@ name = "javascript"
 scope = "source.js"
 file-types = ["js", "mjs"]
 language-servers = [
-  "typescript-language-server", 
   "vscode-eslint-language-server",
-]
-[[language]]
-name = "jsx"
-scope = "source.jsx"
-file-types = ["jsx"]
-language-servers = [
-  "typescript-language-server",
-  "vscode-eslint-language-server",
-  "tailwindcss-ls",
-]
-
-[[language]]
-name = "typescript"
-scope = "source.ts"
-file-types = ["ts"]
-language-servers = [
-  "typescript-language-server",
-  "vscode-eslint-language-server",
-]
-[[language]]
-name = "tsx"
-scope = "source.tsx"
-file-types = ["tsx"]
-language-servers = [
-  "typescript-language-server",
-  "vscode-eslint-language-server",
-  "tailwindcss-ls",
 ]

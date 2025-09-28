@@ -28,10 +28,3 @@ ZSH_RC_COMPILED="$ZSH_RC.zwc"             # Compiled configuration for faster lo
 
 # Add user-specific paths to PATH
 PATH="$ZSH_LOCAL_BIN:$ZSH_MISE_SHIMS:$PATH"
-
-# • History Configuration
-
-# Configure history size and location
-export HISTSIZE=50000        # Number of commands to keep in memory
-export SAVEHIST=50000        # Number of commands to save to disk
-export HISTFILE="$ZSH_HISTORY_FILE"  # Location of history file
