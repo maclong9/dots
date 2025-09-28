@@ -166,54 +166,6 @@ process_colorscheme_files() {
     done
 }
 
-setup_colors() {
-    [ ! -d "$HOME/.config/colors" ] && {
-        log warning "Colors directory missing, skipping color setup"
-        return 0
-    }
-
-    log info "Installing colorschemes..."
-
-    if [ "$IS_MAC" = true ]; then
-        xcode_dir="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
-
-        ensure_dir "$xcode_dir" || die 1 "Failed to create Xcode colors directory"
-    fi
-
-    # Count and check scheme directories
-    for scheme_dir in "$HOME/.config/colors"/*; do
-        [ -d "$scheme_dir" ] && break
-    done
-    [ ! -d "$scheme_dir" ] && {
-        log warning "No colorscheme directories found"
-        return 0
-    }
-
-    for scheme_dir in "$HOME/.config/colors"/*; do
-        [ -d "$scheme_dir" ] || continue
-
-        scheme_name="$(basename "$scheme_dir")"
-        log info "Processing scheme: $scheme_name"
-
-        [ "$DEBUG" = true ] && {
-            log debug "Files in $scheme_name:"
-            ls -la "$scheme_dir" >&2
-        }
-
-        [ "$IS_MAC" = true ] && {
-            xcode_themes="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
-
-            process_colorscheme_files "$scheme_dir" "*.xccolortheme" \
-                "$xcode_themes" "Xcode" || {
-                log error "process Xcode colorscheme files for $scheme_name"
-                return 1
-            }
-        }
-    done
-
-    log success "Color setup complete"
-}
-
 link_dotfiles() {
     log info "Linking dotfiles from .config to home..."
 
@@ -437,18 +389,6 @@ main() {
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
     run_step "Installing mise and development tools" setup_mise
-
-    if [ "$IS_MAC" = true ]; then
-        run_step "Setting up color schemes" setup_colors
-        
-        # Start container system service if available
-        if command_exists container; then
-            log info "Starting container system service..."
-            container system start || {
-                log warning "container system start failed—check permissions or version"
-            }
-        fi
-    fi
 
     log success "Setup complete!"
 

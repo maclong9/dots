@@ -1,7 +1,8 @@
 # • Version Control
 alias g='git'  # Short alias for git command
 
-# • File Listing Aliases
+# • File Aliases
+alias cat='bat' # Syntax highlighted cat
 alias ls='sls -cli --human-readable'    # List files with core info (name, size, date)
 alias la='sls -clia --human-readable'   # List all files including hidden ones
 alias lr='sls -clir --human-readable'   # Recursive listing of files
