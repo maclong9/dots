@@ -1,5 +1,7 @@
 # Brewfile for macOS applications and system tools
 
+tap "maclong9/tap"
+
 # System tools and utilities
 brew "mas"  # Mac App Store CLI
 
@@ -9,6 +11,8 @@ cask "font-sf-mono-nerd-font-ligaturized"
 cask "ghostty@tip"
 cask "onyx"
 cask "pcsx2"
+cask "rpcs3"
+cask "ryujinx"
 cask "steam"
 
 # Mac App Store applications
