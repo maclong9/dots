@@ -157,7 +157,7 @@ setup_homebrew() {
         # Install Homebrew in non-interactive mode
         export NONINTERACTIVE=1
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        
+
         # Add Homebrew to PATH for this session
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
@@ -169,9 +169,9 @@ setup_homebrew() {
             log error "change to .config directory"
             return 1
         }
-        
+
         try_run "brew bundle --file=Brewfile" "install applications from Brewfile"
-        
+
         # Return to original directory
         cd - >/dev/null || true
     else
@@ -234,7 +234,7 @@ setup_maintenance() {
         log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
     else
-        # Linux cron setup 
+        # Linux cron setup
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
 
         if [ -f "$HOME/.config/shell/maintenance/maintenance.crontab" ]; then
@@ -295,11 +295,11 @@ main() {
 
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
-    
+
     if [ "$IS_MAC" = true ]; then
         run_step "Installing Homebrew and applications" setup_homebrew
     fi
-    
+
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
     run_step "Installing mise and development tools" setup_mise
