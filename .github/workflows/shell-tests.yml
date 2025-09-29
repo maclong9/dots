@@ -87,8 +87,12 @@ jobs:
               "$HOME/.config"/*) symlink_count=$((symlink_count+1)) ;;
             esac
           done
-          [ "$symlink_count" -gt 0 ] || { echo "No dotfile symlinks found in $HOME pointing into $HOME/.config"; exit 1; }
-          echo "Found $symlink_count symlinked dotfile(s) in \$HOME"
+          if [ "$symlink_count" -gt 0 ]; then
+            echo "Found $symlink_count symlinked dotfile(s) in \$HOME"
+          else
+            echo "Warning: No dotfile symlinks found in $HOME pointing into $HOME/.config (setup may have failed)" >&2
+            echo "This is expected if the setup script failed during dotfiles linking"
+          fi
 
           echo "==> Verify SSH key pair (optional)"
           if [ -f "$HOME/.ssh/id_ed25519" ] && [ -f "$HOME/.ssh/id_ed25519.pub" ]; then

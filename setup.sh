@@ -86,17 +86,27 @@ setup_dotfiles() {
         return 1
     fi
 
+    # Handle existing .config directory
     if [ -d "$HOME/.config" ]; then
-        backup_dir=$(backup_file "$HOME/.config")
-        if [ -n "$backup_dir" ]; then
-            try_run "rm -rf \"$HOME/.config\"" \
-                "remove old .config directory (check permissions)"
+        # Check if it's already our dotfiles repo
+        if [ -d "$HOME/.config/.git" ] && git -C "$HOME/.config" remote get-url origin 2>/dev/null | grep -q "maclong9/dots"; then
+            log info "Dotfiles already cloned, updating..."
+            try_run "git -C \"$HOME/.config\" pull" \
+                "update existing dotfiles repository"
+        else
+            # Back up existing .config directory
+            backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
+            try_run "mv \"$HOME/.config\" \"$backup_dir\"" \
+                "backup existing .config directory"
             log info "Previous .config backed up to $backup_dir"
+            
+            try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
+                "clone dotfiles repository (check network connection and GitHub access)"
         fi
+    else
+        try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
+            "clone dotfiles repository (check network connection and GitHub access)"
     fi
-
-    try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
-        "clone dotfiles repository (check network connection and GitHub access)"
 
     [ -d "$HOME/.config" ] || {
         log error "Dotfiles clone failed - .config not created"

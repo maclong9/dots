@@ -266,6 +266,11 @@ backup_path() {
     fi
 }
 
+# Alias for backup_path for backward compatibility
+backup_file() {
+    backup_path "$@"
+}
+
 # Counts files matching a pattern.
 #
 # Returns the number of files that match the given pattern. Most useful for bebug statements
