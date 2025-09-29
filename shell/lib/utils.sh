@@ -235,26 +235,33 @@ try_run() {
 
 # • File management
 
-# Creates a timestamped backup of an existing file.
+# Creates a timestamped backup of an existing file or directory.
 #
-# Copies a file to a backup with a timestamp suffix before modification.
+# Copies a file or directory to a backup with a timestamp suffix before modification.
 #
 # - Parameters:
-#   - file: Path to the file to back up.
+#   - path: Path to the file or directory to back up.
 # - Returns:
-#   - The path to the backup file, if created.
+#   - The path to the backup file/directory, if created.
 # - Usage:
 #   ```sh
-#   backup_file ~/.zshrc
+#   backup_path ~/.zshrc
 #   # Creates ~/.zshrc.backup.20241215_143022
+#   backup_path ~/.config
+#   # Creates ~/.config.backup.20241215_143022
 #   ```
-backup_file() {
-    file="$1"
-    backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+backup_path() {
+    path="$1"
+    backup="${path}.backup.$(date +%Y%m%d_%H%M%S)"
 
-    if [ -f "$file" ] && [ ! -L "$file" ]; then
-        cp "$file" "$backup"
-        log debug "Backed up $file to $backup"
+    if [ -e "$path" ] && [ ! -L "$path" ]; then
+        if [ -d "$path" ]; then
+            cp -r "$path" "$backup"
+            log debug "Backed up directory $path to $backup"
+        elif [ -f "$path" ]; then
+            cp "$path" "$backup"
+            log debug "Backed up file $path to $backup"
+        fi
         echo "$backup"
     fi
 }

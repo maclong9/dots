@@ -18,20 +18,6 @@ curl -fsSL --max-time 30 --user-agent "setup-script/1.0" "$url" -o "$utils_temp"
     exit 1
 }
 
-# Check if file exists and contains expected content
-if ! [ -f "$utils_temp" ] || ! [ -s "$utils_temp" ]; then
-    printf "\033[0;31m[ERROR]\033[0m Downloaded utils.sh is empty or invalid\n" >&2
-    rm -f "$utils_temp"
-    exit 1
-fi
-
-# Verify it is a shell script
-if ! head -1 "$utils_temp" | grep -q '^#!/'; then
-    printf "\033[0;31m[ERROR]\033[0m Downloaded file doesn't appear to be a shell script\n" >&2
-    rm -f "$utils_temp"
-    exit 1
-fi
-
 # shellcheck disable=SC1091
 . "$utils_temp" || {
     printf "\033[0;31m[ERROR]\033[0m Failed to source utils.sh\n" >&2
@@ -44,6 +30,7 @@ setup_xcode_tools() {
     log info "Installing Xcode command line tools..."
 
     # Check if command line tools are already installed
+    # xcode-select -p returns the developer directory path if tools are installed
     if xcode-select -p >/dev/null 2>&1; then
         log success "Xcode command line tools already installed"
         return 0
@@ -99,19 +86,14 @@ setup_dotfiles() {
         return 1
     fi
 
-    # Test basic connectivity to GitHub
-    if ! curl -s --connect-timeout 5 "https://api.github.com" >/dev/null; then
-        log warning "Cannot reach GitHub - check network connection and proxy settings"
-        log info "Proceeding anyway, git clone will provide specific error if needed"
+    if [ -d "$HOME/.config" ]; then
+        backup_dir=$(backup_file "$HOME/.config")
+        if [ -n "$backup_dir" ]; then
+            try_run "rm -rf \"$HOME/.config\"" \
+                "remove old .config directory (check permissions)"
+            log info "Previous .config backed up to $backup_dir"
+        fi
     fi
-
-    [ -d "$HOME/.config" ] && {
-        backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
-        log debug "Backing up existing .config directory to $backup_dir"
-        try_run "mv \"$HOME/.config\" \"$backup_dir\"" \
-            "backup old .config directory (check permissions)"
-        log info "Previous .config backed up to $backup_dir"
-    }
 
     try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
         "clone dotfiles repository (check network connection and GitHub access)"
@@ -125,45 +107,22 @@ setup_dotfiles() {
     ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
     # Syntax Highlighting
     try_run "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-    $HOME/.zsh/plugins/zsh-syntax-highlighting" "clone syntax highlighting (check network connection)"
+        $HOME/.zsh/plugins/zsh-syntax-highlighting" \
+        "clone syntax highlighting (check network connection)"
     # Completions
     try_run "git clone https://github.com/zsh-users/zsh-completions.git \
-    $HOME/.zsh/plugins/zsh-completions" "clone zsh completions (check network connection)"
+        $HOME/.zsh/plugins/zsh-completions" \
+        "clone zsh completions (check network connection)"
     # Autosuggestions
     try_run "git clone https://github.com/zsh-users/zsh-autosuggestions.git \
-    $HOME/.zsh/plugins/zsh-autosuggestions" "clone zsh autosuggestions (check network connection)"
+        $HOME/.zsh/plugins/zsh-autosuggestions" \
+        "clone zsh autosuggestions (check network connection)"
     # Autocomplete
     try_run "git clone https://github.com/marlonrichert/zsh-autocomplete.git \
-    $HOME/.zsh/plugins/zsh-autocomplete" "clone zsh autocomplete (check network connection)"
+        $HOME/.zsh/plugins/zsh-autocomplete" \
+        "clone zsh autocomplete (check network connection)"
 
     log success "Dotfiles cloned"
-}
-
-process_colorscheme_files() {
-    scheme_dir="$1"
-    pattern="$2"
-    target_dir="$3"
-    file_type="$4"
-
-    [ ! -d "$scheme_dir" ] && return 0
-
-    count=$(count_files "$scheme_dir/$pattern") || {
-        log error "count files in $scheme_dir"
-        return 1
-    }
-
-    scheme=$(basename "$scheme_dir")
-    log debug "Found $count $file_type files in $scheme"
-
-    [ "$count" -eq 0 ] && return 0
-
-    for file in "$scheme_dir"/$pattern; do
-        [ -f "$file" ] || continue
-        filename=$(basename "$file")
-        log info "Symlinking $file_type file $filename"
-        try_run "safe_symlink \"$file\" \"$target_dir/$filename\"" \
-            "symlink $filename"
-    done
 }
 
 link_dotfiles() {
@@ -173,21 +132,6 @@ link_dotfiles() {
         log error ".config directory does not exist"
         return 1
     }
-
-    # Check for dotfiles
-    for file in "$HOME/.config"/.*; do
-        [ -f "$file" ] || continue
-        case "$(basename "$file")" in
-            . | .. | .git) continue ;;
-            *) break ;;
-        esac
-    done
-    [ ! -f "$file" ] || case "$(basename "$file")" in
-        . | .. | .git) {
-            log warning "No dotfiles found in .config directory"
-            return 0
-        } ;;
-    esac
 
     for file in "$HOME/.config"/.*; do
         [ -f "$file" ] || continue
@@ -243,23 +187,7 @@ setup_mise() {
     if command_exists mise; then
         log success "mise already installed"
     else
-        # Download mise installer with verification
-        mise_installer="/tmp/mise-install.sh"
-        curl -fsSL --max-time 30 "https://mise.run" -o "$mise_installer" || {
-            log error "Failed to download mise installer"
-            return 1
-        }
-
-        # Basic validation of the installer
-        if ! head -1 "$mise_installer" | grep -q '^#!/'; then
-            log error "Downloaded mise installer doesn't appear to be a shell script"
-            rm -f "$mise_installer"
-            return 1
-        fi
-
-        # Run the installer
-        try_run "sh \"$mise_installer\"" "install mise"
-        rm -f "$mise_installer"
+        curl https://mise.run | sh
     fi
 
     # Add mise to PATH for this session
@@ -280,20 +208,6 @@ setup_mise() {
         cd - >/dev/null || true
     else
         log warning "mise config not found, skipping mise tool installation"
-    fi
-
-    # Setup GitHub CLI if available
-    gh_path="$HOME/.local/share/mise/shims/gh"
-    if [ -x "$gh_path" ]; then
-        log info "Setting up GitHub CLI..."
-        try_run "$gh_path auth login" "authenticate GitHub CLI" || {
-            log warning "GitHub CLI authentication failed - you can run 'gh auth login' manually later"
-        }
-        try_run "$gh_path extension install github/gh-copilot" "install GitHub Copilot extension" || {
-            log warning "GitHub Copilot extension installation failed - you can install it manually later"
-        }
-    else
-        log warning "GitHub CLI not found at expected path, skipping setup"
     fi
 
     log success "Development tools installed via mise"
@@ -320,7 +234,7 @@ setup_maintenance() {
         log success "Scheduled maintenance via LaunchDaemon (Tuesdays at 11:00 AM with root privileges)"
         log info "LaunchDaemon installed at: $launch_daemon_dir/$plist_name"
     else
-        # Linux cron setup (no sudo needed)
+        # Linux cron setup 
         crontab -l 2>/dev/null | grep -v "maintenance.sh" >/tmp/current_cron || true
 
         if [ -f "$HOME/.config/shell/maintenance/maintenance.crontab" ]; then
@@ -358,7 +272,7 @@ install_swift() {
         ./swiftly init --quiet-shell-followup &&
         . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" &&
         hash -r
-    rm -rf swiftly-*.tar.gz
+    rm -rf swiftly*.tar.gz
 }
 
 run_step() {
