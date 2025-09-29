@@ -7,6 +7,7 @@ alias ls='sls -cli --human-readable'    # List files with core info (name, size,
 alias la='sls -clia --human-readable'   # List all files including hidden ones
 alias lr='sls -clir --human-readable'   # Recursive listing of files
 alias lar='sls -clira --human-readable' # Recursive listing including hidden files
+alias grep='rg' # Modern grep replacement
 
 # • Utility Aliases
 alias perf='ZSH_PERF_MONITOR=1 zsh'  # Start ZSH with performance monitoring

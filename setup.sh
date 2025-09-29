@@ -206,6 +206,11 @@ setup_mise() {
     # Add mise to PATH for this session
     export PATH="$HOME/.local/bin:$PATH"
 
+    # Generate mise completions
+    ensure_dir "$HOME/.config/shell/completions" || die 1 "Failed to create completions directory"
+    try_run "mise completion zsh > \"$HOME/.config/shell/completions/_mise\"" \
+        "generate mise zsh completions"
+
     # Check if mise config exists before trying to trust it
     if [ -f "$HOME/.config/mise/config.toml" ]; then
         # Change to the .config directory to trust the mise.toml file
