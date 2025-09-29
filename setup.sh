@@ -172,8 +172,11 @@ setup_homebrew() {
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    # Install applications and tools from Brewfile
-    if [ -f "$HOME/.config/Brewfile" ]; then
+    # Skip Brewfile installation in CI environments
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ -n "${RUNNER_OS:-}" ]; then
+        log info "CI environment detected, skipping Brewfile installation"
+        log info "Brewfile contains GUI applications and private taps not suitable for CI"
+    elif [ -f "$HOME/.config/Brewfile" ]; then
         log info "Installing applications from Brewfile..."
         cd "$HOME/.config" || {
             log error "change to .config directory"
