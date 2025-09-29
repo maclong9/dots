@@ -6,10 +6,17 @@ args = ["--stdio"]
 command = "tailwindcss-language-server"
 args = ["--stdio"]
 
+[language-server.deno-ls]
+command = "deno"
+args = ["lsp"]
+config.deno.enable = true
+config.deno.lint = true
+config.deno.unstable = true
+
 [[language]]
 name = "python"
 scope = "source.py"
-file-types = ["i", "py"]
+file-types = ["py"]
 
 [[language]]
 name = "bash"
@@ -34,6 +41,26 @@ soft-wrap.enable = true
 name = "javascript"
 scope = "source.js"
 file-types = ["js", "mjs"]
-language-servers = [
-  "vscode-eslint-language-server",
-]
+language-servers = ["deno-ls", "tailwindcss-ls"]
+formatter = { command = "deno", args = ["fmt", "-"] }
+
+[[language]]
+name = "typescript"
+scope = "source.ts"
+file-types = ["ts", "mts"]
+language-servers = ["deno-ls", "tailwindcss-ls"]
+formatter = { command = "deno", args = ["fmt", "-"] }
+
+[[language]]
+name = "jsx"
+scope = "source.jsx"
+file-types = ["jsx"]
+language-servers = ["deno-ls", "tailwindcss-ls"]
+formatter = { command = "deno", args = ["fmt", "-"] }
+
+[[language]]
+name = "tsx"
+scope = "source.tsx"
+file-types = ["tsx"]
+language-servers = ["deno-ls", "tailwindcss-ls"]
+formatter = { command = "deno", args = ["fmt", "-"] }

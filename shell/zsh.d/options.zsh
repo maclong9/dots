@@ -18,10 +18,7 @@ setopt SHARE_HISTORY     # Share history between all sessions
 # • Completion System Configuration
 
 # Add custom completion paths to fpath if directory exists
-[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR" "$HOME/.zsh/completions")
-
-# Add plugin completions to fpath
-fpath=("$ZSH_PLUGINS_DIR/plugin/zsh-completions/src" $fpath)
+[[ -d "$ZSH_COMPLETIONS_DIR" ]] && fpath+=("$ZSH_COMPLETIONS_DIR")
 
 # • Initialize the completion system
 autoload -Uz compinit bashcompinit  # Load completion initialization functions

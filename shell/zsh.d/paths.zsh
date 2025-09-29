@@ -17,12 +17,12 @@ ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"  # mise version manager shims
 ZSH_SCRIPTS_DIR="$HOME/.config/shell"      # Shell configuration directory
 
 # ZSH-specific Paths
-ZSH_PLUGINS_DIR="$HOME/.zsh/plugins"       # ZSH plugins directory
-ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions/:/usr/local/share/zsh/site-functions/"  # Completion scripts
-ZSH_HISTORY_FILE="$HOME/.zsh_history"      # Shell history storage
 ZSH_COMPDUMP="${ZSH_COMPDUMP:-$HOME/.zcompdump}"  # Completion cache
-ZSH_RC="$HOME/.zshrc"                      # Main ZSH configuration file
+ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions/"  # Completion scripts
+ZSH_HISTORY_FILE="$HOME/.zsh_history"      # Shell history storage
+ZSH_PLUGIN_DIR="$HOME/.zsh/plugins"       # ZSH plugins directory
 ZSH_RC_COMPILED="$ZSH_RC.zwc"             # Compiled configuration for faster loading
+ZSH_RC="$HOME/.zshrc"                      # Main ZSH configuration file
 
 # • Path Configuration
 
