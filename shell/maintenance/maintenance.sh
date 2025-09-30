@@ -3,7 +3,7 @@
 # System maintenance script for cleaning caches and temporary files
 
 # shellcheck disable=SC1091
-. "$HOME/.config/scripts/core/utils.sh"
+. "$HOME/.config/shell/lib/utils.sh"
 
 # Configuration variables
 CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}" # Default 30 days for old file cleanup
@@ -348,7 +348,7 @@ show_disk_usage() {
         done
     fi
 }
-cleanup_mise() {
+cleanup_tooling() {
     echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
     [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
 
@@ -362,6 +362,10 @@ cleanup_mise() {
 
     mise self-update
     mise upgrade
+
+    brew cleanup
+    brew update
+    brew upgrade
 }
 
 main() {
@@ -377,7 +381,7 @@ main() {
 
     # Run universal maintenance
     cleanup_universal
-    cleanup_mise
+    cleanup_tooling
 
     log success "System maintenance completed!"
     show_disk_usage
@@ -413,6 +417,9 @@ main() {
         log success "Spotlight index rebuild initiated"
         echo "    ✓ Spotlight index rebuild initiated (search optimization)" >>/tmp/maintenance.log
     fi
+
+    log info "=== Current Installed Tooling & Applications ==="
+    log plain "$(brew list && echo "==> Apps" && mas list && mise list )"
 
     echo "=== Maintenance run completed at $(date) ===" >>/tmp/maintenance.log
 }

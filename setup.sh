@@ -228,6 +228,10 @@ setup_mise() {
         log warning "mise config not found, skipping mise tool installation"
     fi
 
+    # Generate completions for mise tools
+    "$HOME/.local/share/mise/shims/deno" completions zsh > "$HOME/.zsh/completions/_deno"
+    "$HOME/.local/share/mise/shims/gh" completion -s zsh > "$HOME/.zsh/completions/_gh"
+
     log success "Development tools installed via mise"
 }
 
