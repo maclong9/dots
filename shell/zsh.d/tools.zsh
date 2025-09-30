@@ -8,5 +8,7 @@
 # Initialize mise
 eval "$(mise activate zsh)"
 
-# Initialize zoxide
-eval "$(zoxide init zsh)" || echo "Warning: zoxide activation failed" >&2
+# Initialize zoxide (override zinit's 'zi' command)
+eval "$(zoxide init zsh --no-cmd)" || echo "Warning: zoxide activation failed" >&2
+alias z='__zoxide_z'
+alias zi='__zoxide_zi'

@@ -51,16 +51,15 @@ setup_xcode_tools() {
 setup_touch_id() {
     log info "Configuring Touch ID for sudo..."
 
-    [ -f /etc/pam.d/sudo_local ] &&
-        grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local && {
+    if [ -f /etc/pam.d/sudo_local ] && grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
         log success "Touch ID already enabled"
         return 0
-    }
+    fi
 
-    [ ! -f /etc/pam.d/sudo_local.template ] && {
+    if [ ! -f /etc/pam.d/sudo_local.template ]; then
         log error "Missing template: /etc/pam.d/sudo_local.template"
         return 1
-    }
+    fi
 
     try_run "sudo cp /etc/pam.d/sudo_local.template /etc/pam.d/sudo_local" \
         "copy Touch ID template"
@@ -68,10 +67,10 @@ setup_touch_id() {
     try_run "sudo sed -i '' '/pam_tid\.so/s/^[[:space:]]*#//' /etc/pam.d/sudo_local" \
         "modify Touch ID configuration"
 
-    try_run "grep -q \"^auth.*pam_tid.so\" /etc/pam.d/sudo_local" && {
+    if grep -q "^auth.*pam_tid.so" /etc/pam.d/sudo_local; then
         log success "Touch ID enabled"
         return 0
-    }
+    fi
 
     log error "enable Touch ID - configuration not found"
     return 1
@@ -87,50 +86,28 @@ setup_dotfiles() {
     fi
 
     # Handle existing .config directory
-    if [ -d "$HOME/.config" ]; then
-        # Check if it's already our dotfiles repo
-        if [ -d "$HOME/.config/.git" ] && git -C "$HOME/.config" remote get-url origin 2>/dev/null | grep -q "maclong9/dots"; then
-            log info "Dotfiles already cloned, updating..."
-            try_run "git -C \"$HOME/.config\" pull" \
-                "update existing dotfiles repository"
-        else
-            # Back up existing .config directory
-            backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
-            try_run "mv \"$HOME/.config\" \"$backup_dir\"" \
-                "backup existing .config directory"
-            log info "Previous .config backed up to $backup_dir"
-            
-            try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
-                "clone dotfiles repository (check network connection and GitHub access)"
-        fi
+    if [ -d "$HOME/.config/.git" ] && git -C "$HOME/.config" remote | grep -q "origin"; then
+        log info "Dotfiles already cloned, updating..."
+        try_run "git -C \"$HOME/.config\" pull" \
+            "update existing dotfiles repository"
+    elif [ -d "$HOME/.config" ]; then
+        # Back up existing .config directory
+        backup_dir="$HOME/.config.backup.$(date +%Y%m%d_%H%M%S)"
+        try_run "mv \"$HOME/.config\" \"$backup_dir\"" \
+            "backup existing .config directory"
+        log info "Previous .config backed up to $backup_dir"
+
+        try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
+            "clone dotfiles repository (check network connection and GitHub access)"
     else
         try_run "git clone \"https://github.com/maclong9/dots\" \"$HOME/.config\"" \
             "clone dotfiles repository (check network connection and GitHub access)"
     fi
 
-    [ -d "$HOME/.config" ] || {
+    if [ ! -d "$HOME/.config" ]; then
         log error "Dotfiles clone failed - .config not created"
         return 1
-    }
-
-    # ZSH Plugins
-    ensure_dir "$HOME/.zsh/plugins" || die 1 "Failed to create ZSH plugins directory (check home directory permissions)"
-    # Syntax Highlighting
-    try_run "git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-        $HOME/.zsh/plugins/zsh-syntax-highlighting" \
-        "clone syntax highlighting (check network connection)"
-    # Completions
-    try_run "git clone https://github.com/zsh-users/zsh-completions.git \
-        $HOME/.zsh/plugins/zsh-completions" \
-        "clone zsh completions (check network connection)"
-    # Autosuggestions
-    try_run "git clone https://github.com/zsh-users/zsh-autosuggestions.git \
-        $HOME/.zsh/plugins/zsh-autosuggestions" \
-        "clone zsh autosuggestions (check network connection)"
-    # Autocomplete
-    try_run "git clone https://github.com/marlonrichert/zsh-autocomplete.git \
-        $HOME/.zsh/plugins/zsh-autocomplete" \
-        "clone zsh autocomplete (check network connection)"
+    fi
 
     log success "Dotfiles cloned"
 }
@@ -138,10 +115,10 @@ setup_dotfiles() {
 link_dotfiles() {
     log info "Linking dotfiles from .config to home..."
 
-    [ ! -d "$HOME/.config" ] && {
+    if [ ! -d "$HOME/.config" ]; then
         log error ".config directory does not exist"
         return 1
-    }
+    fi
 
     for file in "$HOME/.config"/.*; do
         [ -f "$file" ] || continue
