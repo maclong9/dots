@@ -48,7 +48,6 @@ clc() {
     local last_cmd
     last_cmd=$(fc -ln -1)
 
-    # Check if there is a command to run.
     if [[ -z "$last_cmd" ]]; then
         echo "No previous command to run."
         return 1
@@ -59,10 +58,18 @@ clc() {
     output=$(eval "$last_cmd" 2>&1)
     local exit_code=$?
 
-    # Format the output and copy it to the clipboard.
-    printf "λ %s\n⇣\n%s" "$last_cmd" "$output" | pbcopy
+    # Format output
+    local formatted
+    formatted=$(printf "λ %s\n⇣\n%s" "$last_cmd" "$output")
 
-    echo "${BRIGHT_GREEN}✓${NC} Copied last command's output to clipboard."
+    # Try to copy to clipboard if possible.
+    if command -v pbcopy &>/dev/null; then
+        printf "%s" "$formatted" | pbcopy
+        echo "${BRIGHT_GREEN}✓${NC} Copied last command's output to clipboard."
+    else
+        echo "${BRIGHT_YELLOW}⚠ pbcopy not found — printing output instead:${NC}"
+        echo "$formatted"
+    fi
 
     return $exit_code
 }
