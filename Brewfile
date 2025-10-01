@@ -3,7 +3,8 @@
 tap "maclong9/tap"
 
 # System tools and utilities
-brew "mas"  # Mac App Store CLI
+brew "mas"
+brew "pkl-lsp"
 
 # Applications (Casks)
 cask "container"
