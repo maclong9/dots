@@ -103,9 +103,13 @@ log() {
 # Parses command line arguments and sets environment variables.
 #
 # Converts `--key=value` and `--flag` arguments to uppercase environment variables (e.g., `--debug` becomes `DEBUG=true`).
+# Validates variable names to prevent command injection.
 #
 # - Parameters:
 #   - args: All command line arguments.
+# - Returns:
+#   - 0 on success.
+#   - 1 if invalid variable name detected.
 # - Usage:
 #   ```sh
 #   parse_args "$@"
@@ -118,12 +122,40 @@ parse_args() {
                 key="${1#--}"
                 var_name=$(echo "${key%%=*}" | tr '[:lower:]-' '[:upper:]_')
                 var_value="${key#*=}"
-                eval "${var_name}='${var_value}'"
+
+                # Validate variable name contains only alphanumeric and underscore
+                case "$var_name" in
+                    *[!A-Z0-9_]*)
+                        log error "Invalid argument name: $var_name (contains invalid characters)"
+                        return 1
+                        ;;
+                    [0-9]*)
+                        log error "Invalid argument name: $var_name (cannot start with number)"
+                        return 1
+                        ;;
+                esac
+
+                # Safe export without eval
+                export "${var_name}=${var_value}"
                 shift
                 ;;
             --*)
                 var_name=$(echo "${1#--}" | tr '[:lower:]-' '[:upper:]_')
-                eval "${var_name}=true"
+
+                # Validate variable name
+                case "$var_name" in
+                    *[!A-Z0-9_]*)
+                        log error "Invalid argument name: $var_name (contains invalid characters)"
+                        return 1
+                        ;;
+                    [0-9]*)
+                        log error "Invalid argument name: $var_name (cannot start with number)"
+                        return 1
+                        ;;
+                esac
+
+                # Safe export without eval
+                export "${var_name}=true"
                 shift
                 ;;
             *)
@@ -242,7 +274,8 @@ try_run() {
 # - Parameters:
 #   - path: Path to the file or directory to back up.
 # - Returns:
-#   - The path to the backup file/directory, if created.
+#   - 0 on success, outputs backup path to stdout.
+#   - 1 if path is invalid or backup fails.
 # - Usage:
 #   ```sh
 #   backup_path ~/.zshrc
@@ -252,18 +285,45 @@ try_run() {
 #   ```
 backup_path() {
     path="$1"
+
+    # Validate input
+    if [ -z "$path" ]; then
+        log error "backup_path: path argument required"
+        return 1
+    fi
+
+    # Check for directory traversal or suspicious patterns
+    case "$path" in
+        *..*)
+            log error "backup_path: path contains directory traversal: $path"
+            return 1
+            ;;
+    esac
+
+    if [ ! -e "$path" ]; then
+        log debug "backup_path: path does not exist, skipping backup: $path"
+        return 0
+    fi
+
     backup="${path}.backup.$(date +%Y%m%d_%H%M%S)"
 
-    if [ -e "$path" ] && [ ! -L "$path" ]; then
+    if [ ! -L "$path" ]; then
         if [ -d "$path" ]; then
-            cp -r "$path" "$backup"
+            if ! cp -r "$path" "$backup"; then
+                log error "Failed to backup directory: $path"
+                return 1
+            fi
             log debug "Backed up directory $path to $backup"
         elif [ -f "$path" ]; then
-            cp "$path" "$backup"
+            if ! cp "$path" "$backup"; then
+                log error "Failed to backup file: $path"
+                return 1
+            fi
             log debug "Backed up file $path to $backup"
         fi
         echo "$backup"
     fi
+    return 0
 }
 
 # Alias for backup_path for backward compatibility
@@ -288,10 +348,12 @@ backup_file() {
 count_files() {
     pattern="$1"
     count=0
+    # Note: Pattern must NOT be quoted for glob expansion
+    # shellcheck disable=SC2086
     for file in $pattern; do
         [ -f "$file" ] && count=$((count + 1))
     done
-    echo $count
+    echo "$count"
 }
 
 # Validates source file and returns its absolute path.
@@ -546,8 +608,24 @@ command_exists() {
 #   safe_cd "/path/to/directory"
 #   ```
 safe_cd() {
-    if ! cd "$1"; then
-        log error "Failed to change directory to: $1"
+    dir="$1"
+
+    # Validate input
+    if [ -z "$dir" ]; then
+        log error "safe_cd: directory argument required"
+        exit 1
+    fi
+
+    # Check for directory traversal attacks
+    case "$dir" in
+        *..*)
+            log error "safe_cd: path contains directory traversal: $dir"
+            exit 1
+            ;;
+    esac
+
+    if ! cd "$dir"; then
+        log error "Failed to change directory to: $dir"
         exit 1
     fi
 }

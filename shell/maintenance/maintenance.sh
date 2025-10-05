@@ -9,7 +9,12 @@
 CLEANUP_DAYS_OLD="${CLEANUP_DAYS_OLD:-30}" # Default 30 days for old file cleanup
 
 # Ensure HOME is set for launchd environment
-[ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
+# Use $HOME if set, otherwise fall back to getent lookup
+HOME_PATH="${HOME:-$(getent passwd "$(whoami)" 2>/dev/null | cut -d: -f6)}"
+if [ -z "$HOME_PATH" ]; then
+    log error "Unable to determine home directory"
+    exit 1
+fi
 
 # Add timestamp to start of maintenance log
 echo "=== Maintenance run started at $(date) ===" >>"$LOG_FILE"
@@ -77,7 +82,9 @@ clean_directory() {
         item_count=$(wc -l <"$cache_file" | tr -d ' ')
         rm -f "$cache_file"
 
-        rm -rf "${dir:?}"/* "$dir"/.* 2>/dev/null || true
+        # Safely remove directory contents using find to avoid .* issues
+        # This prevents accidental deletion of . and .. entries
+        find "$dir" -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null || true
 
         size_after_bytes=$(calculate_size_bytes "$dir")
         saved_bytes=$((size_before_bytes - size_after_bytes))
@@ -166,11 +173,14 @@ cleanup_macos() {
     # Download folder cleanup (files older than configurable days)
     if [ -d "$HOME_PATH/Downloads" ]; then
         echo "  → Cleaning old Downloads (${CLEANUP_DAYS_OLD}+ days)..." >>/tmp/maintenance.log
-        old_files=$(find "$HOME_PATH/Downloads" -type f -mtime "+${CLEANUP_DAYS_OLD}" 2>/dev/null)
         old_count=0
         old_size=0
 
-        for file in $old_files; do
+        # POSIX-compliant approach using temporary file
+        old_files_cache="/tmp/old_downloads_$$"
+        find "$HOME_PATH/Downloads" -type f -mtime "+${CLEANUP_DAYS_OLD}" 2>/dev/null >"$old_files_cache"
+
+        while IFS= read -r file; do
             [ -f "$file" ] && {
                 if command_exists stat; then
                     file_size=$(stat -f%z "$file" 2>/dev/null || echo "0")
@@ -178,7 +188,9 @@ cleanup_macos() {
                 fi
                 old_count=$((old_count + 1))
             }
-        done
+        done <"$old_files_cache"
+
+        rm -f "$old_files_cache"
 
         find "$HOME_PATH/Downloads" -type f -mtime "+${CLEANUP_DAYS_OLD}" -delete 2>/dev/null || true
 
@@ -350,7 +362,6 @@ show_disk_usage() {
 }
 cleanup_tooling() {
     echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
-    [ "$IS_MAC" = "true" ] && HOME_PATH="/Users/mac" || HOME_PATH="/home/mac"
 
     mise_output=$("$HOME_PATH/.local/bin/mise" self-update -y 2>&1)
     echo "$mise_output"

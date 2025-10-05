@@ -8,8 +8,31 @@ A comprehensive, POSIX-compliant dotfiles configuration for productive developme
 
 ## 🚀 Installation
 
+### Recommended (Secure Two-Step Installation)
+
 ```sh
-curl -fsSL https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
+# Download the setup script
+curl -fsSL --proto '=https' --tlsv1.2 \
+  https://raw.githubusercontent.com/maclong9/dots/main/setup.sh \
+  -o /tmp/setup.sh
+
+# Review the script (recommended)
+less /tmp/setup.sh
+
+# Run the setup script
+sh /tmp/setup.sh
+
+# Clean up
+rm /tmp/setup.sh
+```
+
+### Quick Installation (Advanced Users)
+
+⚠️ **Security Warning**: This method executes code directly without inspection.
+
+```sh
+curl -fsSL --proto '=https' --tlsv1.2 \
+  https://raw.githubusercontent.com/maclong9/dots/main/setup.sh | sh
 ```
 
 ## ✨ Features

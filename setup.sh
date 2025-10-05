@@ -255,13 +255,58 @@ setup_maintenance() {
 }
 
 setup_ssh() {
-    try_run "ssh-keygen -t ed25519 -C \"hello@maclong.uk\" -N \"\" -f ~/.ssh/id_ed25519" \
-        "generate SSH key (check ~/.ssh directory permissions)"
-    if [ "$IS_MAC" = true ]; then
-        pbcopy <"$HOME/.ssh/id_ed25519.pub"
-    else
-        cat "$HOME/.ssh/id_ed25519.pub"
+    log info "Setting up SSH key..."
+
+    # Check if SSH key already exists
+    if [ -f "$HOME/.ssh/id_ed25519" ]; then
+        log warning "SSH key already exists at $HOME/.ssh/id_ed25519"
+        log info "Skipping SSH key generation to preserve existing key"
+        log info "To generate a new key, manually delete the existing one first"
+        return 0
     fi
+
+    # Ensure .ssh directory exists with correct permissions
+    ensure_dir "$HOME/.ssh" || return 1
+    chmod 700 "$HOME/.ssh" || {
+        log error "Failed to set permissions on .ssh directory"
+        return 1
+    }
+
+    log info "Generating Ed25519 SSH key..."
+    log warning "SECURITY: You will be prompted to set a passphrase"
+    log warning "A strong passphrase is HIGHLY RECOMMENDED to protect your key"
+    log info "Press Enter for no passphrase (NOT recommended for production use)"
+
+    # Interactive key generation - allows user to set passphrase
+    if ! ssh-keygen -t ed25519 -C "hello@maclong.uk" -f "$HOME/.ssh/id_ed25519"; then
+        log error "SSH key generation failed"
+        return 1
+    fi
+
+    # Set correct permissions on generated keys
+    chmod 600 "$HOME/.ssh/id_ed25519" || {
+        log warning "Failed to set permissions on private key"
+    }
+    chmod 644 "$HOME/.ssh/id_ed25519.pub" || {
+        log warning "Failed to set permissions on public key"
+    }
+
+    log success "SSH key generated successfully"
+    log info "Public key location: $HOME/.ssh/id_ed25519.pub"
+    log info "Add this public key to your GitHub/GitLab account:"
+    echo ""
+
+    # Display and optionally copy public key
+    if [ "$IS_MAC" = true ]; then
+        if command_exists pbcopy; then
+            pbcopy <"$HOME/.ssh/id_ed25519.pub"
+            log success "Public key copied to clipboard"
+        fi
+    fi
+
+    # Always display the public key
+    cat "$HOME/.ssh/id_ed25519.pub"
+    echo ""
 }
 
 # shellcheck disable=SC1091
