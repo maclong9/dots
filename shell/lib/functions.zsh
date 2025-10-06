@@ -1,5 +1,10 @@
 #!/bin/zsh
 
+# Source utility functions for logging and process management
+if [[ -f "$HOME/.config/shell/lib/utils.sh" ]]; then
+    source "$HOME/.config/shell/lib/utils.sh"
+fi
+
 # • Process management
 
 # Kills a process running on a specified port.
@@ -209,5 +214,20 @@ remote_copy() {
     fi
     
     scp -i "$ssh_key" "$addr:$remote_path" "$output_path"
+}
+
+# Converts a collection of PSX game directories to a compressed .chd file
+#
+# Run in a directory of PSX game folders
+# Will delete the original game directories on completion
+convert_psx() {
+    for dir in ./*/; do
+        echo "Processing $dir"
+        cd "$dir" || continue
+        name="${dir%/}" && name="${name##*/}"
+        chdman createcd -i *.cue -o "../${name}.chd"
+        cd ..
+        rm -rf "$dir"
+    done
 }
 
