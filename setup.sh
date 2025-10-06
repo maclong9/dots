@@ -164,6 +164,35 @@ setup_homebrew() {
 
         # Return to original directory
         cd - >/dev/null || true
+
+        # RPCS3 iCloud Sync
+        log info "Setting up RPCS3 save + config sync via iCloud..."
+        RPCS3_DIR="$HOME/Library/Application Support/rpcs3/dev_hdd0"
+        ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/PS3/System"
+        if [ -d "$RPCS3_DIR" ]; then
+            ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PS3 System directory"
+            for folder in home savedata theme drm; do
+                SRC="$RPCS3_DIR/$folder"
+                DEST="$ICLOUD_DIR/$folder"
+                if [ -d "$SRC" ]; then
+                    # Copy if missing in iCloud
+                    if [ ! -d "$DEST" ]; then
+                        log info "Copying $folder to iCloud..."
+                        cp -R "$SRC" "$DEST"
+                    fi
+                    # Replace with symlink
+                    rm -rf "$SRC"
+                    ln -s "$DEST" "$SRC"
+                    log success "Linked $folder → iCloud"
+                else
+                    log warning "Missing: $SRC — skipping"
+                fi
+            done
+            log success "RPCS3 saves + configs now live in iCloud 🎮☁️"
+        else
+            log warning "RPCS3 not installed yet — skipping iCloud sync setup"
+        fi
+
     else
         log warning "Brewfile not found, skipping brew bundle install"
     fi
@@ -206,8 +235,8 @@ setup_mise() {
     fi
 
     # Generate completions for mise tools
-    "$HOME/.local/share/mise/shims/deno" completions zsh > "$HOME/.zsh/completions/_deno"
-    "$HOME/.local/share/mise/shims/gh" completion -s zsh > "$HOME/.zsh/completions/_gh"
+    "$HOME/.local/share/mise/shims/deno" completions zsh >"$HOME/.zsh/completions/_deno"
+    "$HOME/.local/share/mise/shims/gh" completion -s zsh >"$HOME/.zsh/completions/_gh"
 
     log success "Development tools installed via mise"
 }

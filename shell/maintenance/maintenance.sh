@@ -430,7 +430,7 @@ main() {
     fi
 
     log info "=== Current Installed Tooling & Applications ==="
-    log plain "$(brew list && echo "==> Apps" && mas list && mise list )"
+    log plain "$(brew list && echo "==> Apps" && mas list && mise list)"
 
     echo "=== Maintenance run completed at $(date) ===" >>/tmp/maintenance.log
 }
