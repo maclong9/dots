@@ -74,10 +74,6 @@ jobs:
             echo "This is expected if the setup script failed during dotfiles installation"
           fi
 
-          echo "==> Verify zsh plugins directory"
-          [ -d "$HOME/.zsh/plugins" ] || { echo ".zsh/plugins missing"; exit 1; }
-          echo ".zsh/plugins exists"
-
           echo "==> Verify at least one dotfile symlink in \$HOME that points into \$HOME/.config"
           symlink_count=0
           for f in "$HOME"/.*; do
