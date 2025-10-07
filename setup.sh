@@ -165,7 +165,7 @@ setup_homebrew() {
 
         if [ -d "$RPCS3_DIR" ]; then
             ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PS3 System directory"
-            for folder in home savedata theme drm; do
+            for folder in home savedata; do
                 SRC="$RPCS3_DIR/$folder"
                 DEST="$ICLOUD_DIR/$folder"
                 if [ -d "$SRC" ]; then
@@ -214,7 +214,7 @@ setup_homebrew() {
 
         if [ -d "$PCSX2_DIR" ]; then
             ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PCSX2 System directory"
-            for folder in memcards inis cheats bios; do
+            for folder in memcards gamesettings bios; do
                 SRC="$PCSX2_DIR/$folder"
                 DEST="$ICLOUD_DIR/$folder"
                 if [ -d "$SRC" ]; then
