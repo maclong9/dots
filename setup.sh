@@ -141,18 +141,13 @@ setup_homebrew() {
     if command_exists brew; then
         log success "Homebrew already installed"
     else
-        # Install Homebrew in non-interactive mode
         export NONINTERACTIVE=1
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-        # Add Homebrew to PATH for this session
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    # Skip Brewfile installation in CI environments
     if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ -n "${RUNNER_OS:-}" ]; then
         log info "CI environment detected, skipping Brewfile installation"
-        log info "Brewfile contains GUI applications and private taps not suitable for CI"
     elif [ -f "$HOME/.config/Brewfile" ]; then
         log info "Installing applications from Brewfile..."
         cd "$HOME/.config" || {
@@ -161,26 +156,20 @@ setup_homebrew() {
         }
 
         try_run "brew bundle --file=Brewfile" "install applications from Brewfile"
-
-        # Return to original directory
         cd - >/dev/null || true
 
         # RPCS3 iCloud Sync
         log info "Setting up RPCS3 save + config sync via iCloud..."
         RPCS3_DIR="$HOME/Library/Application Support/rpcs3/dev_hdd0"
         ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/PS3/System"
+
         if [ -d "$RPCS3_DIR" ]; then
             ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PS3 System directory"
             for folder in home savedata theme drm; do
                 SRC="$RPCS3_DIR/$folder"
                 DEST="$ICLOUD_DIR/$folder"
                 if [ -d "$SRC" ]; then
-                    # Copy if missing in iCloud
-                    if [ ! -d "$DEST" ]; then
-                        log info "Copying $folder to iCloud..."
-                        cp -R "$SRC" "$DEST"
-                    fi
-                    # Replace with symlink
+                    [ ! -d "$DEST" ] && log info "Copying $folder to iCloud..." && cp -R "$SRC" "$DEST"
                     rm -rf "$SRC"
                     ln -s "$DEST" "$SRC"
                     log success "Linked $folder → iCloud"
@@ -189,47 +178,57 @@ setup_homebrew() {
                 fi
             done
             ln -s "$ICLOUD_DIR/config.yml" "$HOME/Library/Application Support/rpcs3/config.yml"
-
-            # --- Ryujinx iCloud Sync ---
-            log info "Setting up Ryujinx save + config sync via iCloud..."
-
-            RYUJINX_DIR="$HOME/Library/Application Support/Ryujinx"
-            ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/Switch/System"
-
-            if [ -d "$RYUJINX_DIR" ]; then
-                ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud Switch System directory"
-
-                for item in Config.json bis sdcard profiles; do
-                    SRC="$RYUJINX_DIR/$item"
-                    DEST="$ICLOUD_DIR/$item"
-
-                    if [ -L "$SRC" ]; then
-                        log info "$item already linked — skipping"
-                        continue
-                    fi
-
-                    if [ -e "$SRC" ]; then
-                        if [ ! -e "$DEST" ]; then
-                            log info "Copying $item to iCloud..."
-                            cp -R "$SRC" "$DEST"
-                        fi
-
-                        rm -rf "$SRC"
-                        ln -s "$DEST" "$SRC"
-                        log success "Linked $item → iCloud"
-                    else
-                        log warning "Missing: $SRC — skipping"
-                    fi
-                done
-
-                log success "Ryujinx saves + config now live in iCloud 🎮☁️"
-            else
-                log warning "Ryujinx not installed yet — skipping iCloud sync setup"
-            fi
-
             log success "RPCS3 saves + configs now live in iCloud 🎮☁️"
         else
             log warning "RPCS3 not installed yet — skipping iCloud sync setup"
+        fi
+
+        # Ryujinx iCloud Sync
+        log info "Setting up Ryujinx save + config sync via iCloud..."
+        RYUJINX_DIR="$HOME/Library/Application Support/Ryujinx"
+        ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/Switch/System"
+
+        if [ -d "$RYUJINX_DIR" ]; then
+            ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud Switch System directory"
+            for item in Config.json bis sdcard profiles; do
+                SRC="$RYUJINX_DIR/$item"
+                DEST="$ICLOUD_DIR/$item"
+                if [ -L "$SRC" ]; then
+                    log info "$item already linked — skipping"
+                    continue
+                fi
+                [ -e "$SRC" ] && [ ! -e "$DEST" ] && log info "Copying $item to iCloud..." && cp -R "$SRC" "$DEST"
+                rm -rf "$SRC"
+                ln -s "$DEST" "$SRC"
+                log success "Linked $item → iCloud"
+            done
+            log success "Ryujinx saves + configs now live in iCloud 🎮☁️"
+        else
+            log warning "Ryujinx not installed yet — skipping iCloud sync setup"
+        fi
+
+        # PCSX2 iCloud Sync
+        log info "Setting up PCSX2 save + config sync via iCloud..."
+        PCSX2_DIR="$HOME/Library/Application Support/PCSX2"
+        ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/PCSX2"
+
+        if [ -d "$PCSX2_DIR" ]; then
+            ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PCSX2 System directory"
+            for folder in memcards inis cheats bios; do
+                SRC="$PCSX2_DIR/$folder"
+                DEST="$ICLOUD_DIR/$folder"
+                if [ -d "$SRC" ]; then
+                    [ ! -d "$DEST" ] && log info "Copying $folder to iCloud..." && cp -R "$SRC" "$DEST"
+                    rm -rf "$SRC"
+                    ln -s "$DEST" "$SRC"
+                    log success "Linked $folder → iCloud"
+                else
+                    log warning "Missing: $SRC — skipping"
+                fi
+            done
+            log success "PCSX2 saves + configs now live in iCloud 🎮☁️"
+        else
+            log warning "PCSX2 not installed yet — skipping iCloud sync setup"
         fi
 
     else
