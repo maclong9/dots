@@ -188,6 +188,45 @@ setup_homebrew() {
                     log warning "Missing: $SRC — skipping"
                 fi
             done
+            ln -s "$ICLOUD_DIR/config.yml" "$HOME/Library/Application Support/rpcs3/config.yml"
+
+            # --- Ryujinx iCloud Sync ---
+            log info "Setting up Ryujinx save + config sync via iCloud..."
+
+            RYUJINX_DIR="$HOME/Library/Application Support/Ryujinx"
+            ICLOUD_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Games/Switch/System"
+
+            if [ -d "$RYUJINX_DIR" ]; then
+                ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud Switch System directory"
+
+                for item in Config.json bis sdcard profiles; do
+                    SRC="$RYUJINX_DIR/$item"
+                    DEST="$ICLOUD_DIR/$item"
+
+                    if [ -L "$SRC" ]; then
+                        log info "$item already linked — skipping"
+                        continue
+                    fi
+
+                    if [ -e "$SRC" ]; then
+                        if [ ! -e "$DEST" ]; then
+                            log info "Copying $item to iCloud..."
+                            cp -R "$SRC" "$DEST"
+                        fi
+
+                        rm -rf "$SRC"
+                        ln -s "$DEST" "$SRC"
+                        log success "Linked $item → iCloud"
+                    else
+                        log warning "Missing: $SRC — skipping"
+                    fi
+                done
+
+                log success "Ryujinx saves + config now live in iCloud 🎮☁️"
+            else
+                log warning "Ryujinx not installed yet — skipping iCloud sync setup"
+            fi
+
             log success "RPCS3 saves + configs now live in iCloud 🎮☁️"
         else
             log warning "RPCS3 not installed yet — skipping iCloud sync setup"
