@@ -12,14 +12,13 @@ brew "gh"
 brew "harper"
 brew "helix"
 brew "marksman"
-brew "mas"
+brew "mas" if OS.mac?
 brew "node"
 brew "pkl-lsp"
 brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
 brew "swift" if OS.linux?
-brew "usage"
 brew "vscode-langservers-extracted"
 brew "zoxide"
 
