@@ -2,27 +2,27 @@
 
 tap "maclong9/tap"
 
-# System tools and utilities
+# • Language Servers
 brew "bash-language-server"
+brew "marksman"
+brew "pkl-lsp"
+brew "vscode-langservers-extracted"
+
+# • CLI Tools & Utilities
 brew "bat"
-brew "cloudflare-wrangler"
 brew "deno"
 brew "fzf"
 brew "gh"
 brew "harper"
 brew "helix"
-brew "marksman"
-brew "mas" if OS.mac?
-brew "node"
-brew "pkl-lsp"
 brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
-brew "swift" if OS.linux?
-brew "vscode-langservers-extracted"
+brew "sls"
 brew "zoxide"
+brew "swift" if OS.linux?
 
-# Applications (Casks)
+# • Applications (Casks)
 cask "claude-code"
 cask "container"
 cask "font-sf-mono-nerd-font-ligaturized"
@@ -33,7 +33,7 @@ cask "rpcs3"
 cask "ryujinx"
 cask "steam"
 
-# Mac App Store applications
+# • Mac App Store Applications
 mas "Apple Configurator", id: 1037126344
 mas "Compressor", id: 424390742
 mas "Final Cut Pro", id: 424389933
@@ -44,8 +44,5 @@ mas "Motion", id: 434290957
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Pixelmator Pro", id: 1289583905
-mas "Urban VPN Desktop", id: 1517772049
-mas "Windows App", id: 1295203466
 mas "Wipr", id: 1662217862
-mas "WireGuard", id: 1451685025
 mas "Xcode", id: 497799835
