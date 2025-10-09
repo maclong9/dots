@@ -17,7 +17,7 @@ if [ -z "$HOME_PATH" ]; then
 fi
 
 # Add timestamp to start of maintenance log
-log plain "=== Maintenance run started at $(date) ==="
+log plain "• Maintenance run started at $(date)"
 
 # Calculate sizes before and after cleanup
 calculate_size() {
@@ -263,7 +263,7 @@ cleanup_linux() {
 
 # Universal cleanup for all platforms
 cleanup_universal() {
-    log plain "=== Universal Cleanup ==="
+    log plain "• Universal Cleanup"
 
     # Clean git repositories with caching
     if [ -d "$HOME_PATH/Developer" ]; then
@@ -310,7 +310,7 @@ cleanup_universal() {
 # Show disk usage summary
 show_disk_usage() {
     log info "Disk usage summary:"
-    log plain "=== Disk Usage Summary ==="
+    log plain "• Disk Usage Summary"
 
     if command_exists df; then
         df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
@@ -334,7 +334,7 @@ show_disk_usage() {
 }
 
 cleanup_tooling() {
-    log plain "=== Mise Cleanup ==="
+    log plain "• Mise Cleanup"
 
     mise_output=$("$HOME_PATH/.local/bin/mise" self-update -y 2>&1)
     log plain "$mise_output"
@@ -372,7 +372,7 @@ main() {
     log info "Restarting system services to apply cache cleanup..."
     if [ "$IS_MAC" = true ]; then
         log info "Dumping current macOS defaults..."
-        log plain "=== macOS Defaults Backup ==="
+        log plain "• macOS Defaults Backup"
         defaults_output=$("$HOME_PATH/.config/scripts/defaults/dump-defaults.sh" 2>&1)
         log plain "$defaults_output"
         log success "macOS defaults dumped successfully"
@@ -400,10 +400,10 @@ main() {
         log plain "    ✓ Spotlight index rebuild initiated (search optimization)"
     fi
 
-    log info "=== Current Installed Tooling & Applications ==="
+    log info "• Current Installed Tooling & Applications"
     log plain "$(brew list && echo "==> Apps" && mas list && mise list)"
 
-    log plain "=== Maintenance run completed at $(date) ==="
+    log plain "• Maintenance run completed at $(date)"
 }
 
 main "$@" 2>>/tmp/maintenance.error.log
