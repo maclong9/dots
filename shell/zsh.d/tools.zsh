@@ -3,10 +3,7 @@
 [[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP"
 
 # Initialize Homebrew (macOS)
-[[ "$IS_MAC" = true ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Initialize mise
-eval "$(mise activate zsh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Initialize zoxide (override zinit's 'zi' command)
 eval "$(zoxide init zsh --no-cmd)" || echo "Warning: zoxide activation failed" >&2

@@ -3,11 +3,28 @@
 tap "maclong9/tap"
 
 # System tools and utilities
+brew "bash-language-server"
+brew "bat"
+brew "cloudflare-wrangler"
+brew "deno"
+brew "fzf"
+brew "gh"
+brew "harper"
+brew "helix"
+brew "marksman"
 brew "mas"
+brew "node"
 brew "pkl-lsp"
-brew "rom-tools"
+brew "ripgrep"
+brew "shellcheck"
+brew "shfmt"
+brew "swift" if OS.linux?
+brew "usage"
+brew "vscode-langservers-extracted"
+brew "zoxide"
 
 # Applications (Casks)
+cask "claude-code"
 cask "container"
 cask "font-sf-mono-nerd-font-ligaturized"
 cask "ghostty@tip"
@@ -24,7 +41,6 @@ mas "Final Cut Pro", id: 424389933
 mas "Keynote", id: 409183694
 mas "Logic Pro", id: 634148309
 mas "MainStage", id: 634159523
-mas "Manic EMU", id: 6743335790
 mas "Motion", id: 434290957
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
