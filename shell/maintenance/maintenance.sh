@@ -17,7 +17,7 @@ if [ -z "$HOME_PATH" ]; then
 fi
 
 # Add timestamp to start of maintenance log
-echo "=== Maintenance run started at $(date) ===" >>"$LOG_FILE"
+log plain "=== Maintenance run started at $(date) ==="
 
 # Calculate sizes before and after cleanup
 calculate_size() {
@@ -65,7 +65,6 @@ clean_directory() {
 
     if [ -n "$(ls -A "$dir" 2>/dev/null)" ]; then
         log info "Cleaning $name ($size_before)"
-        echo "  → Cleaning $name: $size_before" >>"$LOG_FILE"
 
         # Cache directory listing to avoid multiple find operations
         cache_file="/tmp/cleanup_cache_$$"
@@ -74,7 +73,7 @@ clean_directory() {
         # List items being cleaned from cache
         while IFS= read -r item; do
             [ -e "$item" ] && {
-                echo "    - $(basename "$item")" >>"$LOG_FILE"
+                log plain "  - $(basename "$item")"
             }
         done <"$cache_file"
 
@@ -83,7 +82,6 @@ clean_directory() {
         rm -f "$cache_file"
 
         # Safely remove directory contents using find to avoid .* issues
-        # This prevents accidental deletion of . and .. entries
         find "$dir" -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null || true
 
         size_after_bytes=$(calculate_size_bytes "$dir")
@@ -91,10 +89,8 @@ clean_directory() {
         saved_formatted=$(format_bytes "$saved_bytes")
 
         log success "Cleaned $name (${item_count} items, saved $saved_formatted)"
-        echo "  ✓ Cleaned $name: $item_count items, saved $saved_formatted" >>"$LOG_FILE"
     else
         log debug "$name already clean"
-        echo "  → $name already clean" >>"$LOG_FILE"
     fi
 }
 
@@ -105,7 +101,7 @@ clean_files() {
 
     count=0
     total_size=0
-    echo "  → Cleaning $name files..." >>"$LOG_FILE"
+    log plain "  → Cleaning $name files..."
 
     # Use find instead of unquoted glob expansion for safety
     if echo "$pattern" | grep -q '\*'; then
@@ -127,7 +123,7 @@ clean_files() {
                     fi
                     total_size=$((total_size + file_size))
                 fi
-                echo "    - $(basename "$file")" >>/tmp/maintenance.log
+                log plain "    - $(basename "$file")"
                 rm -f "$file" 2>/dev/null && count=$((count + 1))
             }
         done <<EOF
@@ -144,7 +140,7 @@ EOF
                 fi
                 total_size=$((total_size + file_size))
             fi
-            echo "    - $(basename "$pattern")" >>/tmp/maintenance.log
+            log plain "    - $(basename "$pattern")"
             rm -f "$pattern" 2>/dev/null && count=$((count + 1))
         }
     fi
@@ -152,9 +148,8 @@ EOF
     if [ "$count" -gt 0 ]; then
         saved_formatted=$(format_bytes "$total_size")
         log success "Cleaned ${count} $name files (saved $saved_formatted)"
-        echo "  ✓ Cleaned $count $name files, saved $saved_formatted" >>/tmp/maintenance.log
     else
-        echo "  → No $name files to clean" >>/tmp/maintenance.log
+        log plain "  → No $name files to clean"
     fi
 }
 
@@ -172,7 +167,7 @@ cleanup_macos() {
     wait
     # Download folder cleanup (files older than configurable days)
     if [ -d "$HOME_PATH/Downloads" ]; then
-        echo "  → Cleaning old Downloads (${CLEANUP_DAYS_OLD}+ days)..." >>/tmp/maintenance.log
+        log plain "  → Cleaning old Downloads (${CLEANUP_DAYS_OLD}+ days)..."
         old_count=0
         old_size=0
 
@@ -197,16 +192,14 @@ cleanup_macos() {
         if [ "$old_count" -gt 0 ]; then
             saved_formatted=$(format_bytes "$old_size")
             log success "Cleaned old Downloads ($old_count files, saved $saved_formatted)"
-            echo "  ✓ Cleaned old Downloads: $old_count files, saved $saved_formatted" >>/tmp/maintenance.log
         else
-            echo "  → No old Downloads to clean" >>/tmp/maintenance.log
+            log plain "  → No old Downloads to clean"
         fi
     fi
 
     # Clear system caches (requires sudo)
     if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
         log info "Cleaning system caches (requires admin privileges)"
-        echo "  → Cleaning system caches..." >>/tmp/maintenance.log
 
         system_before=0
         for cache_dir in /System/Library/Caches /Library/Caches /private/var/folders/*/C; do
@@ -222,10 +215,8 @@ cleanup_macos() {
 
         saved_formatted=$(format_bytes "$system_before")
         log success "Cleaned system caches (saved ~$saved_formatted)"
-        echo "  ✓ Cleaned system caches, saved ~$saved_formatted" >>/tmp/maintenance.log
     else
         log warning "Skipping system cache cleanup (requires sudo)"
-        echo "  ! Skipping system cache cleanup (requires sudo)" >>/tmp/maintenance.log
     fi
 }
 
@@ -233,6 +224,7 @@ cleanup_macos() {
 cleanup_linux() {
     # Run independent user cache cleanups in parallel
     clean_directory "$HOME_PATH/.cache/google-chrome" "Chrome cache" &
+    clean_directory "$HOME_PATH/.cache/pip" "pip cache" &
     clean_directory "$HOME_PATH/.cache/pip" "pip cache" &
     clean_directory "$HOME_PATH/.cargo/registry/cache" "Cargo cache" &
     clean_directory "$HOME_PATH/.gradle/caches" "Gradle caches" &
@@ -249,25 +241,21 @@ cleanup_linux() {
     # Log files (requires sudo)
     if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
         log info "Cleaning system logs (requires admin privileges)"
-        echo "  → Cleaning system logs..." >>/tmp/maintenance.log
 
         sudo find /var/log -type f -name "*.log" -mtime +7 -delete 2>/dev/null || true
         sudo journalctl --vacuum-time=7d 2>/dev/null || true
 
         log success "Cleaned system logs"
-        echo "  ✓ Cleaned system logs" >>/tmp/maintenance.log
     else
         log warning "Skipping system log cleanup (requires sudo)"
-        echo "  ! Skipping system log cleanup (requires sudo)" >>/tmp/maintenance.log
     fi
 
     # Package manager caches
     if command_exists apt; then
         if sudo -n true 2>/dev/null; then
-            echo "  → Cleaning apt cache..." >>/tmp/maintenance.log
+            log plain "  → Cleaning apt cache..."
             sudo apt clean 2>/dev/null && {
                 log success "Cleaned apt cache"
-                echo "  ✓ Cleaned apt cache" >>/tmp/maintenance.log
             }
         fi
     fi
@@ -275,11 +263,11 @@ cleanup_linux() {
 
 # Universal cleanup for all platforms
 cleanup_universal() {
-    echo "=== Universal Cleanup ===" >>/tmp/maintenance.log
+    log plain "=== Universal Cleanup ==="
 
     # Clean git repositories with caching
     if [ -d "$HOME_PATH/Developer" ]; then
-        echo "  → Cleaning Git repositories..." >>/tmp/maintenance.log
+        log plain "  → Cleaning Git repositories..."
 
         # Cache git repository list to avoid multiple find operations
         cache_file="/tmp/git_repos_cache_$$"
@@ -295,10 +283,9 @@ cleanup_universal() {
                 if git rev-parse --git-dir >/dev/null 2>&1; then
                     git gc --quiet 2>/dev/null || true
                     git prune 2>/dev/null || true
-                    echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+                    log plain "      ✓ $repo_name repository cleaned successfully"
                 else
-                    printf "      ✓ %s repository cleaned successfully\n" "$repo_name"
-                    echo "      ✓ $repo_name repository cleaned successfully" >>/tmp/maintenance.log
+                    log plain "      ✓ $repo_name repository cleaned successfully"
                     git remote prune origin 2>/dev/null || true
                 fi
             }
@@ -306,9 +293,9 @@ cleanup_universal() {
 
         repo_count=$(wc -l <"$cache_file" | tr -d ' ')
         rm -f "$cache_file"
-        echo "  ✓ Cleaned $repo_count Git repositories" >>/tmp/maintenance.log
+        log plain "  ✓ Cleaned $repo_count Git repositories"
 
-        echo "  → Cleaning zsh history duplicates..." >>/tmp/maintenance.log
+        log plain "  → Cleaning zsh history duplicates..."
         before_lines=$(wc -l <"$HOME_PATH/.zsh_history")
         awk '!seen[$0]++' "$HOME_PATH/.zsh_history" >/tmp/zsh_history_clean
         mv /tmp/zsh_history_clean "$HOME_PATH/.zsh_history"
@@ -317,59 +304,43 @@ cleanup_universal() {
         removed_lines=$((before_lines - after_lines))
 
         log success "Cleaned zsh history duplicates ($removed_lines duplicates removed)"
-        echo "  ✓ Cleaned zsh history: $removed_lines duplicates removed" >>/tmp/maintenance.log
     fi
 }
 
 # Show disk usage summary
 show_disk_usage() {
     log info "Disk usage summary:"
-    echo "=== Disk Usage Summary ===" >>/tmp/maintenance.log
+    log plain "=== Disk Usage Summary ==="
 
     if command_exists df; then
         df -h / 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
-            echo "Root filesystem ($filesystem):"
-            echo "  Size: $size"
-            echo "  Used: $used"
-            echo "  Available: $avail"
-            echo "  Capacity: $capacity"
-            {
-                echo "  Root filesystem ($filesystem):"
-                echo "    Size: $size"
-                echo "    Used: $used"
-                echo "    Available: $avail"
-                echo "    Capacity: $capacity"
-            } >>/tmp/maintenance.log
+            log plain "Root filesystem ($filesystem):"
+            log plain "  Size: $size"
+            log plain "  Used: $used"
+            log plain "  Available: $avail"
+            log plain "  Capacity: $capacity"
         done
     fi
 
     if [ "$IS_MAC" = true ] && command_exists df; then
         df -h /System/Volumes/Data 2>/dev/null | tail -1 | while read -r filesystem size used avail capacity _; do
-            echo "Data volume ($filesystem):"
-            echo "  Size: $size"
-            echo "  Used: $used"
-            echo "  Available: $avail"
-            echo "  Capacity: $capacity"
-            {
-                echo "  Data volume ($filesystem):"
-                echo "    Size: $size"
-                echo "    Used: $used"
-                echo "    Available: $avail"
-                echo "    Capacity: $capacity"
-            } >>/tmp/maintenance.log
+            log plain "Data volume ($filesystem):"
+            log plain "  Size: $size"
+            log plain "  Used: $used"
+            log plain "  Available: $avail"
+            log plain "  Capacity: $capacity"
         done
     fi
 }
+
 cleanup_tooling() {
-    echo "=== Mise Cleanup ===" >>/tmp/maintenance.log
+    log plain "=== Mise Cleanup ==="
 
     mise_output=$("$HOME_PATH/.local/bin/mise" self-update -y 2>&1)
-    echo "$mise_output"
-    echo "$mise_output" >>/tmp/maintenance.log
+    log plain "$mise_output"
 
     mise_output=$("$HOME_PATH/.local/bin/mise" prune 2>&1)
-    echo "$mise_output"
-    echo "$mise_output" >>/tmp/maintenance.log
+    log plain "$mise_output"
 
     mise self-update
     mise upgrade
@@ -401,38 +372,38 @@ main() {
     log info "Restarting system services to apply cache cleanup..."
     if [ "$IS_MAC" = true ]; then
         log info "Dumping current macOS defaults..."
-        echo "=== macOS Defaults Backup ===" >>/tmp/maintenance.log
-        "$HOME_PATH/.config/scripts/defaults/dump-defaults.sh" >>/tmp/maintenance.log 2>&1
+        log plain "=== macOS Defaults Backup ==="
+        defaults_output=$("$HOME_PATH/.config/scripts/defaults/dump-defaults.sh" 2>&1)
+        log plain "$defaults_output"
         log success "macOS defaults dumped successfully"
 
         log info "Restarting macOS system services..."
-        echo "  → Restarting macOS system services..." >>/tmp/maintenance.log
+        log plain "  → Restarting macOS system services..."
 
         # Restart Finder to refresh file system cache
         log info "Restarting Finder (file system cache refresh)..."
         killall Finder 2>/dev/null || true
         log success "Finder restarted successfully"
-        echo "    ✓ Finder restarted (file system cache refreshed)" >>/tmp/maintenance.log
+        log plain "    ✓ Finder restarted (file system cache refreshed)"
 
         # Restart Dock to refresh application cache
         log info "Restarting Dock (application cache refresh)..."
         killall Dock 2>/dev/null || true
         log success "Dock restarted successfully"
-        echo "    ✓ Dock restarted (application cache refreshed)" >>/tmp/maintenance.log
+        log plain "    ✓ Dock restarted (application cache refreshed)"
 
         # Rebuild Spotlight index for better search performance
         log info "Rebuilding Spotlight index (search optimization)..."
         spotlight_output=$(sudo mdutil -E / 2>&1)
-        echo "$spotlight_output"
-        echo "$spotlight_output" >>/tmp/maintenance.log
+        log plain "$spotlight_output"
         log success "Spotlight index rebuild initiated"
-        echo "    ✓ Spotlight index rebuild initiated (search optimization)" >>/tmp/maintenance.log
+        log plain "    ✓ Spotlight index rebuild initiated (search optimization)"
     fi
 
     log info "=== Current Installed Tooling & Applications ==="
     log plain "$(brew list && echo "==> Apps" && mas list && mise list)"
 
-    echo "=== Maintenance run completed at $(date) ===" >>/tmp/maintenance.log
+    log plain "=== Maintenance run completed at $(date) ==="
 }
 
 main "$@" 2>>/tmp/maintenance.error.log
