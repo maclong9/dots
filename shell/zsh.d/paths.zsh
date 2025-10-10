@@ -13,7 +13,6 @@ EDITOR="hx"  # Set Helix as the default editor
 
 # Directory Paths
 ZSH_LOCAL_BIN="$HOME/.local/bin"          # User-specific executables
-ZSH_MISE_SHIMS="$HOME/.local/share/mise/shims"  # mise version manager shims
 ZSH_SCRIPTS_DIR="$HOME/.config/shell"      # Shell configuration directory
 
 # ZSH-specific Paths
@@ -27,4 +26,4 @@ ZSH_RC="$HOME/.zshrc"                      # Main ZSH configuration file
 # • Path Configuration
 
 # Add user-specific paths to PATH
-PATH="$ZSH_LOCAL_BIN:$ZSH_MISE_SHIMS:$PATH"
+PATH="$ZSH_LOCAL_BIN:$PATH"

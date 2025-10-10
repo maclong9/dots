@@ -334,20 +334,10 @@ show_disk_usage() {
 }
 
 cleanup_tooling() {
-    log plain "• Mise Cleanup"
-
-    mise_output=$("$HOME_PATH/.local/bin/mise" self-update -y 2>&1)
-    log plain "$mise_output"
-
-    mise_output=$("$HOME_PATH/.local/bin/mise" prune 2>&1)
-    log plain "$mise_output"
-
-    mise self-update
-    mise upgrade
-
     brew cleanup
     brew update
     brew upgrade
+    mas upgrade
 }
 
 main() {
@@ -401,7 +391,7 @@ main() {
     fi
 
     log info "• Current Installed Tooling & Applications"
-    log plain "$(brew list && echo "==> Apps" && mas list && mise list)"
+    log plain "$(echo "==> Tooling" && brew leaves && echo "==> Apps" && brew list --cask && mas list)"
 
     log plain "• Maintenance run completed at $(date)"
 }

@@ -43,4 +43,4 @@ curl -fsSL --proto '=https' --tlsv1.2 \
 - **Colors**: Consistent color schemes across Helix, Terminal, and Xcode
 - **Scripts**: Utility functions for development workflow automation
 - **Maintenance**: Weekly scheduled system and tooling maintenance
-- **Tools**: Command line tooling managed with `mise`
+- **Tools**: Command line tooling managed with `brew`

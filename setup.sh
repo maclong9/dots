@@ -242,47 +242,6 @@ setup_homebrew() {
     log success "Homebrew setup complete"
 }
 
-setup_mise() {
-    log info "Installing mise and development tools..."
-
-    if command_exists mise; then
-        log success "mise already installed"
-    else
-        curl https://mise.run | sh
-    fi
-
-    # Add mise to PATH for this session
-    export PATH="$HOME/.local/bin:$PATH"
-
-    # Generate mise completions
-    ensure_dir "$HOME/.config/shell/completions" || die 1 "Failed to create completions directory"
-    try_run "mise completion zsh > \"$HOME/.config/shell/completions/_mise\"" \
-        "generate mise zsh completions"
-
-    # Check if mise config exists before trying to trust it
-    if [ -f "$HOME/.config/mise/config.toml" ]; then
-        # Change to the .config directory to trust the mise.toml file
-        cd "$HOME/.config" || {
-            log error "change to .config directory"
-            return 1
-        }
-
-        try_run "mise trust -a" "trust mise configuration file"
-        try_run "mise install" "install mise tools (check network and tool availability)"
-
-        # Return to original directory (optional, but good practice)
-        cd - >/dev/null || true
-    else
-        log warning "mise config not found, skipping mise tool installation"
-    fi
-
-    # Generate completions for mise tools
-    "$HOME/.local/share/mise/shims/deno" completions zsh >"$HOME/.zsh/completions/_deno"
-    "$HOME/.local/share/mise/shims/gh" completion -s zsh >"$HOME/.zsh/completions/_gh"
-
-    log success "Development tools installed via mise"
-}
-
 setup_maintenance() {
     log info "Setting up system maintenance..."
 
@@ -410,18 +369,13 @@ main() {
 
     run_step "Setting up dotfiles" setup_dotfiles
     run_step "Linking dotfiles" link_dotfiles
-
-    if [ "$IS_MAC" = true ]; then
-        run_step "Installing Homebrew and applications" setup_homebrew
-    fi
-
     run_step "Setting up system maintenance" setup_maintenance
     run_step "Generating SSH key" setup_ssh
-    run_step "Installing mise and development tools" setup_mise
+    run_step "Installing Homebrew and applications" setup_homebrew
 
     log success "Setup complete!"
 
-    printf "%s\n" \
+    log plain "%s\n" \
         "" \
         "Next steps:" \
         "- Restart your shell" \
