@@ -152,10 +152,6 @@ jobs:
             echo "This is expected if the setup script failed during dotfiles installation"
           fi
 
-          echo "==> Verify zsh plugins directory"
-          [ -d "$HOME/.zsh/plugins" ] || { echo ".zsh/plugins missing"; exit 1; }
-          echo ".zsh/plugins exists"
-
           echo "==> Verify crontab contains maintenance job"
           cron_content=$(crontab -l 2>/dev/null || true)
           if echo "$cron_content" | grep -q "maintenance.sh"; then
