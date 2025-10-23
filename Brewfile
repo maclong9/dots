@@ -20,7 +20,6 @@ brew "shellcheck"
 brew "shfmt"
 brew "sls"
 brew "zoxide"
-brew "swift" if OS.linux?
 
 # • Applications (Casks)
 cask "claude-code"
