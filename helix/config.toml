@@ -1,5 +1,5 @@
 # • Theme configuration
-theme = "vesper"
+theme = "base16_transparent"
 
 # • Editor settings
 [editor]
