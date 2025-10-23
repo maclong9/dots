@@ -24,16 +24,12 @@ brew "zoxide"
 # • Applications (Casks)
 cask "claude-code"
 cask "container"
-cask "font-sf-mono-nerd-font-ligaturized"
-cask "ghostty@tip"
-cask "onyx"
 cask "pcsx2"
 cask "rpcs3"
 cask "ryujinx"
 cask "steam"
 
 # • Mac App Store Applications
-mas "Apple Configurator", id: 1037126344
 mas "Compressor", id: 424390742
 mas "Final Cut Pro", id: 424389933
 mas "Keynote", id: 409183694
