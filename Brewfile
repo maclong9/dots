@@ -1,9 +1,10 @@
 # Brewfile for macOS applications and system tools
 
-tap "maclong9/tap"
+tap "maclong9/tap", "git@github.com/maclong9/tap.git"
 
 # • Language Servers
 brew "bash-language-server"
+brew "harper"
 brew "marksman"
 brew "pkl-lsp"
 brew "vscode-langservers-extracted"
@@ -13,8 +14,8 @@ brew "bat"
 brew "deno"
 brew "fzf"
 brew "gh"
-brew "harper"
 brew "helix"
+brew "pkl"
 brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
@@ -24,6 +25,7 @@ brew "zoxide"
 # • Applications (Casks)
 cask "claude-code"
 cask "container"
+cask "onyx"
 cask "pcsx2"
 cask "rpcs3"
 cask "ryujinx"
