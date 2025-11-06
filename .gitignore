@@ -1,4 +1,4 @@
-.claude/
+# Kiro
 .kiro/
 .DS_Store
 .env
@@ -8,3 +8,4 @@ gh-copilot/
 github-copilot/
 gh/
 procps
+CLAUDE.md

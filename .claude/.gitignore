@@ -1,0 +1,10 @@
+# Claude Code runtime files (don't track)
+debug/
+file-history/
+history.jsonl
+projects/
+settings.local.json
+shell-snapshots/
+statsig/
+todos/
+plugins/
