@@ -120,6 +120,7 @@ link_dotfiles() {
         return 1
     fi
 
+    # Link dotfiles (files only)
     for file in "$HOME/.config"/.*; do
         [ -f "$file" ] || continue
         filename="$(basename "$file")"
@@ -130,6 +131,15 @@ link_dotfiles() {
         log info "Symlinking $filename"
         try_run "safe_symlink \"$file\" \"$HOME/$filename\"" \
             "symlink $filename"
+    done
+
+    # Link special directories like .claude
+    for dir in .claude; do
+        if [ -d "$HOME/.config/$dir" ]; then
+            log info "Symlinking $dir directory"
+            try_run "safe_symlink \"$HOME/.config/$dir\" \"$HOME/$dir\"" \
+                "symlink $dir directory"
+        fi
     done
 
     log success "Dotfiles linked"
@@ -172,16 +182,24 @@ setup_homebrew() {
             for folder in home savedata; do
                 SRC="$RPCS3_DIR/$folder"
                 DEST="$ICLOUD_DIR/$folder"
-                if [ -d "$SRC" ]; then
+                if [ -d "$SRC" ] && [ ! -L "$SRC" ]; then
                     [ ! -d "$DEST" ] && log info "Copying $folder to iCloud..." && cp -R "$SRC" "$DEST"
+                    backup_path "$SRC" >/dev/null || true
                     rm -rf "$SRC"
                     ln -s "$DEST" "$SRC"
                     log success "Linked $folder → iCloud"
+                elif [ -L "$SRC" ]; then
+                    log info "$folder already linked — skipping"
                 else
                     log warning "Missing: $SRC — skipping"
                 fi
             done
-            ln -s "$ICLOUD_DIR/config.yml" "$HOME/Library/Application Support/rpcs3/config.yml"
+            RPCS3_CONFIG="$HOME/Library/Application Support/rpcs3/config.yml"
+            if [ -f "$RPCS3_CONFIG" ] && [ ! -L "$RPCS3_CONFIG" ]; then
+                backup_path "$RPCS3_CONFIG" >/dev/null || true
+                rm -f "$RPCS3_CONFIG"
+            fi
+            [ ! -L "$RPCS3_CONFIG" ] && ln -s "$ICLOUD_DIR/config.yml" "$RPCS3_CONFIG"
             log success "RPCS3 saves + configs now live in iCloud 🎮☁️"
         else
             log warning "RPCS3 not installed yet — skipping iCloud sync setup"
@@ -201,10 +219,13 @@ setup_homebrew() {
                     log info "$item already linked — skipping"
                     continue
                 fi
-                [ -e "$SRC" ] && [ ! -e "$DEST" ] && log info "Copying $item to iCloud..." && cp -R "$SRC" "$DEST"
-                rm -rf "$SRC"
-                ln -s "$DEST" "$SRC"
-                log success "Linked $item → iCloud"
+                if [ -e "$SRC" ]; then
+                    [ ! -e "$DEST" ] && log info "Copying $item to iCloud..." && cp -R "$SRC" "$DEST"
+                    backup_path "$SRC" >/dev/null || true
+                    rm -rf "$SRC"
+                    ln -s "$DEST" "$SRC"
+                    log success "Linked $item → iCloud"
+                fi
             done
             log success "Ryujinx saves + configs now live in iCloud 🎮☁️"
         else
@@ -218,14 +239,17 @@ setup_homebrew() {
 
         if [ -d "$PCSX2_DIR" ]; then
             ensure_dir "$ICLOUD_DIR" || die 1 "Failed to create iCloud PCSX2 System directory"
-            for folder in memcards gamesettings bios; do
+            for folder in memcards gamesettings; do
                 SRC="$PCSX2_DIR/$folder"
                 DEST="$ICLOUD_DIR/$folder"
-                if [ -d "$SRC" ]; then
+                if [ -d "$SRC" ] && [ ! -L "$SRC" ]; then
                     [ ! -d "$DEST" ] && log info "Copying $folder to iCloud..." && cp -R "$SRC" "$DEST"
+                    backup_path "$SRC" >/dev/null || true
                     rm -rf "$SRC"
                     ln -s "$DEST" "$SRC"
                     log success "Linked $folder → iCloud"
+                elif [ -L "$SRC" ]; then
+                    log info "$folder already linked — skipping"
                 else
                     log warning "Missing: $SRC — skipping"
                 fi

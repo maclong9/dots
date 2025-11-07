@@ -396,4 +396,4 @@ main() {
     log plain "• Maintenance run completed at $(date)"
 }
 
-main "$@" 2>>/tmp/maintenance.error.log
+main "$@" 2>&1 | tee -a /tmp/maintenance.error.log
