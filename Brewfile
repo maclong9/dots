@@ -7,6 +7,8 @@ brew "bash-language-server"
 brew "harper"
 brew "marksman"
 brew "pkl-lsp"
+brew "tinymist"
+brew "typstyle"
 brew "vscode-langservers-extracted"
 
 # • CLI Tools & Utilities
@@ -20,13 +22,13 @@ brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
 brew "sls"
+brew "typst"
 brew "zoxide"
 
 # • Applications (Casks)
 cask "claude-code"
 cask "container"
 cask "onyx"
-cask "pcsx2"
 cask "rpcs3"
 cask "ryujinx"
 cask "steam"

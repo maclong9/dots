@@ -64,3 +64,10 @@ scope = "source.tsx"
 file-types = ["tsx"]
 language-servers = ["deno-ls", "tailwindcss-ls"]
 formatter = { command = "deno", args = ["fmt", "-"] }
+
+[[language]]
+name = "typst"
+scope = "source.typst"
+file-types = ["typ"]
+formatter = { command = "typstyle", args = ["-"] }
+auto-format = true
