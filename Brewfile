@@ -13,6 +13,7 @@ brew "vscode-langservers-extracted"
 
 # • CLI Tools & Utilities
 brew "bat"
+brew "caddy"
 brew "deno"
 brew "fzf"
 brew "gh"
@@ -28,7 +29,9 @@ brew "zoxide"
 # • Applications (Casks)
 cask "claude-code"
 cask "container"
+cask "ghostty@tip"
 cask "onyx"
+cask "pcsx2"
 cask "rpcs3"
 cask "ryujinx"
 cask "steam"
