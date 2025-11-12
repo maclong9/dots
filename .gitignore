@@ -1,11 +1,10 @@
-# Kiro
-.kiro/
 .DS_Store
 .env
 .env.*
 *.bak
-gh-copilot/
-github-copilot/
-gh/
-procps
 CLAUDE.md
+gh-copilot/
+gh/
+github-copilot/
+procps
+sunshine/
