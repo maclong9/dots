@@ -23,6 +23,7 @@ brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
 brew "sls"
+brew "lizardbyte/homebrew/sunshine"
 brew "typst"
 brew "zoxide"
 
