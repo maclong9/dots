@@ -14,11 +14,6 @@ config.deno.lint = true
 config.deno.unstable = true
 
 [[language]]
-name = "python"
-scope = "source.py"
-file-types = ["py"]
-
-[[language]]
 name = "bash"
 formatter = { command = "shfmt", args = ["-i", "4", "-ci"] }
 
