@@ -22,8 +22,8 @@ brew "pkl"
 brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
-brew "sls"
-brew "lizardbyte/homebrew/sunshine"
+brew "sls" if OS.mac?
+brew "lizardbyte/homebrew/sunshine" if OS.mac?
 brew "typst"
 brew "zoxide"
 
