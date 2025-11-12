@@ -10,10 +10,3 @@ done
 
 # Source local zshrc
 [[ -f ~/.zshrc.local ]] && . "$HOME/.zshrc.local"
-
-# bun completions
-[ -s "/Users/mac/.bun/_bun" ] && source "/Users/mac/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
