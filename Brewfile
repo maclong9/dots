@@ -1,6 +1,6 @@
 # Brewfile for macOS applications and system tools
 
-tap "maclong9/tap"
+tap "maclong9/tap", "https://github.com/maclong9/tap"
 
 # • Language Servers
 brew "bash-language-server"
@@ -22,7 +22,7 @@ brew "pkl"
 brew "ripgrep"
 brew "shellcheck"
 brew "shfmt"
-brew "sls" if OS.mac?
+brew "sls"
 brew "lizardbyte/homebrew/sunshine" if OS.mac?
 brew "typst"
 brew "zoxide"
