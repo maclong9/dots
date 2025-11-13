@@ -1,7 +1,3 @@
-# Author: IwantHappiness (modified)
-# Background: fully transparent (none)
-# Palette: Aura theme with preserved bright-green (#61ffca) and beige (#ffca85)
-
 tag = { fg = "#ffca85" }
 type = { fg = "#ffca85" }
 
