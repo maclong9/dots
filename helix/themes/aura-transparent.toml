@@ -1,145 +1,117 @@
-# =============================================================================
-# aurU Transparent Vivid – PERFECTED (strings ≠ functions)
-# Orange strings • Green functions • Full Auru spectrum • Transparent + soft UI
-# Author: Ultimate edition by Grok 4 (November 2025)
-# =============================================================================
+# Author: IwantHappiness (modified)
+# Background: fully transparent (none)
+# Palette: Aura theme with preserved bright-green (#61ffca) and beige (#ffca85)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SYNTAX HIGHLIGHTING – Full Auru 6-accent glory
-# ─────────────────────────────────────────────────────────────────────────────
-"tag"                    = { fg = "accent7" }
-"type"                   = { fg = "accent32" }       # Blue – types, structs
-"type.builtin"           = { fg = "accent32" }
-"constructor"            = { fg = "accent32" }
+tag = { fg = "#ffca85" }
+type = { fg = "#ffca85" }
 
-"keyword"                = { fg = "accent1" }        # Purple – if, else, for, return
-"keyword.control"        = { fg = "accent1" }
-"keyword.control.repeat" = { fg = "accent1" }
-"keyword.control.conditional" = { fg = "accent1" }
-"keyword.control.import" = { fg = "accent1" }
-"keyword.directive"      = { fg = "accent6" }        # Pink – macros, attributes
-"keyword.storage"        = { fg = "accent1" }
-"keyword.storage.type"   = { fg = "accent32" }       # Blue – fn, struct, enum
-"keyword.operator"       = { fg = "accent1" }
+label = { fg = "#ffca85" }
 
-"function"               = { fg = "accent2" }        # Green – function calls & defs
-"function.builtin"       = { fg = "accent2" }
-"function.method"        = { fg = "accent2" }
+operator = { fg = "#a277ff" }
 
-"constant"               = { fg = "accent3" }        # Orange – const, enum variants
-"constant.builtin"       = { fg = "accent3" }
-"constant.numeric"       = { fg = "accent3" }
+attribute = { fg = "#a277ff" }
 
-"string"                 = { fg = "accent3" }        # ORANGE – strings (distinct!)
-"string.regexp"          = { fg = "accent6" }        # Pink – regex
-"string.special.path"    = { fg = "accent8" }
-"string.special.url"     = { fg = "accent7", underline = { style = "line" } }
+function = { fg = "#ffca85" }
 
-"attribute"              = { fg = "accent6" }        # Pink – #[derive]
-"property"               = { fg = "accent6" }
+namespace = { fg = "#ffca85" }
 
-"variable"               = { fg = "accent7" }
-"variable.builtin"       = { fg = "accent8" }
-"variable.parameter"     = { modifiers = ["italic"] }
+comment = { fg = "#6d6d6d" }
 
-"comment"                = { fg = "accent8" }
-"markup.bold"            = { modifiers = ["bold"] }
-"markup.link"            = { fg = "accent32", underline = { style = "line" } }
+constructor = { fg = "#ffca85" }
 
-"punctuation"            = { fg = "accent8" }
-"punctuation.bracket"    = { fg = "accent8" }
-"punctuation.delimiter"  = { fg = "accent7" }
-"punctuation.special"    = { fg = "accent6" }
+constant = { fg = "#61ffca" }
+"constant.character.escape" = { fg = "#a277ff" }
 
-"namespace"              = { fg = "accent32" }
-"label"                  = { fg = "accent6" }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.link" = { fg = "#61ffca", underline = { style = "line" } }
 
-"operator"               = { fg = "accent8" }
+variable = { fg = "#edecee" }
+"variable.builtin" = { fg = "#a277ff" }
+"variable.parameter" = { modifiers = ["italic"] }
 
-"diff.plus"              = { fg = "accent2" }
-"diff.minus"             = { fg = "accent5" }
-"diff.delta"             = { fg = "accent3" }
+"markup.raw" = { bg = "none" }
+"markup.normal" = { bg = "none" }
+"markup.heading" = { bg = "none", fg = "#ffca85", modifiers = ["bold"] }
 
-"error"                  = { fg = "accent5" }
-"warning"                = { fg = "accent3" }
-"info"                   = { fg = "accent32" }
-"hint"                   = { fg = "accent8" }
+"diff.delta" = { fg = "#ffca85" }
+"diff.minus" = { fg = "#ff6767" }
+"diff.plus" = { fg = "#61ffca" }
 
-"diagnostic.error"       = { underline = { style = "curl", color = "accent5" } }
-"diagnostic.warning"     = { underline = { style = "curl", color = "accent3" } }
-"diagnostic.info"        = { underline = { style = "curl", color = "accent32" } }
-"diagnostic.hint"        = { underline = { style = "curl", color = "accent8" } }
+string = { fg = "#61ffca" }
+"string.regexp" = { fg = "#a277ff" }
+"string.special.path" = { fg = "#82e2ff" }
+"string.special.url" = { fg = "#edecee", underline = { style = "line" } }
+
+punctuation = { fg = "#a277ff" }
+"punctuation.bracket" = { fg = "#a277ff" }
+"punctuation.delimiter" = { fg = "#edecee" }
+"punctuation.special" = { fg = "#61ffca" }
+
+keyword = { fg = "#a277ff" }
+"keyword.operator" = { fg = "#ffca85" }
+"keyword.function" = { fg = "#ffca85" }
+"keyword.directive" = { fg = "#f694ff" }
+"keyword.storage.type" = { fg = "#ffca85" }
+"keyword.control.repeat" = { fg = "#a277ff" }
+"keyword.control.import" = { fg = "#ffca85" }
+"keyword.control.conditional" = { fg = "#a277ff" }
+
+error = { fg = "#ff6767" }
+hint = { fg = "#6d6d6d" }
+info = { fg = "#82e2ff" }
+warning = { fg = "#ffca85" }
 "diagnostic.unnecessary" = { modifiers = ["dim"] }
-"diagnostic.deprecated"  = { modifiers = ["crossed_out"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+"diagnostic.error" = { underline = { style = "curl", color = "#ff6767" } }
+"diagnostic.warning" = { underline = { style = "curl", color = "#ffca85" } }
+"diagnostic.info" = { underline = { style = "curl", color = "#82e2ff" } }
+"diagnostic.hint" = { underline = { style = "curl", color = "#6d6d6d" } }
 
+"ui.popup" = { bg = "none" }
 
-# ─────────────────────────────────────────────────────────────────────────────
-# UI – True transparency + soft warm-grey + perfect cursor
-# ─────────────────────────────────────────────────────────────────────────────
-"ui.background"          = { bg = "default" }
-"ui.background.separator" = { fg = "soft_line" }
+"ui.selection" = { bg = "#3d375e7f" }
 
-"ui.popup"               = { bg = "soft_float" }
-"ui.window"              = { bg = "soft_float" }
-"ui.help"                = { bg = "soft_float", fg = "accent7" }
+"ui.help" = { bg = "none", fg = "#ffca85" }
 
-"ui.selection"           = { bg = "accent20" }
-"ui.selection.primary"   = { bg = "accent20" }
+"ui.background" = { bg = "none", fg = "#edecee" }
 
-"ui.linenr"              = { fg = "soft_line" }
-"ui.linenr.selected"     = { fg = "accent7" }
+"ui.window" = { fg = "dark-gray" }
 
-"ui.virtual.whitespace"  = { fg = "soft_line" }
-"ui.virtual.inlay-hint"  = { bg = "soft_float", fg = "accent8" }
+"ui.picker.header.column.active" = { bg = "#3d375e7f" }
 
-"ui.text"                = { fg = "accent7" }
-"ui.text.inactive"       = { fg = "accent8" }
-"ui.text.focus"          = { bg = "accent2", fg = "accent12" }
+"ui.linenr" = { fg = "#6d6d6d" }
+"ui.linenr.selected" = { fg = "#edecee" }
 
-"ui.menu"                = { fg = "accent7", bg = "soft_float" }
-"ui.menu.selected"       = { bg = "soft_line" }
-"ui.menu.scroll"         = { fg = "accent7" }
+"ui.virtual.whitespace" = { fg = "#3d375e7f" }
+"ui.virtual.inlay-hint" = { bg = "none", fg = "#6d6d6d" }
 
-"ui.statusline"          = { bg = "soft_line", fg = "accent7" }
-"ui.statusline.inactive" = { bg = "soft_line", fg = "accent8" }
-"ui.statusline.normal"   = { bg = "soft_active", fg = "accent7" }
-"ui.statusline.insert"   = { bg = "accent2",     fg = "accent12" }
-"ui.statusline.select"   = { bg = "accent5",     fg = "accent12" }
+"ui.text" = { fg = "#edecee" }
+"ui.text.inactive" = { fg = "#6d6d6d" }
+"ui.text.focus" = { bg = "#61ffca", fg = "#15141b" }
 
-"ui.tabline"             = { bg = "soft_line", fg = "accent8" }
-"ui.tabline.active"      = { bg = "soft_active", fg = "accent7" }
-"ui.tabline.inactive"    = { bg = "soft_line", fg = "accent8" }
+"ui.menu.scroll" = { fg = "#edecee" }
+"ui.menu.selected" = { bg = "#3d375e7f" }
+"ui.menu" = { fg = "#edecee", bg = "none" }
 
-"ui.cursor"              = { fg = "cursor_fg", bg = "cursor_bg", modifiers = ["bold"] }
-"ui.cursor.primary"      = { fg = "cursor_fg", bg = "cursor_bg" }
-"ui.cursor.insert"       = { fg = "accent12", bg = "accent2" }
-"ui.cursor.select"       = { fg = "accent12", bg = "accent5" }
-"ui.cursor.match"        = { fg = "accent2", modifiers = ["bold", "underlined"] }
+"ui.statusline" = { bg = "dim-gray" }
+"ui.statusline.inactive" = { bg = "dark-gray" }
 
-"ui.cursorline.primary"  = { bg = "soft_line" }
+"ui.cursor.insert" = { bg = "#61ffca" }
+"ui.cursorline.primary" = { bg = "#29263c" }
+"ui.cursorline.secondary" = { bg = "#29263c" }
+"ui.cursor.primary" = { bg = "#edecee", fg = "#15141b" }
+"ui.cursor" = { fg = "#edecee", modifiers = ["reversed"] }
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# PALETTE – Full official Auru + UI enhancements
-# ─────────────────────────────────────────────────────────────────────────────
 [palette]
-accent1  = "#8464c6"   # Purple  – Keywords
-accent2  = "#54c59f"   # Green   – Functions
-accent3  = "#c7a06f"   # Orange  – Strings, Constants
-accent5  = "#c55858"   # Red     – Errors
-accent6  = "#c17ac8"   # Pink    – Attributes, Macros, Regex
-accent32 = "#6cb2c7"   # Blue    – Types, Namespaces
+red = "#ff6767"
+gray = "#6d6d6d"
+white = "#edecee"
+beige = "#ffca85"
+black = "#15141b"
+dim-gray = "#3d375e7f"
+dark-gray = "#29263c"
+bright-green = "#61ffca"
 
-accent7  = "#bdbdbd"   # White   – Variables, text
-accent8  = "#6d6d6d"   # Gray    – Comments, punctuation
-
-accent12 = "#15141b"   # Deep black
-accent20 = "#3d375e7f" # Selection
-accent38 = "#29263c"
-
-soft_line    = "#353342"
-soft_active  = "#3f3d52"
-soft_float   = "#353342e6"
-
-cursor_bg    = "#e8e8e8"
-cursor_fg    = "#15141b"
+cursor = "#edecee"
+comment = "#6d6d6d"
+bg-selection = "#3d375e7f"
