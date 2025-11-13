@@ -1,6 +1,6 @@
 # Brewfile for macOS applications and system tools
 
-tap "maclong9/tap", "git@github.com/maclong9/tap.git"
+tap "maclong9/tap"
 
 # • Language Servers
 brew "bash-language-server"
