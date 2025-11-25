@@ -6,6 +6,7 @@
 [core]
     editor = hx
     excludesfile = ~/.gitignore
+	pager = delta
 
 [init]
     defaultBranch = main
@@ -74,3 +75,15 @@
     # Reset operations
     unstage = reset HEAD --
     uncommit = reset --soft HEAD~1
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	light = false
+	line-numbers = true
+	side-by-side = true
+	syntax-theme = Monokai Extended
+[merge]
+	conflictstyle = diff3
+[diff]
+	colorMoved = default
