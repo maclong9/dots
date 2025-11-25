@@ -231,3 +231,46 @@ convert_psx() {
     done
 }
 
+# • Graphics and performance tools
+
+# Toggle GPTK Metal HUD overlay with full metrics.
+#
+# Enables or disables the Game Porting Toolkit Metal performance overlay
+# that displays FPS, GPU/CPU metrics, and other performance statistics.
+# Uses launchctl to set system-wide environment variables that persist
+# until toggled off or system restart.
+#
+# - Returns:
+#   - 0 if toggle was successful.
+#   - 1 if launchctl command fails.
+# - Usage:
+#   ```sh
+#   gptk-toggle  # Enable if off, disable if on
+#   ```
+gptk-toggle() {
+    # Check if MTL_HUD_ENABLED is currently set
+    local current_state
+    current_state=$(launchctl getenv MTL_HUD_ENABLED 2>/dev/null)
+
+    if [[ "$current_state" == "1" ]]; then
+        # Disable the HUD
+        echo "${BRIGHT_YELLOW}Disabling GPTK Metal HUD...${NC}"
+        launchctl unsetenv MTL_HUD_ENABLED
+        launchctl unsetenv MTL_DEBUG_LAYER
+        launchctl unsetenv MTL_SHADER_VALIDATION
+        launchctl unsetenv MTL_SHADER_VALIDATION_GLOBAL_MEMORY
+        launchctl unsetenv MTL_SHADER_VALIDATION_TEXTURE_USAGE
+        echo "${BRIGHT_GREEN}✓${NC} GPTK Metal HUD disabled. Restart apps to take effect."
+    else
+        # Enable the HUD with all metrics
+        echo "${BRIGHT_YELLOW}Enabling GPTK Metal HUD with all metrics...${NC}"
+        launchctl setenv MTL_HUD_ENABLED 1
+        launchctl setenv MTL_DEBUG_LAYER 1
+        launchctl setenv MTL_SHADER_VALIDATION 1
+        launchctl setenv MTL_SHADER_VALIDATION_GLOBAL_MEMORY 1
+        launchctl setenv MTL_SHADER_VALIDATION_TEXTURE_USAGE 1
+        echo "${BRIGHT_GREEN}✓${NC} GPTK Metal HUD enabled. Launch apps to see overlay."
+        echo "  Displays: FPS, frame time, GPU/CPU usage, memory, and shader validation"
+    fi
+}
+
