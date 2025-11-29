@@ -28,12 +28,14 @@ brew "zoxide"
 
 # • Applications (Casks)
 cask "claude-code"
+cask "crossover"
 cask "ghostty"
 cask "onyx"
 cask "pcsx2"
 cask "rpcs3"
 cask "ryujinx"
 cask "steam"
+cask "TheBoredTeam/boring-notch/boring-notch"
 
 # • Mac App Store Applications
 mas "Compressor", id: 424390742
